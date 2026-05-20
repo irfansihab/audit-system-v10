@@ -30,6 +30,9 @@ backend/.data/
 dummy-test-docs/*.pdf
 dummy-test-docs/*.xlsx
 
+# Wiki copy untuk build context (di-sync dari ../wiki/ saat deploy)
+backend/wiki/
+
 # OS
 .DS_Store
 Thumbs.db

@@ -34,10 +34,16 @@ COPY app/ ./app/
 # Layout ini dipakai oleh v6_bridge.py: settings.v6_path / "scripts/{skill}/run_batch.py".
 COPY v6/ /v6/
 
+# Copy wiki (knowledge base auditor) ke /wiki.
+# wiki/ asalnya di project root — deploy-fly.sh rsync ke backend/wiki/ supaya
+# masuk build context. Pattern temuan dibaca oleh agen via wiki_tools.py.
+COPY wiki/ /wiki/
+
 # Data directory untuk penugasan (di-mount sebagai Fly volume di production)
 RUN mkdir -p /data
 ENV APP_DATA_DIR=/data
 ENV APP_V6_PATH=/v6
+ENV APP_WIKI_PATH=/wiki
 ENV PYTHONPATH=/app
 
 EXPOSE 8000

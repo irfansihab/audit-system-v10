@@ -9,7 +9,8 @@ if ! command -v fly &> /dev/null; then
     exit 1
 fi
 
-cd "$(dirname "$0")/../backend"
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT/backend"
 
 echo "🔍 Memverifikasi V6 sudah ter-embed di backend/v6/..."
 
@@ -39,6 +40,26 @@ for script in v6/scripts/reviu-rka-kl/run_batch.py v6/scripts/reviu-pengadaan/ru
 done
 
 echo "✅ V6 ter-embed: $(ls v6/scripts/ | wc -l | tr -d ' ') item di scripts/, $(ls v6/skills/ | wc -l | tr -d ' ') item di skills/."
+
+# === WIKI sync ===
+# wiki/ adanya di project root, build context Docker = backend/. Sinkronkan ke
+# backend/wiki/ supaya bisa di-COPY oleh Dockerfile. backend/wiki/ di-gitignore.
+echo ""
+echo "🔍 Memverifikasi wiki/ di project root..."
+if [ ! -d "$PROJECT_ROOT/wiki/temuan-patterns" ]; then
+    echo "❌ Folder $PROJECT_ROOT/wiki/temuan-patterns tidak ada."
+    echo "Wiki diperlukan agen untuk akses pattern temuan. Setup minimal:"
+    echo "  mkdir -p wiki/temuan-patterns/reviu-pengadaan wiki/temuan-patterns/reviu-rka-kl"
+    exit 1
+fi
+
+echo "📦 Sinkron wiki/ → backend/wiki/ untuk masuk build context..."
+rm -rf wiki
+mkdir -p wiki
+cp -R "$PROJECT_ROOT/wiki/." wiki/
+n_patterns_pbj=$(find wiki/temuan-patterns/reviu-pengadaan -name '*.md' -not -name 'README.md' 2>/dev/null | wc -l | tr -d ' ')
+n_patterns_rka=$(find wiki/temuan-patterns/reviu-rka-kl -name '*.md' -not -name 'README.md' 2>/dev/null | wc -l | tr -d ' ')
+echo "✅ Wiki ter-sync: $n_patterns_pbj pattern reviu-pengadaan, $n_patterns_rka pattern reviu-rka-kl."
 
 # Cek apakah app sudah ada di Fly
 if fly status --app audit-ai-v7 &> /dev/null; then
