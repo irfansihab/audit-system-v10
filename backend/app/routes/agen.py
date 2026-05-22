@@ -1,4 +1,5 @@
 """Routes orkestrasi agen + ingestion worker."""
+import asyncio
 import json
 import logging
 from datetime import datetime
@@ -19,7 +20,11 @@ from app.agents import (
 from app.auth import get_current_user
 from app.database import SessionLocal, get_db
 from app.models import AgentRun, Dokumen, DokumenStatus, Penugasan, PenugasanStatus, Role, User
+from app.storage import reset_downstream
 from app.tools.v6_bridge import run_v6_script
+
+# Jenis dokumen yang punya V6 digest script (perlu di-ingest ulang saat re-ingest)
+_DIGESTIBLE_JENIS = ("TOR", "RAB", "KAK", "HPS", "RFI", "KONTRAK")
 
 log = logging.getLogger(__name__)
 router = APIRouter(prefix="/agen", tags=["agen"])
@@ -129,16 +134,24 @@ async def trigger_ingestion(
     if not p:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan")
 
+    # Re-ingest = REPLACE: bersihkan _INGESTED + output analisis turunan (KKP/LHP)
+    # supaya hasil baru menggantikan yang lama, bukan menumpuk.
+    removed = reset_downstream(Path(p.folder_path), from_stage="ingest")
+
+    # Semua dokumen yang punya digest script di-set INGESTING agar di-digest ulang.
     docs = (
         await db.execute(
             select(Dokumen).where(
                 Dokumen.penugasan_id == p.id,
-                Dokumen.status != DokumenStatus.READY,
+                Dokumen.jenis.in_(_DIGESTIBLE_JENIS),
             )
         )
     ).scalars().all()
     for d in docs:
         d.status = DokumenStatus.INGESTING
+        d.ingested_json_path = None
+        d.ingested_at = None
+        d.error_message = None
     p.status = PenugasanStatus.INGESTING
     await db.commit()
 
@@ -149,6 +162,7 @@ async def trigger_ingestion(
     ).scalars().all()
     return {
         "penugasan_id": p.id,
+        "reset_downstream": removed,
         "dokumen_diproses": [
             {
                 "id": d.id,
@@ -162,43 +176,92 @@ async def trigger_ingestion(
 
 
 # ============================================================
-# AGENT STREAM (SSE)
+# AGENT STREAM (SSE) — run DI-DECOUPLE dari koneksi klien
 # ============================================================
+#
+# Masalah lama: generator SSE = tempat agen jalan. Saat klien disconnect
+# (pindah tab / tutup browser), sse-starlette CANCEL generator → subprocess
+# Claude mati di tengah jalan, dan AgentRun nyangkut status "running".
+#
+# Solusi: agen jalan di asyncio.Task TERPISAH (RunHandle) yang hidup
+# independen dari koneksi. Event di-buffer; koneksi SSE hanya men-subscribe
+# ke buffer. Disconnect → subscriber berhenti, TAPI task tetap jalan sampai
+# selesai (DB selalu mencapai completed/failed). Re-mount tab → /attach
+# me-replay buffer + lanjut tail.
 
-async def _stream_agent(agent_name: str, user_prompt: str, penugasan_id: int, user_id: int):
-    # ISOLATION GUARANTEE:
-    # - AGENT_BUILDERS[name]() membuat ClaudeAgentOptions BARU per invoke
-    #   (fresh in-process MCP server, fresh load prompt dari .md)
-    # - ClaudeSDKClient(options=options) spawn subprocess Claude Code BARU
-    #   (lihat SubprocessCLITransport di claude-agent-sdk)
-    # - Subprocess di-terminate saat __aexit__ → tidak ada state agent yang
-    #   bertahan ke invoke berikutnya.
-    # Konsekuensi: zero context/memory leak antar penugasan ATAU antar run.
-    # State per-penugasan disimpan di filesystem (temuan.json, dll) — agen
-    # baca dari sana setiap run.
-    options = AGENT_BUILDERS[agent_name]()
 
-    async with SessionLocal() as db:
-        run = AgentRun(
-            penugasan_id=penugasan_id,
-            agent_name=agent_name,
-            user_id=user_id,
-            status="running",
-            input_summary=user_prompt[:500],
-            started_at=datetime.utcnow(),
-            tool_calls=[],
-        )
-        db.add(run)
-        await db.flush()
-        run_id = run.id
-        await db.commit()
+class RunHandle:
+    """Pegangan satu run agen yang hidup independen dari koneksi SSE."""
 
-    yield {"event": "start", "data": json.dumps({"agent": agent_name, "run_id": run_id})}
+    def __init__(self, run_id: int, agent_name: str, penugasan_id: int):
+        self.run_id = run_id
+        self.agent_name = agent_name
+        self.penugasan_id = penugasan_id
+        self.events: list[dict] = []      # buffer event SSE (append-only)
+        self.done = False
+        self.cond = asyncio.Condition()
+        self.task: asyncio.Task | None = None
+
+    async def emit(self, event: str, data: dict) -> None:
+        async with self.cond:
+            self.events.append({"event": event, "data": json.dumps(data)})
+            self.cond.notify_all()
+
+    async def finish(self) -> None:
+        async with self.cond:
+            self.done = True
+            self.cond.notify_all()
+
+    async def subscribe(self):
+        """Yield semua event dari awal lalu tail sampai run selesai.
+
+        Aman untuk banyak subscriber sekaligus (mis. 2 tab). Saat klien
+        disconnect, generator ini di-cancel — TANPA mempengaruhi task agen.
+        """
+        idx = 0
+        while True:
+            async with self.cond:
+                while idx >= len(self.events) and not self.done:
+                    await self.cond.wait()
+                pending = self.events[idx:]
+                idx = len(self.events)
+                finished = self.done
+            for ev in pending:
+                yield ev
+            if finished and idx >= len(self.events):
+                return
+
+
+# Registry in-process. Hilang saat backend restart (uvicorn --reload) — itu
+# kompromi yang diterima untuk dev; run yang ke-interupsi restart akan tampak
+# "running" basi di DB sampai run berikutnya.
+_RUNS: dict[int, RunHandle] = {}
+_ACTIVE_BY_KEY: dict[tuple[int, str], int] = {}
+
+
+def _active_handle(penugasan_id: int, agent_name: str) -> RunHandle | None:
+    rid = _ACTIVE_BY_KEY.get((penugasan_id, agent_name))
+    if rid is None:
+        return None
+    return _RUNS.get(rid)
+
+
+async def _execute_run(handle: RunHandle, user_prompt: str, user_id: int) -> None:
+    """Loop agen sebenarnya — jalan sebagai task terpisah dari koneksi SSE.
+
+    ISOLATION GUARANTEE (sama spt sebelumnya): AGENT_BUILDERS[name]() bikin
+    ClaudeAgentOptions baru per invoke; ClaudeSDKClient spawn subprocess baru;
+    di-terminate saat __aexit__. Zero state leak antar run.
+    """
+    run_id = handle.run_id
+    await handle.emit("start", {"agent": handle.agent_name, "run_id": run_id})
 
     output_parts: list[str] = []
     tool_calls: list[dict] = []
+    error_msg: str | None = None
 
     try:
+        options = AGENT_BUILDERS[handle.agent_name]()
         async with ClaudeSDKClient(options=options) as client:
             await client.query(user_prompt)
             async for message in client.receive_response():
@@ -208,39 +271,77 @@ async def _stream_agent(agent_name: str, user_prompt: str, penugasan_id: int, us
                     if btype == "TextBlock":
                         text = getattr(block, "text", "")
                         output_parts.append(text)
-                        yield {"event": "text", "data": json.dumps({"text": text})}
+                        await handle.emit("text", {"text": text})
                     elif btype == "ToolUseBlock":
                         name = getattr(block, "name", "?")
                         inp = getattr(block, "input", {})
                         tool_calls.append({"tool": name, "input": inp})
-                        yield {"event": "tool_use", "data": json.dumps({"tool": name, "input": inp})}
+                        await handle.emit("tool_use", {"tool": name, "input": inp})
                     elif btype == "ToolResultBlock":
                         result = getattr(block, "content", "")
                         if isinstance(result, list) and result:
                             result_text = result[0].get("text", "") if isinstance(result[0], dict) else str(result[0])
                         else:
                             result_text = str(result)[:500]
-                        yield {"event": "tool_result", "data": json.dumps({"result": result_text[:500]})}
-    except Exception as e:
-        log.exception("Agent run failed: %s", e)
+                        await handle.emit("tool_result", {"result": result_text[:500]})
+    except Exception as e:  # noqa: BLE001
+        log.exception("Agent run %s failed: %s", run_id, e)
+        error_msg = str(e)[:1000]
+
+    # Persist hasil akhir (SELALU tercapai — tidak bergantung koneksi klien).
+    try:
         async with SessionLocal() as db:
             row = (await db.execute(select(AgentRun).where(AgentRun.id == run_id))).scalar_one()
-            row.status = "failed"
-            row.error_message = str(e)[:1000]
+            row.status = "failed" if error_msg else "completed"
+            row.output_summary = "".join(output_parts)[:2000]
+            row.tool_calls = tool_calls
+            row.error_message = error_msg
             row.ended_at = datetime.utcnow()
             await db.commit()
-        yield {"event": "error", "data": json.dumps({"message": str(e)[:500]})}
-        return
+    except Exception:  # noqa: BLE001
+        log.exception("Gagal persist hasil run %s", run_id)
 
+    if error_msg:
+        await handle.emit("error", {"message": error_msg[:500]})
+    else:
+        await handle.emit("done", {"run_id": run_id})
+    await handle.finish()
+
+    # Lepas dari index "active" supaya /attach berikutnya tahu run sudah kelar.
+    _ACTIVE_BY_KEY.pop((handle.penugasan_id, handle.agent_name), None)
+
+
+async def _start_run(agent_name: str, full_prompt: str, penugasan_id: int, user_id: int) -> RunHandle:
+    """Buat AgentRun di DB + RunHandle + jadwalkan task agen di background."""
     async with SessionLocal() as db:
-        row = (await db.execute(select(AgentRun).where(AgentRun.id == run_id))).scalar_one()
-        row.status = "completed"
-        row.output_summary = "".join(output_parts)[:2000]
-        row.tool_calls = tool_calls
-        row.ended_at = datetime.utcnow()
+        run = AgentRun(
+            penugasan_id=penugasan_id,
+            agent_name=agent_name,
+            user_id=user_id,
+            status="running",
+            input_summary=full_prompt[:500],
+            started_at=datetime.utcnow(),
+            tool_calls=[],
+        )
+        db.add(run)
+        await db.flush()
+        run_id = run.id
         await db.commit()
 
-    yield {"event": "done", "data": json.dumps({"run_id": run_id})}
+    handle = RunHandle(run_id, agent_name, penugasan_id)
+    _RUNS[run_id] = handle
+    _ACTIVE_BY_KEY[(penugasan_id, agent_name)] = run_id
+    handle.task = asyncio.create_task(_execute_run(handle, full_prompt, user_id))
+    return handle
+
+
+def _check_agent_role(agent_name: str, role: Role) -> None:
+    if agent_name not in AGENT_BUILDERS:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Agen tidak dikenal: {agent_name}")
+    if agent_name == "anggota_tim" and role != Role.AT:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Anggota Tim")
+    if agent_name == "ketua_tim" and role not in (Role.KT, Role.PT):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Ketua Tim atau Pengendali Teknis")
 
 
 @router.get("/{agent_name}/stream")
@@ -251,17 +352,22 @@ async def stream_agent(
     current: tuple[User, Role] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    """Mulai run agen baru lalu stream eventnya. Run jalan di background task —
+    bila klien disconnect, run TETAP berjalan (lihat /attach untuk reconnect)."""
     user, role = current
-    if agent_name not in AGENT_BUILDERS:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Agen tidak dikenal: {agent_name}")
-    if agent_name == "anggota_tim" and role != Role.AT:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Anggota Tim")
-    if agent_name == "ketua_tim" and role not in (Role.KT, Role.PT):
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Ketua Tim atau Pengendali Teknis")
+    _check_agent_role(agent_name, role)
 
     p = (await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))).scalar_one_or_none()
     if not p:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan")
+
+    # Tolak start ganda bila masih ada run aktif untuk penugasan+agen ini.
+    existing = _active_handle(p.id, agent_name)
+    if existing is not None and not existing.done:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "Masih ada analisis berjalan untuk agen ini. Tunggu selesai atau buka tab Chat untuk melihat progres.",
+        )
 
     skill_str = p.skill if isinstance(p.skill, str) else p.skill.value
     full_prompt = (
@@ -269,7 +375,50 @@ async def stream_agent(
         f"Pengguna: {user.nama_lengkap} ({role.value})\n\n"
         f"Permintaan: {prompt}"
     )
-    return EventSourceResponse(_stream_agent(agent_name, full_prompt, p.id, user.id))
+    handle = await _start_run(agent_name, full_prompt, p.id, user.id)
+    return EventSourceResponse(handle.subscribe())
+
+
+@router.get("/{agent_name}/attach")
+async def attach_agent(
+    agent_name: str,
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+):
+    """Reconnect ke run aktif (mis. setelah pindah tab / login ulang).
+
+    Bila ada run aktif → stream (replay buffer + tail). Bila tidak → kirim
+    event `idle` lalu tutup, sehingga frontend tahu tidak ada yang berjalan.
+    """
+    user, role = current
+    _check_agent_role(agent_name, role)
+    handle = _active_handle(penugasan_id, agent_name)
+
+    if handle is None:
+        async def _idle():
+            yield {"event": "idle", "data": json.dumps({"active": False})}
+        return EventSourceResponse(_idle())
+
+    return EventSourceResponse(handle.subscribe())
+
+
+@router.get("/{agent_name}/active")
+async def active_agent_run(
+    agent_name: str,
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Cek cepat (non-stream) apakah ada run aktif + teks terkumpul sejauh ini."""
+    handle = _active_handle(penugasan_id, agent_name)
+    if handle is None or handle.done:
+        return {"active": False}
+    text = "".join(
+        json.loads(e["data"]).get("text", "")
+        for e in handle.events
+        if e["event"] == "text"
+    )
+    return {"active": True, "run_id": handle.run_id, "text_so_far": text}
+
 
 @router.post("/{agent_name}/run")
 async def run_agent(

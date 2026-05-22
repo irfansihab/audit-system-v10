@@ -5,6 +5,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api, getSession, clearToken, Penugasan, Session, Skill } from '@/lib/api';
 
+// Status penugasan (di-derive backend dari artefak) → label + warna yang ramah.
+const STATUS_META: Record<string, { label: string; cls: string }> = {
+  DRAFT: { label: 'Draft — belum analisis', cls: 'bg-gray-100 text-gray-700' },
+  INGESTING: { label: '⟳ Ekstraksi dokumen', cls: 'bg-amber-50 text-amber-700' },
+  KKP_IN_PROGRESS: { label: 'KKP berjalan', cls: 'bg-blue-50 text-blue-700' },
+  KKP_QC: { label: 'KKP — QC', cls: 'bg-blue-50 text-blue-700' },
+  KKP_DONE: { label: 'KKP disetujui KT', cls: 'bg-indigo-50 text-indigo-700' },
+  LHP_IN_PROGRESS: { label: 'LHP berjalan', cls: 'bg-violet-50 text-violet-700' },
+  LHP_QC: { label: 'LHP — QC', cls: 'bg-violet-50 text-violet-700' },
+  LHP_DONE: { label: '✓ LHP selesai', cls: 'bg-emerald-50 text-emerald-700' },
+};
+
+function statusMeta(status: string) {
+  return STATUS_META[status] || { label: status, cls: 'bg-gray-100 text-gray-700' };
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [penugasan, setPenugasan] = useState<Penugasan[]>([]);
@@ -56,6 +72,25 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const handleDelete = async (p: Penugasan) => {
+    if (
+      !confirm(
+        `Hapus penugasan "${p.obyek}"?\n\nSeluruh dokumen, hasil ingest, KKP, dan LHP akan DIHAPUS PERMANEN dari disk. Tindakan ini tidak bisa dibatalkan.`
+      )
+    )
+      return;
+    setDeleting(p.id);
+    try {
+      await api.deletePenugasan(p.id);
+      setPenugasan((prev) => prev.filter((x) => x.id !== p.id));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   // SSR + first paint: render shell kosong (atau null) supaya HTML server === HTML
   // client. Setelah mount, session di-load dari localStorage.
   if (!mounted) {
@@ -90,6 +125,20 @@ export default function DashboardPage() {
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-2xl font-bold text-primary-dark">Penugasan Saya</h1>
           <div className="flex items-center gap-3">
+            <Link
+              href="/cacm"
+              className="px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 text-gray-700"
+              title="CACM — Continuous Audit / Continuous Monitoring"
+            >
+              🔔 CACM
+            </Link>
+            <Link
+              href="/knowledge"
+              className="px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 text-gray-700"
+              title="Knowledge — wiki pattern temuan & konteks"
+            >
+              📚 Knowledge
+            </Link>
             <Link
               href="/feedback"
               className="px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 text-gray-700"
@@ -194,17 +243,29 @@ export default function DashboardPage() {
                       </span>
                     </td>
                     <td className="p-3">
-                      <span className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-700">
-                        {p.status}
+                      <span className={`px-2 py-0.5 text-xs rounded ${statusMeta(p.status).cls}`}>
+                        {statusMeta(p.status).label}
                       </span>
                     </td>
                     <td className="p-3">
-                      <Link
-                        href={`/penugasan/${p.id}`}
-                        className="text-primary hover:underline"
-                      >
-                        Buka →
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <Link
+                          href={`/penugasan/${p.id}`}
+                          className="text-primary hover:underline"
+                        >
+                          Buka →
+                        </Link>
+                        {session?.role_aktif === 'PT' && (
+                          <button
+                            onClick={() => handleDelete(p)}
+                            disabled={deleting === p.id}
+                            className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                            title="Hapus penugasan (permanen)"
+                          >
+                            {deleting === p.id ? 'Menghapus…' : 'Hapus'}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

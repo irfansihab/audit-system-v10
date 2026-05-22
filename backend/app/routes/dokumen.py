@@ -19,6 +19,8 @@ from app.models import DocumentCache, Dokumen, DokumenStatus, Penugasan, Role, U
 from app.schemas import DokumenOut
 from app.storage import (
     classify_doc_by_filename,
+    delete_file_quiet,
+    reset_downstream,
     save_upload,
     sha256_bytes,
     target_subfolder_for,
@@ -132,3 +134,48 @@ async def list_dokumen(
         )
     ).scalars().all()
     return [DokumenOut.model_validate(r) for r in rows]
+
+
+@router.delete("/{dokumen_id}", status_code=status.HTTP_200_OK)
+async def delete_dokumen(
+    dokumen_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Hapus 1 dokumen (file + hasil ingest) lalu reset analisis turunan.
+
+    Hanya AT. Karena input berubah, output analisis (KKP/LHP) yang berbasis
+    dokumen lama otomatis dibersihkan (auto-cascade) supaya analisis ulang
+    menghasilkan yang baru, bukan menumpuk hasil lama.
+    """
+    user, role = current
+    if role != Role.AT:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Hanya Anggota Tim (AT) yang boleh hapus dokumen. Role Anda: {role.value}.",
+        )
+
+    d = (
+        await db.execute(select(Dokumen).where(Dokumen.id == dokumen_id))
+    ).scalar_one_or_none()
+    if not d:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Dokumen tidak ditemukan")
+
+    p = (
+        await db.execute(select(Penugasan).where(Penugasan.id == d.penugasan_id))
+    ).scalar_one_or_none()
+
+    nama = d.nama_file
+    # 1. Hapus file fisik + hasil ingest
+    delete_file_quiet(d.file_path)
+    delete_file_quiet(d.ingested_json_path)
+    # 2. Hapus record DB
+    await db.delete(d)
+    await db.commit()
+
+    # 3. Auto-cascade: input berubah → output analisis stale → reset KKP/LHP
+    reset_info: list[str] = []
+    if p:
+        reset_info = reset_downstream(Path(p.folder_path), from_stage="analysis")
+
+    return {"ok": True, "deleted": nama, "reset_downstream": reset_info}

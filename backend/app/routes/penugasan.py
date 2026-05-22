@@ -11,9 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
 from app.database import get_db
-from app.models import Penugasan, PenugasanStatus, Role, User
+from app.models import Dokumen, Penugasan, PenugasanStatus, Role, User
 from app.schemas import PenugasanCreate, PenugasanOut
-from app.storage import gen_kode_penugasan, penugasan_folder
+from app.storage import (
+    compute_penugasan_status,
+    delete_penugasan_folder,
+    gen_kode_penugasan,
+    penugasan_folder,
+)
 
 router = APIRouter(prefix="/penugasan", tags=["penugasan"])
 
@@ -154,13 +159,37 @@ async def create_penugasan(
     return PenugasanOut.model_validate(p)
 
 
+async def _dokumen_status_map(db: AsyncSession, penugasan_ids: list[int]) -> dict[int, list[str]]:
+    """Status semua dokumen di-group per penugasan_id (untuk derive status)."""
+    out: dict[int, list[str]] = {}
+    if not penugasan_ids:
+        return out
+    rows = (
+        await db.execute(
+            select(Dokumen.penugasan_id, Dokumen.status).where(
+                Dokumen.penugasan_id.in_(penugasan_ids)
+            )
+        )
+    ).all()
+    for pid, st in rows:
+        out.setdefault(pid, []).append(st if isinstance(st, str) else st.value)
+    return out
+
+
+def _with_derived_status(p: Penugasan, dok_statuses: list[str]) -> PenugasanOut:
+    out = PenugasanOut.model_validate(p)
+    out.status = compute_penugasan_status(Path(p.folder_path), dok_statuses)
+    return out
+
+
 @router.get("", response_model=list[PenugasanOut])
 async def list_penugasan(
     current: tuple[User, Role] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[PenugasanOut]:
     rows = (await db.execute(select(Penugasan).order_by(Penugasan.created_at.desc()))).scalars().all()
-    return [PenugasanOut.model_validate(r) for r in rows]
+    dok_map = await _dokumen_status_map(db, [r.id for r in rows])
+    return [_with_derived_status(r, dok_map.get(r.id, [])) for r in rows]
 
 
 @router.get("/{penugasan_id}", response_model=PenugasanOut)
@@ -174,7 +203,36 @@ async def get_penugasan(
     ).scalar_one_or_none()
     if not p:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan")
-    return PenugasanOut.model_validate(p)
+    dok_map = await _dokumen_status_map(db, [p.id])
+    return _with_derived_status(p, dok_map.get(p.id, []))
+
+
+@router.delete("/{penugasan_id}", status_code=status.HTTP_200_OK)
+async def delete_penugasan(
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Hapus penugasan beserta seluruh file di disk (hard delete). Hanya PT.
+
+    Cascade ORM menghapus dokumen + agent_runs terkait. Folder penugasan di
+    disk dihapus permanen.
+    """
+    user, role = current
+    if role != Role.PT:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Hanya Pengendali Teknis (PT) yang boleh hapus penugasan. Role Anda: {role.value}.",
+        )
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    folder = Path(p.folder_path)
+    kode = p.kode
+
+    await db.delete(p)
+    await db.commit()
+    delete_penugasan_folder(folder)
+
+    return {"ok": True, "deleted": kode, "folder_removed": str(folder)}
 
 
 # ============================================================

@@ -69,6 +69,21 @@ export default function DetailPenugasanPage() {
     }
   };
 
+  const handleDeleteDokumen = async (d: Dokumen) => {
+    if (
+      !confirm(
+        `Hapus dokumen "${d.nama_file}"?\n\nFile + hasil ekstraksi akan dihapus. Karena dokumen berubah, hasil analisis KKP/LHP yang lama akan di-reset agar bisa dianalisis ulang.`
+      )
+    )
+      return;
+    try {
+      await api.deleteDokumen(d.id);
+      setDokumen((prev) => prev.filter((x) => x.id !== d.id));
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
   // SSR + first client render: kembalikan shell kosong supaya HTML konsisten.
   if (!mounted) return <main className="min-h-screen" />;
   if (!session || !penugasan) return null;
@@ -127,6 +142,7 @@ export default function DetailPenugasanPage() {
             dokumen={dokumen}
             onUpload={handleUpload}
             onIngest={triggerIngest}
+            onDelete={handleDeleteDokumen}
             allReady={allReady}
             role={session.role_aktif}
           />
@@ -159,12 +175,14 @@ function DokumenTab({
   onIngest,
   allReady,
   role,
+  onDelete,
 }: {
   dokumen: Dokumen[];
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onIngest: () => void;
   allReady: boolean;
   role: Role;
+  onDelete: (d: Dokumen) => void;
 }) {
   const canUpload = role === 'AT';
   return (
@@ -209,6 +227,7 @@ function DokumenTab({
                 <th className="text-left p-3 text-xs uppercase text-gray-600">Jenis</th>
                 <th className="text-left p-3 text-xs uppercase text-gray-600">Status</th>
                 <th className="text-left p-3 text-xs uppercase text-gray-600">Output</th>
+                {canUpload && <th className="text-left p-3 text-xs uppercase text-gray-600">Aksi</th>}
               </tr>
             </thead>
             <tbody>
@@ -224,6 +243,17 @@ function DokumenTab({
                   <td className="p-3 text-xs text-gray-500">
                     {d.ingested_json_path ? d.ingested_json_path.split('/').pop() : '—'}
                   </td>
+                  {canUpload && (
+                    <td className="p-3">
+                      <button
+                        onClick={() => onDelete(d)}
+                        className="text-red-600 hover:text-red-800 hover:underline text-xs"
+                        title="Hapus dokumen (file + hasil ingest, reset analisis)"
+                      >
+                        Hapus
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -298,6 +328,9 @@ function ChatTab({
       : 'Susun draft LHR dari temuan.json yang sudah disetujui anggota tim.'
   );
   const [running, setRunning] = useState(false);
+  // reconnected = run ini ditemukan masih berjalan di backend (bukan baru dimulai
+  // di tab ini), mis. setelah pindah tab / reload. Dipakai untuk banner.
+  const [reconnected, setReconnected] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [history, setHistory] = useState<AgentRun[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -347,54 +380,66 @@ function ChatTab({
     }
   }, [history, running, streamText, streamTools]);
 
-  // Streaming via Server-Sent Events. Backend route /agen/{name}/stream
-  // mengirim event: start, text, tool_use, tool_result, done, error.
-  // Hasil run persisted di DB oleh backend — kita reload history saat done.
-  const start = () => {
-    if (running) return;
-    setRunning(true);
-    setElapsed(0);
+  // Streaming via Server-Sent Events. Run jalan di BACKGROUND TASK backend —
+  // koneksi SSE hanya jendela ke buffer event. Disconnect (pindah tab) TIDAK
+  // menghentikan run; saat kembali kita /attach untuk lanjut melihat.
+  // Event: start, text, tool_use, tool_result, done, error, idle.
+  const consumeStream = (url: string, opts: { isAttach: boolean }) => {
+    if (esRef.current) {
+      esRef.current.close();
+      esRef.current = null;
+    }
+    // Untuk start (klik user) → langsung running. Untuk attach (probe) → tunggu
+    // event `start` dari backend supaya tidak flicker "running" saat sebenarnya idle.
+    setRunning(!opts.isAttach);
+    setReconnected(opts.isAttach);
+    // Pada attach, backend me-replay buffer dari awal → mulai dari teks kosong
+    // supaya tidak dobel dengan sisa stream sebelumnya.
     setStreamText('');
     setStreamTools([]);
+    setElapsed(0);
     const startTime = Date.now();
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startTime) / 1000)), 1000);
-    const currentPrompt = prompt;
 
     let gotError: string | null = null;
-    const url = api.agentStreamUrl(agent as any, penugasanId, currentPrompt);
+    let finished = false;
     const es = new EventSource(url);
     esRef.current = es;
 
-    const finalize = async () => {
+    const teardown = () => {
       clearInterval(timer);
-      setRunning(false);
       if (esRef.current === es) esRef.current = null;
       es.close();
-      // Pull fresh history dari DB (jaga2 supaya output_summary/tool_calls yg ter-persist
-      // adalah versi yang lengkap & ter-truncate sesuai aturan backend).
+    };
+
+    const finalize = async () => {
+      if (finished) return;
+      finished = true;
+      teardown();
+      setRunning(false);
+      setReconnected(false);
       try {
         const res = await api.getAgentHistory(agent as any, penugasanId);
         setHistory(res.runs);
       } catch {
-        // Kalau gagal reload, tetap append entri lokal supaya jejak run tidak hilang
-        setHistory((prev) => [
-          ...prev,
-          {
-            id: -Date.now(),
-            status: gotError ? 'failed' : 'completed',
-            input_summary: currentPrompt.slice(0, 500),
-            output_summary: streamText.slice(0, 2000),
-            tool_calls: streamTools,
-            started_at: new Date(startTime).toISOString(),
-            ended_at: new Date().toISOString(),
-            error_message: gotError,
-          },
-        ]);
+        // abaikan; history bisa di-refresh manual
       }
-      // Bersihkan area streaming live; history sekarang sudah punya run terbaru.
       setStreamText('');
       setStreamTools([]);
     };
+
+    es.addEventListener('idle', () => {
+      // Tidak ada run aktif di backend (hanya muncul di jalur /attach).
+      finished = true;
+      teardown();
+      setRunning(false);
+      setReconnected(false);
+    });
+
+    es.addEventListener('start', () => {
+      // Ada run aktif (penting untuk jalur attach: tandai running).
+      setRunning(true);
+    });
 
     es.addEventListener('text', (ev: MessageEvent) => {
       try {
@@ -416,7 +461,6 @@ function ChatTab({
 
     es.addEventListener('tool_result', () => {
       // Tool result hanya untuk audit trail — sudah ter-log di tool_calls.
-      // Future: tampilkan ringkasan return value.
     });
 
     es.addEventListener('error', (ev: MessageEvent) => {
@@ -429,27 +473,43 @@ function ChatTab({
       finalize();
     });
 
-    es.addEventListener('done', () => {
-      finalize();
-    });
+    es.addEventListener('done', () => finalize());
 
-    // Native EventSource onerror tanpa retry: bila bukan error event dari server
-    // (mis. koneksi ke-drop), finalize dengan pesan generik.
+    // onerror tanpa retry. Penting: saat kita SENGAJA detach (pindah tab/Stop),
+    // jangan tandai gagal — run tetap jalan di backend.
     es.onerror = () => {
-      if (es.readyState === EventSource.CLOSED) {
-        if (!gotError) gotError = 'Koneksi ke server terputus';
+      if (es.readyState === EventSource.CLOSED && !finished) {
         finalize();
       }
     };
   };
 
-  const stop = () => {
+  const start = () => {
+    if (running) return;
+    const url = api.agentStreamUrl(agent as any, penugasanId, prompt);
+    consumeStream(url, { isAttach: false });
+  };
+
+  // "Stop" sekarang = LEPAS jendela (run tetap jalan di backend). Untuk lihat
+  // lagi, buka tab Chat → otomatis reconnect.
+  const detach = () => {
     if (esRef.current) {
       esRef.current.close();
       esRef.current = null;
     }
     setRunning(false);
+    setReconnected(false);
+    setStreamText('');
+    setStreamTools([]);
   };
+
+  // Saat mount (atau pindah ke penugasan/role lain): reconnect ke run aktif di
+  // backend bila ada (mis. ditinggal pindah tab). Kalau tidak ada → event idle.
+  useEffect(() => {
+    const url = api.agentAttachUrl(agent as any, penugasanId);
+    consumeStream(url, { isAttach: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [penugasanId, agent]);
 
   return (
     <div>
@@ -546,7 +606,9 @@ function ChatTab({
               <div className="flex items-center gap-2 text-blue-700">
                 <span className="inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
                 <span className="text-sm font-semibold">
-                  Agen sedang streaming… ({elapsed}s)
+                  {reconnected
+                    ? 'Analisis masih berjalan di backend — dilanjutkan otomatis'
+                    : `Agen sedang streaming… (${elapsed}s)`}
                 </span>
               </div>
               <span className="text-xs text-gray-500">
@@ -598,16 +660,18 @@ function ChatTab({
         </button>
         {running && (
           <button
-            onClick={stop}
-            className="px-4 py-2 rounded border border-red-300 text-red-700 text-sm font-semibold hover:bg-red-50"
+            onClick={detach}
+            className="px-4 py-2 rounded border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50"
+            title="Berhenti melihat — analisis tetap berjalan di backend"
           >
-            ■ Stop
+            ✕ Lepas (tetap jalan)
           </button>
         )}
       </div>
       <p className="mt-2 text-xs text-gray-500">
-        Output text + tool calls di-stream real-time via SSE. Agen butuh 30–90 detik untuk selesai.
-        Setelah selesai, run otomatis di-persist ke DB dan ter-load di history.
+        Analisis berjalan di <strong>background backend</strong> — aman ditinggal pindah tab atau
+        reload; saat kembali ke tab ini progres otomatis disambung. Tombol <em>Lepas</em> hanya
+        menutup tampilan, tidak menghentikan agen. Hasil di-persist ke DB dan tampil di history.
       </p>
     </div>
   );

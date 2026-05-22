@@ -117,6 +117,13 @@ export const api = {
 
   getPenugasan: (id: number) => request<Penugasan>(`/penugasan/${id}`),
 
+  /** Hapus penugasan + seluruh file di disk (hard delete). Hanya PT. */
+  deletePenugasan: (id: number) =>
+    request<{ ok: boolean; deleted: string; folder_removed: string }>(
+      `/penugasan/${id}`,
+      { method: 'DELETE' }
+    ),
+
   createPenugasan: (payload: {
     obyek: string;
     skill: Skill;
@@ -139,8 +146,15 @@ export const api = {
     return request<Dokumen>('/dokumen', { method: 'POST', body: fd });
   },
 
+  /** Hapus 1 dokumen (file + hasil ingest) lalu reset analisis turunan. Hanya AT. */
+  deleteDokumen: (dokumenId: number) =>
+    request<{ ok: boolean; deleted: string; reset_downstream: string[] }>(
+      `/dokumen/${dokumenId}`,
+      { method: 'DELETE' }
+    ),
+
   triggerIngestion: (penugasanId: number) =>
-    request<{ penugasan_id: number; dokumen_diproses: any[] }>(
+    request<{ penugasan_id: number; reset_downstream: string[]; dokumen_diproses: any[] }>(
       `/agen/ingest/${penugasanId}`,
       { method: 'POST' }
     ),
@@ -160,6 +174,26 @@ export const api = {
     // standar). Untuk produksi, gunakan cookie session.
     return `${API_BASE}/agen/${agent}/stream?${qs.toString()}&_token=${encodeURIComponent(token)}`;
   },
+
+  /** URL EventSource untuk RECONNECT ke run aktif (replay buffer + tail).
+   * Bila tak ada run aktif, server kirim event `idle` lalu tutup. */
+  agentAttachUrl: (
+    agent: 'ingestion' | 'anggota_tim' | 'ketua_tim' | 'qc_saipi',
+    penugasanId: number
+  ) => {
+    const token = getToken() || '';
+    const qs = new URLSearchParams({ penugasan_id: String(penugasanId) });
+    return `${API_BASE}/agen/${agent}/attach?${qs.toString()}&_token=${encodeURIComponent(token)}`;
+  },
+
+  /** Cek cepat (non-stream) apakah ada run agen aktif di backend. */
+  getActiveRun: (
+    agent: 'ingestion' | 'anggota_tim' | 'ketua_tim' | 'qc_saipi',
+    penugasanId: number
+  ) =>
+    request<{ active: boolean; run_id?: number; text_so_far?: string }>(
+      `/agen/${agent}/active?penugasan_id=${penugasanId}`
+    ),
 runAgent: (
     agent: 'ingestion' | 'anggota_tim' | 'ketua_tim' | 'qc_saipi',
     penugasanId: number,

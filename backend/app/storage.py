@@ -1,6 +1,8 @@
 """Storage helpers: folder layout per penugasan, hash, baca/tulis file."""
 import hashlib
 import json
+import logging
+import shutil
 from datetime import datetime
 from pathlib import Path
 
@@ -9,6 +11,7 @@ import aiofiles
 from app.config import get_settings
 
 settings = get_settings()
+log = logging.getLogger(__name__)
 
 # Subfolder standar per penugasan (mengikuti V6)
 PENUGASAN_SUBFOLDERS = [
@@ -110,6 +113,140 @@ async def write_json(path: Path, data: dict | list) -> None:
 async def read_json(path: Path) -> dict | list:
     async with aiofiles.open(path, "r", encoding="utf-8") as f:
         return json.loads(await f.read())
+
+
+def _count_temuan(folder: Path) -> int:
+    path = folder / "_KKP" / "temuan.json"
+    if not path.exists():
+        return 0
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return len(data.get("temuan", [])) if isinstance(data, dict) else 0
+    except (json.JSONDecodeError, OSError):
+        return 0
+
+
+def _all_sasaran_disetujui(folder: Path) -> bool:
+    path = folder / "_PKP" / "sasaran-assignment.json"
+    if not path.exists():
+        return False
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    sasaran = data.get("sasaran", []) if isinstance(data, dict) else []
+    return bool(sasaran) and all(s.get("status") == "DISETUJUI_KT" for s in sasaran)
+
+
+def compute_penugasan_status(folder: Path, dokumen_statuses: list[str]):
+    """Turunkan status penugasan dari artefak nyata di disk, bukan dari field DB
+    yang tidak pernah dimajukan. Prioritas dari tahap terjauh.
+
+    Catatan: field `Penugasan.status` di DB historically tidak ter-update di
+    setiap stage; status display selalu dihitung ulang di sini.
+    """
+    from app.models import PenugasanStatus
+
+    lhp_dir = folder / "_LHP"
+    kkp_dir = folder / "_KKP"
+
+    if lhp_dir.exists() and any(lhp_dir.glob("LHP-SUBSTANSI*.docx")):
+        return PenugasanStatus.LHP_DONE
+    if (lhp_dir / "rekomendasi.json").exists():
+        return PenugasanStatus.LHP_IN_PROGRESS
+
+    n_temuan = _count_temuan(folder)
+    if n_temuan > 0:
+        if _all_sasaran_disetujui(folder):
+            return PenugasanStatus.KKP_DONE
+        return PenugasanStatus.KKP_IN_PROGRESS
+
+    if any(s == "INGESTING" for s in dokumen_statuses):
+        return PenugasanStatus.INGESTING
+    return PenugasanStatus.DRAFT
+
+
+# Output turunan yang BOLEH dihapus saat re-ingest / re-analisis. Tidak pernah
+# menyentuh dokumen sumber, context.md, atau _PKP/sasaran-assignment.json.
+def reset_downstream(folder: Path, from_stage: str) -> list[str]:
+    """Hapus output turunan supaya re-ingest/re-analisis MENGGANTIKAN (bukan
+    menumpuk). `from_stage`:
+      - 'ingest'   → _INGESTED + _KKP + _LHP + _QA-SAIPI turunan
+      - 'analysis' → _KKP + _LHP + _QA-SAIPI turunan
+      - 'lhp'      → _LHP + QC lhp turunan
+    Return list path relatif yang dihapus (untuk log/response).
+    """
+    removed: list[str] = []
+
+    def _rm(path: Path) -> None:
+        try:
+            if path.is_file():
+                path.unlink()
+                removed.append(str(path.relative_to(folder)))
+        except OSError as e:
+            log.warning("reset_downstream: gagal hapus %s: %s", path, e)
+
+    def _glob_rm(subdir: str, patterns: list[str]) -> None:
+        d = folder / subdir
+        if not d.exists():
+            return
+        for pat in patterns:
+            for p in d.glob(pat):
+                _rm(p)
+
+    def _reset_temuan_envelope() -> None:
+        path = folder / "_KKP" / "temuan.json"
+        if not path.exists():
+            return
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return
+        if not isinstance(data, dict):
+            return
+        envelope = {
+            "penugasan": data.get("penugasan", {}),
+            "schema_version": data.get("schema_version", "v4.0.0"),
+            "temuan": [],
+        }
+        path.write_text(json.dumps(envelope, ensure_ascii=False, indent=2), encoding="utf-8")
+        removed.append("_KKP/temuan.json (reset → envelope)")
+
+    clear_lhp = from_stage in ("ingest", "analysis", "lhp")
+    clear_kkp = from_stage in ("ingest", "analysis")
+    clear_ingested = from_stage == "ingest"
+
+    if clear_lhp:
+        _glob_rm("_LHP", ["*.docx", "rekomendasi.json"])
+        _glob_rm("_QA-SAIPI", ["checklist-lhp.json", "laporan-qa-lhp.md"])
+    if clear_kkp:
+        _glob_rm("_KKP", [
+            "*.docx", "anomalies*.json", "tor-*.json", "rab-*.json", "_pipeline_meta.json",
+        ])
+        _glob_rm("_QA-SAIPI", ["checklist-kkp.json", "laporan-qa-kkp.md"])
+        _reset_temuan_envelope()
+    if clear_ingested:
+        _glob_rm("_INGESTED", ["*.json"])
+
+    return removed
+
+
+def delete_penugasan_folder(folder: Path) -> None:
+    """Hapus seluruh folder penugasan dari disk (hard delete)."""
+    if folder.exists():
+        shutil.rmtree(folder, ignore_errors=True)
+
+
+def delete_file_quiet(path: str | None) -> None:
+    """Hapus satu file bila ada; abaikan error."""
+    if not path:
+        return
+    try:
+        p = Path(path)
+        if p.is_file():
+            p.unlink()
+    except OSError as e:
+        log.warning("delete_file_quiet: gagal hapus %s: %s", path, e)
 
 
 def append_audit_trail(folder: Path, event: dict) -> None:
