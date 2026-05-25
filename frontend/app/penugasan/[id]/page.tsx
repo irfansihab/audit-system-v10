@@ -187,6 +187,12 @@ function DokumenTab({
   const canUpload = role === 'AT';
   return (
     <div>
+      <div className="mb-4 p-3 rounded bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+        📎 <strong>Wajib untuk QC SAIPI:</strong> upload juga <strong>KP</strong> (Kartu Penugasan) dan
+        <strong> PKP</strong> (Program Kerja Pengawasan) dari INTEGRAL ke folder ini sebelum analisis —
+        tanpa keduanya, QC akan <strong>BLOKIR</strong> (REN-001/REN-002). Beri nama file diawali
+        <code className="bg-amber-100 px-1 rounded">KP</code> / <code className="bg-amber-100 px-1 rounded">PKP</code>.
+      </div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-primary-dark">Dokumen Penugasan</h2>
         <div className="flex gap-2">
@@ -855,6 +861,19 @@ function SetupPenugasanTab({
         assigned_to: s.assigned_to.map((x) => x.trim()).filter(Boolean),
         langkah_kerja: s.langkah_kerja.map((x) => x.trim()).filter(Boolean),
       }));
+      // Validasi anggota: sasaran tanpa assigned_to → QC SAIPI KRITIS (REN-006)
+      // + AT tak bisa mulai. Warn tegas, tapi tetap izinkan simpan (draft).
+      const noAssignee = cleaned.filter((s) => s.assigned_to.length === 0);
+      if (noAssignee.length > 0) {
+        const lanjut = confirm(
+          `${noAssignee.length} sasaran belum punya anggota: ${noAssignee.map((s) => s.sasaran_id).join(', ')}.\n\n` +
+            `Tanpa anggota, QC SAIPI akan KRITIS (REN-006) dan Anggota Tim tidak bisa mulai analisis.\n\nTetap simpan?`
+        );
+        if (!lanjut) {
+          setSaving(null);
+          return;
+        }
+      }
       const res = await api.saveSasaranAssignment(penugasanId, cleaned);
       setSavedAt({ ...savedAt, sasaran: new Date().toLocaleTimeString('id-ID') });
       setSasaran(cleaned);
@@ -1094,7 +1113,9 @@ function SetupPenugasanTab({
                     ) : (
                       <div className="flex flex-wrap gap-1 py-1">
                         {s.assigned_to.length === 0 ? (
-                          <span className="text-xs text-gray-400 italic">— belum di-assign —</span>
+                          <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-800 border border-amber-300" title="QC SAIPI akan KRITIS (REN-006) sampai sasaran ini di-assign ke anggota">
+                            ⚠ belum di-assign
+                          </span>
                         ) : (
                           s.assigned_to.map((n) => (
                             <span

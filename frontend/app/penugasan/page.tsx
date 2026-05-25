@@ -55,6 +55,19 @@ export default function DashboardPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!obyek.trim()) {
+      setError('Obyek penugasan wajib diisi.');
+      return;
+    }
+    // Nomor ST kosong → context.md memuat placeholder [DIISI AUDITOR] → QC SAIPI
+    // KRITIS (REN-003). Warn tegas tapi tetap izinkan (bisa dilengkapi via Konteks).
+    if (!nomorSt.trim()) {
+      const lanjut = confirm(
+        'Nomor ST belum diisi.\n\nContext.md akan memuat placeholder dan QC SAIPI akan KRITIS (REN-003) ' +
+          'sampai Nomor ST + tanggal dilengkapi (via tab Konteks/Setup).\n\nTetap buat penugasan?'
+      );
+      if (!lanjut) return;
+    }
     try {
       const p = await api.createPenugasan({
         obyek,
