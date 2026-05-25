@@ -116,6 +116,17 @@
     🔁 <b>Loop tertutup:</b> CACM ➝ usulan penugasan ➝ reviu selesai ➝ temuan memperbarui Wiki ➝ Wiki memperkaya konteks penugasan &amp; interpretasi sinyal CACM berikutnya.
   </div>
 
+  <div class="callout note">
+    <b>✅ Status implementasi (per 25 Mei 2026)</b>
+    <b>W1 (baca vault) — SELESAI:</b> <code>search_wiki</code>/<code>get_wiki_page</code> + panel "Cari Wiki".<br/>
+    <b>CACM C1a/C1b/C2 — SELESAI</b>, dan arsitektur CACM <u>berkembang dari sketsa "scrape manual" di bawah</u>:
+    tim menyerahkan <b>layanan EWS SIRUP mandiri</b> (agent Node/TS, crawl + 9 skenario + webhook HMAC + REST API).
+    Jadi v7 = penerima: <code>POST /cacm/ews-webhook</code> (HMAC) + <code>POST /cacm/sync</code> (pull) +
+    auto-usulan dari finding MERAH (anti-duplikat) + badge notifikasi. Ingest offline (<code>/ingest-sample</code>) untuk demo.
+    <b>Sisa:</b> Wiki W2 (promosi pattern) &amp; W3 (tulis-balik). Detail terkini: <code>ROADMAP.md §13</code>.
+    <br/><em>Bagian C1/C2 di bawah adalah rencana awal (sebelum delivery tim) — disimpan sebagai konteks historis.</em>
+  </div>
+
   <!-- ====================== WIKI ====================== -->
   <h2 style="border-color:var(--wiki)">A. Wiki — Integrasi Dua Arah <span class="tag" style="background:var(--wiki)">knowledge</span></h2>
 
