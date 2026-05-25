@@ -26,6 +26,9 @@ class Settings(BaseSettings):
 
     # App
     app_env: str = "development"
+    # Log SETIAP query SQL (SQLAlchemy echo). Default OFF — hidupkan hanya saat
+    # debug query; sebelumnya selalu ON di dev → spam log + overhead.
+    debug_sql: bool = False
     app_secret_key: str = "dev-secret-please-change"
     app_data_dir: str = "/data"
     app_v6_path: str = "/v6"

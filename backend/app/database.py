@@ -50,7 +50,7 @@ class Base(DeclarativeBase):
 _db_url, _connect_args = _normalize_db_url(settings.database_url)
 engine = create_async_engine(
     _db_url,
-    echo=settings.is_dev,
+    echo=settings.debug_sql,
     pool_pre_ping=True,
     connect_args=_connect_args,
 )

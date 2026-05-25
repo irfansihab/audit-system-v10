@@ -8,14 +8,18 @@ Prototype ini membungkus skill V6 (`audit-system-v4`) ke dalam empat agen Claude
 
 ---
 
-## Empat Agen
+## Dua Agen ber-LLM + Ingestion/QC non-agen
 
-| Agen                 | Peran                                                                | Model             | Status hardening |
-| -------------------- | -------------------------------------------------------------------- | ----------------- | ---------------- |
-| Ingestion            | Ekstrak PDF/Word → JSON terstruktur (deterministic + Haiku fallback) | claude-haiku-4-5  | ⏳ belum          |
-| **Anggota Tim (AT)** | Analisis dokumen + susun KKP                                         | claude-sonnet-4-6 | ✅ hardened       |
-| QC SAIPI             | Gate kepatuhan SAIPI stage KKP & LHP                                 | claude-haiku-4-5  | ⏳ belum          |
-| Ketua Tim (KT)       | Susun draft LHR dari `temuan.json`                                   | claude-sonnet-4-6 | ⏳ belum          |
+| Komponen             | Peran                                                                | Model             | Bentuk |
+| -------------------- | -------------------------------------------------------------------- | ----------------- | ------ |
+| **Anggota Tim (AT)** | Analisis dokumen + susun KKP                                         | claude-sonnet-4-6 | Agen hardened ✅ |
+| **Ketua Tim (KT)**   | Susun draft LHR dari `temuan.json`                                   | claude-sonnet-4-6 | Agen hardened ✅ |
+| Ingestion            | Ekstrak PDF/Word → JSON terstruktur                                  | —                 | Worker **deterministik** (`routes/agen._run_ingestion`, panggil script digest V6) |
+| QC SAIPI             | Gate kepatuhan SAIPI stage KKP & LHP                                 | —                 | Tool **sinkron** (`run_qc_kkp`/`run_qc_lhp`, panggil `qc_saipi.py` V6) |
+
+> Catatan: Ingestion & QC dulu dirancang sebagai agen LLM (Haiku) tapi nyatanya jalan
+> deterministik/sinkron — agen LLM-nya tak pernah dipakai, jadi dihapus (audit 25 Mei 2026).
+> Hanya **AT & KT** yang benar-benar agen Claude.
 
 "Hardened" = `tools=[]` (no built-in tools), prompt ketat (no V6 edits, no improvisation), MCP-only access. Lihat [Pipeline V6 Hardening](#pipeline-v6-hardening) di bawah.
 

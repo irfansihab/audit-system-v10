@@ -13,9 +13,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from app.agents import (
     build_anggota_tim_agent,
-    build_ingestion_agent,
     build_ketua_tim_agent,
-    build_qc_saipi_agent,
 )
 from app.auth import get_current_user
 from app.database import SessionLocal, get_db
@@ -30,10 +28,8 @@ log = logging.getLogger(__name__)
 router = APIRouter(prefix="/agen", tags=["agen"])
 
 AGENT_BUILDERS = {
-    "ingestion": build_ingestion_agent,
     "anggota_tim": build_anggota_tim_agent,
     "ketua_tim": build_ketua_tim_agent,
-    "qc_saipi": build_qc_saipi_agent,
 }
 
 
@@ -418,88 +414,6 @@ async def active_agent_run(
         if e["event"] == "text"
     )
     return {"active": True, "run_id": handle.run_id, "text_so_far": text}
-
-
-@router.post("/{agent_name}/run")
-async def run_agent(
-    agent_name: str,
-    payload: dict,  # body: {"penugasan_id": int, "prompt": str}
-    current: tuple[User, Role] = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """Jalankan agen synchronous, return hasil lengkap sebagai JSON."""
-    user, role = current
-
-    if agent_name not in AGENT_BUILDERS:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Agen tidak dikenal: {agent_name}")
-    if agent_name == "anggota_tim" and role != Role.AT:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Anggota Tim")
-    if agent_name == "ketua_tim" and role not in (Role.KT, Role.PT):
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Hanya Ketua Tim atau Pengendali Teknis")
-
-    penugasan_id = int(payload.get("penugasan_id"))
-    prompt = str(payload.get("prompt", ""))
-
-    p = (await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))).scalar_one_or_none()
-    if not p:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan")
-
-    skill_str = p.skill if isinstance(p.skill, str) else p.skill.value
-    full_prompt = (
-        f"Penugasan kode={p.kode}, skill={skill_str}, folder={p.folder_path}\n"
-        f"Pengguna: {user.nama_lengkap} ({role.value})\n\n"
-        f"Permintaan: {prompt}"
-    )
-
-    options = AGENT_BUILDERS[agent_name]()
-    output_parts: list[str] = []
-    tool_calls: list[dict] = []
-    error_msg: str | None = None
-
-    run = AgentRun(
-        penugasan_id=penugasan_id,
-        agent_name=agent_name,
-        user_id=user.id,
-        status="running",
-        input_summary=full_prompt[:500],
-        started_at=datetime.utcnow(),
-        tool_calls=[],
-    )
-    db.add(run)
-    await db.commit()
-
-    try:
-        async with ClaudeSDKClient(options=options) as client:
-            await client.query(full_prompt)
-            async for message in client.receive_response():
-                content = getattr(message, "content", None) or []
-                for block in content:
-                    btype = type(block).__name__
-                    if btype == "TextBlock":
-                        output_parts.append(getattr(block, "text", ""))
-                    elif btype == "ToolUseBlock":
-                        tool_calls.append({
-                            "tool": getattr(block, "name", "?"),
-                            "input": getattr(block, "input", {}),
-                        })
-    except Exception as e:
-        log.exception("Agent run failed")
-        error_msg = str(e)[:1000]
-
-    run.status = "failed" if error_msg else "completed"
-    run.output_summary = "".join(output_parts)[:2000]
-    run.tool_calls = tool_calls
-    run.error_message = error_msg
-    run.ended_at = datetime.utcnow()
-    await db.commit()
-
-    return {
-        "run_id": run.id,
-        "status": run.status,
-        "output": "".join(output_parts),
-        "tool_calls": tool_calls,
-        "error": error_msg,
-    }
 
 
 # ============================================================

@@ -194,22 +194,6 @@ export const api = {
     request<{ active: boolean; run_id?: number; text_so_far?: string }>(
       `/agen/${agent}/active?penugasan_id=${penugasanId}`
     ),
-runAgent: (
-    agent: 'ingestion' | 'anggota_tim' | 'ketua_tim' | 'qc_saipi',
-    penugasanId: number,
-    prompt: string
-  ) =>
-    request<{
-      run_id: number;
-      status: string;
-      output: string;
-      tool_calls: Array<{ tool: string; input: any }>;
-      error: string | null;
-    }>(`/agen/${agent}/run`, {
-      method: 'POST',
-      body: JSON.stringify({ penugasan_id: penugasanId, prompt }),
-    }),
-
   /** History semua run agen pada penugasan ini, urutan oldest → newest.
    * Dipakai untuk persist percakapan lampau saat user login ulang. */
   getAgentHistory: (

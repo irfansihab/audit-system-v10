@@ -1,12 +1,13 @@
-"""Empat agen Claude untuk Audit AI v7."""
+"""Agen Claude untuk Audit AI v7.
+
+Dua agen ber-LLM (hardened): Anggota Tim (susun KKP) + Ketua Tim (susun LHR).
+Ingestion = worker DETERMINISTIK (routes/agen._run_ingestion), bukan agen.
+QC SAIPI = tool SINKRON (run_qc_kkp/run_qc_lhp), bukan agen.
+"""
 from app.agents.anggota_tim import build_anggota_tim_agent
-from app.agents.ingestion import build_ingestion_agent
 from app.agents.ketua_tim import build_ketua_tim_agent
-from app.agents.qc_saipi import build_qc_saipi_agent
 
 __all__ = [
-    "build_ingestion_agent",
     "build_anggota_tim_agent",
-    "build_qc_saipi_agent",
     "build_ketua_tim_agent",
 ]
