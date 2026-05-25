@@ -58,17 +58,6 @@ export default function DetailPenugasanPage() {
     e.target.value = '';
   };
 
-  const triggerIngest = async () => {
-    try {
-      await api.triggerIngestion(id);
-      // refresh list
-      const d = await api.listDokumen(id);
-      setDokumen(d);
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
-
   const handleDeleteDokumen = async (d: Dokumen) => {
     if (
       !confirm(
@@ -141,7 +130,6 @@ export default function DetailPenugasanPage() {
             key={`dokumen-${id}`}
             dokumen={dokumen}
             onUpload={handleUpload}
-            onIngest={triggerIngest}
             onDelete={handleDeleteDokumen}
             allReady={allReady}
             role={session.role_aktif}
@@ -172,14 +160,12 @@ export default function DetailPenugasanPage() {
 function DokumenTab({
   dokumen,
   onUpload,
-  onIngest,
   allReady,
   role,
   onDelete,
 }: {
   dokumen: Dokumen[];
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onIngest: () => void;
   allReady: boolean;
   role: Role;
   onDelete: (d: Dokumen) => void;
@@ -205,15 +191,6 @@ function DokumenTab({
             <span className="px-4 py-2 rounded bg-gray-100 text-gray-500 text-sm">
               🔒 Upload hanya oleh Anggota Tim (AT)
             </span>
-          )}
-          {canUpload && (
-            <button
-              onClick={onIngest}
-              disabled={dokumen.length === 0}
-              className="px-4 py-2 rounded bg-ing text-white text-sm font-semibold hover:opacity-90 disabled:opacity-40"
-            >
-              Mulai Ingestion
-            </button>
           )}
         </div>
       </div>
@@ -781,6 +758,7 @@ function SetupPenugasanTab({
   const [saving, setSaving] = useState<'sasaran' | 'context' | null>(null);
   const [savedAt, setSavedAt] = useState<{ sasaran?: string; context?: string }>({});
   const [err, setErr] = useState<string | null>(null);
+  const [genCtx, setGenCtx] = useState(false); // generate context (AI) sedang berjalan
 
   const load = async () => {
     setLoading(true);
@@ -897,6 +875,45 @@ function SetupPenugasanTab({
     }
   };
 
+  // Generate context.md via agen AT (mode context-only). Run di-decouple di
+  // backend; EventSource hanya untuk tahu kapan selesai → reload textarea.
+  const generateContext = () => {
+    if (genCtx) return;
+    setGenCtx(true);
+    setErr(null);
+    const prompt =
+      '[MODE:CONTEXT] Susun/perbarui context.md dari hasil digest dokumen + sasaran audit. ' +
+      'Jangan jalankan pipeline/analisis atau susun temuan — cukup context.md lalu berhenti.';
+    const es = new EventSource(api.agentStreamUrl('anggota_tim', penugasanId, prompt));
+    let done = false;
+    const finish = async () => {
+      if (done) return;
+      done = true;
+      es.close();
+      try {
+        const cm = await api.getContextMd(penugasanId);
+        setContextMd(cm.content || '');
+        setSavedAt((s) => ({ ...s, context: new Date().toLocaleTimeString('id-ID') }));
+      } catch {
+        /* abaikan */
+      }
+      setGenCtx(false);
+    };
+    es.addEventListener('done', finish);
+    es.addEventListener('error', (ev: MessageEvent) => {
+      try {
+        const d = JSON.parse(ev.data);
+        if (d?.message) setErr(`Generate context gagal: ${d.message}`);
+      } catch {
+        /* error event tanpa data = koneksi; finish saja */
+      }
+      finish();
+    });
+    es.onerror = () => {
+      if (es.readyState === EventSource.CLOSED) finish();
+    };
+  };
+
   if (loading) {
     return <div className="bg-white p-5 rounded-lg text-sm text-gray-500">Memuat setup penugasan…</div>;
   }
@@ -918,18 +935,17 @@ function SetupPenugasanTab({
 
       {role === 'AT' ? (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-sm text-blue-900">
-          <strong>Konteks (peran AT).</strong> <strong>context.md di-generate otomatis oleh AI</strong>{' '}
-          (dari hasil digest dokumen + sasaran) saat Anda menjalankan analisis di tab Chat AT.
-          Anda boleh edit manual di bawah bila perlu menyempurnakan. Bagian sasaran hanya
-          menampilkan <strong>sasaran yang ditugaskan kepada Anda</strong> ({currentUserName}) — read-only.
+          <strong>Konteks (peran AT).</strong> Klik <strong>Generate Context (AI)</strong> di bawah —
+          AI menyusun context.md dari hasil digest dokumen + sasaran. Setelah jadi, <strong>review &amp; edit</strong>{' '}
+          bila perlu tambah informasi, lalu <strong>Simpan</strong>. Baru jalankan <strong>Analisis AI</strong> di tab Chat AT.
+          Bagian sasaran hanya menampilkan <strong>sasaran yang ditugaskan kepada Anda</strong> ({currentUserName}) — read-only.
         </div>
       ) : (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-sm text-blue-900">
           <strong>Setup Penugasan (peran KT/PT).</strong> Fokus Anda: isi{' '}
           <strong>Sasaran reviu + langkah kerja</strong> di bawah dan assign ke anggota tim.
-          {' '}<strong>context.md di-generate otomatis oleh AI</strong> saat Anggota Tim mulai
-          analisis — tidak perlu diisi manual. Bagian context di bawah <strong>opsional</strong>{' '}
-          (hanya untuk override bila perlu). Bisa juga bantu lewat tab <strong>Chat KT</strong>.
+          {' '}context.md di-generate oleh <strong>Anggota Tim</strong> (tombol Generate Context) dari digest + sasaran —
+          tidak perlu Anda isi manual. Bagian context di bawah <strong>opsional</strong> (override bila perlu).
         </div>
       )}
 
@@ -938,15 +954,25 @@ function SetupPenugasanTab({
         <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
           <div>
             <h3 className="font-semibold text-primary-dark">
-              1. Konteks Penugasan (context.md) <span className="text-xs font-normal text-blue-600">· otomatis oleh AI</span>
+              1. Konteks Penugasan (context.md) <span className="text-xs font-normal text-blue-600">· Generate AI + edit</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
-              Di-generate AI dari digest dokumen + sasaran saat AT mulai analisis. Opsional: edit manual untuk override.
+              Generate dari digest dokumen + sasaran, lalu edit bila perlu tambah info, lalu Simpan.
             </p>
           </div>
           <div className="flex items-center gap-3">
             {savedAt.context && (
               <span className="text-xs text-green-700">✓ Tersimpan {savedAt.context}</span>
+            )}
+            {role === 'AT' && (
+              <button
+                onClick={generateContext}
+                disabled={genCtx || saving === 'context'}
+                className="px-4 py-1.5 text-sm rounded border border-primary text-primary font-semibold hover:bg-blue-50 disabled:opacity-50"
+                title="AI menyusun context.md dari digest dokumen + sasaran (±30–60 detik)"
+              >
+                {genCtx ? '⟳ Generating…' : '✨ Generate Context (AI)'}
+              </button>
             )}
             {canEditContext ? (
               <button
