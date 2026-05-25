@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     app_vault_path: str = ""
     app_cors_origins: str = "http://localhost:3000"
 
+    # CACM / EWS SIRUP (integrasi service agent tim) — C1b
+    # Kosong = fitur live (webhook/pull) non-aktif; ingest offline tetap jalan.
+    cacm_webhook_secret: str = ""   # verifikasi X-Agent-Signature (HMAC sha256) push agent
+    cacm_agent_base_url: str = ""   # mis. http://10.0.0.5:3000 (untuk pull/trigger)
+    cacm_agent_api_key: str = ""    # X-API-Key untuk REST agent
+
     # Token quota per user per jam (safety)
     rate_limit_runs_per_hour: int = 5
 

@@ -95,6 +95,20 @@ export default function CacmPage() {
     }
   };
 
+  const syncAgent = async () => {
+    setBusy('sync');
+    setError(null);
+    try {
+      await api.syncCacm();
+      await loadRuns();
+    } catch (e: any) {
+      // 503 = agent belum dikonfigurasi (pesan jelas dari backend)
+      setError(e.message?.includes('503') ? 'Agent EWS belum dikonfigurasi (set CACM_AGENT_BASE_URL + CACM_AGENT_API_KEY di .env backend).' : e.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const promote = async (f: Finding) => {
     if (!confirm(`Jadikan finding ${f.kode} (${f.satker}) sebagai usulan penugasan?`)) return;
     setBusy(`promote-${f.id}`);
@@ -150,13 +164,23 @@ export default function CacmPage() {
         <div className="flex justify-between items-start mb-1">
           <h1 className="text-2xl font-bold text-primary-dark">CACM — Early Warning System SIRUP</h1>
           {isPT && (
-            <button
-              onClick={ingestSample}
-              disabled={busy === 'ingest'}
-              className="px-3 py-2 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark disabled:opacity-50"
-            >
-              {busy === 'ingest' ? 'Memuat…' : '＋ Muat contoh EWS'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={syncAgent}
+                disabled={busy === 'sync'}
+                className="px-3 py-2 text-sm rounded border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50"
+                title="Pull run terbaru dari agent EWS tim (butuh agent ter-deploy + CACM_AGENT_* di .env)"
+              >
+                {busy === 'sync' ? 'Sinkron…' : '⟳ Sync dari agent'}
+              </button>
+              <button
+                onClick={ingestSample}
+                disabled={busy === 'ingest'}
+                className="px-3 py-2 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark disabled:opacity-50"
+              >
+                {busy === 'ingest' ? 'Memuat…' : '＋ Muat contoh EWS'}
+              </button>
+            </div>
           )}
         </div>
         <p className="text-sm text-gray-500 mb-4">
@@ -197,6 +221,9 @@ export default function CacmPage() {
               <span className="text-xs px-2 py-1 rounded bg-red-100 text-red-800">🔴 {s.merah ?? 0} Merah</span>
               <span className="text-xs px-2 py-1 rounded bg-amber-100 text-amber-800">🟡 {s.kuning ?? 0} Kuning</span>
               <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">ℹ️ {s.info ?? 0} Info</span>
+              <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-600" title="Sumber data run">
+                {run.source === 'webhook' ? '📡 webhook' : run.source === 'pull' ? '⟳ pull agent' : '📄 offline'}
+              </span>
               <span className="text-[11px] text-gray-400">run: {run.run_id}</span>
             </div>
 

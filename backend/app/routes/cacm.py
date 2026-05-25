@@ -9,22 +9,29 @@ Format hasil EWS (lihat CACM/.../sample-ews-hasil.json): LIST berisi item rekap
 (`{"rekap": {...}}`, 1 per satker) + item finding (punya `kode`, `status`,
 MERAH→judul+penjelasan, KUNING/INFO→ringkasan).
 """
+import hashlib
+import hmac
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+import httpx
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
+from app.config import get_settings
 from app.database import get_db
 from app.models import CacmRun, EwsFinding, Penugasan, PenugasanStatus, Role, Skill, User
 from app.routes.penugasan import _scaffold_penugasan_files
 from app.schemas import PenugasanCreate
 from app.storage import gen_kode_penugasan, penugasan_folder
 
+log = logging.getLogger(__name__)
+settings = get_settings()
 router = APIRouter(prefix="/cacm", tags=["cacm"])
 
 _FIXTURE = Path(__file__).resolve().parent.parent / "fixtures" / "cacm-sample-ews-hasil.json"
@@ -37,6 +44,19 @@ def _require_pt(role: Role) -> None:
             status.HTTP_403_FORBIDDEN,
             f"Hanya Pengendali Teknis (PT) yang boleh aksi ini. Role Anda: {role.value}.",
         )
+
+
+def _verify_signature(raw: bytes, header: str, secret: str) -> bool:
+    """Verifikasi X-Agent-Signature: sha256=<hex hmac-sha256(raw, secret)>.
+
+    Cocok dengan signer agent tim (lihat INTEGRATION_GUIDE.md). Pakai
+    compare_digest agar tahan timing attack.
+    """
+    if not header or not header.startswith("sha256="):
+        return False
+    provided = header[7:]
+    expected = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(provided, expected)
 
 
 def _normalize(payload: Any) -> tuple[list[dict], list[dict], dict]:
@@ -90,10 +110,17 @@ async def _ingest(db: AsyncSession, payload: Any, source: str) -> CacmRun:
         if key:
             counts[key] += 1
 
+    # Webhook payload menaruh runId/completedAt di top-level (bukan di meta).
+    top_run_id = payload.get("runId") or payload.get("run_id") if isinstance(payload, dict) else None
+    top_tanggal = payload.get("completedAt") or payload.get("startedAt") if isinstance(payload, dict) else None
+    if not meta.get("tanggal_evaluasi") and top_tanggal:
+        meta["tanggal_evaluasi"] = top_tanggal
+
     run_id = str(
         meta.get("run_id")
         or meta.get("runId")
-        or f"offline-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+        or top_run_id
+        or f"{source}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
     )
     # Jaga unik
     if (await db.execute(select(CacmRun).where(CacmRun.run_id == run_id))).scalar_one_or_none():
@@ -352,3 +379,104 @@ async def accept_usulan(
     p.status = PenugasanStatus.DRAFT
     await db.commit()
     return {"ok": True, "penugasan_id": penugasan_id, "status": "DRAFT"}
+
+
+# ============================================================
+# C1b — integrasi LIVE dengan agent EWS tim (webhook push + pull REST)
+# ============================================================
+
+
+@router.post("/ews-webhook")
+async def ews_webhook(request: Request, db: AsyncSession = Depends(get_db)) -> dict:
+    """Terima push hasil run dari agent EWS tim. Autentikasi mesin via HMAC
+    `X-Agent-Signature` (BUKAN Bearer token — ini server-to-server).
+
+    Retry policy agent: 4xx = permanent (tidak retry), 5xx = retry. Maka
+    signature salah → 401 (permanent), error internal → biarkan 5xx.
+    """
+    secret = settings.cacm_webhook_secret
+    if not secret:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Webhook belum dikonfigurasi (set CACM_WEBHOOK_SECRET).",
+        )
+    raw = await request.body()
+    if not _verify_signature(raw, request.headers.get("X-Agent-Signature", ""), secret):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid signature")
+
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Body bukan JSON valid")
+
+    if payload.get("event") == "run.failed" or payload.get("status") == "failed":
+        return {"received": True, "note": "run.failed diabaikan"}
+
+    run = await _ingest(db, payload, source="webhook")
+    return {"received": True, "run_id": run.run_id, "findings": (run.summary or {}).get("total", 0)}
+
+
+@router.post("/sync")
+async def sync_from_agent(
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Pull run terbaru dari agent EWS via REST (fallback/backfill push)."""
+    user, role = current
+    _require_pt(role)
+    base = settings.cacm_agent_base_url.rstrip("/")
+    key = settings.cacm_agent_api_key
+    if not base or not key:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Agent belum dikonfigurasi (set CACM_AGENT_BASE_URL + CACM_AGENT_API_KEY).",
+        )
+    headers = {"X-API-Key": key}
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.get(f"{base}/api/v1/runs", headers=headers)
+            r.raise_for_status()
+            runs_resp = r.json()
+            run_list = (
+                runs_resp.get("runs") or runs_resp.get("data")
+                if isinstance(runs_resp, dict) else runs_resp
+            ) or []
+            if not run_list:
+                raise HTTPException(status.HTTP_502_BAD_GATEWAY, "Agent tidak punya run.")
+            latest_id = run_list[0].get("id") or run_list[0].get("runId")
+            rr = await client.get(f"{base}/api/v1/runs/{latest_id}/result", headers=headers)
+            rr.raise_for_status()
+            result = rr.json()
+            # result bisa berupa list findings, atau {findings, rekap, runId, ...}
+            if isinstance(result, list):
+                result = {"runId": str(latest_id), "findings": result}
+            elif isinstance(result, dict):
+                result.setdefault("runId", str(latest_id))
+    except httpx.HTTPError as e:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, f"Gagal ambil data agent: {e}")
+
+    run = await _ingest(db, result, source="pull")
+    return {"ok": True, **_run_summary_dict(run, (run.summary or {}).get("total", 0))}
+
+
+@router.post("/trigger")
+async def trigger_agent_run(
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Minta agent menjalankan run baru (manual). Hasil masuk via webhook/sync."""
+    user, role = current
+    _require_pt(role)
+    base = settings.cacm_agent_base_url.rstrip("/")
+    key = settings.cacm_agent_api_key
+    if not base or not key:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Agent belum dikonfigurasi (set CACM_AGENT_BASE_URL + CACM_AGENT_API_KEY).",
+        )
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.post(f"{base}/api/v1/runs", headers={"X-API-Key": key})
+            r.raise_for_status()
+            return {"ok": True, "agent_response": r.json()}
+    except httpx.HTTPError as e:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, f"Gagal trigger agent: {e}")

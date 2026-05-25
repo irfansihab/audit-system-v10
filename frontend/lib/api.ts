@@ -375,6 +375,8 @@ runAgent: (
     request<{
       id: number;
       run_id: string;
+      source: string;
+      tanggal_evaluasi: string | null;
       summary: Record<string, number>;
       rekap: Array<Record<string, any>>;
       findings: Array<{
@@ -419,6 +421,17 @@ runAgent: (
       `/cacm/usulan/${penugasanId}/accept`,
       { method: 'POST' }
     ),
+
+  /** Pull run terbaru dari agent EWS tim via REST (C1b). PT only. */
+  syncCacm: () =>
+    request<{ ok: boolean; id: number; run_id: string; summary: Record<string, number> }>(
+      '/cacm/sync',
+      { method: 'POST' }
+    ),
+
+  /** Minta agent EWS jalankan run baru (C1b). PT only. */
+  triggerCacm: () =>
+    request<{ ok: boolean; agent_response: any }>('/cacm/trigger', { method: 'POST' }),
 
   // ===== Feedback Aggregate Dashboard (Phase 2) =====
 
