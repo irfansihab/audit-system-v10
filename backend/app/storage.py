@@ -242,6 +242,35 @@ def reset_downstream(folder: Path, from_stage: str) -> list[str]:
     return removed
 
 
+def context_readiness(folder: Path) -> dict:
+    """Prasyarat Generate Context: KT sudah mengisi sasaran + AT sudah upload
+    dokumen yang ter-digest (ada di _INGESTED/). Tanpa keduanya, agen tak punya
+    bahan menyusun context.md.
+    """
+    has_sasaran = False
+    sa = folder / "_PKP" / "sasaran-assignment.json"
+    if sa.exists():
+        try:
+            d = json.loads(sa.read_text(encoding="utf-8"))
+            has_sasaran = bool(isinstance(d, dict) and d.get("sasaran"))
+        except (json.JSONDecodeError, OSError):
+            pass
+    ingested_dir = folder / "_INGESTED"
+    has_ingested = ingested_dir.exists() and any(ingested_dir.glob("*.json"))
+
+    reasons: list[str] = []
+    if not has_sasaran:
+        reasons.append("Ketua Tim belum mengisi sasaran")
+    if not has_ingested:
+        reasons.append("belum ada dokumen ter-digest (AT upload TOR/RAB atau KAK/HPS dulu)")
+    return {
+        "ready": has_sasaran and has_ingested,
+        "has_sasaran": has_sasaran,
+        "has_ingested": has_ingested,
+        "reason": "; ".join(reasons) if reasons else "Siap generate context",
+    }
+
+
 def delete_penugasan_folder(folder: Path) -> None:
     """Hapus seluruh folder penugasan dari disk (hard delete)."""
     if folder.exists():

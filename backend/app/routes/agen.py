@@ -18,7 +18,7 @@ from app.agents import (
 from app.auth import get_current_user
 from app.database import SessionLocal, get_db
 from app.models import AgentRun, Dokumen, DokumenStatus, Penugasan, PenugasanStatus, Role, User
-from app.storage import reset_downstream
+from app.storage import context_readiness, reset_downstream
 from app.tools.v6_bridge import run_v6_script
 
 # Jenis dokumen yang punya V6 digest script (perlu di-ingest ulang saat re-ingest)
@@ -356,6 +356,16 @@ async def stream_agent(
     p = (await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))).scalar_one_or_none()
     if not p:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan")
+
+    # Hard gate: Generate Context ([MODE:CONTEXT]) hanya boleh bila KT sudah isi
+    # sasaran + AT sudah upload dokumen yang ter-digest (ada bahan untuk context).
+    if "[MODE:CONTEXT]" in prompt:
+        rd = context_readiness(Path(p.folder_path))
+        if not rd["ready"]:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                f"Belum bisa generate context — {rd['reason']}.",
+            )
 
     # Tolak start ganda bila masih ada run aktif untuk penugasan+agen ini.
     existing = _active_handle(p.id, agent_name)

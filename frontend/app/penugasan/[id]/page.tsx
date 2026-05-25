@@ -759,15 +759,18 @@ function SetupPenugasanTab({
   const [savedAt, setSavedAt] = useState<{ sasaran?: string; context?: string }>({});
   const [err, setErr] = useState<string | null>(null);
   const [genCtx, setGenCtx] = useState(false); // generate context (AI) sedang berjalan
+  const [ctxReady, setCtxReady] = useState<{ ready: boolean; reason: string } | null>(null);
 
   const load = async () => {
     setLoading(true);
     try {
-      const [sa, cm, users] = await Promise.all([
+      const [sa, cm, users, rd] = await Promise.all([
         api.getSasaranAssignment(penugasanId),
         api.getContextMd(penugasanId),
         api.listUsers('AT').catch(() => []),
+        api.getContextReadiness(penugasanId).catch(() => null),
       ]);
+      setCtxReady(rd ? { ready: rd.ready, reason: rd.reason } : null);
       setAtUsers(users.map((u) => u.nama_lengkap));
       // Normalize: pastikan semua field array tidak undefined (data lama mungkin tidak punya langkah_kerja)
       const normalized: Sasaran[] = (sa.sasaran || []).map((s: any) => ({
@@ -967,9 +970,13 @@ function SetupPenugasanTab({
             {role === 'AT' && (
               <button
                 onClick={generateContext}
-                disabled={genCtx || saving === 'context'}
-                className="px-4 py-1.5 text-sm rounded border border-primary text-primary font-semibold hover:bg-blue-50 disabled:opacity-50"
-                title="AI menyusun context.md dari digest dokumen + sasaran (±30–60 detik)"
+                disabled={genCtx || saving === 'context' || !ctxReady?.ready}
+                className="px-4 py-1.5 text-sm rounded border border-primary text-primary font-semibold hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={
+                  ctxReady && !ctxReady.ready
+                    ? `Belum bisa: ${ctxReady.reason}`
+                    : 'AI menyusun context.md dari digest dokumen + sasaran (±30–60 detik)'
+                }
               >
                 {genCtx ? '⟳ Generating…' : '✨ Generate Context (AI)'}
               </button>
@@ -987,6 +994,11 @@ function SetupPenugasanTab({
             )}
           </div>
         </div>
+        {role === 'AT' && ctxReady && !ctxReady.ready && (
+          <div className="px-5 py-2 bg-amber-50 border-b border-amber-200 text-xs text-amber-800">
+            ⚠ Generate Context belum bisa dipakai — {ctxReady.reason}.
+          </div>
+        )}
         <textarea
           value={contextMd}
           onChange={(e) => setContextMd(e.target.value)}

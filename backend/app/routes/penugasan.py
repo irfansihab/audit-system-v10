@@ -15,6 +15,7 @@ from app.models import Dokumen, Penugasan, PenugasanStatus, Role, User
 from app.schemas import PenugasanCreate, PenugasanOut
 from app.storage import (
     compute_penugasan_status,
+    context_readiness,
     delete_penugasan_folder,
     gen_kode_penugasan,
     penugasan_folder,
@@ -377,6 +378,17 @@ async def put_sasaran_assignment(
         "total_sasaran": len(payload.sasaran),
         "path": str(path.relative_to(folder)),
     }
+
+
+@router.get("/{penugasan_id}/context-readiness")
+async def get_context_readiness(
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Prasyarat tombol Generate Context: sasaran (KT) + dokumen ter-digest (AT)."""
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    return context_readiness(Path(p.folder_path))
 
 
 @router.get("/{penugasan_id}/context-md")

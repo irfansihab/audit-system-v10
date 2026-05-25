@@ -294,6 +294,12 @@ export const api = {
       `/penugasan/${penugasanId}/context-md`
     ),
 
+  /** Prasyarat Generate Context: sasaran (KT) + dokumen ter-digest (AT). */
+  getContextReadiness: (penugasanId: number) =>
+    request<{ ready: boolean; has_sasaran: boolean; has_ingested: boolean; reason: string }>(
+      `/penugasan/${penugasanId}/context-readiness`
+    ),
+
   saveContextMd: (penugasanId: number, content: string) =>
     request<{ ok: boolean; size_bytes: number; path: string }>(
       `/penugasan/${penugasanId}/context-md`,
