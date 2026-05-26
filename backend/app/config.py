@@ -20,6 +20,32 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings,
+        env_settings,
+        dotenv_settings,
+        file_secret_settings,
+    ):
+        """Abaikan environment variable yang KOSONG agar `.env`/default tetap menang.
+
+        Footgun pydantic-settings: env var bernilai string kosong (mis. shell yang
+        meng-`export ANTHROPIC_API_KEY=`) MENGALAHKAN nilai di `.env` — sehingga key
+        nyata di `.env` diam-diam hilang. Di sini kita saring env kosong dari sumber
+        environment; env var yang BERISI tetap menang (precedence normal terjaga).
+        """
+
+        def env_nonempty() -> dict:
+            return {
+                k: v
+                for k, v in env_settings().items()
+                if not (isinstance(v, str) and v.strip() == "")
+            }
+
+        return (init_settings, env_nonempty, dotenv_settings, file_secret_settings)
+
     # Anthropic
     anthropic_api_key: str = ""
 
