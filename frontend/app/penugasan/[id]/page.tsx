@@ -20,6 +20,13 @@ export default function DetailPenugasanPage() {
   const [dokumen, setDokumen] = useState<Dokumen[]>([]);
   const [tab, setTab] = useState<Tab>('dokumen');
   const [error, setError] = useState<string | null>(null);
+  // Prefill chat dari tombol "Jalankan Gate" di panel evaluasi bertahap. token
+  // memaksa ChatTab remount agar prompt awal terisi ulang tiap klik gate.
+  const [chatSeed, setChatSeed] = useState<{ prompt: string; token: number } | null>(null);
+  const runGateInChat = (gateId: string) => {
+    setChatSeed({ prompt: `[MODE:GATE:${gateId}]`, token: Date.now() });
+    setTab('chat');
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -124,7 +131,7 @@ export default function DetailPenugasanPage() {
         )}
 
         {/* Panel evaluasi bertahap — tampil hanya untuk skill gated (SPIP/SAKIP/RB) */}
-        <GatePanel penugasanId={id} skill={penugasan.skill} />
+        <GatePanel penugasanId={id} skill={penugasan.skill} role={session.role_aktif} onRunGate={runGateInChat} />
 
         {/* key={id} memaksa React unmount + remount setiap kali penugasan ganti,
             mencegah state lokal (chat prompt, modal preview, dll) bocor antar penugasan. */}
@@ -150,7 +157,13 @@ export default function DetailPenugasanPage() {
         )}
 
         {tab === 'chat' && (
-          <ChatTab key={`chat-${id}`} penugasanId={id} role={session.role_aktif} skill={penugasan.skill} />
+          <ChatTab
+            key={`chat-${id}-${chatSeed?.token ?? 0}`}
+            penugasanId={id}
+            role={session.role_aktif}
+            skill={penugasan.skill}
+            seedPrompt={chatSeed?.prompt}
+          />
         )}
 
         {tab === 'output' && (
@@ -348,15 +361,18 @@ function ChatTab({
   penugasanId,
   role,
   skill,
+  seedPrompt,
 }: {
   penugasanId: number;
   role: string;
   skill: string;
+  seedPrompt?: string;
 }) {
   const [prompt, setPrompt] = useState(
-    role === 'AT'
-      ? `Mulai analisis ${skill} untuk penugasan ini. Jalankan pipeline V6 dan verifikasi anomali.`
-      : 'Susun draft LHR dari temuan.json yang sudah disetujui anggota tim.'
+    seedPrompt ??
+      (role === 'AT'
+        ? `Mulai analisis ${skill} untuk penugasan ini. Jalankan pipeline V6 dan verifikasi anomali.`
+        : 'Susun draft LHR dari temuan.json yang sudah disetujui anggota tim.')
   );
   const [running, setRunning] = useState(false);
   // reconnected = run ini ditemukan masih berjalan di backend (bukan baru dimulai
@@ -1447,7 +1463,17 @@ const GATE_BADGE: Record<string, string> = {
   PENDING: 'bg-gray-100 text-gray-500',
 };
 
-function GatePanel({ penugasanId, skill }: { penugasanId: number; skill: string }) {
+function GatePanel({
+  penugasanId,
+  skill,
+  role,
+  onRunGate,
+}: {
+  penugasanId: number;
+  skill: string;
+  role: Role;
+  onRunGate: (gateId: string) => void;
+}) {
   const [data, setData] = useState<GateStatus | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -1521,7 +1547,16 @@ function GatePanel({ penugasanId, skill }: { penugasanId: number; skill: string 
           : <>Mulai dengan menjalankan <code className="bg-white px-1 rounded">[MODE:GATE:{data.gates[0]?.id}]</code> di tab Chat (Anggota Tim), lalu putuskan di sini.</>}
       </div>
       {current && (
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex gap-2 items-center flex-wrap">
+          {role === 'AT' && (
+            <button
+              onClick={() => onRunGate(current)}
+              className="text-xs px-3 py-1 rounded bg-violet-600 text-white font-medium"
+              title={`Buka Chat dengan perintah [MODE:GATE:${current}] terisi`}
+            >
+              ▶ Jalankan Gate {current}
+            </button>
+          )}
           <button
             onClick={() => decide(current, 'LANJUT')}
             disabled={busy}
