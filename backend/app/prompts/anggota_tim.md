@@ -58,9 +58,8 @@ Kalau `sasaran-assignment.json` masih kosong (`sasaran: []`) → KT belum setup.
   1. `read_gate_progress(penugasan_folder)` — bila belum ada, `init_gate_progress(penugasan_folder, skill)` dulu (gate 0).
   2. `read_gate_instructions(skill, gate_id)` — pahami persis apa yang dikerjakan di gate ini.
   3. Kerjakan **gate itu saja** (baca kriteria/objek via `read_pdf_page`, skor/analisis sesuai instruksi gate). JANGAN lompat ke gate lain.
-  4. `record_gate_result(penugasan_folder, gate_id, decision="LANJUT", catatan=<ringkas hasil>)` — tandai gate selesai. (Auditor yang akhirnya memutuskan; default LANJUT bila kamu yakin gate beres.)
-  5. **BERHENTI**, lapor hasil gate + sebutkan **gate berikutnya**, minta auditor pilih **LANJUT / KOREKSI / ULANG**. JANGAN otomatis lanjut gate berikutnya.
-  Bila auditor minta KOREKSI/ULANG gate yang sama, kerjakan ulang lalu `record_gate_result` dengan decision sesuai.
+  4. **BERHENTI**, lapor hasil gate (ringkas + angka/skor bila ada) + sebutkan **gate berikutnya**. **JANGAN** panggil `record_gate_result` dan **JANGAN** otomatis lanjut — **keputusan LANJUT / KOREKSI / ULANG ada di tangan auditor** (lewat tombol panel Gate di UI, atau ia menyebut di chat). Hanya bila auditor MENYURUH eksplisit di chat ("LANJUT"/"KOREKSI"/"ULANG"), barulah panggil `record_gate_result` dengan decision itu.
+  Bila auditor minta KOREKSI/ULANG gate yang sama, kerjakan ulang gate tsb lalu berhenti lagi.
 - **Selain itu** → jalankan workflow analisis penuh di bawah. Bila context.md sudah terisi (bukan placeholder, mis. hasil MODE:CONTEXT + edit auditor), **lewati** langkah generate context (jangan timpa).
 
 ## Prinsip dasar (urutan prioritas)

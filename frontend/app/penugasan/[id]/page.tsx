@@ -1404,6 +1404,10 @@ const GATE_BADGE: Record<string, string> = {
 
 function GatePanel({ penugasanId, skill }: { penugasanId: number; skill: string }) {
   const [data, setData] = useState<GateStatus | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const refetch = () =>
+    api.getGates(penugasanId).then(setData).catch(() => {});
 
   useEffect(() => {
     let alive = true;
@@ -1415,6 +1419,19 @@ function GatePanel({ penugasanId, skill }: { penugasanId: number; skill: string 
       alive = false;
     };
   }, [penugasanId]);
+
+  const decide = async (gateId: string, decision: 'LANJUT' | 'KOREKSI' | 'ULANG') => {
+    if (decision !== 'LANJUT' && !confirm(`Tandai Gate ${gateId} sebagai ${decision}?`)) return;
+    setBusy(true);
+    try {
+      await api.recordGateDecision(penugasanId, gateId, decision);
+      await refetch();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (!data || !data.gated) return null;
 
@@ -1453,11 +1470,36 @@ function GatePanel({ penugasanId, skill }: { penugasanId: number; skill: string 
       </div>
       <div className="mt-2 text-xs text-violet-800">
         {current
-          ? <>Gate aktif: <b>Gate {current}</b>. Anggota Tim menjalankan via tab <b>Chat</b> dengan perintah <code className="bg-white px-1 rounded">[MODE:GATE:{current}]</code>, lalu Anda pilih LANJUT / KOREKSI / ULANG.</>
+          ? <>Gate aktif: <b>Gate {current}</b>. Anggota Tim menjalankan via tab <b>Chat</b> dengan perintah <code className="bg-white px-1 rounded">[MODE:GATE:{current}]</code>. Setelah ditinjau, pilih keputusan:</>
           : prog
           ? <>✓ Semua gate selesai. Lanjut ke penyusunan LHE/LHP di tab Output.</>
-          : <>Mulai dengan menjalankan <code className="bg-white px-1 rounded">[MODE:GATE:{data.gates[0]?.id}]</code> di tab Chat (Anggota Tim).</>}
+          : <>Mulai dengan menjalankan <code className="bg-white px-1 rounded">[MODE:GATE:{data.gates[0]?.id}]</code> di tab Chat (Anggota Tim), lalu putuskan di sini.</>}
       </div>
+      {current && (
+        <div className="mt-2 flex gap-2">
+          <button
+            onClick={() => decide(current, 'LANJUT')}
+            disabled={busy}
+            className="text-xs px-3 py-1 rounded bg-emerald-600 text-white font-medium disabled:opacity-50"
+          >
+            ✓ LANJUT
+          </button>
+          <button
+            onClick={() => decide(current, 'KOREKSI')}
+            disabled={busy}
+            className="text-xs px-3 py-1 rounded bg-amber-500 text-white font-medium disabled:opacity-50"
+          >
+            ✎ KOREKSI
+          </button>
+          <button
+            onClick={() => decide(current, 'ULANG')}
+            disabled={busy}
+            className="text-xs px-3 py-1 rounded bg-gray-500 text-white font-medium disabled:opacity-50"
+          >
+            ↻ ULANG
+          </button>
+        </div>
+      )}
     </div>
   );
 }

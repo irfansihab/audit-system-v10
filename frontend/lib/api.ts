@@ -149,6 +149,18 @@ export const api = {
   getGates: (penugasanId: number) =>
     request<GateStatus>(`/penugasan/${penugasanId}/gates`),
 
+  /** Keputusan auditor atas satu gate: LANJUT / KOREKSI / ULANG. */
+  recordGateDecision: (
+    penugasanId: number,
+    gateId: string,
+    decision: 'LANJUT' | 'KOREKSI' | 'ULANG',
+    catatan?: string
+  ) =>
+    request<{ ok: boolean; progress: GateStatus['progress'] }>(
+      `/penugasan/${penugasanId}/gates/${gateId}/decision`,
+      { method: 'POST', body: JSON.stringify({ decision, catatan }) }
+    ),
+
   listPenugasan: () => request<Penugasan[]>('/penugasan'),
 
   getPenugasan: (id: number) => request<Penugasan>(`/penugasan/${id}`),

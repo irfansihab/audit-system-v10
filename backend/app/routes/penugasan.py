@@ -430,6 +430,38 @@ async def get_gates(
     }
 
 
+@router.post("/{penugasan_id}/gates/{gate_id}/decision")
+async def decide_gate(
+    penugasan_id: int,
+    gate_id: str,
+    body: dict = Body(...),
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Keputusan auditor atas satu gate evaluasi bertahap: LANJUT / KOREKSI / ULANG.
+
+    Auto-init progress bila belum ada. Hanya untuk skill bertahap (SPIP/SAKIP/RB).
+    """
+    from app import gate_registry as greg
+    from app.tools.gate_tools import init_progress, read_progress, record_result
+
+    user, role = current
+    if role == Role.PM:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "PM tidak menjalankan keputusan gate.")
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    skill = p.skill if isinstance(p.skill, str) else p.skill.value
+    if not greg.skill_has_gates(skill):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, f"Skill '{skill}' bukan evaluasi bertahap.")
+
+    folder = Path(p.folder_path)
+    if read_progress(folder) is None:
+        init_progress(folder, skill)
+    res = record_result(folder, gate_id, str(body.get("decision", "")), str(body.get("catatan", "")))
+    if "error" in res:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, res["error"])
+    return {"ok": True, "progress": res}
+
+
 @router.get("/{penugasan_id}/context-md")
 async def get_context_md(
     penugasan_id: int,
