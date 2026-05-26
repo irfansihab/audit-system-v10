@@ -223,23 +223,9 @@ async def _render_kksa(folder: Path, args: dict) -> dict:
 
 
 @tool(
-    "render_lhp",
-    "Render LHP paradigma KKSA (reviu/audit) via render_lhp.py V6 + template per "
-    "`skill`. Untuk skill non-KKSA (Konsultansi=memo, Eval RB=tabel 4-dimensi) gunakan "
-    "`render_report` yang otomatis memilih format. Butuh _LHP/rekomendasi.json + _KKP/temuan.json.",
-    {
-        "penugasan_folder": str, "skill": str, "judul": str, "auditi": str,
-        "dasar_permintaan": str, "gambaran_umum": str, "tanggal_exit_meeting": str,
-    },
-)
-async def render_lhp(args: dict) -> dict:
-    return await _render_kksa(Path(args["penugasan_folder"]), args)
-
-
-@tool(
     "render_report",
     "Render laporan hasil sesuai PROFIL FORMAT skill (otomatis): 'kksa' (reviu/audit → "
-    "render_lhp), 'memo' (Konsultansi → Memo pendapat/saran, butuh _LHP/saran.json), "
+    "LHP KKSA via V6), 'memo' (Konsultansi → Memo pendapat/saran, butuh _LHP/saran.json), "
     "'rb-4dim' (Eval RB → tabel 4-dimensi, butuh _LHP/penilaian-rb.json). Pakai tool ini "
     "sebagai jalur utama penyusunan laporan untuk SEMUA skill kecuali reviu-pengadaan "
     "(pakai render_lhr_pbj).",
@@ -520,8 +506,7 @@ LHR_TOOLS = [
     read_temuan_json,
     check_completeness,
     write_rekomendasi_json,
-    render_report,     # dispatcher per-profil (kksa/memo/rb-4dim) — jalur utama
-    render_lhp,        # KKSA eksplisit (reviu-rka-kl + criteria-driven KKSA)
+    render_report,     # dispatcher per-profil (kksa/memo/rb-4dim) — jalur utama LHP
     render_lhr_pbj,    # pipeline khusus reviu-pengadaan
     append_saran,      # Memo Konsultansi
     write_penilaian_rb,  # Evaluasi RB 4-dimensi

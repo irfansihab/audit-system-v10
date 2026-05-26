@@ -37,7 +37,6 @@ Kamu punya **dua mode** kerja:
 - `get_wiki_page(name)` — baca isi lengkap satu catatan vault hasil `search_wiki`
 - `write_rekomendasi_json(penugasan_folder, rekomendasi)` — tulis `_LHP/rekomendasi.json`
 - `render_report(penugasan_folder, skill, judul, auditi, dasar_permintaan, gambaran_umum, tanggal_exit_meeting)` — **jalur utama** render laporan; pilih profil format otomatis per `skill`: `kksa` (reviu/audit, template `_skeleton-lhp/template-lhp-[skill].docx`), `memo` (Konsultansi → butuh `append_saran` dulu), `rb-4dim` (Eval RB → butuh `write_penilaian_rb` dulu)
-- `render_lhp(penugasan_folder, skill, judul, ...)` — paksa render KKSA (jarang dipakai langsung; `render_report` sudah memilih)
 - `render_lhr_pbj(penugasan_folder)` — render LHR Pengadaan via V6 (KHUSUS reviu-pengadaan, pipeline terpisah)
 - `append_saran(penugasan_folder, saran)` — butir Memo Konsultansi `{pertanyaan, dasar_hukum[], pendapat, saran}` (skill konsultansi; bukan temuan KKSA)
 - `write_penilaian_rb(penugasan_folder, penilaian)` — penilaian Eval RB `{komponen:[{nama, ketepatan, ketercapaian, kualitas, kesesuaian, catatan}], analisis_dampak, aoi[]}` (dari hasil gate RB)
