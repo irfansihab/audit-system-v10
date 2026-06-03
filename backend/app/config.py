@@ -87,11 +87,14 @@ class Settings(BaseSettings):
     rate_limit_runs_per_hour: int = 5
 
     # Fallback ekstraksi LLM saat digest deterministik kehilangan field kunci.
-    # OFF default → ingestion tetap gratis/cepat/reproducible. ON → untuk dokumen
-    # yang field kuncinya hilang (parser tak menangani), panggil model murah (Haiku)
-    # atas TEKS dokumen untuk memulihkan field — selektif per dokumen, hemat token.
-    # Asumsi: tidak ada dokumen scan (teks selalu terbaca). Butuh ANTHROPIC_API_KEY.
-    digest_llm_fallback: bool = False
+    # ON default sejak 3 Jun 2026 (hybrid agresif) — KAK/HPS pengadaan banyak
+    # non-standar; parser regex sering miss field penting (dasar_hukum,
+    # ruang_lingkup, sumber_referensi_harga, dll). Tier-1 parser tetap jadi
+    # primary (gratis, cepat, reproducible); Haiku hanya dipanggil per dokumen
+    # bila field kunci di COVERAGE_KEYS hilang — selektif & hemat token (~$0.003/doc).
+    # Set OFF eksplisit di .env bila ingin parser-only (mis. operasi tanpa internet).
+    # Butuh ANTHROPIC_API_KEY. Asumsi: tidak ada dokumen scan (teks selalu terbaca).
+    digest_llm_fallback: bool = True
     digest_llm_model: str = DEFAULT_LLM_MODEL
 
     @property

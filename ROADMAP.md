@@ -711,6 +711,52 @@ Aturan emas REFINE di prompt: "Pekerjaan AT sebelumnya adalah BASELINE.
 Tambahkan/sempurnakan, jangan ulangi dari nol. Bila auditor minta 'analisis
 ulang dari awal' eksplisit, baru jalankan FRESH-RUN."
 
+### Hybrid agresif pengadaan: parser-first + Haiku fallback default ON (3 Juni 2026)
+
+KAK & HPS pengadaan sering **tidak terstandar** — layout berbeda per Satker,
+prefix `Signed_` dari e-materai, vendor RFI multi-format. Parser regex V6 sering
+miss field penting (mis. `dasar_hukum_kak`, `sumber_referensi_harga`,
+`nama_vendor_rfi`) → temuan substantif auditor terlewat.
+
+Arsitektur fallback Haiku (`DIGEST_LLM_FALLBACK`) **sudah ada** sejak 26 Mei 2026:
+parser jalan dulu (gratis, cepat); jika field di `COVERAGE_KEYS` hilang, Haiku
+baca teks dokumen, isi field hilang, simpan di blok `_llm_fallback`. Tapi
+**default OFF** + **COVERAGE_KEYS PENGADAAN cuma 3 field** (`obyek`, `nilai_hps`,
+`jangka_waktu`) → field auditor butuhkan tidak terpicu fallback.
+
+Hybrid agresif (commit ini):
+
+1. **Default ON** — `digest_llm_fallback: bool = True` di `app/config.py`
+   + `docker-compose.yml` env `DIGEST_LLM_FALLBACK: ${...:-true}`. Set OFF
+   eksplisit untuk operasi tanpa internet.
+2. **Perluas `COVERAGE_KEYS['PENGADAAN']`** dari 3 → **11 field**:
+   - 3 lama: `obyek`, `nilai_hps`, `jangka_waktu`
+   - 8 baru (semua relevan ke angle temuan auditor):
+     - `dasar_hukum_kak` (T-001: "KAK tak ada dasar hukum eksplisit")
+     - `ruang_lingkup`, `spesifikasi_teknis_ringkas`, `metode_pemilihan`
+     - `jadwal_pengadaan`, `masa_berlaku_existing` (T-002: "jadwal lewat batas
+       lisensi → risiko service mati")
+     - `sumber_referensi_harga`, `nama_vendor_rfi` (T-003: "vendor RFI
+       terafiliasi / dari alamat sama")
+3. **Perluas `FIELD_HINTS`** di `app/llm_extract.py` — petunjuk eksplisit utk
+   Haiku per field baru, dgn contoh konkret dan **anti-halusinasi rules** (mis.
+   "footer e-materai BUKAN dasar hukum pengadaan"; bila tidak ada, kembalikan
+   array kosong).
+
+Cost: ~$0.003/dokumen Haiku. Pengadaan rata-rata 5–10 dok/penugasan → ~$0.03–0.10
+per penugasan. 10 penugasan/bulan = ~$1/bulan. Negligible vs nilai temuan.
+
+Verifikasi: load `pengadaan-digest.json` user nyata → setelah COVERAGE_KEYS
+diperluas, 8 field tambahan terdeteksi missing (`dasar_hukum_kak`,
+`ruang_lingkup`, `spesifikasi_teknis_ringkas`, `metode_pemilihan`,
+`jadwal_pengadaan`, `sumber_referensi_harga`, `nama_vendor_rfi`,
+`masa_berlaku_existing`). Run ingestion berikutnya akan otomatis panggil Haiku
+untuk isi field-field ini dari teks KAK/HPS/RFI/kontrak.
+
+Parser tetap primary (`Tier-1`), Haiku tetap secondary (`Tier-2 selektif`) —
+nilai pulihan disimpan terpisah di blok `_llm_fallback` (provenans terjaga),
+`_summarize_digest` overlay ke summary dgn flag `_llm_recovered`. V6 read-only.
+
 ---
 
 ## 14. Lihat Juga
@@ -726,4 +772,4 @@ ulang dari awal' eksplisit, baru jalankan FRESH-RUN."
 
 ---
 
-*Dokumen ini dibuat 20 Mei 2026, di-update setiap akhir minggu. Adendum §13 ditambah 22 Mei; direvisi 25 Mei 2026 (integrasi EWS SIRUP tim + W1; CACM C1a/C1b/C2; audit P1/P2 + penyederhanaan workflow + gate Generate Context); 26 Mei 2026 (P4 digest paralel + DocumentCache; perluasan skill pengawasan Fase A–C: skill engine, gate-based, LKE, bukti retrieval, format non-KKSA, graduasi; digestion dua-tingkat fallback LLM + deteksi gambar + fix config env kosong; selaras pattern temuan 12 skill); 28 Mei 2026 (W2 promosi pattern; W3 tulis-balik vault; W1.1 pivoted ke stub SIMWAS sasaran sync); 2 Juni 2026 (W4 Knowledge Management pass: browser pattern + template setup 3-sumber + klaritas UX); 3 Juni 2026 (fix substansi reviu pengadaan: digest_postprocess rescue Signed_KAK/HPS + AT prompt mode REFINE).*
+*Dokumen ini dibuat 20 Mei 2026, di-update setiap akhir minggu. Adendum §13 ditambah 22 Mei; direvisi 25 Mei 2026 (integrasi EWS SIRUP tim + W1; CACM C1a/C1b/C2; audit P1/P2 + penyederhanaan workflow + gate Generate Context); 26 Mei 2026 (P4 digest paralel + DocumentCache; perluasan skill pengawasan Fase A–C: skill engine, gate-based, LKE, bukti retrieval, format non-KKSA, graduasi; digestion dua-tingkat fallback LLM + deteksi gambar + fix config env kosong; selaras pattern temuan 12 skill); 28 Mei 2026 (W2 promosi pattern; W3 tulis-balik vault; W1.1 pivoted ke stub SIMWAS sasaran sync); 2 Juni 2026 (W4 Knowledge Management pass: browser pattern + template setup 3-sumber + klaritas UX); 3 Juni 2026 (fix substansi reviu pengadaan: digest_postprocess rescue Signed_KAK/HPS + AT prompt mode REFINE + hybrid agresif pengadaan: parser-first + Haiku fallback default ON + COVERAGE_KEYS PENGADAAN 3→11 field).*

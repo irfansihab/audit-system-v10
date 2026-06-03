@@ -290,7 +290,19 @@ async def run_qc_kkp(args: dict) -> dict:
 COVERAGE_KEYS = {
     "TOR": ["kementerian", "program_nama", "kegiatan_nama", "ro", "total_biaya", "dasar_hukum"],
     "RAB": ["kementerian", "ro", "jumlah_komponen", "total_pagu"],
-    "PENGADAAN": ["obyek", "nilai_hps", "jangka_waktu"],
+    # Field PENGADAAN diperluas 3 Jun 2026 (hybrid agresif). KAK & HPS sering
+    # non-standar (prefix Signed_, layout berbeda per Satker) → field penting yg
+    # auditor butuhkan untuk temuan substantif (dasar_hukum KAK, sumber referensi
+    # harga HPS, metode pemilihan, dll) sering kosong di parser deterministik.
+    # Dgn field ini ke COVERAGE_KEYS, fallback Haiku akan dipicu otomatis utk
+    # mengisi field hilang. Tetap parser-first; Haiku hanya per dokumen kurang.
+    "PENGADAAN": [
+        "obyek", "nilai_hps", "jangka_waktu",
+        "dasar_hukum_kak", "ruang_lingkup", "spesifikasi_teknis_ringkas",
+        "metode_pemilihan", "jadwal_pengadaan",
+        "sumber_referensi_harga", "nama_vendor_rfi",
+        "masa_berlaku_existing",
+    ],
 }
 
 

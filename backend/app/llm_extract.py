@@ -43,7 +43,53 @@ FIELD_HINTS: dict[str, str] = {
     "obyek": "Nama/objek pekerjaan pengadaan.",
     "nilai_hps": "Nilai HPS dalam rupiah — ANGKA saja tanpa 'Rp'/titik.",
     "jangka_waktu": "Jangka waktu/periode pelaksanaan (mis. '6 bulan' atau '12 bulan').",
-    "metode_pemilihan": "Metode pemilihan penyedia (mis. 'Tender', 'Penunjukan Langsung').",
+    "metode_pemilihan": "Metode pemilihan penyedia (mis. 'Tender', 'Penunjukan Langsung', 'e-Purchasing').",
+    # ---- Field tambahan PENGADAAN (3 Jun 2026, hybrid agresif) ----
+    # Dipakai supaya temuan auditor substantif (mis. 'KAK tidak ada Dasar Hukum',
+    # 'Vendor RFI dari alamat sama / terafiliasi', 'Jadwal pengadaan lewat masa
+    # berlaku lisensi') punya bahan ekstrak dari fallback Haiku.
+    "dasar_hukum_kak": (
+        "ARRAY string regulasi yang disebut KAK sebagai dasar hukum pengadaan "
+        "(mis. ['UU 11/2008', 'Perpres 16/2018', 'Perpres 12/2021']). Bila KAK "
+        "TIDAK punya seksi 'Dasar Hukum' yang eksplisit (hanya footer e-materai/UU "
+        "ITE), kembalikan ARRAY KOSONG []. Footer/legalisasi e-materai BUKAN dasar "
+        "hukum pengadaan."
+    ),
+    "ruang_lingkup": (
+        "Ringkasan ruang lingkup pekerjaan dari KAK (apa yang di-procure: "
+        "barang/jasa, perpanjangan/baru, kuantitas). 1-3 kalimat."
+    ),
+    "spesifikasi_teknis_ringkas": (
+        "Ringkasan spesifikasi teknis dari KAK (mis. 'Lisensi Fortigate FG-601E "
+        "UTP 1 tahun, untuk 4 unit'). 1-3 kalimat. Bila tidak terperinci di KAK, "
+        "kembalikan null."
+    ),
+    "jadwal_pengadaan": (
+        "ARRAY tahapan jadwal pengadaan dari KAK ({tahap, periode}). "
+        "Contoh: [{'tahap': 'Penerimaan RFI', 'periode': '24 Feb – 5 Mar 2026'}]. "
+        "Bila hanya total durasi (mis. '10 hari kerja') kembalikan satu entri "
+        "tahap='Total durasi'."
+    ),
+    "sumber_referensi_harga": (
+        "ARRAY sumber harga yang dipakai menyusun HPS, dari dokumen HPS atau RFI. "
+        "Setiap entri: {nama_sumber, nilai_rupiah, tanggal_atau_nomor}. Contoh: "
+        "[{'nama_sumber':'RFI PT Mahameru','nilai_rupiah':643800000,"
+        "'tanggal_atau_nomor':'07/SPI/SIS/II/2026 - 27 Feb 2026'}, ...]. Auditor "
+        "pakai untuk menilai kewajaran (Perpres 16/2018 Pasal 26 ayat 5: minimal "
+        "2 sumber INDEPENDEN)."
+    ),
+    "nama_vendor_rfi": (
+        "ARRAY string nama vendor yang muncul dalam dokumen RFI (Request For "
+        "Information / Surat Pemberian Informasi / proposal vendor). Format: "
+        "['PT Mahameru Informatika Pratama', 'PT Digital Fatih Indonesia']. "
+        "Auditor pakai untuk cek vendor sejenis/terafiliasi."
+    ),
+    "masa_berlaku_existing": (
+        "Bila pengadaan adalah PERPANJANGAN/RENEWAL lisensi yang sudah ada, "
+        "kapan lisensi existing habis (format ISO YYYY-MM-DD bila tertera). "
+        "Kalau bukan renewal atau tidak tertera, kembalikan null. Auditor pakai "
+        "untuk cek apakah jadwal pengadaan lewat batas (risiko service mati)."
+    ),
 }
 
 
