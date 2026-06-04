@@ -711,6 +711,49 @@ Aturan emas REFINE di prompt: "Pekerjaan AT sebelumnya adalah BASELINE.
 Tambahkan/sempurnakan, jangan ulangi dari nol. Bila auditor minta 'analisis
 ulang dari awal' eksplisit, baru jalankan FRESH-RUN."
 
+### Rencana Mesin Kriteria CACM Multi-Sumber (3 Juni 2026) — DRAFT
+
+Tim minta plan/draft sebelum implementasi. Visi: CACM v7 tidak hanya SIRUP
+(perencanaan, 9 EWS), tapi multi-dimensi: **SIRUP + DIPA/Anggaran + SPSE
+realisasi + Kinerja**. v7 OWN threshold MERAH/KUNING/HIJAU (saat ini di
+EWS agent), simpan sebagai YAML di `knowledge/cacm/kriteria/<id>.yaml`
+supaya gitable + PR-able + audit trail via git log.
+
+Plan visual lengkap: [docs/rencana-cacm-kriteria.html](docs/rencana-cacm-kriteria.html).
+Sample skema YAML: [knowledge/cacm/kriteria/PBJ-PDN-RASIO.yaml](knowledge/cacm/kriteria/PBJ-PDN-RASIO.yaml).
+
+**Keputusan strategis ditetapkan 3 Jun 2026:**
+- Threshold di-OWN v7 (re-evaluate dari raw `paket_detail[]` yg agent sudah kirim).
+- Storage YAML di repo (Git PR utk revisi, UI read-only awal).
+- Sumber kinerja TBD — placeholder fase 4.
+
+**Roadmap implementasi (5 fase):**
+- **F1 — Externalize threshold SIRUP** (~2 minggu, low-risk): YAML kriteria, evaluator DSL, paralel-eval vs agent utk validasi, model `CacmObservasi`+`CacmFinding` (EwsFinding tetap utk compat).
+- **F2 — Dimensi Anggaran**: 5 kriteria `ANG-*` dari digest RAB / INTEGRAL.
+- **F3 — Dimensi SPSE realisasi**: 6 kriteria `SPSE-*`, ingest mulai dari file upload Excel (F3a), scraping opt-in (F3b).
+- **F4 — Dimensi Kinerja**: sumber TBD.
+- **F5 — UI mode edit kriteria** (kalau revisi >2x/bulan).
+
+**Skema YAML kriteria (lihat sample PBJ-PDN-RASIO):** id, revisi, dimensi,
+sumber_data, satker_terapkan, periode_relevansi, regulasi, metric (DSL:
+sum/avg/count/ratio/max/min/delta WHERE …), thresholds (status + condition
+expression), evidence_fields (snapshot ke finding), promote (skill +
+pattern_ids_hint + obyek_tpl).
+
+**Schema DB baru:**
+- `CacmObservasi` — raw data per ingest channel (no status — disimpan sebagai
+  bukti untuk eval).
+- `CacmFinding` — generalisasi EwsFinding ke semua dimensi, punya pointer
+  ke observasi yang jadi bukti + revisi kriteria yang dipakai saat evaluasi.
+
+**Quick wins paralel:** Validator pydantic untuk YAML, endpoint read
+kriteria, UI panel preview di `/knowledge` (mirror Pattern Library), port 9
+YAML SIRUP dari `ews-rules-verified.md`.
+
+**Belum implementasi apa pun di kode** — folder `knowledge/cacm/kriteria/`
+hanya README + 1 sample PoC schema. Eksekusi menunggu review tim + workshop
+kalibrasi threshold.
+
 ### Hybrid agresif pengadaan: parser-first + Haiku fallback default ON (3 Juni 2026)
 
 KAK & HPS pengadaan sering **tidak terstandar** — layout berbeda per Satker,
@@ -765,6 +808,7 @@ nilai pulihan disimpan terpisah di blok `_llm_fallback` (provenans terjaga),
 - [docs/rencana-skill-pengawasan.html](docs/rencana-skill-pengawasan.html) — rencana perluasan skill pengawasan (mesin skill generik, pilot audit-kinerja)
 - [docs/rencana-format-laporan.html](docs/rencana-format-laporan.html) — rencana format laporan non-KKSA (Memo Konsultansi + Eval RB 4-dimensi)
 - [docs/rencana-graduasi-skill.html](docs/rencana-graduasi-skill.html) — rencana meta-skill graduasi (auto-generate skill spesifik dari penugasan)
+- [docs/rencana-cacm-kriteria.html](docs/rencana-cacm-kriteria.html) — rencana Mesin Kriteria CACM multi-sumber (3 Jun 2026, draft pre-implementasi)
 - [README.md](README.md) — setup dev lokal + arsitektur teknis
 - [DEPLOY.md](DEPLOY.md) — panduan deploy Fly.io + Vercel
 - [wiki/README.md](wiki/README.md) — panduan menulis pattern temuan
@@ -772,4 +816,4 @@ nilai pulihan disimpan terpisah di blok `_llm_fallback` (provenans terjaga),
 
 ---
 
-*Dokumen ini dibuat 20 Mei 2026, di-update setiap akhir minggu. Adendum §13 ditambah 22 Mei; direvisi 25 Mei 2026 (integrasi EWS SIRUP tim + W1; CACM C1a/C1b/C2; audit P1/P2 + penyederhanaan workflow + gate Generate Context); 26 Mei 2026 (P4 digest paralel + DocumentCache; perluasan skill pengawasan Fase A–C: skill engine, gate-based, LKE, bukti retrieval, format non-KKSA, graduasi; digestion dua-tingkat fallback LLM + deteksi gambar + fix config env kosong; selaras pattern temuan 12 skill); 28 Mei 2026 (W2 promosi pattern; W3 tulis-balik vault; W1.1 pivoted ke stub SIMWAS sasaran sync); 2 Juni 2026 (W4 Knowledge Management pass: browser pattern + template setup 3-sumber + klaritas UX); 3 Juni 2026 (fix substansi reviu pengadaan: digest_postprocess rescue Signed_KAK/HPS + AT prompt mode REFINE + hybrid agresif pengadaan: parser-first + Haiku fallback default ON + COVERAGE_KEYS PENGADAAN 3→11 field).*
+*Dokumen ini dibuat 20 Mei 2026, di-update setiap akhir minggu. Adendum §13 ditambah 22 Mei; direvisi 25 Mei 2026 (integrasi EWS SIRUP tim + W1; CACM C1a/C1b/C2; audit P1/P2 + penyederhanaan workflow + gate Generate Context); 26 Mei 2026 (P4 digest paralel + DocumentCache; perluasan skill pengawasan Fase A–C: skill engine, gate-based, LKE, bukti retrieval, format non-KKSA, graduasi; digestion dua-tingkat fallback LLM + deteksi gambar + fix config env kosong; selaras pattern temuan 12 skill); 28 Mei 2026 (W2 promosi pattern; W3 tulis-balik vault; W1.1 pivoted ke stub SIMWAS sasaran sync); 2 Juni 2026 (W4 Knowledge Management pass: browser pattern + template setup 3-sumber + klaritas UX); 3 Juni 2026 (fix substansi reviu pengadaan: digest_postprocess rescue Signed_KAK/HPS + AT prompt mode REFINE + hybrid agresif pengadaan: parser-first + Haiku fallback default ON + COVERAGE_KEYS PENGADAAN 3→11 field; draft rencana Mesin Kriteria CACM Multi-Sumber).*
