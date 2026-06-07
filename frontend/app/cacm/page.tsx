@@ -253,8 +253,11 @@ export default function CacmPage() {
               </div>
             )}
 
+            {/* V7-native findings (paralel CACM Fase 1 evaluator) */}
+            <V7NativeFindingsSection runId={run.id} />
+
             {/* Findings */}
-            <h2 className="text-lg font-bold text-primary-dark mb-2">Temuan EWS ({run.findings.length})</h2>
+            <h2 className="text-lg font-bold text-primary-dark mb-2">Temuan EWS legacy ({run.findings.length})</h2>
             <div className="space-y-2">
               {run.findings.map((f) => (
                 <div key={f.id} className="bg-white border border-gray-200 rounded-lg">
@@ -347,5 +350,122 @@ export default function CacmPage() {
         )}
       </div>
     </main>
+  );
+}
+
+// =============================================================================
+// V7NativeFindingsSection — finding hasil evaluator v7-native paralel dgn
+// EwsFinding legacy. Tombol "Re-evaluate" (PT/PM) ulang run dgn YAML terbaru.
+// =============================================================================
+
+type V7Finding = Awaited<ReturnType<typeof api.getCacmV7Findings>>['findings'][number];
+
+const CACM_STATUS_CLS_V7: Record<string, string> = {
+  MERAH: 'bg-red-100 text-red-800 border-red-300',
+  KUNING: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  HIJAU: 'bg-green-100 text-green-800 border-green-300',
+  INFO: 'bg-gray-100 text-gray-600 border-gray-300',
+};
+
+function V7NativeFindingsSection({ runId }: { runId: number }) {
+  const session = getSession();
+  const canReEval = session?.role_aktif === 'PT' || session?.role_aktif === 'PM';
+  const [findings, setFindings] = useState<V7Finding[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const r = await api.getCacmV7Findings(runId);
+      setFindings(r.findings);
+    } catch { /* silent */ }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [runId]);
+
+  const doReEval = async () => {
+    if (!canReEval) return;
+    if (!confirm(`Re-evaluate run #${runId} dgn kriteria YAML terbaru? CacmFinding & CacmObservasi run ini akan dihapus & dibangun ulang. EwsFinding legacy tidak terpengaruh.`)) return;
+    setBusy(true); setMsg(null);
+    try {
+      const r = await api.reEvaluateCacmRun(runId);
+      setMsg(`Re-evaluate: ${r.removed_findings_old} finding lama dihapus, ${r.new_findings} finding baru dibuat.`);
+      refresh();
+    } catch (e: any) { setMsg(`Gagal: ${e.message}`); }
+    finally { setBusy(false); }
+  };
+
+  if (loading) return (
+    <div className="mb-4 p-3 text-xs text-gray-400 italic border border-amber-100 rounded">Memuat v7-native findings…</div>
+  );
+  if (findings.length === 0) return (
+    <div className="mb-4 p-3 text-xs text-gray-500 border border-amber-200 bg-amber-50/30 rounded">
+      Belum ada finding v7-native untuk run ini. Bisa terjadi bila ingest sebelum Fase 1 commit-2 rilis, atau evaluator gagal (cek log backend).
+      {canReEval && (
+        <button onClick={doReEval} disabled={busy} className="ml-3 text-xs px-2 py-0.5 rounded bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50">
+          {busy ? 'Re-evaluate…' : 'Re-evaluate sekarang'}
+        </button>
+      )}
+    </div>
+  );
+
+  // Group by satker_nama
+  const bySatker: Record<string, V7Finding[]> = {};
+  for (const f of findings) {
+    bySatker[f.satker_nama] = bySatker[f.satker_nama] || [];
+    bySatker[f.satker_nama].push(f);
+  }
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-bold text-primary-dark">
+          Finding CACM v7-native ({findings.length})
+          <span className="text-[11px] font-normal text-gray-500 ml-2">
+            evaluator atas kriteria YAML — paralel dgn EWS legacy
+          </span>
+        </h2>
+        {canReEval && (
+          <button onClick={doReEval} disabled={busy} className="text-xs px-3 py-1 rounded border border-amber-500 text-amber-700 hover:bg-amber-600 hover:text-white disabled:opacity-50">
+            {busy ? 'Re-evaluate…' : '↻ Re-evaluate run'}
+          </button>
+        )}
+      </div>
+      {msg && <div className="mb-2 p-2 rounded bg-amber-50 border border-amber-200 text-amber-800 text-xs">{msg}</div>}
+
+      <div className="space-y-3">
+        {Object.entries(bySatker).map(([satker, items]) => (
+          <div key={satker} className="bg-white border border-gray-200 rounded-lg p-3">
+            <div className="text-sm font-semibold text-gray-800 mb-2">{satker}</div>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-left text-gray-500 border-b border-gray-200">
+                  <th className="py-1.5 pr-2">Kriteria</th>
+                  <th className="py-1.5 px-2">Status</th>
+                  <th className="py-1.5 px-2">Metric</th>
+                  <th className="py-1.5 pl-2">Narasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((f) => (
+                  <tr key={f.id} className="border-b border-gray-100 last:border-0">
+                    <td className="py-1.5 pr-2 font-mono text-gray-500">{f.kriteria_id}</td>
+                    <td className="py-1.5 px-2">
+                      <span className={`px-1.5 py-0.5 rounded border text-[10px] ${CACM_STATUS_CLS_V7[f.status] || 'bg-gray-100'}`}>
+                        {f.status}
+                      </span>
+                    </td>
+                    <td className="py-1.5 px-2 text-gray-700">{f.metric_display || '—'}</td>
+                    <td className="py-1.5 pl-2 text-gray-500 text-[11px]">{f.narasi}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

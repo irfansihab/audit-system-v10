@@ -23,9 +23,26 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
+from app.cacm_evaluator import (
+    EvaluasiHasil,
+    evaluate_all_for_dimensi,
+    get_kriteria,
+    list_kriteria,
+    load_registry,
+)
 from app.config import get_settings
 from app.database import get_db
-from app.models import CacmRun, EwsFinding, Penugasan, PenugasanStatus, Role, Skill, User
+from app.models import (
+    CacmFinding,
+    CacmObservasi,
+    CacmRun,
+    EwsFinding,
+    Penugasan,
+    PenugasanStatus,
+    Role,
+    Skill,
+    User,
+)
 from app.routes.penugasan import _scaffold_penugasan_files
 from app.schemas import PenugasanCreate
 from app.storage import gen_kode_penugasan, penugasan_folder
@@ -159,8 +176,91 @@ async def _ingest(db: AsyncSession, payload: Any, source: str) -> CacmRun:
 
     await db.commit()
     await db.refresh(run)
+    # Wire-up Fase 1: paralel-eval v7-native dgn kriteria YAML.
+    # Best-effort — kegagalan tidak menggagalkan ingest (EwsFinding tetap dipakai
+    # UI legacy). Hasil tersimpan di CacmObservasi + CacmFinding utk validasi.
+    try:
+        await _run_v7_native_eval(db, run, findings)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("v7-native eval gagal utk run %s: %s", run.run_id, exc)
     await _maybe_auto_promote(db, run, source)
     return run
+
+
+# ============================================================
+# V7-native evaluator wire-up (Fase 1 CACM)
+# ============================================================
+
+def _periode_label_from_run(run: CacmRun) -> str:
+    """Label periode singkat utk CacmObservasi/Finding (cth: '2026-05' atau '2026-Q2')."""
+    src = run.tanggal_evaluasi or run.periode_crawl or ""
+    if isinstance(src, str) and len(src) >= 7:
+        return src[:7]  # YYYY-MM
+    return datetime.utcnow().strftime("%Y-%m")
+
+
+async def _run_v7_native_eval(db: AsyncSession, run: CacmRun, findings: list[dict]) -> None:
+    """Jalankan evaluator v7-native: dump paket_detail ke CacmObservasi,
+    group by satker, eval semua kriteria PENGADAAN_RENCANA, tulis CacmFinding.
+
+    Tidak mengubah EwsFinding existing. Idempoten per run: dipanggil sekali per
+    ingest. Re-evaluate manual lewat POST /cacm/runs/{run_id}/re-evaluate.
+    """
+    load_registry()  # cache kriteria
+    periode = _periode_label_from_run(run)
+
+    # Dump observasi: 1 row per paket di paket_detail, group by satker
+    obs_by_satker: dict[tuple[str | None, str], list[CacmObservasi]] = {}
+    for f in findings:
+        satker_nama = str(f.get("satker", "")).strip() or "(tanpa satker)"
+        satker_kode = (str(f.get("satker_kode")) if f.get("satker_kode") else None) or None
+        pakets = f.get("paket_detail") if isinstance(f.get("paket_detail"), list) else []
+        for p in pakets:
+            if not isinstance(p, dict):
+                continue
+            o = CacmObservasi(
+                sumber="sirup",
+                dimensi="PENGADAAN_RENCANA",
+                satker_kode=satker_kode,
+                satker_nama=satker_nama,
+                periode_label=periode,
+                data=p,
+                raw_source_id=str(p.get("kode_paket") or p.get("nama_paket") or "")[:120] or None,
+                cacm_run_id=run.id,
+            )
+            db.add(o)
+            obs_by_satker.setdefault((satker_kode, satker_nama), []).append(o)
+
+    if not obs_by_satker:
+        return
+
+    await db.flush()  # supaya CacmObservasi punya ID utk bukti_observasi_ids
+
+    # Untuk tiap satker, eval semua kriteria PENGADAAN_RENCANA
+    for (satker_kode, satker_nama), obs_list in obs_by_satker.items():
+        rows = [{"data": o.data, "_id": o.id} for o in obs_list]
+        bukti_ids = [o.id for o in obs_list]
+        hasils: list[EvaluasiHasil] = evaluate_all_for_dimensi("PENGADAAN_RENCANA", rows)
+        for h in hasils:
+            db.add(CacmFinding(
+                kriteria_id=h.kriteria_id,
+                kriteria_revisi=h.kriteria_revisi,
+                status=h.status,
+                metric_value=(float(h.value) if isinstance(h.value, (int, float)) and h.value == h.value else None),
+                metric_satuan=h.satuan,
+                metric_display=h.value_display,
+                satker_kode=satker_kode,
+                satker_nama=satker_nama,
+                periode_label=periode,
+                dimensi="PENGADAAN_RENCANA",
+                bukti_observasi_ids=bukti_ids[:50],
+                evidence=h.evidence,
+                narasi=h.narasi,
+                tindak_lanjut="BARU",
+                cacm_run_id=run.id,
+            ))
+
+    await db.commit()
 
 
 def _run_summary_dict(run: CacmRun, n_findings: int) -> dict:
@@ -566,3 +666,178 @@ async def trigger_agent_run(
             return {"ok": True, "agent_response": r.json()}
     except httpx.HTTPError as e:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, f"Gagal trigger agent: {e}")
+
+
+# ============================================================
+# Kriteria Library + Re-evaluate (Fase 1 CACM)
+# ============================================================
+
+
+def _kriteria_to_dict(model) -> dict:
+    """Serialisasi pydantic KriteriaModel utk respon HTTP."""
+    return {
+        "id": model.id,
+        "revisi": model.revisi,
+        "nama": model.nama,
+        "tipe": model.tipe,
+        "dimensi": model.dimensi,
+        "sumber_data": model.sumber_data,
+        "satker_terapkan": model.satker_terapkan,
+        "regulasi": model.regulasi,
+        "metric": {
+            "expression": model.metric.expression,
+            "satuan": model.metric.satuan,
+            "format_display": model.metric.format_display,
+        },
+        "thresholds": [
+            {"status": t.status, "condition": t.condition, "catatan": t.catatan}
+            for t in model.thresholds
+        ],
+        "evidence_fields": model.evidence_fields,
+        "promote": (
+            {
+                "skill": model.promote.skill,
+                "pattern_ids_hint": model.promote.pattern_ids_hint,
+                "prefilled_obyek_tpl": model.promote.prefilled_obyek_tpl,
+                "prefilled_dasar_permintaan": model.promote.prefilled_dasar_permintaan,
+            }
+            if model.promote
+            else None
+        ),
+        "catatan_revisi": model.catatan_revisi,
+    }
+
+
+@router.get("/kriteria/library")
+async def kriteria_library(
+    dimensi: str | None = None,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """List kriteria CACM v7-native dari `knowledge/cacm/kriteria/*.yaml`.
+
+    Semua role boleh baca (mirror Pattern Library di /knowledge).
+    """
+    items = list_kriteria(dimensi=dimensi or None)
+    dimensions = sorted({m.dimensi for m in list_kriteria()})
+    return {
+        "total": len(items),
+        "dimensi_available": dimensions,
+        "items": [_kriteria_to_dict(m) for m in items],
+    }
+
+
+@router.get("/kriteria/{kriteria_id}")
+async def kriteria_detail(
+    kriteria_id: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Detail 1 kriteria — full schema utk preview & cross-check."""
+    m = get_kriteria(kriteria_id)
+    if not m:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Kriteria '{kriteria_id}' tidak ada di registry.")
+    return _kriteria_to_dict(m)
+
+
+@router.get("/runs/{run_id}/findings/v7-native")
+async def runs_v7_native_findings(
+    run_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """List CacmFinding v7-native utk satu run (paralel dgn /runs/{id} legacy)."""
+    rows = (
+        await db.execute(
+            select(CacmFinding)
+            .where(CacmFinding.cacm_run_id == run_id)
+            .order_by(CacmFinding.satker_nama, CacmFinding.kriteria_id)
+        )
+    ).scalars().all()
+    return {
+        "total": len(rows),
+        "findings": [
+            {
+                "id": r.id,
+                "kriteria_id": r.kriteria_id,
+                "kriteria_revisi": r.kriteria_revisi,
+                "status": r.status,
+                "metric_value": r.metric_value,
+                "metric_display": r.metric_display,
+                "metric_satuan": r.metric_satuan,
+                "satker_kode": r.satker_kode,
+                "satker_nama": r.satker_nama,
+                "periode_label": r.periode_label,
+                "dimensi": r.dimensi,
+                "narasi": r.narasi,
+                "evidence": r.evidence or {},
+                "bukti_observasi_ids": r.bukti_observasi_ids or [],
+                "tindak_lanjut": r.tindak_lanjut,
+                "penugasan_id": r.penugasan_id,
+                "evaluated_at": r.evaluated_at.isoformat() if r.evaluated_at else None,
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.post("/runs/{run_id}/re-evaluate")
+async def runs_re_evaluate(
+    run_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Re-evaluate v7-native utk satu run — PT/PM only.
+
+    Hapus CacmObservasi + CacmFinding lama untuk run ini, lalu ulangi dump +
+    eval pakai kriteria YAML terbaru. Useful saat auditor revisi threshold
+    (revisi YAML) dan ingin melihat dampak ke run historis.
+    """
+    user, role = current
+    _require_pt(role)
+    load_registry(force_reload=True)  # reload supaya pickup revisi YAML
+
+    run = (await db.execute(select(CacmRun).where(CacmRun.id == run_id))).scalar_one_or_none()
+    if not run:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Run tidak ditemukan")
+
+    # Hapus CacmObservasi + Finding lama
+    old_obs = (
+        await db.execute(select(CacmObservasi).where(CacmObservasi.cacm_run_id == run_id))
+    ).scalars().all()
+    old_fnd = (
+        await db.execute(select(CacmFinding).where(CacmFinding.cacm_run_id == run_id))
+    ).scalars().all()
+    for o in old_obs:
+        await db.delete(o)
+    for f in old_fnd:
+        await db.delete(f)
+    await db.flush()
+
+    # Reconstruct findings list dari EwsFinding (paket_detail) — supaya re-eval
+    # pakai data raw yang sama dgn ingest awal.
+    legacy = (
+        await db.execute(select(EwsFinding).where(EwsFinding.cacm_run_id == run_id))
+    ).scalars().all()
+    findings_payload = [
+        {
+            "satker": f.satker,
+            "satker_kode": f.satker_kode,
+            "paket_detail": f.paket_detail or [],
+        }
+        for f in legacy
+    ]
+    if not findings_payload:
+        await db.commit()
+        return {"ok": True, "run_id": run_id, "rebuilt": 0, "note": "Tidak ada EwsFinding utk run ini."}
+
+    await _run_v7_native_eval(db, run, findings_payload)
+
+    n_new = len(
+        (await db.execute(select(CacmFinding).where(CacmFinding.cacm_run_id == run_id))).scalars().all()
+    )
+    return {
+        "ok": True,
+        "run_id": run_id,
+        "removed_observasi": len(old_obs),
+        "removed_findings_old": len(old_fnd),
+        "new_findings": n_new,
+    }

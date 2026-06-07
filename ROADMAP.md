@@ -850,6 +850,66 @@ engine sebelum integrasi.
 V6 read-only — semua menulis di v7 (`app/cacm_*.py`, `knowledge/cacm/`,
 model paralel dgn EwsFinding existing).
 
+### Fase 1 commit-2 — Wire-up + endpoint + UI (3-7 Juni 2026) — IMPLEMENTED
+
+Tutup loop CACM Fase 1: evaluator yang sudah dibangun di commit sebelumnya
+sekarang otomatis jalan saat ingest, hasilnya bisa dilihat di UI.
+
+**Backend (`routes/cacm.py`):**
+- `_run_v7_native_eval(db, run, findings)` — after `_ingest` finalize: dump
+  `paket_detail` ke `CacmObservasi` (1 row per paket, group by satker), call
+  `evaluate_all_for_dimensi("PENGADAAN_RENCANA", rows)` per satker, write
+  `CacmFinding`. Best-effort: gagal eval tidak menggagalkan ingest, EwsFinding
+  legacy tetap dipakai UI lama.
+- `GET /cacm/kriteria/library?dimensi=...` — list kriteria + filter dimensi
+  (semua role).
+- `GET /cacm/kriteria/{id}` — detail satu kriteria utk preview.
+- `GET /cacm/runs/{run_id}/findings/v7-native` — list CacmFinding utk satu
+  run.
+- `POST /cacm/runs/{run_id}/re-evaluate` (PT/PM only) — hapus
+  CacmObservasi+CacmFinding lama untuk run, reload registry, rebuild dari
+  EwsFinding.paket_detail. Idempoten.
+
+**Frontend:**
+- `lib/api.ts` — 4 helpers baru: listCacmKriteria, getCacmKriteria,
+  getCacmV7Findings, reEvaluateCacmRun.
+- `app/knowledge/page.tsx` — **panel "Kriteria CACM"** (paralel
+  PatternLibraryPanel): filter dimensi + list 9 kriteria + preview detail
+  (metric DSL expression, threshold table dgn color-code MERAH/KUNING/HIJAU,
+  regulasi, evidence_fields, satker_terapkan, revisi). Intro page diperbarui
+  utk sebutkan Kriteria CACM.
+- `app/cacm/page.tsx` — **section "Finding CACM v7-native"** di atas EWS
+  legacy (rename jadi "Temuan EWS legacy"). Group by satker_nama, table
+  dgn status badge + metric_display + narasi. Tombol "↻ Re-evaluate run"
+  (PT/PM only) di header section, banner hasil setelah eksekusi.
+
+**Verifikasi end-to-end:**
+- Ingest sample fixture (20 EWS findings, 36 paket_detail rows) → wire-up
+  otomatis jalankan eval → **27 CacmFinding** (3 satker × 9 kriteria) tertulis
+  paralel dgn 20 EwsFinding legacy.
+- Endpoint kriteria library: 9 items + 1 dimensi available.
+- Endpoint detail: full schema dgn metric/threshold/regulasi.
+- Endpoint v7-native: 27 finding lengkap dgn evidence + bukti_observasi_ids.
+- Re-evaluate: hapus 36 obs + 27 finding lama → rebuild 27 baru identik
+  (deterministik).
+- Browser E2E: login PT → `/knowledge` → panel "Kriteria CACM" render dgn
+  9 kriteria → klik PBJ-PDN-RASIO → preview metric DSL + thresholds + regulasi.
+  Lanjut `/cacm` → run detail → section "Finding CACM v7-native (27)" tampak
+  di atas EWS legacy, 3 group satker × 9 row → klik "↻ Re-evaluate run" →
+  banner "27 finding lama dihapus, 27 finding baru dibuat".
+
+**Sisa Fase 1:**
+- Diff UI: bandingkan status v7-native vs status EWS legacy per finding
+  utk validasi cut-over (saat ini diff hanya bisa dibaca manual).
+- Promote v7-native finding ke Penugasan (current `_create_usulan_from_finding`
+  pakai EwsFinding only).
+
+**Yg sudah hibrida & stabil:** Fase 1 closed loop — eval jalan saat ingest,
+auditor bisa baca kriteria + finding hasil + re-evaluate manual.
+
+V6 read-only — semua perubahan di v7 (app/routes/cacm.py, knowledge/cacm/,
+frontend).
+
 ### Hybrid agresif pengadaan: parser-first + Haiku fallback default ON (3 Juni 2026)
 
 KAK & HPS pengadaan sering **tidak terstandar** — layout berbeda per Satker,

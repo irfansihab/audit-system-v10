@@ -130,6 +130,7 @@ export default function KnowledgePage() {
         </p>
         <ul className="text-xs text-gray-500 mb-5 space-y-0.5 list-disc list-inside">
           <li><b>Pattern Temuan</b> — 65+ pattern terkurasi yang dipakai agen sebagai acuan menyusun temuan (semua role bisa baca).</li>
+          <li><b>Kriteria CACM</b> — definisi MERAH/KUNING/HIJAU yang dipakai mesin evaluator v7-native atas data SIRUP/DIPA/SPSE/Kinerja.</li>
           <li><b>Cari Wiki</b> — pencarian luas di vault organisasi (catatan BPK, profil auditi, dll).</li>
           <li><b>Promosi Pattern</b> & <b>Graduasi Skill</b> — workflow PT/PM untuk memperkaya pengetahuan dari penugasan nyata.</li>
           <li><b>Tulis-balik Vault</b> — saat penugasan selesai, hasilnya ditulis ke vault sebagai catatan operasional.</li>
@@ -137,6 +138,9 @@ export default function KnowledgePage() {
 
         {/* ===== Pattern Library (semua role) — dinaikkan ke atas supaya tinggi visibility ===== */}
         <PatternLibraryPanel />
+
+        {/* ===== Kriteria CACM (semua role baca) ===== */}
+        <CacmKriteriaPanel />
 
         {/* ===== W1: Cari Wiki ===== */}
         <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
@@ -1073,6 +1077,184 @@ function PatternLibraryPanel() {
                 </>
               )}
               <pre className="text-[11px] whitespace-pre-wrap font-sans text-gray-800 leading-relaxed">{detail.body}</pre>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// CacmKriteriaPanel — browser kriteria CACM v7-native (semua role baca).
+// =============================================================================
+
+type CacmKriteriaItem = {
+  id: string;
+  revisi: string;
+  nama: string;
+  tipe: string;
+  dimensi: string;
+  sumber_data: string;
+  satker_terapkan: string[];
+  regulasi: string[];
+  metric: { expression: string; satuan: string | null; format_display: string | null };
+  thresholds: Array<{ status: string; condition: string; catatan: string | null }>;
+  evidence_fields: string[];
+  promote: any;
+  catatan_revisi: string | null;
+};
+
+const CACM_STATUS_COLOR: Record<string, string> = {
+  MERAH: 'bg-red-100 text-red-800 border-red-300',
+  KUNING: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  HIJAU: 'bg-green-100 text-green-800 border-green-300',
+  INFO: 'bg-gray-100 text-gray-600 border-gray-300',
+};
+
+function CacmKriteriaPanel() {
+  const [items, setItems] = useState<CacmKriteriaItem[]>([]);
+  const [dimensions, setDimensions] = useState<string[]>([]);
+  const [dimensi, setDimensi] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<CacmKriteriaItem | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const refresh = async () => {
+    setLoading(true); setErr(null);
+    try {
+      const r = await api.listCacmKriteria(dimensi || undefined);
+      setItems(r.items);
+      setDimensions(r.dimensi_available);
+    } catch (e: any) { setErr(e.message); }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { refresh(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => {
+    const t = setTimeout(() => refresh(), 150);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line
+  }, [dimensi]);
+
+  return (
+    <div className="mb-6 bg-white border border-amber-200 rounded-lg p-5">
+      <div className="flex items-start justify-between mb-1 flex-wrap gap-2">
+        <h2 className="font-semibold text-primary-dark">Kriteria CACM (mesin evaluator v7-native)</h2>
+        <span className="text-[11px] text-gray-500">
+          {items.length} kriteria {dimensi ? `di ${dimensi}` : 'aktif'}
+        </span>
+      </div>
+      <p className="text-xs text-gray-500 mb-2">
+        Definisi MERAH/KUNING/HIJAU yang dipakai mesin evaluator atas data SIRUP/DIPA/SPSE/Kinerja.
+        Sumber: <code>knowledge/cacm/kriteria/&lt;id&gt;.yaml</code>. Revisi via Pull Request (Git audit trail).
+      </p>
+
+      <HowToUse
+        color="amber"
+        when="Mau memahami logika threshold yang dipakai sistem saat menilai sinyal CACM. Cek metric, regulasi, threshold per status, dan revisi YAML."
+        steps={[
+          'Pilih dimensi (PENGADAAN_RENCANA / ANGGARAN / dst) atau biarkan kosong untuk lihat semua.',
+          'Klik kartu untuk preview lengkap: metric DSL expression, threshold per status, regulasi, evidence_fields.',
+          'Bila threshold perlu direvisi (mis. setelah workshop kalibrasi): edit YAML di knowledge/cacm/kriteria/, buat PR. Re-evaluate run lama via tombol di /cacm.',
+        ]}
+        example="Klik PBJ-PDN-RASIO → metric: sum(pagu WHERE pdn=PDN) / sum(pagu) * 100; threshold MERAH <40, KUNING 40-60, HIJAU >=60. Regulasi: Inpres 2/2022 + Perpres 12/2021 Pasal 66."
+      />
+
+      <div className="mb-3">
+        <select value={dimensi} onChange={(e) => setDimensi(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-xs">
+          <option value="">Semua dimensi ({dimensions.length})</option>
+          {dimensions.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
+      </div>
+
+      {err && <div className="mb-2 p-2 rounded bg-red-50 border border-red-200 text-red-700 text-xs">{err}</div>}
+
+      <div className="grid md:grid-cols-2 gap-3">
+        <div className="border border-gray-200 rounded max-h-[480px] overflow-y-auto divide-y">
+          {loading ? (
+            <div className="p-3 text-xs text-gray-400 italic">Memuat kriteria…</div>
+          ) : items.length === 0 ? (
+            <div className="p-3 text-xs text-gray-400 italic">
+              Belum ada kriteria. Cek folder <code>knowledge/cacm/kriteria/</code>.
+            </div>
+          ) : items.map((k) => (
+            <button
+              key={k.id}
+              onClick={() => setSelected(k)}
+              className={`w-full text-left p-2.5 hover:bg-amber-50/40 transition ${selected?.id === k.id ? 'bg-amber-50' : ''}`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-mono text-[11px] text-gray-500 shrink-0">{k.id}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 shrink-0">{k.revisi}</span>
+              </div>
+              <div className="text-xs font-medium text-gray-800 mt-0.5">{k.nama}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">
+                <span className="uppercase">{k.dimensi}</span>
+                <span> · {k.sumber_data}</span>
+                <span> · {k.satker_terapkan.join(', ')}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div className="border border-gray-200 rounded p-3 bg-gray-50 min-h-[300px] max-h-[480px] overflow-y-auto">
+          {!selected ? (
+            <p className="text-xs text-gray-400 italic">Klik salah satu kriteria di kiri untuk baca detail.</p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="font-mono text-[11px] text-gray-500">{selected.id}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{selected.tipe}</span>
+              </div>
+              <div className="text-sm font-semibold text-gray-800 mb-1">{selected.nama}</div>
+              <div className="text-[11px] text-gray-500 mb-2">
+                <b>Dimensi:</b> {selected.dimensi} · <b>Sumber:</b> {selected.sumber_data}
+              </div>
+              {selected.regulasi.length > 0 && (
+                <div className="text-[11px] text-gray-600 mb-2">
+                  <b>Regulasi:</b>
+                  <ul className="list-disc list-inside ml-2">
+                    {selected.regulasi.map((r, i) => <li key={i}>{r}</li>)}
+                  </ul>
+                </div>
+              )}
+              <div className="text-[11px] text-gray-600 mb-2">
+                <b>Metric:</b> {selected.metric.satuan && <span className="text-gray-500">({selected.metric.satuan})</span>}
+                <pre className="text-[10px] bg-white border border-gray-200 rounded p-2 mt-1 whitespace-pre-wrap font-mono text-gray-800">{selected.metric.expression}</pre>
+              </div>
+              <div className="text-[11px] text-gray-600 mb-2">
+                <b>Thresholds:</b>
+                <table className="w-full text-[10px] mt-1 border border-gray-200 rounded overflow-hidden">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="px-1.5 py-1 text-left">Status</th>
+                      <th className="px-1.5 py-1 text-left">Condition</th>
+                      <th className="px-1.5 py-1 text-left">Catatan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selected.thresholds.map((t, i) => (
+                      <tr key={i} className="border-t border-gray-200">
+                        <td className="px-1.5 py-1">
+                          <span className={`px-1 py-0.5 rounded border ${CACM_STATUS_COLOR[t.status] || 'bg-gray-100 text-gray-500 border-gray-300'}`}>{t.status}</span>
+                        </td>
+                        <td className="px-1.5 py-1 font-mono">{t.condition}</td>
+                        <td className="px-1.5 py-1 text-gray-500">{t.catatan || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {selected.evidence_fields.length > 0 && (
+                <div className="text-[11px] text-gray-500 mb-1">
+                  <b>Evidence fields:</b> {selected.evidence_fields.join(', ')}
+                </div>
+              )}
+              {selected.satker_terapkan.length > 0 && (
+                <div className="text-[11px] text-gray-500">
+                  <b>Berlaku utk satker:</b> {selected.satker_terapkan.join(', ')}
+                </div>
+              )}
             </>
           )}
         </div>

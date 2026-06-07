@@ -745,6 +745,86 @@ export const api = {
       '/cacm/usulan/pending'
     ),
 
+  // ===== CACM Mesin Kriteria (Fase 1 — backend core wire-up commit-2) =====
+
+  /** List kriteria CACM v7-native dari knowledge/cacm/kriteria/*.yaml. Semua role. */
+  listCacmKriteria: (dimensi?: string) => {
+    const qs = dimensi ? `?dimensi=${encodeURIComponent(dimensi)}` : '';
+    return request<{
+      total: number;
+      dimensi_available: string[];
+      items: Array<{
+        id: string;
+        revisi: string;
+        nama: string;
+        tipe: string;
+        dimensi: string;
+        sumber_data: string;
+        satker_terapkan: string[];
+        regulasi: string[];
+        metric: { expression: string; satuan: string | null; format_display: string | null };
+        thresholds: Array<{ status: string; condition: string; catatan: string | null }>;
+        evidence_fields: string[];
+        promote: { skill: string; pattern_ids_hint: string[]; prefilled_obyek_tpl: string | null; prefilled_dasar_permintaan: string | null } | null;
+        catatan_revisi: string | null;
+      }>;
+    }>(`/cacm/kriteria/library${qs}`);
+  },
+
+  /** Detail 1 kriteria CACM. */
+  getCacmKriteria: (id: string) =>
+    request<{
+      id: string;
+      revisi: string;
+      nama: string;
+      tipe: string;
+      dimensi: string;
+      sumber_data: string;
+      satker_terapkan: string[];
+      regulasi: string[];
+      metric: { expression: string; satuan: string | null; format_display: string | null };
+      thresholds: Array<{ status: string; condition: string; catatan: string | null }>;
+      evidence_fields: string[];
+      promote: any;
+      catatan_revisi: string | null;
+    }>(`/cacm/kriteria/${encodeURIComponent(id)}`),
+
+  /** List CacmFinding v7-native utk satu run (paralel dgn EwsFinding legacy). */
+  getCacmV7Findings: (runId: number) =>
+    request<{
+      total: number;
+      findings: Array<{
+        id: number;
+        kriteria_id: string;
+        kriteria_revisi: string;
+        status: string;
+        metric_value: number | null;
+        metric_display: string | null;
+        metric_satuan: string | null;
+        satker_kode: string | null;
+        satker_nama: string;
+        periode_label: string;
+        dimensi: string;
+        narasi: string;
+        evidence: Record<string, any>;
+        bukti_observasi_ids: number[];
+        tindak_lanjut: string;
+        penugasan_id: number | null;
+        evaluated_at: string | null;
+      }>;
+    }>(`/cacm/runs/${runId}/findings/v7-native`),
+
+  /** Re-evaluate v7-native untuk satu run — PT/PM. Dipakai setelah revisi YAML. */
+  reEvaluateCacmRun: (runId: number) =>
+    request<{
+      ok: boolean;
+      run_id: number;
+      removed_observasi: number;
+      removed_findings_old: number;
+      new_findings: number;
+      note?: string;
+    }>(`/cacm/runs/${runId}/re-evaluate`, { method: 'POST' }),
+
   // ===== Feedback Aggregate Dashboard (Phase 2) =====
 
   /** Ringkasan agregat feedback agen cross-penugasan untuk N hari ke belakang. */
