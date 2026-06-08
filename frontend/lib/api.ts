@@ -407,6 +407,13 @@ export const api = {
         note: string | null;
         reviewed_at: string | null;
         reviewed_by_user_id: number | null;
+        has_edits?: boolean;
+        edited_fields?: {
+          judul_temuan?: string;
+          kondisi?: string;
+          kriteria?: string;
+          akibat?: string;
+        } | null;
       }>;
     }>(`/penugasan/${penugasanId}/temuan-review`),
 
@@ -429,6 +436,31 @@ export const api = {
     request<{ ok: boolean; approved_count: number; total_temuan: number }>(
       `/penugasan/${penugasanId}/temuan-review/bulk-approve`,
       { method: 'POST' }
+    ),
+
+  /** Edit field temuan via overlay (KT/PT/PM). String "" eksplisit → hapus
+   * overlay key (revert ke versi agen). Field undefined → tidak ubah. */
+  editTemuan: (
+    penugasanId: number,
+    temuanId: string,
+    edits: {
+      judul_temuan?: string;
+      kondisi?: string;
+      kriteria?: string;
+      akibat?: string;
+      note?: string;
+    }
+  ) =>
+    request<{
+      ok: boolean;
+      id_temuan: string;
+      status: string;
+      edited_fields: Record<string, string> | null;
+      has_edits: boolean;
+      reviewed_at: string | null;
+    }>(
+      `/penugasan/${penugasanId}/temuan-review/${encodeURIComponent(temuanId)}/edit`,
+      { method: 'PUT', body: JSON.stringify(edits) }
     ),
 
   /** W1.1 — sync sasaran dari payload PKP SIMWAS (manual paste/upload hari ini;

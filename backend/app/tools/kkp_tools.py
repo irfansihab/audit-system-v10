@@ -195,28 +195,180 @@ async def append_temuan(args: dict) -> dict:
     }
 
 
+async def _filter_temuan_by_review(folder: Path) -> tuple[Path | None, dict | None]:
+    """Filter `_KKP/temuan.json` agar hanya berisi temuan APPROVED/EDITED dari
+    `TemuanReview` (HITL). Return (backup_path, stats).
+
+    Aturan:
+      - Bila tabel TemuanReview KOSONG utk penugasan ini → JANGAN filter
+        (backward compat untuk penugasan lama / penugasan yg belum direview).
+      - Bila ada ≥1 review record → strict: hanya status APPROVED atau EDITED
+        yang lolos. PENDING & REJECTED di-exclude.
+      - Bila gagal query DB (mis. session tidak tersedia) → JANGAN filter
+        (best-effort; render kembali ke perilaku lama).
+
+    Saat filter aktif, file asli dibackup ke `_KKP/temuan-full-backup.json`
+    dan `temuan.json` ditulis ulang dengan subset. Caller WAJIB panggil
+    `_restore_temuan_from_backup` setelah render selesai (sukses/gagal).
+    """
+    from app.database import SessionLocal
+    from app.models import Penugasan, TemuanReview
+
+    temuan_path = folder / "_KKP" / "temuan.json"
+    if not temuan_path.is_file():
+        return None, None
+
+    # Resolve penugasan_id dari folder_path
+    folder_abs = str(folder.resolve())
+    penugasan_id: int | None = None
+    try:
+        async with SessionLocal() as db:
+            row = (await db.execute(
+                select(Penugasan.id).where(Penugasan.folder_path == folder_abs)
+            )).first()
+            if row is None:
+                # Fallback: cari yang ber-suffix nama folder (kode)
+                kode = folder.name
+                row = (await db.execute(
+                    select(Penugasan.id).where(Penugasan.kode == kode)
+                )).first()
+            if row is None:
+                return None, None
+            penugasan_id = row[0]
+
+            reviews = (await db.execute(
+                select(TemuanReview.temuan_id, TemuanReview.status)
+                .where(TemuanReview.penugasan_id == penugasan_id)
+            )).all()
+    except Exception:  # noqa: BLE001 — best-effort filter
+        return None, None
+
+    if not reviews:
+        return None, None  # belum ada workflow review → bypass
+
+    # Re-query untuk dapatkan edited_fields (TemuanReview row utuh).
+    try:
+        async with SessionLocal() as db2:
+            full_reviews = (await db2.execute(
+                select(TemuanReview).where(TemuanReview.penugasan_id == penugasan_id)
+            )).scalars().all()
+    except Exception:  # noqa: BLE001
+        full_reviews = []
+
+    review_by_id: dict[str, TemuanReview] = {r.temuan_id: r for r in full_reviews}
+
+    approved = {tid for tid, status in reviews if status in ("APPROVED", "EDITED")}
+    pending = {tid for tid, status in reviews if status == "PENDING"}
+    rejected = {tid for tid, status in reviews if status == "REJECTED"}
+
+    # Load + filter
+    try:
+        data = json.loads(temuan_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None, None
+
+    full = data.get("temuan", [])
+    if not isinstance(full, list):
+        return None, None
+
+    # Filter + overlay edited_fields ke temuan yang masuk
+    n_edits_applied = 0
+    filtered: list[dict] = []
+    for t in full:
+        tid = t.get("id_temuan")
+        if tid not in approved:
+            continue
+        rev = review_by_id.get(tid)
+        edits = rev.edited_fields if rev and rev.edited_fields else None
+        if edits:
+            # Shallow overlay — hanya field yg di-edit yg ditimpa
+            t_overlay = {**t, **edits}
+            filtered.append(t_overlay)
+            n_edits_applied += 1
+        else:
+            filtered.append(t)
+    stats = {
+        "n_total": len(full),
+        "n_approved": len(filtered),
+        "n_pending": len(pending),
+        "n_rejected": len(rejected),
+        "n_edits_applied": n_edits_applied,
+        "penugasan_id": penugasan_id,
+    }
+
+    # Backup + tulis filtered
+    backup = folder / "_KKP" / "temuan-full-backup.json"
+    try:
+        backup.write_bytes(temuan_path.read_bytes())
+    except OSError:
+        return None, None
+    data["temuan"] = filtered
+    try:
+        temuan_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    except OSError:
+        # gagal tulis → restore backup
+        try:
+            temuan_path.write_bytes(backup.read_bytes())
+        except OSError:
+            pass
+        backup.unlink(missing_ok=True)
+        return None, None
+
+    return backup, stats
+
+
+def _restore_temuan_from_backup(folder: Path, backup: Path | None) -> None:
+    """Restore `_KKP/temuan.json` dari backup. Always call di finally."""
+    if backup is None or not backup.is_file():
+        return
+    temuan_path = folder / "_KKP" / "temuan.json"
+    try:
+        temuan_path.write_bytes(backup.read_bytes())
+    finally:
+        backup.unlink(missing_ok=True)
+
+
 @tool(
     "render_kkp_docx",
-    "Render KKP-{nama-anggota}.docx menggunakan scripts/render_kkp.py V6.",
+    "Render KKP-{nama-anggota}.docx menggunakan scripts/render_kkp.py V6. "
+    "Otomatis FILTER temuan: hanya yang status review APPROVED/EDITED yang "
+    "masuk ke DOCX (HITL gating). Bila belum ada review record sama sekali "
+    "untuk penugasan ini, perilaku LEGACY: render semua temuan apa adanya.",
     {"penugasan_folder": str, "nama_anggota": str},
 )
 async def render_kkp_docx(args: dict) -> dict:
-    code, out, err = await run_v6_script(
-        "scripts/render_kkp.py",
-        [
-            "--penugasan",
-            args["penugasan_folder"],
-            "--anggota",
-            args["nama_anggota"],
-        ],
-        timeout=120,
-    )
+    folder = Path(args["penugasan_folder"])
+    backup, stats = await _filter_temuan_by_review(folder)
+    filter_note = ""
+    if stats is not None:
+        edit_str = f", edits_applied={stats.get('n_edits_applied', 0)}" if stats.get('n_edits_applied') else ""
+        filter_note = (
+            f" | FILTER:APPROVED-only "
+            f"({stats['n_approved']}/{stats['n_total']} masuk, "
+            f"pending={stats['n_pending']}, rejected={stats['n_rejected']}{edit_str})"
+        )
+    try:
+        code, out, err = await run_v6_script(
+            "scripts/render_kkp.py",
+            [
+                "--penugasan",
+                args["penugasan_folder"],
+                "--anggota",
+                args["nama_anggota"],
+            ],
+            timeout=120,
+        )
+    finally:
+        _restore_temuan_from_backup(folder, backup)
     if code != 0:
         return {
-            "content": [{"type": "text", "text": f"FAILED|exit={code}|err={err[:400]}"}],
+            "content": [{"type": "text", "text": f"FAILED|exit={code}|err={err[:400]}{filter_note}"}],
             "is_error": True,
         }
-    return {"content": [{"type": "text", "text": f"OK|stdout={out[:200]}"}]}
+    return {"content": [{"type": "text", "text": f"OK|stdout={out[:200]}{filter_note}"}]}
 
 
 @tool(
