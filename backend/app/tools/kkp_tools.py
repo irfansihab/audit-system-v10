@@ -511,8 +511,130 @@ async def write_context_md(args: dict) -> dict:
 # tanpa ini agen AT selalu mulai dari nol saat auditor minta koreksi.
 from app.tools.lhr_tools import read_temuan_json  # noqa: E402
 
+
+@tool(
+    "build_draft_temuan_from_anomalies",
+    "Konversi DETERMINISTIK anomalies-master.json (output pipeline V6) → draft "
+    "temuan v4.0.0. Hasil disimpan ke `_KKP/temuan-draft.json` (BUKAN temuan.json). "
+    "Setiap anomali yang punya `draft_catatan` jadi satu draft temuan dengan field "
+    "kondisi/kriteria/akibat sudah terisi otomatis. TIDAK panggil LLM. Agen AT "
+    "kemudian baca file ini, verifikasi tiap draft (buang false-positive, poles "
+    "narasi, tambah dokumen_sumber dgn halaman/kutipan dari PDF), baru append ke "
+    "temuan.json via `append_temuan`. Param severity_min: INFO (default, semua) | "
+    "PERINGATAN | KRITIS.",
+    {"penugasan_folder": str, "severity_min": str, "anggota_tim_nama": str, "overwrite": bool},
+)
+async def build_draft_temuan_from_anomalies(args: dict) -> dict:
+    from app.prefill_temuan import write_draft_temuan
+    folder = Path(args["penugasan_folder"])
+    severity_min = args.get("severity_min", "INFO")
+    anggota_tim_nama = args.get("anggota_tim_nama") or None
+    overwrite = bool(args.get("overwrite", False))
+    try:
+        path, data = write_draft_temuan(
+            folder,
+            overwrite=overwrite,
+            severity_min=severity_min,
+            anggota_tim_nama=anggota_tim_nama,
+        )
+    except Exception as e:  # noqa: BLE001 — surface error ke agen
+        return {
+            "content": [{"type": "text", "text": f"FAILED|{e}"}],
+            "is_error": True,
+        }
+    meta = data.get("_meta") or {}
+    n_drafts = len(data.get("temuan") or [])
+    skip_count = len(meta.get("anomali_skip") or [])
+    msg = (
+        f"OK|temuan-draft.json @ {path} — {n_drafts} draft dari "
+        f"{meta.get('anomali_total', 0)} anomali "
+        f"(skip {skip_count}, severity_min={meta.get('severity_min')})"
+    )
+    return {"content": [{"type": "text", "text": msg}]}
+
+
+@tool(
+    "read_draft_temuan",
+    "Baca `_KKP/temuan-draft.json` hasil `build_draft_temuan_from_anomalies`. "
+    "Return JSON {meta, temuan:[...]}. Pakai untuk verifikasi draft sebelum "
+    "append_temuan.",
+    {"penugasan_folder": str},
+)
+async def read_draft_temuan(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    path = folder / "_KKP" / "temuan-draft.json"
+    if not path.exists():
+        return {
+            "content": [{
+                "type": "text",
+                "text": "FAILED|temuan-draft.json tidak ada — panggil build_draft_temuan_from_anomalies dulu",
+            }],
+            "is_error": True,
+        }
+    data = safe_read_json(path)
+    return {
+        "content": [{
+            "type": "text",
+            "text": json.dumps(data, ensure_ascii=False, indent=2)[:24000],
+        }]
+    }
+
+
+@tool(
+    "build_context_md_template",
+    "Susun context.md DETERMINISTIK dari field penugasan + digest hasil ingestion. "
+    "Mengisi 80% bagian context (Identitas, Periode, Tujuan/Ruang Lingkup per skill, "
+    "Tim, Ringkasan Obyek dari digest). Bagian 'Gambaran Umum' di-placeholder "
+    "`<!-- AI_PARAGRAPH:gambaran_umum -->` untuk diisi LLM/auditor. TIDAK panggil "
+    "LLM. Pakai ini sebagai LANGKAH AWAL sebelum write_context_md.",
+    {"penugasan_folder": str, "kode": str, "obyek": str, "skill": str,
+     "nomor_st": str, "tanggal_st": str, "gambaran_umum": str, "overwrite": bool},
+)
+async def build_context_md_template(args: dict) -> dict:
+    from app.context_template import build_context_md
+    folder = Path(args["penugasan_folder"])
+    try:
+        md = build_context_md(
+            kode=args["kode"],
+            obyek=args["obyek"],
+            skill=args["skill"],
+            nomor_st=args.get("nomor_st") or None,
+            tanggal_st=args.get("tanggal_st") or None,
+            penugasan_folder=folder,
+            gambaran_umum=args.get("gambaran_umum") or None,
+        )
+    except Exception as e:  # noqa: BLE001
+        return {
+            "content": [{"type": "text", "text": f"FAILED|{e}"}],
+            "is_error": True,
+        }
+    overwrite = bool(args.get("overwrite", False))
+    path = folder / "context.md"
+    if path.exists() and not overwrite:
+        return {
+            "content": [{
+                "type": "text",
+                "text": (
+                    f"OK|template siap ({len(md)} char). context.md SUDAH ada — "
+                    f"set overwrite=true untuk timpa, atau pakai output ini "
+                    f"sebagai bahan write_context_md:\n\n{md}"
+                ),
+            }]
+        }
+    folder.mkdir(parents=True, exist_ok=True)
+    path.write_text(md, encoding="utf-8")
+    return {
+        "content": [{
+            "type": "text",
+            "text": f"OK|context.md ditulis dari template ({len(md)} char) @ {path}",
+        }]
+    }
+
+
 KKP_TOOLS = [
     read_context, list_ingested, read_ingested_digest, get_team_members,
-    write_context_md, append_temuan, render_kkp_docx, run_qc_kkp,
+    write_context_md, build_context_md_template,
+    append_temuan, build_draft_temuan_from_anomalies, read_draft_temuan,
+    render_kkp_docx, run_qc_kkp,
     read_temuan_json,
 ]
