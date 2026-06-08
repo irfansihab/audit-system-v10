@@ -1,4 +1,6 @@
 """Entry point FastAPI."""
+import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,6 +11,19 @@ from app.database import Base, engine
 from app.routes import agen, auth, cacm, dokumen, feedback, files, graduasi, knowledge, penugasan, skills
 
 settings = get_settings()
+log = logging.getLogger(__name__)
+
+# Export ANTHROPIC_API_KEY ke env var supaya `claude-agent-sdk` subprocess
+# bisa baca saat dia spawn `claude` CLI. Pydantic-settings hanya populate
+# settings object — TIDAK set env real. Tanpa ini, agen (anggota_tim/ketua_tim)
+# gagal dgn "API Error: 401 Invalid authentication credentials" saat uvicorn
+# dijalankan dari context yg env-nya tidak punya key (mis. Claude Code shell).
+#
+# Aturan: HORMATI env yg sudah ada (operator override). Hanya inject bila
+# env kosong dan settings punya nilai. Idempoten untuk reload.
+if settings.anthropic_api_key and not os.environ.get("ANTHROPIC_API_KEY"):
+    os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
+    log.info("ANTHROPIC_API_KEY di-export dari .env ke env proses (untuk SDK subprocess)")
 
 
 @asynccontextmanager
