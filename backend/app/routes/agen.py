@@ -286,6 +286,30 @@ async def _run_ingestion(penugasan_id: int) -> None:
             d.status = DokumenStatus.READY
             d.ingested_at = datetime.utcnow()
 
+        # Digest generik untuk skill criteria-driven (audit-kinerja, evaluasi-*,
+        # kepatuhan-saipi, konsultansi-*, pemantauan-*, audit-umum, reviu-umum)
+        # — semua skill yg TIDAK punya pipeline V6 khusus.
+        # File-only output di _INGESTED/<jenis>-<nn>.json. Best-effort: gagal tidak
+        # menggagalkan ingestion utama. Pakai LiteParse (deterministik, no LLM).
+        try:
+            skill_value = p.skill if isinstance(p.skill, str) else getattr(p.skill, "value", str(p.skill))
+        except Exception:  # noqa: BLE001
+            skill_value = None
+        try:
+            from app.digest_generic import skill_needs_generic_digest, digest_folder
+            if skill_needs_generic_digest(skill_value):
+                # Run di thread (sync I/O, jangan block event loop)
+                generic_result = await asyncio.to_thread(digest_folder, folder)
+                log.info(
+                    "digest_generic untuk penugasan_id=%d skill=%s: %d/%d files digested (%s)",
+                    penugasan_id, skill_value,
+                    generic_result.get("n_digested", 0),
+                    generic_result.get("n_total", 0),
+                    generic_result.get("per_jenis", {}),
+                )
+        except Exception as exc:  # noqa: BLE001 — best-effort, log saja
+            log.warning("digest_generic gagal untuk penugasan_id=%d: %s", penugasan_id, exc)
+
         # Tier-2 (opsional, OFF default): untuk digest yang field kuncinya hilang,
         # pulihkan via LLM murah dari TEKS dokumen. File-only (tidak menyentuh DB).
         await _run_llm_fallback(jobs, results)
