@@ -327,7 +327,42 @@ async def read_preload_context(args: dict) -> dict:
     return {"content": [{"type": "text", "text": text[:24000]}]}
 
 
+@tool(
+    "run_digest_generic",
+    "Digest GENERIK untuk skill yang TIDAK punya pipeline V6 khusus (audit-kinerja, "
+    "audit-umum, evaluasi-*, kepatuhan-saipi, konsultansi-umum, konsultasi-pengadaan, "
+    "pemantauan-*, reviu-umum). Iterate seluruh dokumen di folder penugasan, ekstrak "
+    "teks via LiteParse, klasifikasi jenis (KRITERIA/OBJEK/NOTULEN/SK/LKE/dst), tulis "
+    "satu JSON per file di `_INGESTED/<jenis>-<nn>.json` dengan: ringkasan_teks (cap "
+    "6K char), kata_kunci, regulasi_terdeteksi, tanggal_terdeteksi, "
+    "nilai_rupiah_terdeteksi. TIDAK panggil LLM. Pakai ini sebagai LANGKAH AWAL untuk "
+    "skill criteria-driven supaya hemat token vs read_pdf_page mentah.",
+    {"penugasan_folder": str},
+)
+async def run_digest_generic(args: dict) -> dict:
+    from app.digest_generic import digest_folder
+    folder = Path(args["penugasan_folder"])
+    try:
+        result = digest_folder(folder)
+    except Exception as e:  # noqa: BLE001
+        return {
+            "content": [{"type": "text", "text": f"FAILED|{e}"}],
+            "is_error": True,
+        }
+    per_jenis_str = ", ".join(f"{k}={v}" for k, v in sorted(result.get("per_jenis", {}).items()))
+    return {
+        "content": [{
+            "type": "text",
+            "text": (
+                f"OK|digested={result['n_digested']}/{result['n_total']} files | "
+                f"per_jenis: {per_jenis_str} | "
+                f"output: _INGESTED/*.json"
+            ),
+        }]
+    }
+
+
 PIPELINE_TOOLS = [
-    run_batch_rka, run_batch_pbj, run_batch_audit_pbj,
+    run_batch_rka, run_batch_pbj, run_batch_audit_pbj, run_digest_generic,
     read_pdf_page, read_anomalies, read_preload_context,
 ]
