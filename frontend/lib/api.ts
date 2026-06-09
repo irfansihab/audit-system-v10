@@ -535,6 +535,18 @@ export const api = {
       `/penugasan/${penugasanId}/context-md`
     ),
 
+  // ===== Kartu Penugasan (KP) — diisi PT (Fase B) =====
+  /** Baca isi Kartu Penugasan (markdown). Semua role. */
+  getKpMd: (penugasanId: number) =>
+    request<{ content: string; exists: boolean }>(`/penugasan/${penugasanId}/kp-md`),
+
+  /** Simpan Kartu Penugasan (PT/KT only). */
+  saveKpMd: (penugasanId: number, content: string) =>
+    request<{ ok: boolean; size_bytes: number; path: string }>(
+      `/penugasan/${penugasanId}/kp-md`,
+      { method: 'PUT', body: JSON.stringify({ content }) }
+    ),
+
   /** Prasyarat Generate Context: sasaran (KT) + dokumen ter-digest (AT). */
   getContextReadiness: (penugasanId: number) =>
     request<{ ready: boolean; has_sasaran: boolean; has_ingested: boolean; reason: string }>(

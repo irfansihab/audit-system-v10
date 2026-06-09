@@ -849,6 +849,50 @@ async def put_context_md(
 
 
 # ============================================================
+# Kartu Penugasan (KP) — diisi PT (tahapan 1), dokumen administratif.
+# Beda dgn context.md (konteks kerja AI yang di-generate AT). Disimpan sbg
+# _KP/kartu-penugasan.md. Diisi dari template wiki (kind=kp) lalu di-edit.
+# ============================================================
+
+_KP_REL = "_KP/kartu-penugasan.md"
+
+
+@router.get("/{penugasan_id}/kp-md")
+async def get_kp_md(
+    penugasan_id: int,
+    _current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Read isi Kartu Penugasan (markdown) — semua role bisa baca."""
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    path = Path(p.folder_path) / _KP_REL
+    if not path.exists():
+        return {"content": "", "exists": False}
+    return {"content": path.read_text(encoding="utf-8"), "exists": True}
+
+
+@router.put("/{penugasan_id}/kp-md")
+async def put_kp_md(
+    penugasan_id: int,
+    payload: ContextMdPayload,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Overwrite Kartu Penugasan. Hanya PT (pemilik tahapan 1) / KT."""
+    _user, role = current
+    if role not in (Role.PT, Role.KT):
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Kartu Penugasan diisi oleh Pengendali Teknis (PT)/Ketua Tim (KT). Role Anda: {role.value}.",
+        )
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    path = Path(p.folder_path) / _KP_REL
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(payload.content, encoding="utf-8")
+    return {"ok": True, "size_bytes": len(payload.content.encode("utf-8")), "path": _KP_REL}
+
+
+# ============================================================
 # Preload Context Bundle (Prioritas 1 — peningkatan kualitas)
 # Bangun konteks 4-sumber sebelum agen jalan supaya agen mulai dgn tangan penuh.
 # ============================================================

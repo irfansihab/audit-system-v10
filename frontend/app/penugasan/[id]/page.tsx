@@ -6,8 +6,32 @@ import Link from 'next/link';
 import { api, getSession, Dokumen, Penugasan, Role, Session, GateStatus } from '@/lib/api';
 import { AppShell } from '@/components/AppShell';
 import { HeroPenugasan } from '@/components/HeroPenugasan';
+import { TemplatePickerKpPkp } from '@/components/TemplatePickerKpPkp';
 
-type Tab = 'dokumen' | 'setup' | 'chat' | 'output';
+// Tab workspace per-peran (konsolidasi Fase A):
+//   kp  — Penugasan & KP (PT isi dari template)
+//   pkp — PKP / sasaran (KT isi dari template)
+//   kkp — Workspace AT (konteks + dokumen + analisis AI + HITL approval)
+//   lhp — Konsep Laporan / Workspace KT (generate LHP + approval temuan + approval LHP)
+//   output — daftar file hasil
+type Tab = 'kp' | 'pkp' | 'kkp' | 'lhp' | 'output';
+
+const TAB_LABEL: Record<Tab, string> = {
+  kp: '📇 Penugasan & KP',
+  pkp: '📋 PKP — Sasaran',
+  kkp: '🎯 KKP — Workspace AT',
+  lhp: '📄 Konsep Laporan — Workspace KT',
+  output: '📁 Output & Laporan',
+};
+const TAB_ORDER: Tab[] = ['kp', 'pkp', 'kkp', 'lhp', 'output'];
+
+// Tab default sesuai peran — buka langsung di workspace yang jadi tanggung jawabnya.
+function defaultTabForRole(role: Role): Tab {
+  if (role === 'PT') return 'kp';
+  if (role === 'KT') return 'pkp';
+  if (role === 'AT') return 'kkp';
+  return 'lhp'; // PM
+}
 
 export default function DetailPenugasanPage() {
   const params = useParams();
@@ -20,7 +44,7 @@ export default function DetailPenugasanPage() {
 
   const [penugasan, setPenugasan] = useState<Penugasan | null>(null);
   const [dokumen, setDokumen] = useState<Dokumen[]>([]);
-  const [tab, setTab] = useState<Tab>('dokumen');
+  const [tab, setTab] = useState<Tab>('kkp');
   const [error, setError] = useState<string | null>(null);
   // Status reviu konsep LHP terbaru (S3.2) — dipakai HeroPenugasan untuk tahapan 6.
   const [lhpStatus, setLhpStatus] = useState<'APPROVED' | 'NEEDS_REVISION' | null>(null);
@@ -29,7 +53,7 @@ export default function DetailPenugasanPage() {
   const [chatSeed, setChatSeed] = useState<{ prompt: string; token: number } | null>(null);
   const runGateInChat = (gateId: string) => {
     setChatSeed({ prompt: `[MODE:GATE:${gateId}]`, token: Date.now() });
-    setTab('chat');
+    setTab('kkp'); // gate dijalankan agen AT di Workspace KKP
   };
 
   useEffect(() => {
@@ -46,7 +70,7 @@ export default function DetailPenugasanPage() {
     setDokumen([]);
     setError(null);
     setLhpStatus(null);
-    setTab('dokumen');
+    setTab(defaultTabForRole(s.role_aktif));
     Promise.all([api.getPenugasan(id), api.listDokumen(id)])
       .then(([p, d]) => {
         setPenugasan(p);
@@ -106,25 +130,22 @@ export default function DetailPenugasanPage() {
         />
       </div>
 
-      {/* Tab bar — rename untuk match workflow workspace */}
+      {/* Tab bar — workspace per-peran (Fase A) */}
       <div className="bg-white border-y border-gray-200 sticky top-16 z-10">
-        <div className="max-w-6xl mx-auto px-6 flex gap-1">
-          {(['dokumen', 'setup', 'chat', 'output'] as Tab[]).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-4 py-3 text-sm border-b-2 transition ${
-                  tab === t
-                    ? 'border-primary text-primary-dark font-semibold'
-                    : 'border-transparent text-gray-500 hover:text-primary-dark'
-                }`}
-              >
-                {t === 'dokumen' && '📁 Dokumen & Survey'}
-                {t === 'setup' && (session.role_aktif === 'AT' ? '🎯 KKP — Workspace AT' : '📋 KP & PKP — Setup')}
-                {t === 'chat' && (session.role_aktif === 'AT' ? '🤖 Agen AT' : '🤖 Agen KT')}
-                {t === 'output' && (session.role_aktif === 'AT' ? '✅ Approval AT & Output' : '📄 Konsep Laporan — Workspace KT')}
-              </button>
-            ))}
+        <div className="max-w-6xl mx-auto px-6 flex gap-1 overflow-x-auto">
+          {TAB_ORDER.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-4 py-3 text-sm whitespace-nowrap border-b-2 transition ${
+                tab === t
+                  ? 'border-primary text-primary-dark font-semibold'
+                  : 'border-transparent text-gray-500 hover:text-primary-dark'
+              }`}
+            >
+              {TAB_LABEL[t]}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -140,47 +161,225 @@ export default function DetailPenugasanPage() {
 
         {/* key={id} memaksa React unmount + remount setiap kali penugasan ganti,
             mencegah state lokal (chat prompt, modal preview, dll) bocor antar penugasan. */}
-        {tab === 'dokumen' && (
-          <DokumenTab
-            key={`dokumen-${id}`}
-            dokumen={dokumen}
-            onUpload={handleUpload}
-            onDelete={handleDeleteDokumen}
-            allReady={allReady}
+
+        {/* === Tahapan 1 — Penugasan & Kartu Penugasan (PT isi dari template) === */}
+        {tab === 'kp' && (
+          <KpTab
+            key={`kp-${id}`}
+            penugasan={penugasan}
             role={session.role_aktif}
-            skill={penugasan.skill}
           />
         )}
 
-        {tab === 'setup' && (
+        {/* === Tahapan 2 — PKP / Sasaran reviu (KT isi dari template) === */}
+        {tab === 'pkp' && (
           <SetupPenugasanTab
-            key={`setup-${id}`}
+            key={`pkp-${id}`}
             penugasanId={id}
             role={session.role_aktif}
             currentUserName={session.user.nama_lengkap}
+            section="sasaran"
           />
         )}
 
-        {tab === 'chat' && (
-          <ChatTab
-            key={`chat-${id}-${chatSeed?.token ?? 0}`}
-            penugasanId={id}
-            role={session.role_aktif}
-            skill={penugasan.skill}
-            seedPrompt={chatSeed?.prompt}
-          />
+        {/* === Tahapan 3 — KKP Workspace AT: konteks → dokumen → analisis AI → HITL === */}
+        {tab === 'kkp' && (
+          <div key={`kkp-${id}`} className="space-y-6">
+            <WorkspaceBanner
+              title="🎯 Workspace Anggota Tim — Produksi KKP"
+              steps={['Generate Konteks', 'Upload Dokumen', 'Analisis AI', 'Review & Approval Temuan']}
+            />
+            <SetupPenugasanTab
+              penugasanId={id}
+              role={session.role_aktif}
+              currentUserName={session.user.nama_lengkap}
+              section="context"
+            />
+            <DokumenTab
+              dokumen={dokumen}
+              onUpload={handleUpload}
+              onDelete={handleDeleteDokumen}
+              allReady={allReady}
+              role={session.role_aktif}
+              skill={penugasan.skill}
+            />
+            <ChatTab
+              key={`chat-at-${id}-${chatSeed?.token ?? 0}`}
+              penugasanId={id}
+              role="AT"
+              skill={penugasan.skill}
+              seedPrompt={chatSeed?.prompt}
+            />
+          </div>
         )}
 
+        {/* === Tahapan 5/6 — Konsep Laporan Workspace KT: generate LHP + approval === */}
+        {tab === 'lhp' && (
+          <div key={`lhp-${id}`} className="space-y-6">
+            <WorkspaceBanner
+              title="📄 Workspace Ketua Tim — Konsep Laporan (LHP)"
+              steps={['Lihat KKP disetujui AT', 'Generate Draft LHP (AI)', 'Approval Temuan', 'Approval / Revisi Draft LHP']}
+            />
+            <ChatTab
+              key={`chat-kt-${id}`}
+              penugasanId={id}
+              role="KT"
+              skill={penugasan.skill}
+            />
+            <LhpReviewPanel
+              penugasanId={id}
+              role={session.role_aktif}
+              onReviewed={(s) => setLhpStatus(s)}
+            />
+          </div>
+        )}
+
+        {/* === Output & Laporan — daftar file hasil === */}
         {tab === 'output' && (
-          <OutputTab
-            key={`output-${id}`}
-            penugasan={penugasan}
-            role={session.role_aktif}
-            onLhpReviewed={(s) => setLhpStatus(s)}
-          />
+          <OutputTab key={`output-${id}`} penugasan={penugasan} />
         )}
       </div>
     </AppShell>
+  );
+}
+
+// Banner ringkas urutan langkah di atas workspace per-peran (Fase A).
+function WorkspaceBanner({ title, steps }: { title: string; steps: string[] }) {
+  return (
+    <div className="integral-card p-4 bg-primary-50/40 border-primary-100">
+      <div className="font-semibold text-sm text-primary-dark mb-2">{title}</div>
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        {steps.map((s, i) => (
+          <span key={s} className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded-full bg-white border border-primary-100 text-primary-dark">
+              {i + 1}. {s}
+            </span>
+            {i < steps.length - 1 && <span className="text-gray-300">→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function KpField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="text-gray-400 text-[10px] uppercase mb-0.5">{label}</div>
+      <div className="text-gray-800">{value}</div>
+    </div>
+  );
+}
+
+// ============================================================
+// KP TAB (Fase B) — Kartu Penugasan diisi PT dari template wiki.
+// ST (read-only, sumber SIMWAS) + picker template KP + editor kp-md.
+// ============================================================
+function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
+  const canEdit = role === 'PT' || role === 'KT';
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [showTpl, setShowTpl] = useState(false);
+
+  useEffect(() => {
+    api
+      .getKpMd(penugasan.id)
+      .then((r) => setContent(r.content || ''))
+      .catch((e) => setErr(e.message))
+      .finally(() => setLoading(false));
+  }, [penugasan.id]);
+
+  const save = async () => {
+    setSaving(true);
+    setErr(null);
+    try {
+      await api.saveKpMd(penugasan.id, content);
+      setSavedAt(new Date().toLocaleTimeString('id-ID'));
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="bg-white p-5 rounded-lg text-sm text-gray-500">Memuat Kartu Penugasan…</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <WorkspaceBanner
+        title="📇 Kartu Penugasan (KP) — diisi Pengendali Teknis"
+        steps={['Tarik ST dari SIMWAS', 'Pilih Template KP', 'Lengkapi & Simpan']}
+      />
+
+      {/* ST — read-only, sumber SIMWAS (akan terisi via sync ST, Fase C) */}
+      <div className="integral-card p-4">
+        <div className="text-xs uppercase text-gray-400 tracking-wider mb-2">Surat Tugas (sumber: SIMWAS)</div>
+        <div className="grid md:grid-cols-2 gap-3 text-sm">
+          <KpField label="Nomor ST" value={penugasan.nomor_st || '[belum ditarik dari SIMWAS]'} />
+          <KpField label="Tanggal ST" value={penugasan.tanggal_st || '—'} />
+          <KpField label="Obyek" value={penugasan.obyek} />
+          <KpField label="Jenis Pengawasan" value={penugasan.skill} />
+        </div>
+      </div>
+
+      {err && (
+        <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">{err}</div>
+      )}
+
+      {canEdit && (
+        <div className="integral-card p-4">
+          <button onClick={() => setShowTpl((v) => !v)} className="text-sm text-primary font-medium">
+            {showTpl ? '▾' : '▸'} Mulai dari Template KP (wiki)
+          </button>
+          {showTpl && (
+            <div className="mt-3">
+              <TemplatePickerKpPkp
+                kind="kp"
+                skill={penugasan.skill}
+                onUse={(t) => {
+                  setContent(t.body);
+                  setShowTpl(false);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-primary-dark">Isi Kartu Penugasan</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {canEdit
+                ? 'Markdown — ambil dari template wiki lalu lengkapi, klik Simpan.'
+                : 'Read-only — hanya Pengendali Teknis / Ketua Tim yang mengisi.'}
+            </p>
+          </div>
+          {canEdit && (
+            <button
+              onClick={save}
+              disabled={saving}
+              className="px-3 py-1.5 rounded bg-primary text-white text-sm font-semibold disabled:opacity-50"
+            >
+              {saving ? 'Menyimpan…' : savedAt ? 'Simpan KP ✓' : 'Simpan KP'}
+            </button>
+          )}
+        </div>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          disabled={!canEdit}
+          className="w-full p-4 font-mono text-xs h-96 border-0 resize-y focus:outline-none focus:ring-1 focus:ring-primary disabled:bg-gray-50 disabled:text-gray-600"
+          placeholder="# Kartu Penugasan&#10;(pilih template KP di atas untuk mengisi otomatis)"
+        />
+      </div>
+    </div>
   );
 }
 
@@ -841,11 +1040,18 @@ function SetupPenugasanTab({
   penugasanId,
   role,
   currentUserName,
+  section = 'all',
 }: {
   penugasanId: number;
   role: Role;
   currentUserName: string;
+  // 'context' → hanya context.md (dipakai di KKP Workspace AT);
+  // 'sasaran' → hanya sasaran-assignment + template/SIMWAS (dipakai di tab PKP);
+  // 'all' → keduanya (kompat lama).
+  section?: 'context' | 'sasaran' | 'all';
 }) {
+  const showContext = section !== 'sasaran';
+  const showSasaran = section !== 'context';
   const canEditSasaran = role === 'KT' || role === 'PT';
   const canEditContext = role === 'KT' || role === 'PT' || role === 'AT';
   const [sasaran, setSasaran] = useState<Sasaran[] | null>(null);
@@ -1035,7 +1241,7 @@ function SetupPenugasanTab({
         </div>
       )}
 
-      {role === 'AT' ? (
+      {section === 'all' && (role === 'AT' ? (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-sm text-blue-900">
           <strong>Konteks (peran AT).</strong> Klik <strong>Generate Context (AI)</strong> di bawah —
           AI menyusun context.md dari hasil digest dokumen + sasaran. Setelah jadi, <strong>review &amp; edit</strong>{' '}
@@ -1049,8 +1255,10 @@ function SetupPenugasanTab({
           {' '}context.md di-generate oleh <strong>Anggota Tim</strong> (tombol Generate Context) dari digest + sasaran —
           tidak perlu Anda isi manual. Bagian context di bawah <strong>opsional</strong> (override bila perlu).
         </div>
-      )}
+      ))}
 
+      {showContext && (
+        <>
       {/* === KONTEKS PRA-LOADED (Prioritas 1 — peningkatan kualitas output agen) === */}
       <PreloadContextPanel penugasanId={penugasanId} />
 
@@ -1109,7 +1317,11 @@ function SetupPenugasanTab({
           placeholder="# Konteks Penugasan: ..."
         />
       </div>
+        </>
+      )}
 
+      {showSasaran && (
+        <>
       {/* === SASARAN-ASSIGNMENT === */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
@@ -1353,19 +1565,13 @@ function SetupPenugasanTab({
           bisa lanjut ke Draft LHR.
         </div>
       )}
+        </>
+      )}
     </div>
   );
 }
 
-function OutputTab({
-  penugasan,
-  role,
-  onLhpReviewed,
-}: {
-  penugasan: Penugasan;
-  role: Role;
-  onLhpReviewed?: (status: 'APPROVED' | 'NEEDS_REVISION' | null) => void;
-}) {
+function OutputTab({ penugasan }: { penugasan: Penugasan }) {
   const [categories, setCategories] = useState<FileCategory[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1432,9 +1638,6 @@ function OutputTab({
           {loading ? 'Memuat…' : '↻ Refresh'}
         </button>
       </div>
-
-      {/* Tahapan 6 — Reviu Konsep LHP (LRS LHP) oleh PT/PM */}
-      <LhpReviewPanel penugasanId={penugasan.id} role={role} onReviewed={onLhpReviewed} />
 
       {error && (
         <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
