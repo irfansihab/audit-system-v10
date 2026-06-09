@@ -433,6 +433,30 @@ async def put_sasaran_assignment(
     }
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    # Render dokumen PKP ke 00-input/ → QC SAIPI REN-002 ("PKP tersedia di
+    # 00-input/") terpenuhi. Format mengikuti PKP INTEGRAL (I. Perencanaan /
+    # II. Pelaksanaan = sasaran / III. Pelaporan).
+    def _langkah_md(rows: list) -> str:
+        if not rows:
+            return "_(belum diisi)_\n"
+        out = "| Langkah Kerja | Pelaksana | Waktu |\n|---|---|---|\n"
+        for r in rows:
+            out += f"| {r.langkah} | {r.pelaksana} | {r.waktu} |\n"
+        return out
+
+    pkp_md = f"# PROGRAM KERJA PENGAWASAN\n\n**Nomor PKP**: {payload.nomor_pkp or '[DIISI]'}\n\n"
+    pkp_md += "## I. Perencanaan\n\n" + _langkah_md(payload.langkah_perencanaan or []) + "\n"
+    pkp_md += "## II. Pelaksanaan — Sasaran Pengawasan\n\n"
+    pkp_md += "| Sasaran | Langkah Kerja | Dilaksanakan Oleh | Waktu | No KKP |\n|---|---|---|---|---|\n"
+    for s in payload.sasaran:
+        lk = "; ".join(s.langkah_kerja) if s.langkah_kerja else ""
+        who = ", ".join(s.assigned_to) if s.assigned_to else ""
+        pkp_md += f"| {s.deskripsi} | {lk} | {who} | {s.waktu or ''} | {s.no_kkp or ''} |\n"
+    pkp_md += "\n## III. Pelaporan\n\n" + _langkah_md(payload.langkah_pelaporan or [])
+    pkp_doc = folder / "00-input" / f"PKP-{p.kode}.md"
+    pkp_doc.parent.mkdir(parents=True, exist_ok=True)
+    pkp_doc.write_text(pkp_md, encoding="utf-8")
+
     return {
         "ok": True,
         "total_sasaran": len(payload.sasaran),
@@ -950,6 +974,12 @@ async def put_kp_md(
     path = folder / _KP_REL
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(payload.content, encoding="utf-8")
+    # Tulis juga dokumen KP ke 00-input/ supaya QC SAIPI REN-001 (SAIPI 2200:
+    # "KP tersedia di 00-input/") terpenuhi. INTEGRAL: KP berasal dari sistem,
+    # di-drop sebagai dokumen 00-input/. Nama harus cocok glob `KP-*.*`.
+    kp_doc = folder / "00-input" / f"KP-{p.kode}.md"
+    kp_doc.parent.mkdir(parents=True, exist_ok=True)
+    kp_doc.write_text(payload.content, encoding="utf-8")
     if payload.fields is not None or payload.sasaran is not None:
         (folder / _KP_FIELDS_REL).write_text(
             json.dumps(
