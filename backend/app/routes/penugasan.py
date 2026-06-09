@@ -297,8 +297,23 @@ class SasaranItem(BaseModel):
     no_kkp: str | None = Field(default=None, description="Nomor KKP (kolom No KKP PKP SIMWAS)")
 
 
+class LangkahUmum(BaseModel):
+    """Langkah kerja umum PKP format INTEGRAL (kelompok I. Perencanaan /
+    III. Pelaporan) — tiap langkah punya Pelaksana + Waktu."""
+
+    langkah: str = Field(default="")
+    pelaksana: str = Field(default="")
+    waktu: str = Field(default="")
+
+
 class SasaranAssignmentPayload(BaseModel):
     sasaran: list[SasaranItem]
+    # Meta PKP format INTEGRAL (hasil bedah form live simwasv2 10 Jun 2026):
+    # nomor PKP + langkah kelompok I (Perencanaan) & III (Pelaporan).
+    # Kelompok II (Pelaksanaan) = `sasaran` di atas (dari Kartu Penugasan).
+    nomor_pkp: str | None = None
+    langkah_perencanaan: list[LangkahUmum] | None = None
+    langkah_pelaporan: list[LangkahUmum] | None = None
 
 
 def _require_sasaran_setup_role(role: Role) -> None:
@@ -410,6 +425,11 @@ async def put_sasaran_assignment(
         "schema_version": "v4.0.0",
         "tanggal_dibuat": datetime.utcnow().isoformat() + "Z",
         "sasaran": [s.model_dump() for s in payload.sasaran],
+        # Meta PKP INTEGRAL — top-level keys tambahan; aman untuk V6 yang
+        # hanya membaca key `sasaran`.
+        "nomor_pkp": payload.nomor_pkp or "",
+        "langkah_perencanaan": [l.model_dump() for l in (payload.langkah_perencanaan or [])],
+        "langkah_pelaporan": [l.model_dump() for l in (payload.langkah_pelaporan or [])],
     }
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -864,10 +884,15 @@ _KP_FIELDS_REL = "_KP/kp-fields.json"
 
 class KpPayload(BaseModel):
     content: str = Field(..., description="Isi Kartu Penugasan (markdown ter-render)")
-    # Nilai field form terstruktur (format INTEGRAL: judul_penugasan,
-    # tujuan_pengawasan, ruang_lingkup, jadwal_*, tim_pengawasan, dst).
+    # Nilai field form terstruktur — format INTEGRAL (hasil bedah form live
+    # simwasv2 10 Jun 2026): nomor, judul, dasar, aktivitas_tingkat_risiko,
+    # tujuan, ruang_lingkup, tanggal, disusun_oleh.
     # Disimpan terpisah supaya form bisa di-reedit tanpa parse markdown.
     fields: dict[str, str] | None = None
+    # Daftar Sasaran Pengawasan (repeatable di form KP INTEGRAL). Saat simpan,
+    # otomatis di-sync ke _PKP/sasaran-assignment.json — meniru INTEGRAL di mana
+    # bagian "II. Pelaksanaan" PKP dibangun dari sasaran KP.
+    sasaran: list[str] | None = None
     # Slug template wiki yang dipakai (kosong = isi manual tanpa template).
     template_slug: str | None = None
 
@@ -884,20 +909,24 @@ async def get_kp_md(
     path = folder / _KP_REL
     fields_path = folder / _KP_FIELDS_REL
     fields: dict | None = None
+    sasaran: list | None = None
     template_slug: str | None = None
     if fields_path.exists():
         try:
             raw = json.loads(fields_path.read_text(encoding="utf-8"))
-            fields = raw.get("fields") if isinstance(raw, dict) else None
-            template_slug = raw.get("template_slug") if isinstance(raw, dict) else None
+            if isinstance(raw, dict):
+                fields = raw.get("fields")
+                sasaran = raw.get("sasaran")
+                template_slug = raw.get("template_slug")
         except (json.JSONDecodeError, OSError):
             fields = None
     if not path.exists():
-        return {"content": "", "exists": False, "fields": fields, "template_slug": template_slug}
+        return {"content": "", "exists": False, "fields": fields, "sasaran": sasaran, "template_slug": template_slug}
     return {
         "content": path.read_text(encoding="utf-8"),
         "exists": True,
         "fields": fields,
+        "sasaran": sasaran,
         "template_slug": template_slug,
     }
 
@@ -921,16 +950,64 @@ async def put_kp_md(
     path = folder / _KP_REL
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(payload.content, encoding="utf-8")
-    if payload.fields is not None:
+    if payload.fields is not None or payload.sasaran is not None:
         (folder / _KP_FIELDS_REL).write_text(
             json.dumps(
-                {"fields": payload.fields, "template_slug": payload.template_slug},
+                {
+                    "fields": payload.fields or {},
+                    "sasaran": payload.sasaran or [],
+                    "template_slug": payload.template_slug,
+                },
                 ensure_ascii=False,
                 indent=2,
             ),
             encoding="utf-8",
         )
-    return {"ok": True, "size_bytes": len(payload.content.encode("utf-8")), "path": _KP_REL}
+
+    # Sync sasaran KP → _PKP/sasaran-assignment.json (meniru INTEGRAL: PKP
+    # bagian "II. Pelaksanaan" dibangun dari sasaran Kartu Penugasan).
+    # Append-only by deskripsi — baris existing (beserta langkah/assignment)
+    # tidak disentuh; sasaran KP yang dihapus TIDAK menghapus baris PKP.
+    synced = 0
+    if payload.sasaran:
+        sa_path = folder / "_PKP" / "sasaran-assignment.json"
+        try:
+            data = json.loads(sa_path.read_text(encoding="utf-8")) if sa_path.exists() else {}
+        except (json.JSONDecodeError, OSError):
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
+        rows = data.get("sasaran") or []
+        existing_desc = {str(r.get("deskripsi", "")).strip().lower() for r in rows if isinstance(r, dict)}
+        for desc in payload.sasaran:
+            d = str(desc).strip()
+            if not d or d.lower() in existing_desc:
+                continue
+            rows.append({
+                "sasaran_id": f"S-{len(rows) + 1:02d}",
+                "deskripsi": d,
+                "assigned_to": [],
+                "langkah_kerja": [],
+                "status": "AKTIF",
+                "waktu": "",
+                "no_kkp": "",
+            })
+            existing_desc.add(d.lower())
+            synced += 1
+        if synced:
+            data.setdefault("penugasan_id", p.kode)
+            data.setdefault("skill", p.skill if isinstance(p.skill, str) else p.skill.value)
+            data.setdefault("schema_version", "v4.0.0")
+            data["sasaran"] = rows
+            sa_path.parent.mkdir(parents=True, exist_ok=True)
+            sa_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    return {
+        "ok": True,
+        "size_bytes": len(payload.content.encode("utf-8")),
+        "path": _KP_REL,
+        "sasaran_synced_to_pkp": synced,
+    }
 
 
 # ============================================================

@@ -344,7 +344,13 @@ export const api = {
         assigned_to: string[];
         langkah_kerja: string[];
         status: string;
+        waktu?: string;
+        no_kkp?: string;
       }>;
+      // Meta PKP format INTEGRAL (opsional — file lama belum punya)
+      nomor_pkp?: string;
+      langkah_perencanaan?: Array<{ langkah: string; pelaksana: string; waktu: string }>;
+      langkah_pelaporan?: Array<{ langkah: string; pelaksana: string; waktu: string }>;
     }>(`/penugasan/${penugasanId}/sasaran-assignment`),
 
   saveSasaranAssignment: (
@@ -355,11 +361,18 @@ export const api = {
       assigned_to: string[];
       langkah_kerja: string[];
       status: string;
-    }>
+      waktu?: string;
+      no_kkp?: string;
+    }>,
+    meta?: {
+      nomor_pkp?: string;
+      langkah_perencanaan?: Array<{ langkah: string; pelaksana: string; waktu: string }>;
+      langkah_pelaporan?: Array<{ langkah: string; pelaksana: string; waktu: string }>;
+    }
   ) =>
     request<{ ok: boolean; total_sasaran: number; path: string }>(
       `/penugasan/${penugasanId}/sasaran-assignment`,
-      { method: 'PUT', body: JSON.stringify({ sasaran }) }
+      { method: 'PUT', body: JSON.stringify({ sasaran, ...(meta || {}) }) }
     ),
 
   // ===== Preload Context Bundle (Prioritas 1 — peningkatan kualitas output agen) =====
@@ -535,30 +548,34 @@ export const api = {
       `/penugasan/${penugasanId}/context-md`
     ),
 
-  // ===== Kartu Penugasan (KP) — diisi PT (Fase B) =====
-  /** Baca Kartu Penugasan: markdown + nilai field form INTEGRAL. Semua role. */
+  // ===== Kartu Penugasan (KP) — diisi PT, format INTEGRAL =====
+  /** Baca Kartu Penugasan: markdown + nilai field form INTEGRAL + daftar sasaran. */
   getKpMd: (penugasanId: number) =>
     request<{
       content: string;
       exists: boolean;
       fields: Record<string, string> | null;
+      sasaran: string[] | null;
       template_slug: string | null;
     }>(`/penugasan/${penugasanId}/kp-md`),
 
-  /** Simpan Kartu Penugasan (PT/KT only). fields = nilai form terstruktur. */
+  /** Simpan Kartu Penugasan (PT/KT only). `sasaran` otomatis di-sync ke PKP
+   * (sasaran-assignment) — meniru INTEGRAL: bagian II Pelaksanaan PKP dari sasaran KP. */
   saveKpMd: (
     penugasanId: number,
     content: string,
     fields?: Record<string, string>,
+    sasaran?: string[],
     templateSlug?: string | null
   ) =>
-    request<{ ok: boolean; size_bytes: number; path: string }>(
+    request<{ ok: boolean; size_bytes: number; path: string; sasaran_synced_to_pkp: number }>(
       `/penugasan/${penugasanId}/kp-md`,
       {
         method: 'PUT',
         body: JSON.stringify({
           content,
           fields: fields ?? null,
+          sasaran: sasaran ?? null,
           template_slug: templateSlug ?? null,
         }),
       }

@@ -291,120 +291,114 @@ function KpField({ label, value }: { label: string; value: string }) {
 }
 
 // ============================================================
-// KP TAB — Kartu Penugasan format INTEGRAL, diisi PT via FORM FIELD
-// terstruktur. Bisa manual (field standar) atau prefill dari template
-// wiki (field mengikuti frontmatter template). Disimpan sebagai
-// _KP/kp-fields.json (untuk re-edit form) + kartu-penugasan.md (render).
+// KP TAB — Kartu Penugasan, FIELD PERSIS FORM INTEGRAL (hasil bedah live
+// simwasv2 10 Jun 2026): nomor, judul, dasar, aktivitas_tingkat_risiko,
+// tujuan, ruang_lingkup, sasaran[] (repeatable), tanggal + disusun_oleh.
+// Bisa isi manual atau prefill dari template wiki (tujuan/ruang lingkup/
+// dasar baku skill). Sasaran KP otomatis sync ke PKP (sasaran-assignment)
+// — meniru INTEGRAL: bagian "II. Pelaksanaan" PKP dibangun dari sasaran KP.
 // ============================================================
 
-// Field standar KP format INTEGRAL — sama dengan frontmatter template wiki
-// (knowledge/wiki/templates/kp/*). Dipakai saat PT isi manual tanpa template.
-const KP_FIELDS_REQUIRED = [
-  'nomor_st', 'tanggal_st', 'judul_penugasan', 'tujuan_pengawasan',
-  'ruang_lingkup', 'jadwal_mulai', 'jadwal_selesai', 'tim_pengawasan',
+// Urutan & label field mengikuti form INTEGRAL.
+const KP_FIELD_DEFS: Array<{ key: string; label: string; multiline: boolean; ph: string }> = [
+  { key: 'nomor', label: 'Nomor Kartu', multiline: false, ph: 'KP/93/IJ.3/KP.01.06/05/2026' },
+  { key: 'judul', label: 'Judul Pengawasan', multiline: true, ph: 'Isikan Judul Pengawasan' },
+  { key: 'dasar', label: 'Dasar Pengawasan', multiline: true, ph: 'Isikan Dasar Pengawasan (PKPT, ST, dll — boleh daftar a/b/c)' },
+  { key: 'aktivitas_tingkat_risiko', label: 'Tingkat Risiko Unit/Aktivitas', multiline: true, ph: 'Isikan Tingkat Risiko Unit/Aktivitas' },
+  { key: 'tujuan', label: 'Tujuan Pengawasan', multiline: true, ph: 'Isikan Tujuan Pengawasan' },
+  { key: 'ruang_lingkup', label: 'Ruang Lingkup Pengawasan', multiline: true, ph: 'Isikan Ruang Lingkup Pengawasan' },
 ];
-const KP_FIELDS_OPTIONAL = ['referensi_regulasi', 'dasar_penugasan_tambahan', 'catatan_pt'];
-// Field naratif panjang → textarea; sisanya input 1 baris.
-const KP_MULTILINE = new Set([
-  'tujuan_pengawasan', 'ruang_lingkup', 'tim_pengawasan',
-  'referensi_regulasi', 'dasar_penugasan_tambahan', 'catatan_pt',
-]);
 
-function kpLabel(key: string): string {
-  const special: Record<string, string> = {
-    nomor_st: 'Nomor ST', tanggal_st: 'Tanggal ST',
-    no_kkp: 'No KKP',
-  };
-  if (special[key]) return special[key];
-  return key.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+/** Ambil isi teks satu section (## Heading) dari body template wiki —
+ * baris placeholder {{...}} dibuang. Untuk prefill tujuan/ruang lingkup/
+ * dasar baku skill dari template. */
+function extractTemplateSection(body: string, heading: RegExp): string {
+  const lines = body.split('\n');
+  const i = lines.findIndex((l) => /^#{1,6}\s/.test(l) && heading.test(l));
+  if (i === -1) return '';
+  const out: string[] = [];
+  for (let j = i + 1; j < lines.length; j++) {
+    const l = lines[j];
+    if (/^#{1,6}\s/.test(l)) break;
+    if (l.includes('{{') || l.includes('}}')) continue;
+    out.push(l);
+  }
+  return out.join('\n').trim();
 }
 
-/** Render body template wiki ({{field}} + blok kondisional {{#f}}...{{/f}})
- * dengan nilai form. Field kosong → '[DIISI AUDITOR]'; blok kondisional yang
- * field-nya kosong dihapus. */
-function renderKpMarkdown(
-  templateBody: string | null,
-  fields: Record<string, string>
-): string {
-  const val = (k: string) => (fields[k] || '').trim();
-  if (templateBody) {
-    let out = templateBody;
-    // Blok kondisional {{#key}}...{{/key}} — buang bila kosong, buka bila isi.
-    out = out.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_m, k, inner) =>
-      val(k) ? inner : ''
-    );
-    out = out.replace(/\{\{(\w+)\}\}/g, (_m, k) => val(k) || '[DIISI AUDITOR]');
-    return out;
-  }
-  // Tanpa template — layout KP standar INTEGRAL dari field.
-  const v = (k: string) => val(k) || '[DIISI AUDITOR]';
-  let md = `# Kartu Penugasan
+/** Render markdown Kartu Penugasan — layout mengikuti dokumen KP INTEGRAL. */
+function renderKpMarkdown(fields: Record<string, string>, sasaran: string[]): string {
+  const v = (k: string) => (fields[k] || '').trim() || '[DIISI AUDITOR]';
+  const sasaranMd = sasaran.filter((s) => s.trim()).length
+    ? sasaran.filter((s) => s.trim()).map((s, i) => `${i + 1}. ${s.trim()}`).join('\n')
+    : '[DIISI AUDITOR]';
+  return `# KARTU PENUGASAN
 
-## Identitas Penugasan
+**Nomor**: ${v('nomor')}
 
-- **Nomor Surat Tugas**: ${v('nomor_st')}
-- **Tanggal Surat Tugas**: ${v('tanggal_st')}
-- **Judul Penugasan**: ${v('judul_penugasan')}
+## Judul Pengawasan
+
+${v('judul')}
+
+## Dasar Pengawasan
+
+${v('dasar')}
+
+## Tingkat Risiko Unit/Aktivitas
+
+${v('aktivitas_tingkat_risiko')}
 
 ## Tujuan Pengawasan
 
-${v('tujuan_pengawasan')}
+${v('tujuan')}
 
-## Ruang Lingkup
+## Ruang Lingkup Pengawasan
 
 ${v('ruang_lingkup')}
 
-## Jadwal Pelaksanaan
+## Sasaran Pengawasan
 
-- **Mulai**: ${v('jadwal_mulai')}
-- **Selesai**: ${v('jadwal_selesai')}
+${sasaranMd}
 
-## Tim Pengawasan
+---
 
-${v('tim_pengawasan')}
+Jakarta, ${v('tanggal')}
+
+Disusun oleh: ${v('disusun_oleh')}
 `;
-  if (val('referensi_regulasi')) md += `\n## Referensi Regulasi\n\n${val('referensi_regulasi')}\n`;
-  if (val('dasar_penugasan_tambahan')) md += `\n## Dasar Penugasan Tambahan\n\n${val('dasar_penugasan_tambahan')}\n`;
-  if (val('catatan_pt')) md += `\n## Catatan Pengendali Teknis\n\n${val('catatan_pt')}\n`;
-  return md;
 }
 
 function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
   const canEdit = role === 'PT' || role === 'KT';
   const [fields, setFields] = useState<Record<string, string>>({});
-  const [required, setRequired] = useState<string[]>(KP_FIELDS_REQUIRED);
-  const [optional, setOptional] = useState<string[]>(KP_FIELDS_OPTIONAL);
-  const [templateBody, setTemplateBody] = useState<string | null>(null);
+  const [sasaran, setSasaran] = useState<string[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
   const [templateSlug, setTemplateSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [showTpl, setShowTpl] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const r = await api.getKpMd(penugasan.id);
-        // Prefill identitas dari penugasan (sumber: ST SIMWAS); nilai tersimpan menang.
+        const [r, allUsers] = await Promise.all([
+          api.getKpMd(penugasan.id),
+          api.listUsers().catch(() => []),
+        ]);
+        setUsers(allUsers.map((u) => u.nama_lengkap));
+        // Prefill ala INTEGRAL: nomor auto dari nomor ST, judul dari ST,
+        // tanggal hari ini. Nilai tersimpan menang.
+        const today = new Date().toISOString().slice(0, 10);
         const base: Record<string, string> = {
-          nomor_st: penugasan.nomor_st || '',
-          tanggal_st: penugasan.tanggal_st || '',
-          judul_penugasan: penugasan.obyek || '',
+          nomor: penugasan.nomor_st ? `KP/${penugasan.nomor_st}` : '',
+          judul: penugasan.obyek || '',
+          tanggal: today,
         };
         setFields({ ...base, ...(r.fields || {}) });
-        if (r.template_slug) {
-          setTemplateSlug(r.template_slug);
-          // Restore body + daftar field dari template yang dulu dipakai.
-          try {
-            const t = await api.getTemplate('kp', r.template_slug);
-            setTemplateBody(t.body);
-            if (Array.isArray(t.meta.field_required)) setRequired(t.meta.field_required);
-            if (Array.isArray(t.meta.field_optional)) setOptional(t.meta.field_optional);
-          } catch {
-            /* template wiki hilang — lanjut layout standar */
-          }
-        }
+        setSasaran(r.sasaran && r.sasaran.length ? r.sasaran : ['']);
+        setTemplateSlug(r.template_slug);
       } catch (e: any) {
         setErr(e.message);
       } finally {
@@ -414,24 +408,45 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [penugasan.id]);
 
+  // Template wiki → prefill tujuan/ruang lingkup/dasar baku skill (hanya ke
+  // field yang masih kosong — isian manual PT tidak ditimpa).
   const useTemplate = (t: { slug: string; body: string; meta: Record<string, any> }) => {
-    setTemplateBody(t.body);
+    const sections: Array<[string, RegExp]> = [
+      ['tujuan', /tujuan/i],
+      ['ruang_lingkup', /ruang lingkup/i],
+      ['dasar', /dasar|referensi regulasi/i],
+    ];
+    setFields((prev) => {
+      const next = { ...prev };
+      for (const [key, re] of sections) {
+        if (!(next[key] || '').trim()) {
+          const text = extractTemplateSection(t.body, re);
+          if (text) next[key] = text;
+        }
+      }
+      return next;
+    });
     setTemplateSlug(t.slug);
-    if (Array.isArray(t.meta.field_required)) setRequired(t.meta.field_required);
-    if (Array.isArray(t.meta.field_optional)) setOptional(t.meta.field_optional);
     setShowTpl(false);
   };
 
   const setF = (k: string, v: string) => setFields((p) => ({ ...p, [k]: v }));
-  const rendered = renderKpMarkdown(templateBody, fields);
-  const missingRequired = required.filter((k) => !(fields[k] || '').trim());
+  const setSasaranAt = (i: number, v: string) =>
+    setSasaran((p) => p.map((s, j) => (j === i ? v : s)));
+  const cleanSasaran = sasaran.map((s) => s.trim()).filter(Boolean);
+  const rendered = renderKpMarkdown(fields, sasaran);
+  const missing = KP_FIELD_DEFS.filter((d) => !(fields[d.key] || '').trim()).map((d) => d.label);
 
   const save = async () => {
     setSaving(true);
     setErr(null);
     try {
-      await api.saveKpMd(penugasan.id, rendered, fields, templateSlug);
-      setSavedAt(new Date().toLocaleTimeString('id-ID'));
+      const res = await api.saveKpMd(penugasan.id, rendered, fields, cleanSasaran, templateSlug);
+      setSaveMsg(
+        res.sasaran_synced_to_pkp > 0
+          ? `Tersimpan ✓ — ${res.sasaran_synced_to_pkp} sasaran ditambahkan ke PKP (tahapan 2)`
+          : 'Tersimpan ✓'
+      );
     } catch (e: any) {
       setErr(e.message);
     } finally {
@@ -443,35 +458,11 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
     return <div className="bg-white p-5 rounded-lg text-sm text-gray-500">Memuat Kartu Penugasan…</div>;
   }
 
-  const renderField = (k: string, isRequired: boolean) => (
-    <label key={k} className={KP_MULTILINE.has(k) ? 'block md:col-span-2' : 'block'}>
-      <span className="text-xs text-gray-600">
-        {kpLabel(k)} {isRequired && <span className="text-red-500">*</span>}
-      </span>
-      {KP_MULTILINE.has(k) ? (
-        <textarea
-          value={fields[k] || ''}
-          onChange={(e) => setF(k, e.target.value)}
-          disabled={!canEdit}
-          rows={3}
-          className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
-        />
-      ) : (
-        <input
-          value={fields[k] || ''}
-          onChange={(e) => setF(k, e.target.value)}
-          disabled={!canEdit}
-          className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
-        />
-      )}
-    </label>
-  );
-
   return (
     <div className="space-y-6">
       <WorkspaceBanner
         title="📇 Tahapan 1 — Kartu Penugasan (KP) — diisi Pengendali Teknis"
-        steps={['Tarik ST dari SIMWAS', 'Isi manual ATAU pakai template wiki', 'Lengkapi field & Simpan']}
+        steps={['Tarik ST dari SIMWAS', 'Isi manual / pakai template wiki', 'Daftar Sasaran Pengawasan', 'Simpan → sasaran masuk PKP']}
       />
 
       {/* ST — read-only, sumber SIMWAS (akan terisi via sync ST, Fase C) */}
@@ -493,6 +484,9 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
         <div className="integral-card p-4">
           <button onClick={() => setShowTpl((v) => !v)} className="text-sm text-primary font-medium">
             {showTpl ? '▾' : '▸'} Pakai Template KP dari Wiki
+            <span className="ml-2 text-[11px] text-gray-400 font-normal">
+              mengisi Tujuan / Ruang Lingkup / Dasar baku skill ke field yang masih kosong
+            </span>
             {templateSlug && (
               <span className="ml-2 px-2 py-0.5 rounded-full bg-primary-50 text-primary text-[11px] font-mono">
                 {templateSlug}
@@ -507,44 +501,127 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
         </div>
       )}
 
-      {/* Form field terstruktur — format INTEGRAL (mengikuti frontmatter template) */}
+      {/* Form — field persis INTEGRAL */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
           <div>
-            <h3 className="font-semibold text-primary-dark">Field Kartu Penugasan</h3>
+            <h3 className="font-semibold text-primary-dark">KARTU PENUGASAN</h3>
             <p className="text-xs text-gray-500 mt-0.5">
-              {canEdit
-                ? templateSlug
-                  ? `Field mengikuti template ${templateSlug} — lengkapi lalu Simpan.`
-                  : 'Isi manual field standar INTEGRAL, atau pilih template wiki di atas.'
-                : 'Read-only — hanya Pengendali Teknis / Ketua Tim yang mengisi.'}
+              {canEdit ? 'Field mengikuti form INTEGRAL SIMWAS.' : 'Read-only — diisi Pengendali Teknis / Ketua Tim.'}
             </p>
           </div>
           {canEdit && (
             <div className="flex items-center gap-2">
-              {missingRequired.length > 0 && (
-                <span className="text-[11px] text-amber-700" title={missingRequired.join(', ')}>
-                  ⚠ {missingRequired.length} field wajib kosong
+              {missing.length > 0 && (
+                <span className="text-[11px] text-amber-700" title={missing.join(', ')}>
+                  ⚠ {missing.length} field kosong
                 </span>
               )}
+              {saveMsg && <span className="text-[11px] text-emerald-700">{saveMsg}</span>}
               <button
                 onClick={save}
                 disabled={saving}
                 className="px-3 py-1.5 rounded bg-primary text-white text-sm font-semibold disabled:opacity-50"
               >
-                {saving ? 'Menyimpan…' : savedAt ? 'Simpan KP ✓' : 'Simpan KP'}
+                {saving ? 'Menyimpan…' : 'Simpan KP'}
               </button>
             </div>
           )}
         </div>
-        <div className="p-5 grid md:grid-cols-2 gap-4">
-          {required.map((k) => renderField(k, true))}
-          {optional.map((k) => renderField(k, false))}
+
+        <div className="p-5 space-y-4">
+          {KP_FIELD_DEFS.map((d) => (
+            <div key={d.key} className="grid md:grid-cols-4 gap-2 items-start">
+              <label className="text-sm text-gray-600 md:pt-2">{d.label}</label>
+              <div className="md:col-span-3">
+                {d.multiline ? (
+                  <textarea
+                    value={fields[d.key] || ''}
+                    onChange={(e) => setF(d.key, e.target.value)}
+                    disabled={!canEdit}
+                    rows={d.key === 'judul' ? 2 : 3}
+                    placeholder={d.ph}
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
+                  />
+                ) : (
+                  <input
+                    value={fields[d.key] || ''}
+                    onChange={(e) => setF(d.key, e.target.value)}
+                    disabled={!canEdit}
+                    placeholder={d.ph}
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-mono disabled:bg-gray-50"
+                  />
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Sasaran Pengawasan — repeatable, persis INTEGRAL */}
+          <div className="grid md:grid-cols-4 gap-2 items-start">
+            <label className="text-sm text-gray-600 md:pt-2">Sasaran Pengawasan</label>
+            <div className="md:col-span-3 space-y-2">
+              {sasaran.map((s, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    value={s}
+                    onChange={(e) => setSasaranAt(i, e.target.value)}
+                    disabled={!canEdit}
+                    placeholder="Isikan Sasaran Pengawasan"
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
+                  />
+                  {canEdit && sasaran.length > 1 && (
+                    <button
+                      onClick={() => setSasaran((p) => p.filter((_, j) => j !== i))}
+                      className="px-2.5 rounded border border-red-200 text-red-600 hover:bg-red-50"
+                      title="Hapus sasaran"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+              {canEdit && (
+                <button
+                  onClick={() => setSasaran((p) => [...p, ''])}
+                  className="px-3 py-1.5 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+                >
+                  + Tambah Sasaran
+                </button>
+              )}
+              <p className="text-[11px] text-gray-400">
+                Saat Simpan, sasaran otomatis masuk ke PKP (tahapan 2) sebagai bagian II. Pelaksanaan.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer: Jakarta, tanggal + Disusun Oleh — persis INTEGRAL */}
+          <div className="border-t border-dashed border-gray-300 pt-4 flex flex-wrap justify-end items-center gap-3 text-sm">
+            <span className="text-gray-600">Jakarta,</span>
+            <input
+              type="date"
+              value={fields.tanggal || ''}
+              onChange={(e) => setF('tanggal', e.target.value)}
+              disabled={!canEdit}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
+            />
+            <span className="text-gray-600">Disusun Oleh:</span>
+            <select
+              value={fields.disusun_oleh || ''}
+              onChange={(e) => setF('disusun_oleh', e.target.value)}
+              disabled={!canEdit}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white disabled:bg-gray-50"
+            >
+              <option value="">Pilih Nama Pegawai</option>
+              {users.map((u) => (
+                <option key={u} value={u}>{u}</option>
+              ))}
+            </select>
+          </div>
         </div>
-        {/* Preview markdown ter-render (yang dibaca agen saat Generate Konteks) */}
+
         <details className="border-t border-gray-100">
           <summary className="px-5 py-2.5 text-xs text-gray-500 cursor-pointer hover:text-primary">
-            Lihat preview Kartu Penugasan (markdown yang disimpan)
+            Lihat preview Kartu Penugasan (markdown yang disimpan — dibaca agen saat Generate Konteks)
           </summary>
           <pre className="px-5 pb-4 text-[11px] whitespace-pre-wrap font-mono text-gray-700 max-h-72 overflow-y-auto">
             {rendered}
@@ -1214,6 +1291,87 @@ function emptySasaran(idx: number): Sasaran {
   };
 }
 
+// Editor langkah kerja umum PKP (kelompok I. Perencanaan / III. Pelaporan,
+// format INTEGRAL): kolom Langkah Kerja | Pelaksana | Waktu | Aksi.
+type LangkahUmumRow = { langkah: string; pelaksana: string; waktu: string };
+
+function LangkahUmumEditor({
+  title,
+  rows,
+  onChange,
+  disabled,
+  placeholder,
+}: {
+  title: string;
+  rows: LangkahUmumRow[];
+  onChange: (rows: LangkahUmumRow[]) => void;
+  disabled?: boolean;
+  placeholder: string;
+}) {
+  const setRow = (i: number, patch: Partial<LangkahUmumRow>) =>
+    onChange(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  return (
+    <div>
+      <h4 className="font-semibold text-sm text-primary-dark mb-2">{title}</h4>
+      {rows.length > 0 && (
+        <div className="grid grid-cols-12 gap-2 mb-1 text-[11px] uppercase text-gray-400">
+          <span className="col-span-6">Langkah Kerja</span>
+          <span className="col-span-3">Pelaksana</span>
+          <span className="col-span-2">Waktu</span>
+          <span className="col-span-1">Aksi</span>
+        </div>
+      )}
+      <div className="space-y-2">
+        {rows.map((r, i) => (
+          <div key={i} className="grid grid-cols-12 gap-2">
+            <input
+              value={r.langkah}
+              onChange={(e) => setRow(i, { langkah: e.target.value })}
+              disabled={disabled}
+              placeholder={placeholder}
+              className="col-span-6 border border-gray-300 rounded px-2 py-1.5 text-sm disabled:bg-gray-50"
+            />
+            <input
+              value={r.pelaksana}
+              onChange={(e) => setRow(i, { pelaksana: e.target.value })}
+              disabled={disabled}
+              placeholder="Nama pelaksana"
+              className="col-span-3 border border-gray-300 rounded px-2 py-1.5 text-sm disabled:bg-gray-50"
+            />
+            <input
+              value={r.waktu}
+              onChange={(e) => setRow(i, { waktu: e.target.value })}
+              disabled={disabled}
+              placeholder="Waktu"
+              className="col-span-2 border border-gray-300 rounded px-2 py-1.5 text-sm disabled:bg-gray-50"
+            />
+            {!disabled && (
+              <button
+                onClick={() => onChange(rows.filter((_, j) => j !== i))}
+                className="col-span-1 px-2 rounded border border-red-200 text-red-600 hover:bg-red-50 text-sm"
+                title="Hapus langkah"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!disabled && (
+        <button
+          onClick={() => onChange([...rows, { langkah: '', pelaksana: '', waktu: '' }])}
+          className="mt-2 px-3 py-1.5 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+        >
+          + Tambah Langkah
+        </button>
+      )}
+      {rows.length === 0 && disabled && (
+        <p className="text-xs text-gray-400 italic">Belum ada langkah.</p>
+      )}
+    </div>
+  );
+}
+
 /** Ambil butir daftar di bawah heading/baris "Sasaran baku ..." dari body
  * template PKP wiki → jadi baris sasaran. Berhenti di baris kosong setelah
  * butir pertama atau heading berikutnya. */
@@ -1264,6 +1422,11 @@ function SetupPenugasanTab({
   const [simwasOpen, setSimwasOpen] = useState(false); // W1.1 — modal Impor dari SIMWAS
   const [templatesOpen, setTemplatesOpen] = useState(false); // Mulai dari template (3-sumber)
   const [pkpTplOpen, setPkpTplOpen] = useState(false); // Template PKP wiki → sasaran baku
+  // Meta PKP format INTEGRAL: nomor PKP + langkah kelompok I (Perencanaan)
+  // & III (Pelaporan). Kelompok II (Pelaksanaan) = daftar sasaran dari KP.
+  const [nomorPkp, setNomorPkp] = useState('');
+  const [perencanaan, setPerencanaan] = useState<Array<{ langkah: string; pelaksana: string; waktu: string }>>([]);
+  const [pelaporan, setPelaporan] = useState<Array<{ langkah: string; pelaksana: string; waktu: string }>>([]);
 
   const load = async () => {
     setLoading(true);
@@ -1287,6 +1450,9 @@ function SetupPenugasanTab({
         no_kkp: String(s.no_kkp ?? ''),
       }));
       setSasaran(normalized);
+      setNomorPkp(String((sa as any).nomor_pkp ?? ''));
+      setPerencanaan(Array.isArray((sa as any).langkah_perencanaan) ? (sa as any).langkah_perencanaan : []);
+      setPelaporan(Array.isArray((sa as any).langkah_pelaporan) ? (sa as any).langkah_pelaporan : []);
       setContextMd(cm.content || '');
       setErr(null);
     } catch (e: any) {
@@ -1361,7 +1527,12 @@ function SetupPenugasanTab({
           return;
         }
       }
-      const res = await api.saveSasaranAssignment(penugasanId, cleaned);
+      const meta = {
+        nomor_pkp: nomorPkp.trim(),
+        langkah_perencanaan: perencanaan.filter((l) => l.langkah.trim()),
+        langkah_pelaporan: pelaporan.filter((l) => l.langkah.trim()),
+      };
+      const res = await api.saveSasaranAssignment(penugasanId, cleaned, meta);
       setSavedAt({ ...savedAt, sasaran: new Date().toLocaleTimeString('id-ID') });
       setSasaran(cleaned);
     } catch (e: any) {
@@ -1523,19 +1694,51 @@ function SetupPenugasanTab({
 
       {showSasaran && (
         <>
+      {/* === PKP header (format INTEGRAL): Nomor PKP + I. Perencanaan === */}
+      {role !== 'AT' && (
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="px-5 py-3 bg-gray-50 border-b border-gray-200">
+            <h3 className="font-semibold text-primary-dark">PROGRAM KERJA PENGAWASAN</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Format INTEGRAL: Nomor PKP + langkah kerja kelompok I. Perencanaan / II. Pelaksanaan
+              (sasaran dari Kartu Penugasan) / III. Pelaporan. Simpan lewat tombol <b>Simpan Sasaran</b> di bawah.
+            </p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid md:grid-cols-4 gap-2 items-center">
+              <label className="text-sm text-gray-600">Nomor PKP</label>
+              <input
+                value={nomorPkp}
+                onChange={(e) => setNomorPkp(e.target.value)}
+                disabled={!canEditSasaran}
+                placeholder="PKP/93/IJ.3/KP.01.06/05/2026"
+                className="md:col-span-3 border border-gray-300 rounded-md px-3 py-2 text-sm font-mono disabled:bg-gray-50"
+              />
+            </div>
+            <LangkahUmumEditor
+              title="I. Perencanaan"
+              rows={perencanaan}
+              onChange={setPerencanaan}
+              disabled={!canEditSasaran}
+              placeholder="Masukkan langkah kerja perencanaan"
+            />
+          </div>
+        </div>
+      )}
+
       {/* === SASARAN-ASSIGNMENT === */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
           <div>
             <h3 className="font-semibold text-primary-dark">
               {role === 'AT'
-                ? `2. Sasaran Saya (${myCount})`
-                : `2. Sasaran Reviu & Assignment (${sasaran?.length || 0})`}
+                ? `Sasaran Saya (${myCount})`
+                : `II. Pelaksanaan — Sasaran Pengawasan (${sasaran?.length || 0})`}
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
               {role === 'AT'
                 ? `Sasaran yang ditugaskan kepada ${currentUserName}. Agen Anggota Tim hanya mengerjakan sasaran ini.`
-                : 'Daftar sasaran yang akan dianalisis Anggota Tim. Setiap sasaran punya ID unik (mis. S-PBJ-01), deskripsi, dan minimal 1 anggota di "Ditugaskan ke".'}
+                : 'Sasaran berasal dari Kartu Penugasan (tahapan 1) — bisa juga ditambah manual di sini. Tiap sasaran: langkah kerja + Pelaksana ("Ditugaskan ke") + Waktu.'}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -1795,6 +1998,19 @@ function SetupPenugasanTab({
           </div>
         )}
       </div>
+
+      {/* === III. Pelaporan (format INTEGRAL) === */}
+      {role !== 'AT' && (
+        <div className="bg-white rounded-lg border border-gray-200 p-5">
+          <LangkahUmumEditor
+            title="III. Pelaporan"
+            rows={pelaporan}
+            onChange={setPelaporan}
+            disabled={!canEditSasaran}
+            placeholder="Masukkan langkah kerja pelaporan"
+          />
+        </div>
+      )}
 
       {canEditSasaran && simwasOpen && (
         <SimwasImportModal
