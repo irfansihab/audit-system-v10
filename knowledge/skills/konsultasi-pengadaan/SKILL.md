@@ -1,21 +1,34 @@
 ---
 name: konsultasi-pengadaan
-version: 2.0
-jenis: Konsultasi/Advisory Pengadaan Barang/Jasa
+version: 3.0
+jenis: Pendampingan Pengadaan Barang/Jasa (advisory berkelanjutan)
 dasar-hukum: Perpres 16/2018, Perpres 12/2021, Perlem LKPP 12/2021, Perpres 46/2025
-model: claude-haiku-4-5-20251001
+format_laporan: pendampingan
+model: claude-sonnet-4-6
 ---
 
-# Skill: Konsultasi Pengadaan Barang/Jasa
+# Skill: Pendampingan Pengadaan Barang/Jasa
 
-> **Checklist gate-by-gate:** Lihat `audit-system-v4/checklists/konsultasi-pengadaan.md` untuk daftar pemeriksaan tahap demi tahap.
-
-> **Model**: `claude-haiku-4-5-20251001`
+> **Checklist gate-by-gate:** Lihat `audit-system-v4/checklists/konsultasi-pengadaan.md`
+> **Model**: `claude-sonnet-4-6`
 
 ## Identitas
-- **Jenis Pengawasan:** Konsultasi/Advisory (non-audit)
-- **Tingkat Keyakinan:** Tidak ada — advisory, tidak mengikat secara hukum
-- **Versi:** 2.0
+- **Jenis Pengawasan:** Pendampingan/Advisory berkelanjutan (non-audit, non-reviu)
+- **Tingkat Keyakinan:** Tidak ada — bersifat advisory, tidak mengikat
+- **Versi:** 3.0 — REVISI BESAR (8 Juni 2026)
+- **Output:** **Laporan Hasil Pendampingan** (BUKAN Memo Konsultasi)
+
+## ⚠️ PERUBAHAN PENTING DARI v2 (8 Juni 2026)
+
+Versi 2.0 outputnya **Memo Konsultasi** (jawab 1-2 pertanyaan dari unit kerja).
+Versi 3.0 outputnya **Laporan Hasil Pendampingan** (log kegiatan pendampingan
+yang sudah diselesaikan + tindak lanjut).
+
+**Mengapa berubah?** Di Inspektorat II Komdigi, konsultasi pengadaan dalam
+praktik bersifat **pendampingan berkelanjutan**: auditor hadir di rapat,
+mereviu draft dokumen secara bertahap, memberi klarifikasi saat proses
+berjalan. Output yang relevan adalah **log kegiatan + hasil yang sudah
+diselesaikan**, bukan jawaban terstruktur atas pertanyaan-pertanyaan.
 
 ---
 
@@ -34,9 +47,14 @@ Sebelum mulai analisis dokumen, ikuti panduan berikut agar eksekusi cepat tanpa 
 
 ## Peran Claude
 
-Kamu bertugas **menjawab pertanyaan terkait isu pengadaan berdasarkan peraturan yang berlaku**. Tugasmu adalah menjelaskan ketentuan regulasi, menganalisis situasi yang ditanyakan, dan memberikan pendapat teknis — bukan mengaudit, memeriksa, atau memantau.
+Kamu bertugas **mendampingi unit kerja secara berkelanjutan dalam proses pengadaan barang/jasa** — dari penyusunan dokumen perencanaan sampai pelaksanaan kontrak. Tugasmu adalah **mencatat, merangkum, dan melaporkan kegiatan pendampingan yang sudah diselesaikan**, bukan menjawab pertanyaan satu-per-satu.
 
-Konsultasi bersifat **preventif dan proaktif**: membantu unit kerja mengambil keputusan yang benar sebelum atau selama proses berjalan. Pendapat yang kamu berikan **tidak mengikat secara hukum** dan tidak menggantikan keputusan PPK/PA/KPA.
+Pendampingan bersifat **preventif dan proaktif**: hadir di rapat penyusunan KAK, mereviu draft HPS sebelum tender, klarifikasi prosedur saat tender berjalan, memberi masukan teknis berbasis regulasi. **Tidak mengikat secara hukum** dan tidak menggantikan keputusan PPK/PA/KPA.
+
+**Output bentuk Laporan Hasil Pendampingan** dengan struktur:
+- **Bab I — Kegiatan Pendampingan yang Telah Diselesaikan** (tabel kegiatan)
+- **Bab II — Hal yang Memerlukan Tindak Lanjut Auditi**
+- **Bab III — Kesimpulan**
 
 ---
 
@@ -59,64 +77,73 @@ Baca `shared-pbj-references/PANDUAN.md` untuk:
 
 ## Yang Dikerjakan
 
-### Satu tugas: Jawab pertanyaan berdasarkan regulasi
+### Tugas utama: Log kegiatan pendampingan yang sudah diselesaikan
 
-Untuk setiap pertanyaan yang masuk, jawab secara sistematis:
+Untuk setiap penugasan pendampingan, catat **setiap kegiatan** yang dilakukan tim Inspektorat ke `_LHP/kegiatan-pendampingan.json` via tool `append_kegiatan_pendampingan`. Lalu render via `render_report(skill="konsultasi-pengadaan", ...)`.
 
-1. **Identifikasi isu** — apa pertanyaan atau masalah intinya?
-2. **Cari regulasi yang relevan** — pasal/ayat mana yang berlaku? (gunakan referensi di bawah)
-3. **Analisis aplikatif** — bagaimana regulasi diterapkan pada situasi yang ditanyakan?
-4. **Sampaikan opsi** — jika ada lebih dari satu pendekatan yang sah, jelaskan masing-masing beserta risikonya
-5. **Berikan pendapat** — rekomendasikan yang terbaik berdasarkan regulasi dan konteks
-6. **Catat keterbatasan** — jika ada ketidakpastian atau kondisi khusus yang dapat mengubah analisis
+**Schema entry kegiatan:**
+```json
+{
+  "tanggal": "2026-02-15",
+  "jenis_kegiatan": "Rapat Klarifikasi KAK | Reviu HPS Sebelum Tender | Klarifikasi Tender Ulang | Pendampingan Penyusunan Dokumen | dll",
+  "pihak_didampingi": "PPK / PA / KPA / Pokja Pemilihan / dst",
+  "deskripsi": "Apa yang tim Inspektorat lakukan dalam kegiatan ini (1-3 kalimat)",
+  "hasil": "Apa yang berhasil diselesaikan / disepakati dari kegiatan ini",
+  "dokumen_pendukung": ["Notulen rapat 15-02-2026", "Draft KAK rev-1 → rev-2"],
+  "tindak_lanjut": "Hal yang masih harus diselesaikan auditi (opsional)"
+}
+```
 
-**Jenis pertanyaan yang ditangani:**
-- Perencanaan: pemecahan/penggabungan paket, penyusunan HPS, kelengkapan dokumen, jenis KAK
-- Metode pemilihan: threshold tender, penunjukan langsung, e-katalog, pengadaan langsung
-- Proses pemilihan: penanganan sanggah, satu penawaran, pemenang mengundurkan diri
-- Kontrak dan pelaksanaan: jenis kontrak, addendum, denda keterlambatan, pemutusan kontrak
-- Isu lintas regulasi: dampak Perpres 46/2025, PDN, konflik kepentingan
+**Jenis kegiatan yang biasa di-log:**
+- **Rapat penyusunan dokumen** — KAK, HPS, dokumen tender
+- **Reviu draft dokumen** — sebelum di-finalisasi auditi
+- **Klarifikasi prosedur** — saat tender berjalan, pasca sanggah, pemenang mengundurkan diri
+- **Pendampingan teknis** — penjelasan regulasi tertentu kepada tim auditi
+- **Penyelesaian masalah berjalan** — saat ada kebuntuan proses pengadaan
 
 **Batasan:**
-- JANGAN menilai apakah dokumen sudah sesuai ketentuan → gunakan **reviu-pengadaan**
-- JANGAN memantau progres pelaksanaan kontrak → gunakan **pemantauan-pengadaan**
+- JANGAN menilai apakah dokumen sudah sesuai ketentuan secara komprehensif → gunakan **reviu-pengadaan**
+- JANGAN memantau progres pelaksanaan kontrak end-to-end → gunakan **pemantauan-pengadaan**
 - JANGAN menyimpulkan pelanggaran atau menghitung kerugian → gunakan **audit-pengadaan**
 - Jika isu sangat kompleks atau bernilai material besar: rekomendasikan konsultasi ke LKPP
-- Jika dari analisis ditemukan indikasi pelanggaran yang sudah terjadi: sarankan eskalasi ke audit
+- Jika dari pendampingan ditemukan indikasi pelanggaran yang SUDAH terjadi: sarankan eskalasi ke audit
 
 ---
 
-## Format Output: Memo Konsultasi
+## Format Output: Laporan Hasil Pendampingan
+
+Renderer profil `pendampingan` (`backend/app/tools/lhr_tools.py:_render_pendampingan`) menghasilkan DOCX dengan struktur:
 
 ```
-MEMO KONSULTASI PENGADAAN
-=========================
-Nomor    : [Nomor Urut]/KSL.PBJ/[Tahun]
-Perihal  : [Subjek konsultasi — spesifik]
-Kepada   : [Jabatan/Unit Kerja Pemohon]
-Dari     : Inspektorat II — Inspektorat Jenderal Kementerian Komunikasi dan Digital
-Tanggal  : [Tanggal Memo]
+LAPORAN HASIL PENDAMPINGAN PENGADAAN
+====================================
+Auditan: [Unit Kerja]
+Dasar Penugasan: ST nomor
+Periode Pendampingan: [tanggal kegiatan paling awal] s.d. [tanggal kegiatan paling akhir]
 
-I. PERTANYAAN / PERMASALAHAN
-[Uraian isu atau pertanyaan yang diajukan, termasuk konteks situasinya]
+Catatan: Laporan ini berisi rangkaian KEGIATAN PENDAMPINGAN yang
+telah diselesaikan tim Inspektorat II atas permintaan unit kerja.
+Pendampingan bersifat advisory dan preventif — tidak memberikan
+keyakinan dan tidak mengikat pejabat berwenang.
 
-II. DASAR HUKUM
-[Regulasi yang relevan dengan kutipan pasal/ayat yang spesifik]
+I. KEGIATAN PENDAMPINGAN YANG TELAH DISELESAIKAN (N)
+| No | Tanggal | Jenis Kegiatan | Pihak Didampingi | Deskripsi | Hasil |
+| 1  | ...     | ...            | ...              | ...       | ...   |
 
-III. ANALISIS
-[Bagaimana regulasi berlaku terhadap situasi yang ditanyakan.
-Jika ada lebih dari satu interpretasi, jelaskan masing-masing dengan konsekuensinya.]
+Dokumen Pendukung per Kegiatan
+- Kegiatan #1 (tanggal):
+  • Notulen rapat ...
+  • Draft KAK rev-1 → rev-2
 
-IV. PENDAPAT DAN SARAN
-[Rekomendasi konkret berdasarkan regulasi. Jelaskan "mengapa", bukan hanya "apa".]
+II. HAL YANG MASIH MEMERLUKAN TINDAK LANJUT
+1. [Jenis kegiatan] (tanggal): [tindak lanjut spesifik]
+2. ...
 
-V. CATATAN DAN RISIKO
-[Hal yang perlu diperhatikan, risiko jika saran tidak diikuti, atau kondisi khusus
-yang dapat mengubah analisis.]
-
-*Memo ini merupakan pendapat teknis APIP dan tidak mengikat secara hukum.
-Keputusan final tetap merupakan kewenangan PPK/PA/KPA.*
+III. KESIMPULAN
+[Auto-generated bila tidak ada `kesimpulan` di args render]
 ```
+
+Output file: `_LHP/LHP-PENDAMPINGAN.docx`
 
 ---
 

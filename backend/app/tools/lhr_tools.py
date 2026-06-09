@@ -244,6 +244,8 @@ async def render_report(args: dict) -> dict:
         return _render_memo(folder, args)
     if profile == "rb-4dim":
         return _render_rb(folder, args)
+    if profile == "pendampingan":
+        return _render_pendampingan(folder, args)
     return await _render_kksa(folder, args)
 
 
@@ -461,6 +463,183 @@ def _render_rb(folder: Path, args: dict) -> dict:
     return {"content": [{"type": "text", "text": f"OK|format=rb-4dim|n_komponen={len(komponen)}|{out_path.name}"}]}
 
 
+def _render_pendampingan(folder: Path, args: dict) -> dict:
+    """Laporan Hasil Pendampingan (profil baru utk konsultasi-pengadaan).
+
+    Beda dengan Memo: bukan jawab pertanyaan, melainkan LOG kegiatan
+    pendampingan yang sudah diselesaikan. Sesuai pola Inspektorat II Komdigi
+    yang sering pendampingan berkelanjutan (hadir rapat, reviu bertahap,
+    klarifikasi proses) bukan konsultasi sekali jadi.
+
+    Input: `_LHP/kegiatan-pendampingan.json` — list of:
+        {tanggal, jenis_kegiatan, deskripsi, hasil,
+         pihak_didampingi?, dokumen_pendukung?[], tindak_lanjut?}
+
+    Output: `_LHP/LHP-PENDAMPINGAN.docx` — BAB I Kegiatan Pendampingan +
+    BAB II Tindak Lanjut + Kesimpulan.
+    """
+    keg_path = folder / "_LHP" / "kegiatan-pendampingan.json"
+    if not keg_path.exists():
+        return {
+            "content": [{
+                "type": "text",
+                "text": (
+                    "FAILED|_LHP/kegiatan-pendampingan.json belum ada "
+                    "(pakai append_kegiatan_pendampingan)"
+                ),
+            }],
+            "is_error": True,
+        }
+    try:
+        items = json.loads(keg_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as e:
+        return {
+            "content": [{"type": "text", "text": f"FAILED|baca kegiatan: {e}"}],
+            "is_error": True,
+        }
+    if not isinstance(items, list) or not items:
+        return {
+            "content": [{"type": "text", "text": "FAILED|kegiatan-pendampingan.json kosong"}],
+            "is_error": True,
+        }
+
+    ctx = _ctx_lines(folder)
+    doc = Document()
+    doc.add_heading("LAPORAN HASIL PENDAMPINGAN PENGADAAN", level=0)
+    doc.add_paragraph(args.get("judul") or "Laporan Hasil Pendampingan Pengadaan")
+
+    meta = doc.add_paragraph()
+    meta.add_run(f"Auditan: {args.get('auditi') or ctx.get('obyek', '-')}\n")
+    meta.add_run(f"Dasar Penugasan: {args.get('dasar_permintaan') or ctx.get('nomor st', '-')}\n")
+    meta.add_run(f"Kode penugasan: {ctx.get('kode', folder.name)}\n")
+    # Periode pendampingan: tanggal min-max dari kegiatan
+    tgls = sorted([str(it.get("tanggal", "")) for it in items if it.get("tanggal")])
+    if tgls:
+        periode = f"{tgls[0]} s.d. {tgls[-1]}" if tgls[0] != tgls[-1] else tgls[0]
+        meta.add_run(f"Periode Pendampingan: {periode}\n")
+
+    p = doc.add_paragraph()
+    p.add_run(
+        "Catatan: Laporan ini berisi rangkaian KEGIATAN PENDAMPINGAN yang "
+        "telah diselesaikan tim Inspektorat II atas permintaan unit kerja. "
+        "Pendampingan bersifat advisory dan preventif — tidak memberikan "
+        "keyakinan dan tidak mengikat pejabat berwenang."
+    ).italic = True
+
+    # Gambaran umum (opsional)
+    if args.get("gambaran_umum"):
+        doc.add_heading("Gambaran Umum", level=1)
+        doc.add_paragraph(str(args["gambaran_umum"]))
+
+    # BAB I — Kegiatan Pendampingan
+    doc.add_heading(f"I. Kegiatan Pendampingan yang Telah Diselesaikan ({len(items)})", level=1)
+    table = doc.add_table(rows=1, cols=6)
+    table.style = "Table Grid"
+    hdr = table.rows[0].cells
+    headers = ["No", "Tanggal", "Jenis Kegiatan", "Pihak Didampingi", "Deskripsi", "Hasil"]
+    for i, h in enumerate(headers):
+        hdr[i].text = h
+    for i, it in enumerate(items, start=1):
+        row = table.add_row().cells
+        row[0].text = str(i)
+        row[1].text = str(it.get("tanggal", "-"))
+        row[2].text = str(it.get("jenis_kegiatan", "-"))
+        row[3].text = str(it.get("pihak_didampingi", "-"))
+        row[4].text = str(it.get("deskripsi", "-"))
+        row[5].text = str(it.get("hasil", "-"))
+
+    # Dokumen pendukung (per kegiatan, kalau ada)
+    has_dok = any(it.get("dokumen_pendukung") for it in items)
+    if has_dok:
+        doc.add_heading("Dokumen Pendukung per Kegiatan", level=2)
+        for i, it in enumerate(items, start=1):
+            doks = it.get("dokumen_pendukung") or []
+            if not isinstance(doks, list) or not doks:
+                continue
+            doc.add_paragraph(f"Kegiatan #{i} ({it.get('tanggal', '-')})").bold = True
+            for d in doks:
+                doc.add_paragraph(str(d), style="List Bullet")
+
+    # BAB II — Tindak Lanjut
+    tindak_lanjut = [it for it in items if it.get("tindak_lanjut")]
+    if tindak_lanjut:
+        doc.add_heading(f"II. Hal yang Masih Memerlukan Tindak Lanjut ({len(tindak_lanjut)})", level=1)
+        for i, it in enumerate(tindak_lanjut, start=1):
+            p2 = doc.add_paragraph()
+            p2.add_run(f"{i}. {it.get('jenis_kegiatan', '-')} ({it.get('tanggal', '-')}): ").bold = True
+            p2.add_run(str(it.get("tindak_lanjut", "")))
+
+    # Kesimpulan (template singkat — auditor bisa edit DOCX)
+    doc.add_heading("III. Kesimpulan", level=1)
+    doc.add_paragraph(
+        args.get("kesimpulan")
+        or (
+            f"Tim Inspektorat II telah menyelesaikan {len(items)} kegiatan pendampingan "
+            f"pengadaan pada {args.get('auditi') or ctx.get('obyek', 'unit kerja')}. "
+            f"Seluruh kegiatan diarahkan untuk mencegah penyimpangan prosedur "
+            f"pengadaan dan memberikan masukan teknis berbasis Perpres 16/2018 "
+            f"jo. 12/2021. Pendampingan ini tidak menggantikan kewenangan "
+            f"PPK/PA/KPA atas keputusan pengadaan."
+        )
+    )
+
+    out_path = folder / "_LHP" / "LHP-PENDAMPINGAN.docx"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(out_path)
+    return {
+        "content": [{
+            "type": "text",
+            "text": (
+                f"OK|format=pendampingan|n_kegiatan={len(items)}|"
+                f"n_tindak_lanjut={len(tindak_lanjut)}|{out_path.name}"
+            ),
+        }]
+    }
+
+
+@tool(
+    "append_kegiatan_pendampingan",
+    "Tambah satu kegiatan pendampingan ke `_LHP/kegiatan-pendampingan.json` "
+    "(skill konsultasi-pengadaan, profil 'pendampingan'). Schema: "
+    "{tanggal: 'YYYY-MM-DD', jenis_kegiatan: 'Rapat|Reviu|Klarifikasi|Pendampingan langsung|...', "
+    "deskripsi: 'apa yg auditor lakukan', hasil: 'apa yg berhasil diselesaikan', "
+    "pihak_didampingi?: 'PPK/PA/Pokja Pemilihan/dst', "
+    "dokumen_pendukung?: ['Notulen rapat tanggal X', 'Draft KAK rev-2', ...], "
+    "tindak_lanjut?: 'hal yg masih perlu diselesaikan auditi'}. "
+    "Konsultasi-pengadaan TIDAK pakai temuan KKSA dan TIDAK pakai memo — pakai "
+    "log kegiatan ini, lalu render_report.",
+    {"penugasan_folder": str, "kegiatan": dict},
+)
+async def append_kegiatan_pendampingan(args: dict) -> dict:
+    path = Path(args["penugasan_folder"]) / "_LHP" / "kegiatan-pendampingan.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    items: list = []
+    if path.exists():
+        try:
+            items = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(items, list):
+                items = []
+        except (json.JSONDecodeError, OSError):
+            items = []
+    new = args.get("kegiatan")
+    if isinstance(new, list):
+        items.extend(new)
+    elif isinstance(new, dict):
+        items.append(new)
+    else:
+        return {
+            "content": [{"type": "text", "text": "FAILED|param 'kegiatan' harus dict atau list of dict"}],
+            "is_error": True,
+        }
+    path.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {
+        "content": [{
+            "type": "text",
+            "text": f"OK|total_kegiatan={len(items)} @ {path}",
+        }]
+    }
+
+
 @tool(
     "append_saran",
     "Tambah butir Memo Konsultansi ke _LHP/saran.json (untuk skill konsultansi). "
@@ -506,9 +685,10 @@ LHR_TOOLS = [
     read_temuan_json,
     check_completeness,
     write_rekomendasi_json,
-    render_report,     # dispatcher per-profil (kksa/memo/rb-4dim) — jalur utama LHP
+    render_report,     # dispatcher per-profil (kksa/memo/rb-4dim/pendampingan) — jalur utama LHP
     render_lhr_pbj,    # pipeline khusus reviu-pengadaan
-    append_saran,      # Memo Konsultansi
+    append_saran,      # Memo Konsultansi (konsultansi-umum)
+    append_kegiatan_pendampingan,  # Laporan Pendampingan (konsultasi-pengadaan)
     write_penilaian_rb,  # Evaluasi RB 4-dimensi
     run_qc_lhp,
 ]

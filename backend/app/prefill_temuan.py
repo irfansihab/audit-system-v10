@@ -93,8 +93,14 @@ def anomali_to_temuan(
     *,
     idx: int,
     anggota_tim_nama: str | None = None,
+    skill: str | None = None,
 ) -> dict | None:
     """Konversi satu anomali V6 → draft temuan v4.0.0.
+
+    Args:
+        skill: skill penugasan (mis. 'audit-pengadaan'). Untuk skill `audit-*`,
+            kolom `sebab` di-isi placeholder eksplisit bila draft V6 tidak punya —
+            karena kolom Sebab WAJIB di KKP audit (vs reviu yang tidak butuh).
 
     Return None bila anomali tidak punya `draft_catatan` (tidak bisa dikonversi).
     """
@@ -109,12 +115,26 @@ def anomali_to_temuan(
     aspek = (anomali.get("aspek") or "").upper()
     ro_nama = anomali.get("ro_nama")
 
+    # Sebab handling — untuk skill audit-*, kolom Sebab WAJIB. Bila V6 tidak
+    # menyediakan, kasih placeholder eksplisit supaya agen AT tahu wajib isi.
+    sebab_v6 = (draft.get("sebab") or "").strip() or None
+    skill_str = (skill or "").lower()
+    is_audit = skill_str.startswith("audit-")
+    sebab_final = sebab_v6
+    if is_audit and not sebab_final:
+        sebab_final = (
+            "[WAJIB DIISI AUDITOR — akar masalah administratif/prosedural. "
+            "Contoh: 'PPK kurang verifikasi kelengkapan dokumen sebelum tanda tangan', "
+            "'Pokja Pemilihan tidak mengikuti prosedur Perlem LKPP', "
+            "'kelemahan SPI di unit kerja terkait dokumentasi BAST'.]"
+        )
+
     temuan = {
         "sasaran_id": _ASPEK_TO_SASARAN_HINT.get(aspek, "S-01"),
         "kondisi": kondisi,
         "kriteria": (draft.get("kriteria") or "").strip() or None,
         "akibat": (draft.get("akibat") or "").strip() or None,
-        "sebab": (draft.get("sebab") or "").strip() or None,
+        "sebab": sebab_final,
         "dokumen_sumber": _suggest_dokumen_sumber(anomali, ro_nama),
         "judul_temuan": _build_judul(anomali),
         "anggota_tim": {"nama_lengkap": anggota_tim_nama} if anggota_tim_nama else None,
@@ -143,6 +163,7 @@ def build_draft_temuan(
     *,
     anggota_tim_nama: str | None = None,
     severity_min: str = "INFO",
+    skill: str | None = None,
 ) -> dict:
     """Bangun struktur `temuan.json` DRAFT dari anomalies V6.
 
@@ -192,7 +213,7 @@ def build_draft_temuan(
         if severity_rank.get(sev, 0) < min_rank:
             skipped.append({"rule_id": a.get("rule_id"), "reason": f"severity {sev} < {severity_min}"})
             continue
-        t = anomali_to_temuan(a, idx=idx, anggota_tim_nama=anggota_tim_nama)
+        t = anomali_to_temuan(a, idx=idx, anggota_tim_nama=anggota_tim_nama, skill=skill)
         if t is None:
             skipped.append({"rule_id": a.get("rule_id"), "reason": "tidak ada draft_catatan/kondisi"})
             continue

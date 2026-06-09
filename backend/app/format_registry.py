@@ -16,12 +16,19 @@ import re
 
 from app import skills_registry as sreg
 
-VALID_PROFILES = {"kksa", "memo", "rb-4dim"}
+VALID_PROFILES = {"kksa", "memo", "rb-4dim", "pendampingan"}
 
 # Default bila SKILL.md tak menyebut format_laporan.
+#
+# Catatan: `konsultasi-pengadaan` pakai `pendampingan` (bukan `memo`) — di
+# Inspektorat II, konsultasi pengadaan biasanya bersifat pendampingan
+# berkelanjutan (hadir rapat, reviu bertahap), bukan jawab 1-2 pertanyaan.
+# Output: laporan kegiatan pendampingan yg sudah diselesaikan.
+# `konsultansi-umum` tetap pakai `memo` (jawab pertanyaan teknis bersifat
+# advisory satu kali).
 _DEFAULT_PROFILE = {
     "konsultansi-umum": "memo",
-    "konsultasi-pengadaan": "memo",
+    "konsultasi-pengadaan": "pendampingan",
     "evaluasi-reformasi-birokrasi": "rb-4dim",
 }
 

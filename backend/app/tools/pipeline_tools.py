@@ -139,6 +139,44 @@ async def run_batch_rka(args: dict) -> dict:
 
 
 @tool(
+    "run_batch_audit_pbj",
+    "Jalankan pipeline V6 audit-pengadaan: digest_pengadaan + cross_check 11 rules "
+    "(P.1-4, K.1-3, PL.1, B.1, D.1-2) untuk SELURUH SIKLUS pengadaan (perencanaan → "
+    "pemilihan → kontrak → pelaksanaan → pembayaran). Beda dengan reviu-pengadaan "
+    "(perencanaan saja), audit-pengadaan WAJIB menganalisis hasil pekerjaan (BAST, "
+    "SPM, kewajaran pembayaran) dan WAJIB isi kolom Sebab di setiap temuan KKP. "
+    "Output: _KKP/anomalies.json + _KKP/pengadaan-digest.json. KKP format CCSAA "
+    "lengkap: Judul | Kondisi | Kriteria | Sebab | Akibat | Sumber.",
+    {"penugasan_folder": str, "role": str},
+)
+async def run_batch_audit_pbj(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    role = (args.get("role") or "AT").upper()
+    extra = ["--no-render"] if role == "AT" else []  # LHA dirender KT terpisah
+    code, out, err = await run_v6_script(
+        "scripts/audit-pengadaan/run_batch.py",
+        ["--penugasan", str(folder), *extra],
+        timeout=300,
+    )
+    if code != 0:
+        return {
+            "content": [{"type": "text", "text": f"FAILED|exit={code}|err={err[:600]}"}],
+            "is_error": True,
+        }
+    anomalies = safe_read_json(folder / "_KKP" / "anomalies.json")
+    total = len(anomalies) if isinstance(anomalies, list) else len(anomalies.get("anomalies", []))
+    return {
+        "content": [{
+            "type": "text",
+            "text": (
+                f"OK|role={role}|anomalies_total={total}|output={folder / '_KKP'} "
+                f"| AUDIT-MODE: WAJIB analisis hasil pekerjaan + isi kolom Sebab di KKP"
+            ),
+        }]
+    }
+
+
+@tool(
     "run_batch_pbj",
     "Jalankan pipeline lengkap V6 reviu-pengadaan dengan role gating. "
     "AT → output KKP, KT → output LHR. Skript reuse digest_pengadaan dari audit-pengadaan.",
@@ -290,5 +328,6 @@ async def read_preload_context(args: dict) -> dict:
 
 
 PIPELINE_TOOLS = [
-    run_batch_rka, run_batch_pbj, read_pdf_page, read_anomalies, read_preload_context,
+    run_batch_rka, run_batch_pbj, run_batch_audit_pbj,
+    read_pdf_page, read_anomalies, read_preload_context,
 ]
