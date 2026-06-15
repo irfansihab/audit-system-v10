@@ -1,8 +1,10 @@
-# Roadmap — Audit AI v8
+# Roadmap — INTEGRAL v8
 
-> **Konsolidasi: INTEGRAL → satu produk "Audit AI v8".**
-> v8 meleburkan lapisan "INTEGRAL AI Workspace" (branding + UX 7-tahapan SIMWAS) ke dalam
-> inti Audit AI — tidak lagi ada identitas "INTEGRAL" terpisah. Satu nama, satu UI, satu data model.
+> **Konsolidasi: INTEGRAL jadi satu produk tunggal (v8).**
+> Nama produk **TETAP "INTEGRAL"** (logo ∫, palette ungu `#5C4FE7`). Yang dihapus adalah
+> **dualitasnya** — selama ini terasa dua produk ("INTEGRAL AI Workspace · Powered by Audit AI v7").
+> Di v8, "Audit AI" turun jadi **engine/versi internal**, bukan brand terpisah. Satu nama (INTEGRAL),
+> satu UI, satu data model. **"v8" = nomor versi codebase, bukan nama baru.**
 
 **Dibuat:** 16 Juni 2026 · **Basis:** clone Audit v7 `d0c8a81` (branch `v8-main`, folder `sistem audit v8`).
 Roadmap v7 lama diarsipkan di [`docs/ROADMAP-v7-archive.md`](docs/ROADMAP-v7-archive.md) (backlog mutu & detail teknis tetap berlaku — lihat Workstream E).
@@ -11,10 +13,24 @@ Roadmap v7 lama diarsipkan di [`docs/ROADMAP-v7-archive.md`](docs/ROADMAP-v7-arc
 
 ## 0. Keputusan pendiri v8 (16 Juni 2026)
 
-- **INTEGRAL bukan sistem terpisah** — ia lapisan branding/UX di atas codebase v7 yang sama. v8 = hapus identitas terpisah itu, jadikan satu produk **Audit AI v8**.
+- **INTEGRAL bukan sistem terpisah** — ia lapisan branding/UX di atas codebase v7 yang sama. v8 = hapus **dualitasnya**, jadikan **INTEGRAL** satu produk tunggal (nama dipertahankan; "Audit AI" jadi engine internal).
+- **Nama produk = INTEGRAL** (keputusan user 16 Juni: nama lama dipertahankan, hanya dualitas "powered by Audit v7" yang dibuang). v8 = versi codebase.
 - **Clone, bukan merge dua repo** — tak ada repo "audit v7" kedua; v8 = salinan bersih repo ini.
 - **Dipertahankan:** workflow 7-tahapan · integrasi SIMWAS v2 · CACM/EWS · eval harness + mutu agen (R0–R4, PKP-di-feedback).
-- **Baru di v8:** **login username + password** (ganti prototype role-only).
+- **Baru di v8:** **login username + password** (ganti prototype role-only) + **pemantauan Tindak Lanjut Hasil Pengawasan (TLHP)** sebagai pilar penuh.
+
+### Visi produk: INTEGRAL = workspace utama auditor (4 pilar)
+
+INTEGRAL adalah **satu tempat** auditor menjalankan seluruh pengawasan — dari informasi → deteksi → kerja → tindak lanjut:
+
+| Pilar | Modul | Fungsi |
+|---|---|---|
+| 📚 **Pengetahuan** | **Wiki** (`knowledge/`) | Semua informasi: pattern temuan, regulasi, glossary, profil auditi/vendor, riwayat. |
+| 🔔 **Deteksi dini** | **CACM / EWS** (`CACM/`) | Early Warning System: pantau kondisi anggaran/pengadaan/kinerja satker, picu usulan penugasan. |
+| 🤖 **Mesin kerja** | **Agen** (AT/KT + skill R0–R4) | Eksekusi analisis: digest → temuan → KKP → LHR, dengan HITL. |
+| 🔁 **Tindak lanjut** | **TLHP** (baru, kelas-satu) | Pantau status rekomendasi LHP/LHR sampai tuntas — menutup lingkaran pengawasan. |
+
+Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganalisis (didukung Wiki) → laporan terbit → TLHP mengawal rekomendasi sampai selesai.**
 
 ## 1. Prinsip arsitektur (warisan v7, tetap berlaku)
 
@@ -25,14 +41,16 @@ Roadmap v7 lama diarsipkan di [`docs/ROADMAP-v7-archive.md`](docs/ROADMAP-v7-arc
 
 ---
 
-## Workstream A — Rebrand & konsolidasi (INTEGRAL → Audit AI v8)
+## Workstream A — Konsolidasi identitas INTEGRAL (hapus dualitas, BUKAN ganti nama)
 
-- [ ] **A1 — Inventarisasi string "INTEGRAL"** lintas repo (frontend UI, `README.md`, `HANDOVER.md`, `docs/*`, prompt agen, frontmatter skill, nama file `*integral*`). Buat daftar ganti.
-- [ ] **A2 — Tetapkan identitas v8**: nama produk final (mis. "Audit AI v8" / nama Indonesia), pertahankan/ubah palette ungu `#5C4FE7`, logo `∫`. → keputusan user.
-- [ ] **A3 — Terapkan rebrand**: ganti string UI (`frontend/`), judul halaman, `AppShell`/`Sidebar`/`TopBar`, landing. Satukan narasi `README.md` + `HANDOVER.md` jadi dokumen v8 tunggal.
-- [ ] **A4 — Bump versi v7→v8**: `config`, manifest, `package.json`, badge, frontmatter skill yang menyebut versi.
-- [ ] **A5 — Bersihkan legacy**: rename `docs/openapi-integral-v7.yaml`→`...-v8`, file `*integral*` lain; lanjutkan pembuangan referensi `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).
-- [ ] **A6 — Arsip**: pindahkan rencana/docs ber-nuansa "INTEGRAL fase" yang sudah usang ke `docs/archive/`.
+> Nama tetap **INTEGRAL**. Tujuan: berhenti tampil seperti dua produk. "Audit AI v7/v8" turun jadi engine/versi internal.
+
+- [ ] **A1 — Hapus framing "Powered by Audit AI v7"** dari UI (landing, `TopBar`, footer, meta title) → cukup **"INTEGRAL — Workspace Pengawasan Inspektorat II"**. "Audit AI" hanya muncul di About/teknis sebagai engine.
+- [ ] **A2 — Identitas tetap**: pertahankan logo **∫** + palette ungu `#5C4FE7`. Tidak ada aset baru. (Keputusan: nama tidak diganti.)
+- [ ] **A3 — Satukan narasi dokumen**: `README.md` + `HANDOVER.md` ditulis ulang sebagai **dokumen INTEGRAL tunggal** — INTEGRAL = produk, Audit AI engine = bagian internal; bukan dua hal.
+- [ ] **A4 — Versi internal v7→v8**: `config`, `package.json`, badge versi → v8 sebagai nomor build, tanpa menyentuh brand "INTEGRAL".
+- [ ] **A5 — Rapikan penamaan teknis**: `docs/openapi-integral-v7.yaml`→`openapi-integral-v8.yaml`; konsisten "integral" di slug teknis. Lanjutkan pembuangan referensi legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).
+- [ ] **A6 — Arsip**: pindahkan docs rencana "fase INTEGRAL" yang sudah usang ke `docs/archive/` (riwayat, bukan acuan aktif).
 
 ## Workstream B — Autentikasi username + password (BARU, fondasi v8)
 
@@ -50,6 +68,12 @@ Roadmap v7 lama diarsipkan di [`docs/ROADMAP-v7-archive.md`](docs/ROADMAP-v7-arc
 - [ ] **C2 — Integrasi SIMWAS v2**: finalisasi kontrak REST (`openapi`→v8), JWKS SSO, webhook; selaras dengan B5.
 - [ ] **C3 — CACM/EWS**: modul `CACM/` + `CacmRun`/`EwsFinding` + halaman CACM dipertahankan & diverifikasi.
 - [ ] **C4 — Mutu agen & eval (lanjutan v7)**: skill **R0–R4** untuk reviu sudah selesai → **lanjutkan ke rumpun audit/evaluasi/pemantauan** (hati-hati: paradigma stop-confirm berbeda per rumpun); PKP-di-feedback; `backend/eval` (rubrik, golden, judge, verification pass).
+- [ ] **C5 — TLHP sebagai pilar penuh (BARU)** — naikkan `pemantauan-tindak-lanjut` dari skill skeleton jadi **modul produk**:
+  - Data model: matriks rekomendasi (asal LHP/LHR, No rek, substansi, PIC, deadline, status SUDAH/PROSES/BELUM, bukti TL, umur/aging).
+  - UI: dashboard TLHP (per satker/PIC, aging hijau→merah, daftar kritis >365 hari) sebagai menu utama (sejajar Penugasan/CACM/Wiki).
+  - Backend: endpoint TLHP + ingest rekomendasi dari LHP terbit (auto dari Tahapan 7) → **menutup lingkaran** (laporan → TLHP).
+  - Lengkapi `knowledge/skills/pemantauan-tindak-lanjut/references/` (4 file kosong) + agen pemantauan TLHP.
+  - Integrasi SIMWAS: sinkron status TLHP bila SIMWAS jadi sumber/penampung.
 
 ## Workstream D — Infra & bootstrap v8
 
@@ -61,7 +85,7 @@ Roadmap v7 lama diarsipkan di [`docs/ROADMAP-v7-archive.md`](docs/ROADMAP-v7-arc
 ## Workstream E — Backlog warisan v7 (tetap berlaku — detail di arsip)
 
 - [ ] Konsistensi skill rumpun **audit/evaluasi/pemantauan** → pola Tahap (lihat [[project-skill-orkestrasi-v7]] di memori).
-- [ ] Gap audit skill: `pemantauan-tindak-lanjut` masih skeleton (references kosong); `audit-kinerja` wajib riset online tapi agen tak punya tool web; unsur **Sebab** pada `evaluasi-mr`/`evaluasi-umum` kontradiktif dgn aturan "sebab hanya audit".
+- [ ] Gap audit skill: `audit-kinerja` wajib riset online tapi agen tak punya tool web; unsur **Sebab** pada `evaluasi-mr`/`evaluasi-umum` kontradiktif dgn aturan "sebab hanya audit". (TLHP skeleton → sudah diangkat ke **C5**.)
 - [ ] Eval P3–P5: perkuat grounding+coverage; token logging (`agent_runs`) + instrumen HITL; ukur akurasi digest.
 - [ ] A3 laporan bespoke (dashboard pemantauan, tabel aspek evaluasi).
 - [ ] Fix kosmetik: warning duplicate-key `Sidebar.tsx`; cap 14000 char `load_skill` untuk 2 skill pipeline besar.
