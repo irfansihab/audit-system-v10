@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import Base, engine
-from app.routes import agen, auth, cacm, dashboard, dokumen, feedback, files, graduasi, knowledge, penugasan, skills
+from app.routes import agen, auth, cacm, dashboard, dokumen, feedback, files, graduasi, knowledge, penugasan, skills, tlhp
 
 settings = get_settings()
 log = logging.getLogger(__name__)
@@ -67,6 +67,7 @@ app.include_router(knowledge.router)
 app.include_router(cacm.router)
 app.include_router(skills.router)
 app.include_router(dashboard.router)
+app.include_router(tlhp.router)
 app.include_router(graduasi.router)
 
 

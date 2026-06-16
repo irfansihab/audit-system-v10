@@ -145,6 +145,18 @@ export const api = {
   /** Daftar skill pengawasan terdaftar (folder-driven) untuk dropdown. */
   getSkills: () => request<SkillInfo[]>('/skills'),
 
+  /** Ringkasan beranda (1 panggilan, di-cache backend ~30s) — widget dashboard. */
+  getDashboardSummary: () => request<any>('/dashboard/summary'),
+
+  /** Daftar rekomendasi TLHP (ber-aging). Filter opsional satker/status. */
+  listTlhp: (params?: { satker_kode?: string; status?: string }) => {
+    const qs = new URLSearchParams();
+    if (params?.satker_kode) qs.set('satker_kode', params.satker_kode);
+    if (params?.status) qs.set('status', params.status);
+    const q = qs.toString();
+    return request<{ total: number; items: any[] }>(`/tlhp${q ? `?${q}` : ''}`);
+  },
+
   /** Status evaluasi bertahap (gate-based). gated=false untuk skill non-bertahap. */
   getGates: (penugasanId: number) =>
     request<GateStatus>(`/penugasan/${penugasanId}/gates`),

@@ -40,6 +40,7 @@ const MENU_ITEMS: MenuItem[] = [
       { href: '/knowledge#kriteria-cacm', label: 'Kriteria CACM' },
     ],
   },
+  { href: '/tlhp', label: 'Tindak Lanjut', icon: '🔁' },
   {
     href: '/knowledge',
     label: 'Knowledge',

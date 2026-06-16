@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "judul": "Tindak Lanjut Hasil Pengawasan (TLHP) — DUMMY",
+    "unit": "Inspektorat II, Kementerian Komunikasi dan Digital RI",
+    "catatan": "Data dummy untuk modul C5 / dashboard F4. Nanti diisi dari rekomendasi LHP terbit (Tahapan 7) + sinkron SIMWAS. Status: SUDAH | PROSES | BELUM | TIDAK_DAPAT. Aging dihitung backend dari tgl_lhp.",
+    "sumber": "dummy"
+  },
+  "rekomendasi": [
+    {"no_rek": "REK-2026-014", "asal_lhp": "LHR RKA-K/L Ekosdig TA 2026", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "substansi": "Sesuaikan harga satuan konsumsi rapat dengan SBM TA 2026", "pic": "Sekretariat Ditjen Ekosdig", "tgl_lhp": "2026-04-10", "deadline": "2026-06-10", "status": "PROSES", "bukti_tl": "Nota dinas perbaikan RAB (draft)"},
+    {"no_rek": "REK-2026-009", "asal_lhp": "LHA Pengadaan Wasdig TA 2026", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "substansi": "Lengkapi BAST dengan hasil uji fungsi perangkat", "pic": "PPK Wasdig", "tgl_lhp": "2026-03-05", "deadline": "2026-05-05", "status": "BELUM", "bukti_tl": ""},
+    {"no_rek": "REK-2026-002", "asal_lhp": "LHE SAKIP Itjen 2025", "satker": "Inspektorat Jenderal", "satker_kode": "itjen", "substansi": "Tajamkan indikator kinerja agar SMART pada PK 2026", "pic": "Bagian Perencanaan Itjen", "tgl_lhp": "2026-02-01", "deadline": "2026-04-01", "status": "SUDAH", "bukti_tl": "PK 2026 revisi + SK penetapan IKU"},
+    {"no_rek": "REK-2025-061", "asal_lhp": "LHR Pengadaan Ekosdig TA 2025", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "substansi": "Dokumentasikan metodologi HPS dengan minimal 2 sumber harga", "pic": "Pokja Pemilihan", "tgl_lhp": "2025-10-05", "deadline": "2025-12-05", "status": "PROSES", "bukti_tl": "Survei pasar tambahan (sebagian)"},
+    {"no_rek": "REK-2025-048", "asal_lhp": "LHA Kinerja Program Wasdig 2025", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "substansi": "Bangun mekanisme validasi data capaian outcome", "pic": "Sekretariat Ditjen Wasdig", "tgl_lhp": "2025-08-20", "deadline": "2025-11-20", "status": "BELUM", "bukti_tl": ""},
+    {"no_rek": "REK-2025-033", "asal_lhp": "LHE SPIP Ekosdig 2025", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "substansi": "Susun register risiko terkini per unit kerja", "pic": "UPR Ekosdig", "tgl_lhp": "2025-06-18", "deadline": "2025-09-18", "status": "PROSES", "bukti_tl": "Register risiko 2 dari 5 unit"},
+    {"no_rek": "REK-2025-012", "asal_lhp": "LHA Pengadaan Itjen 2025", "satker": "Inspektorat Jenderal", "satker_kode": "itjen", "substansi": "Pulihkan kelebihan bayar atas volume pekerjaan kurang", "pic": "PPK Itjen", "tgl_lhp": "2025-02-10", "deadline": "2025-05-10", "status": "BELUM", "bukti_tl": ""},
+    {"no_rek": "REK-2024-077", "asal_lhp": "LHR RKA-K/L Wasdig TA 2025", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "substansi": "Lengkapi 7 blok substansi TOR yang belum ada", "pic": "Sekretariat Ditjen Wasdig", "tgl_lhp": "2024-12-15", "deadline": "2025-03-15", "status": "PROSES", "bukti_tl": "Revisi TOR sebagian"},
+    {"no_rek": "REK-2024-051", "asal_lhp": "LHA Kinerja Ekosdig 2024", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "substansi": "Perbaiki cascading Renstra→Renja→PK", "pic": "Bagian Perencanaan Ekosdig", "tgl_lhp": "2024-09-30", "deadline": "2024-12-30", "status": "BELUM", "bukti_tl": ""},
+    {"no_rek": "REK-2024-019", "asal_lhp": "Temuan BPK LK 2023", "satker": "Inspektorat Jenderal", "satker_kode": "itjen", "substansi": "Selesaikan pertanggungjawaban belanja yang belum lengkap", "pic": "Bagian Keuangan", "tgl_lhp": "2024-04-12", "deadline": "2024-07-12", "status": "TIDAK_DAPAT", "bukti_tl": "Pejabat terkait sudah pensiun — perlu penetapan TP/TGR"}
+  ]
+}

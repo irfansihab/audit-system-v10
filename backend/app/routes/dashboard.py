@@ -23,6 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth import get_current_user
 from app.database import get_db
 from app.models import EwsFinding, Penugasan, Role, User
+from app.routes.tlhp import tlhp_summary
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -118,8 +119,8 @@ async def dashboard_summary(
         "ews": await _ews_summary(db),
         "pkpt": _pkpt_summary(),
         "capaian_kinerja": _kinerja_summary(),
-        # Stub — modul belum dibangun (roadmap): C5 TLHP · F3 permintaan · F5 tren temuan.
-        "tlhp": {"tersedia": False, "catatan": "Modul TLHP (C5) belum dibangun."},
+        "tlhp": tlhp_summary(),  # F4 — modul C5 (fase dummy)
+        # Stub — modul belum dibangun (roadmap): F3 permintaan · F5 tren temuan.
         "permintaan_belum_ditindaklanjuti": {"tersedia": False, "catatan": "Belum ada model permintaan (F3)."},
         "tren_temuan_berulang": {"tersedia": False, "catatan": "Belum dirakit (F5)."},
         "_role": role.value if hasattr(role, "value") else str(role),
