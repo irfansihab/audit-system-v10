@@ -93,12 +93,10 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - [ ] **C2 — Integrasi SIMWAS v2**: finalisasi kontrak REST (`openapi`→v8), JWKS SSO, webhook; selaras dengan B5.
 - [ ] **C3 — CACM/EWS**: modul `CACM/` + `CacmRun`/`EwsFinding` + halaman CACM dipertahankan & diverifikasi.
 - [ ] **C4 — Mutu agen & eval (lanjutan v7)**: skill **R0–R4** untuk reviu sudah selesai → **lanjutkan ke rumpun audit/evaluasi/pemantauan** (hati-hati: paradigma stop-confirm berbeda per rumpun); PKP-di-feedback; `backend/eval` (rubrik, golden, judge, verification pass).
-- [ ] **C5 — TLHP sebagai pilar penuh (BARU)** — naikkan `pemantauan-tindak-lanjut` dari skill skeleton jadi **modul produk**:
-  - Data model: matriks rekomendasi (asal LHP/LHR, No rek, substansi, PIC, deadline, status SUDAH/PROSES/BELUM, bukti TL, umur/aging).
-  - UI: dashboard TLHP (per satker/PIC, aging hijau→merah, daftar kritis >365 hari) sebagai menu utama (sejajar Penugasan/CACM/Wiki).
-  - Backend: endpoint TLHP + ingest rekomendasi dari LHP terbit (auto dari Tahapan 7) → **menutup lingkaran** (laporan → TLHP).
-  - Lengkapi `knowledge/skills/pemantauan-tindak-lanjut/references/` (4 file kosong) + agen pemantauan TLHP.
-  - Integrasi SIMWAS: sinkron status TLHP bila SIMWAS jadi sumber/penampung.
+- [~] **C5 — TLHP sebagai pilar penuh (BARU)** — fase pertama ✅ (16 Juni):
+  - [x] Backend `routes/tlhp.py`: `GET /tlhp` (list+filter) & `/tlhp/summary`; hitung **umur/warna aging** (HIJAU/KUNING/ORANGE/MERAH) + flag **kritis** (>365 hari belum tuntas). Data dummy `fixtures/tlhp-dummy.json` (10 rekomendasi).
+  - [x] UI: **menu "Tindak Lanjut"** + halaman `app/tlhp/page.tsx` (tabel rekomendasi + aging + filter status) + widget F4 di dashboard.
+  - [ ] **Lanjutan:** data model DB (`TlhpRekomendasi`) + **ingest rekomendasi dari LHP terbit (Tahapan 7)** → menutup lingkaran laporan→TLHP; lengkapi `pemantauan-tindak-lanjut/references/` + agen; sinkron SIMWAS.
 
 ## Workstream D — Infra & bootstrap v8
 
@@ -119,15 +117,17 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 
 > Beranda = ringkasan sekilas seluruh pengawasan. Mengikat 4 pilar (Wiki/EWS/Agen/TLHP). **Wajib ringan** (lihat §3): semua angka dari ringkasan precomputed, satu endpoint.
 
+Status: **beranda 6-widget LIVE** ✅ (16 Juni) — `app/dashboard/page.tsx` konsumsi `/dashboard/summary`, desain clean (UX §2). F1/F2/F4/F6 + kartu Penugasan terisi data; F3/F5 placeholder jujur "segera hadir".
+
 Widget (kartu) yang ditampilkan:
-- [ ] **F1 — Update informasi EWS** — peringatan terbaru dari CACM/EWS (per satker, severity), link ke detail.
-- [ ] **F2 — Progres pemenuhan PKPT** — Program Kerja Pengawasan Tahunan: rencana vs realisasi penugasan (%, sisa). **Keputusan: pakai DUMMY dulu** → fixture [`backend/app/fixtures/pkpt-dummy.json`](backend/app/fixtures/pkpt-dummy.json) (12 kegiatan: nama · jenis · satker · rencana_bulan · triwulan · status RENCANA/BERJALAN/SELESAI/TERTUNDA). Nanti diganti sumber resmi / sinkron SIMWAS.
-- [ ] **F3 — Permintaan pengawasan belum ditindaklanjuti** — antrian ND/permintaan masuk yang belum jadi penugasan (umur, asal).
-- [ ] **F4 — Progres TLHP** — rekap status tindak lanjut (SUDAH/PROSES/BELUM), kritis >365 hari (tarik dari modul C5).
-- [ ] **F5 — Tren temuan berulang** — pola temuan lintas penugasan/waktu (dari Wiki pola-berulang + temuan), grafik tren.
-- [ ] **F6 — Capaian kinerja (scorecard)** — nilai **SPIP · SAKIP · RB · IACM · PEKPP · temuan BPK** dalam satu kartu skor (nilai + tren). **Keputusan: entri MANUAL dulu** → fixture [`backend/app/fixtures/capaian-kinerja.json`](backend/app/fixtures/capaian-kinerja.json) (6 indikator, `sumber:"manual"`). **Nanti dihubungkan ke API sistem kinerja saat siap** → ganti `sumber` jadi API + sinkron.
-- [ ] **F7 — Satu endpoint ringkas** `GET /dashboard/summary` mengembalikan semua angka dari tabel ringkasan (bukan agregasi berat live). Role-aware (pimpinan vs auditor).
-- [ ] **F8 — Desain clean** (Prinsip UX §2): kartu seragam, status warna sekilas, klik kartu → detail; tanpa kontrol membingungkan.
+- [x] **F1 — Update informasi EWS** — peringatan terbaru dari CACM/EWS (per satker, severity), link ke detail. ✅
+- [x] **F2 — Progres pemenuhan PKPT** ✅ — widget %, berjalan/rencana/tertunda dari fixture [`pkpt-dummy.json`](backend/app/fixtures/pkpt-dummy.json) (DUMMY; nanti sumber resmi/SIMWAS).
+- [ ] **F3 — Permintaan pengawasan belum ditindaklanjuti** — placeholder "segera hadir" (perlu model permintaan). Belum dibangun.
+- [x] **F4 — Progres TLHP** ✅ — rekap status + aging warna + kritis >365 hari, dari modul C5.
+- [ ] **F5 — Tren temuan berulang** — placeholder "segera hadir" (perlu agregasi pola temuan). Belum dibangun.
+- [x] **F6 — Capaian kinerja (scorecard)** ✅ — 6 indikator (SPIP/SAKIP/RB/IACM/PEKPP/temuan BPK) + tren, dari fixture [`capaian-kinerja.json`](backend/app/fixtures/capaian-kinerja.json) (MANUAL; nanti API kinerja).
+- [x] **F7 — Satu endpoint ringkas** ✅ `GET /dashboard/summary` (= G1; cache TTL 30s).
+- [x] **F8 — Desain clean** ✅ (Prinsip UX §2): kartu seragam, status warna sekilas, klik → detail. Diverifikasi via screenshot.
 
 ## Workstream G — Kinerja & skala (±80 pengguna)
 

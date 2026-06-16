@@ -203,7 +203,7 @@
     <div class="task"><div class="box"></div><div class="t"><b>C2 — Integrasi SIMWAS v2</b> <span class="pill keep">tetap</span><span class="sub">Finalisasi kontrak REST (openapi→v8), JWKS SSO, webhook; selaras dengan B5.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>C3 — CACM/EWS</b> <span class="pill keep">tetap</span><span class="sub">Modul CACM + CacmRun/EwsFinding + halaman CACM dipertahankan &amp; diverifikasi.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>C4 — Mutu agen &amp; eval</b> <span class="pill keep">lanjut v7</span><span class="sub">Skill R0–R4 (reviu selesai) → lanjut rumpun audit/evaluasi/pemantauan; PKP-di-feedback; backend/eval.</span></div></div>
-    <div class="task"><div class="box"></div><div class="t"><b>C5 — TLHP sebagai pilar penuh</b> <span class="pill new">baru</span><span class="sub">Naikkan pemantauan-tindak-lanjut dari skill skeleton jadi modul: data model matriks rekomendasi + aging; dashboard TLHP (per satker/PIC, hijau→merah, kritis &gt;365 hari) sebagai menu utama; auto-ingest rekomendasi dari laporan terbit (Tahapan 7) → menutup lingkaran; lengkapi references + agen.</span></div></div>
+    <div class="task"><div class="box" style="background:var(--green);border-color:var(--green)"></div><div class="t"><b>C5 — TLHP sebagai pilar penuh</b> <span class="pill keep">fase 1 selesai</span><span class="sub">✅ endpoint /tlhp + /tlhp/summary (aging hijau→merah + kritis &gt;365 hr), halaman + menu “Tindak Lanjut”, widget F4, data dummy 10 rekomendasi. Lanjutan: model DB + auto-ingest dari LHP Tahapan 7 (tutup lingkaran) + references/agen + sinkron SIMWAS.</span></div></div>
   </div>
 
   <div class="ws">
@@ -223,8 +223,8 @@
   </div>
 
   <div class="ws new">
-    <div class="head"><span class="tag">F</span><h3>Dashboard beranda — pusat informasi <span class="pill new">baru</span></h3></div>
-    <p class="desc">Ringkasan sekilas seluruh pengawasan, mengikat 4 pilar. Wajib ringan (§3): angka dari ringkasan precomputed, satu endpoint.</p>
+    <div class="head"><span class="tag">F</span><h3>Dashboard beranda — pusat informasi <span class="pill keep">live (6 widget)</span></h3></div>
+    <p class="desc"><b>Beranda LIVE ✅ (16 Juni)</b> — konsumsi /dashboard/summary, desain clean. F1 EWS · F2 PKPT · F4 TLHP · F6 scorecard + kartu Penugasan terisi data; F3/F5 placeholder “segera hadir” (modul belum dibangun). Diverifikasi screenshot.</p>
     <div class="task"><div class="box"></div><div class="t"><b>F1 — Update informasi EWS</b><span class="sub">Peringatan terbaru dari CACM/EWS (per satker, severity) → link detail.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F2 — Progres pemenuhan PKPT</b><span class="sub">Rencana vs realisasi (%, sisa). <b>Dummy dulu</b>: fixture pkpt-dummy.json (12 kegiatan: jenis · satker · rencana bulan · status). Nanti sinkron SIMWAS/sumber resmi.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F3 — Permintaan pengawasan belum ditindaklanjuti</b><span class="sub">Antrian ND/permintaan masuk yang belum jadi penugasan (umur, asal).</span></div></div>
