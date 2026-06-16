@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "judul": "Program Kerja Pengawasan Tahunan (PKPT) — DUMMY",
+    "unit": "Inspektorat II, Kementerian Komunikasi dan Digital RI",
+    "tahun": 2026,
+    "catatan": "Data dummy untuk dashboard F2 (progres pemenuhan PKPT). Nanti diganti sumber resmi / sinkron SIMWAS. Status: RENCANA | BERJALAN | SELESAI | TERTUNDA.",
+    "sumber": "dummy"
+  },
+  "kegiatan": [
+    {"kode": "PKPT-2026-01", "kegiatan": "Reviu RKA-K/L TA 2026 — Ditjen Ekosistem Digital", "jenis": "reviu-rka-kl", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "rencana_bulan": "Maret", "triwulan": "TW I", "status": "SELESAI"},
+    {"kode": "PKPT-2026-02", "kegiatan": "Reviu RKA-K/L TA 2026 — Ditjen Pengawasan Ruang Digital", "jenis": "reviu-rka-kl", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "rencana_bulan": "Maret", "triwulan": "TW I", "status": "SELESAI"},
+    {"kode": "PKPT-2026-03", "kegiatan": "Evaluasi SAKIP 2025 — Inspektorat Jenderal", "jenis": "evaluasi-sakip", "satker": "Inspektorat Jenderal", "satker_kode": "itjen", "rencana_bulan": "Februari", "triwulan": "TW I", "status": "SELESAI"},
+    {"kode": "PKPT-2026-04", "kegiatan": "Reviu Pengadaan Aplikasi PDP — Ditjen Ekosistem Digital", "jenis": "reviu-pengadaan", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "rencana_bulan": "April", "triwulan": "TW II", "status": "BERJALAN"},
+    {"kode": "PKPT-2026-05", "kegiatan": "Audit Pengadaan Infrastruktur Pemantauan — Ditjen Pengawasan Ruang Digital", "jenis": "audit-pengadaan", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "rencana_bulan": "Mei", "triwulan": "TW II", "status": "BERJALAN"},
+    {"kode": "PKPT-2026-06", "kegiatan": "Evaluasi SPIP 2026 — Ditjen Ekosistem Digital", "jenis": "evaluasi-spip", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "rencana_bulan": "Juni", "triwulan": "TW II", "status": "RENCANA"},
+    {"kode": "PKPT-2026-07", "kegiatan": "Audit Kinerja Program Pengawasan Ruang Digital", "jenis": "audit-kinerja", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "rencana_bulan": "Juli", "triwulan": "TW III", "status": "RENCANA"},
+    {"kode": "PKPT-2026-08", "kegiatan": "Pemantauan Tindak Lanjut Hasil Pengawasan Semester I", "jenis": "pemantauan-tindak-lanjut", "satker": "Lintas Satker", "satker_kode": "lintas", "rencana_bulan": "Juli", "triwulan": "TW III", "status": "RENCANA"},
+    {"kode": "PKPT-2026-09", "kegiatan": "Evaluasi Reformasi Birokrasi 2026 — Inspektorat Jenderal", "jenis": "evaluasi-reformasi-birokrasi", "satker": "Inspektorat Jenderal", "satker_kode": "itjen", "rencana_bulan": "Agustus", "triwulan": "TW III", "status": "RENCANA"},
+    {"kode": "PKPT-2026-10", "kegiatan": "Reviu RKA-K/L Pagu Anggaran TA 2027 — Ditjen Ekosistem Digital", "jenis": "reviu-rka-kl", "satker": "Direktorat Jenderal Ekosistem Digital", "satker_kode": "ekosdig", "rencana_bulan": "September", "triwulan": "TW III", "status": "RENCANA"},
+    {"kode": "PKPT-2026-11", "kegiatan": "Evaluasi Manajemen Risiko — Ditjen Pengawasan Ruang Digital", "jenis": "evaluasi-manajemen-risiko", "satker": "Direktorat Jenderal Pengawasan Ruang Digital", "satker_kode": "wasdig", "rencana_bulan": "Oktober", "triwulan": "TW IV", "status": "TERTUNDA"},
+    {"kode": "PKPT-2026-12", "kegiatan": "Pemantauan Tindak Lanjut Hasil Pengawasan Semester II", "jenis": "pemantauan-tindak-lanjut", "satker": "Lintas Satker", "satker_kode": "lintas", "rencana_bulan": "Desember", "triwulan": "TW IV", "status": "RENCANA"}
+  ]
+}

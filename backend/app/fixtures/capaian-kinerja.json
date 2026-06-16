@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "judul": "Capaian Kinerja Pengawasan — entri MANUAL (dashboard F6)",
+    "unit": "Inspektorat II / Itjen, Kementerian Komunikasi dan Digital RI",
+    "tahun": 2026,
+    "catatan": "Nilai diisi MANUAL untuk sekarang. Nanti akan dihubungkan dengan API sistem kinerja saat sudah siap (lihat roadmap F6). Field 'sumber' = 'manual' sampai integrasi aktif.",
+    "sumber": "manual"
+  },
+  "indikator": [
+    {"kode": "SPIP", "nama": "Maturitas SPIP", "nilai": 3.21, "skala": "level 1-5", "predikat": "Terdefinisi", "tahun": 2025, "tren": "naik", "target": 3.5, "sumber": "manual"},
+    {"kode": "SAKIP", "nama": "Nilai SAKIP", "nilai": 75.20, "skala": "0-100", "predikat": "BB", "tahun": 2025, "tren": "naik", "target": 80.0, "sumber": "manual"},
+    {"kode": "RB", "nama": "Indeks Reformasi Birokrasi", "nilai": 80.15, "skala": "0-100", "predikat": "A", "tahun": 2025, "tren": "stabil", "target": 82.0, "sumber": "manual"},
+    {"kode": "IACM", "nama": "Internal Audit Capability Model", "nilai": 3.0, "skala": "level 1-5", "predikat": "Level 3 (Integrated)", "tahun": 2025, "tren": "naik", "target": 3.0, "sumber": "manual"},
+    {"kode": "PEKPP", "nama": "Penilaian Efektivitas & Kapabilitas Penyelenggaraan Pengawasan", "nilai": 78.50, "skala": "0-100", "predikat": "Baik", "tahun": 2025, "tren": "naik", "target": 80.0, "sumber": "manual"},
+    {"kode": "TEMUAN_BPK", "nama": "Temuan BPK (LHP)", "nilai": 6, "skala": "jumlah temuan", "predikat": "6 temuan / Rp1,2 M", "tahun": 2025, "tren": "turun", "target": 0, "sumber": "manual", "detail": {"jumlah_temuan": 6, "nilai_rupiah_juta": 1240, "persen_tindak_lanjut_selesai": 67}}
+  ]
+}

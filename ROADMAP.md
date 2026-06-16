@@ -121,11 +121,11 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 
 Widget (kartu) yang ditampilkan:
 - [ ] **F1 — Update informasi EWS** — peringatan terbaru dari CACM/EWS (per satker, severity), link ke detail.
-- [ ] **F2 — Progres pemenuhan PKPT** — Program Kerja Pengawasan Tahunan: rencana vs realisasi penugasan (%, sisa). *Perlu data model PKPT (daftar rencana pengawasan tahunan) — flag baru.*
+- [ ] **F2 — Progres pemenuhan PKPT** — Program Kerja Pengawasan Tahunan: rencana vs realisasi penugasan (%, sisa). **Keputusan: pakai DUMMY dulu** → fixture [`backend/app/fixtures/pkpt-dummy.json`](backend/app/fixtures/pkpt-dummy.json) (12 kegiatan: nama · jenis · satker · rencana_bulan · triwulan · status RENCANA/BERJALAN/SELESAI/TERTUNDA). Nanti diganti sumber resmi / sinkron SIMWAS.
 - [ ] **F3 — Permintaan pengawasan belum ditindaklanjuti** — antrian ND/permintaan masuk yang belum jadi penugasan (umur, asal).
 - [ ] **F4 — Progres TLHP** — rekap status tindak lanjut (SUDAH/PROSES/BELUM), kritis >365 hari (tarik dari modul C5).
 - [ ] **F5 — Tren temuan berulang** — pola temuan lintas penugasan/waktu (dari Wiki pola-berulang + temuan), grafik tren.
-- [ ] **F6 — Capaian kinerja (scorecard)** — nilai **SPIP · SAKIP · RB · IACM · PEKPP · temuan BPK** dalam satu kartu skor (nilai + tren naik/turun). *Perlu sumber/entry nilai — manual input atau integrasi.*
+- [ ] **F6 — Capaian kinerja (scorecard)** — nilai **SPIP · SAKIP · RB · IACM · PEKPP · temuan BPK** dalam satu kartu skor (nilai + tren). **Keputusan: entri MANUAL dulu** → fixture [`backend/app/fixtures/capaian-kinerja.json`](backend/app/fixtures/capaian-kinerja.json) (6 indikator, `sumber:"manual"`). **Nanti dihubungkan ke API sistem kinerja saat siap** → ganti `sumber` jadi API + sinkron.
 - [ ] **F7 — Satu endpoint ringkas** `GET /dashboard/summary` mengembalikan semua angka dari tabel ringkasan (bukan agregasi berat live). Role-aware (pimpinan vs auditor).
 - [ ] **F8 — Desain clean** (Prinsip UX §2): kartu seragam, status warna sekilas, klik kartu → detail; tanpa kontrol membingungkan.
 

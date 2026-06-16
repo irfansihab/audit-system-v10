@@ -226,11 +226,11 @@
     <div class="head"><span class="tag">F</span><h3>Dashboard beranda — pusat informasi <span class="pill new">baru</span></h3></div>
     <p class="desc">Ringkasan sekilas seluruh pengawasan, mengikat 4 pilar. Wajib ringan (§3): angka dari ringkasan precomputed, satu endpoint.</p>
     <div class="task"><div class="box"></div><div class="t"><b>F1 — Update informasi EWS</b><span class="sub">Peringatan terbaru dari CACM/EWS (per satker, severity) → link detail.</span></div></div>
-    <div class="task"><div class="box"></div><div class="t"><b>F2 — Progres pemenuhan PKPT</b><span class="sub">Program Kerja Pengawasan Tahunan: rencana vs realisasi (%, sisa). Perlu data model PKPT — baru.</span></div></div>
+    <div class="task"><div class="box"></div><div class="t"><b>F2 — Progres pemenuhan PKPT</b><span class="sub">Rencana vs realisasi (%, sisa). <b>Dummy dulu</b>: fixture pkpt-dummy.json (12 kegiatan: jenis · satker · rencana bulan · status). Nanti sinkron SIMWAS/sumber resmi.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F3 — Permintaan pengawasan belum ditindaklanjuti</b><span class="sub">Antrian ND/permintaan masuk yang belum jadi penugasan (umur, asal).</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F4 — Progres TLHP</b><span class="sub">Rekap status SUDAH/PROSES/BELUM + kritis &gt;365 hari (dari modul C5).</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F5 — Tren temuan berulang</b><span class="sub">Pola temuan lintas penugasan/waktu (Wiki pola-berulang + temuan), grafik tren.</span></div></div>
-    <div class="task"><div class="box"></div><div class="t"><b>F6 — Capaian kinerja (scorecard)</b><span class="sub">Nilai SPIP · SAKIP · RB · IACM · PEKPP · temuan BPK — satu kartu skor + tren. Perlu sumber/entry nilai.</span></div></div>
+    <div class="task"><div class="box"></div><div class="t"><b>F6 — Capaian kinerja (scorecard)</b><span class="sub">Nilai SPIP · SAKIP · RB · IACM · PEKPP · temuan BPK + tren. <b>Manual dulu</b> (fixture capaian-kinerja.json); nanti dihubungkan ke API sistem kinerja saat siap.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F7 — Satu endpoint ringkas</b><span class="sub">GET /dashboard/summary dari tabel ringkasan (bukan agregasi berat live), role-aware.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>F8 — Desain clean</b> (Prinsip UX §2)<span class="sub">Kartu seragam, status warna sekilas, klik kartu → detail.</span></div></div>
   </div>
