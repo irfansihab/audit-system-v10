@@ -102,7 +102,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 
 ## Workstream D — Infra & bootstrap v8
 
-- [ ] **D1 — Bootstrap dev** (node_modules/.venv TIDAK ikut clone): `cd frontend && npm install`; `cd backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`. (Lihat "Cara menjalankan" di bawah.)
+- [x] **D1 — Bootstrap dev** ✅ (16 Juni) — v8 jalan lokal: backend `.venv` **Python 3.12.13** (`/opt/homebrew/bin/python3.12` — sistem `python3` 3.9.6 TERLALU TUA, butuh ≥3.10) + `pip install -r requirements.txt`; frontend `npm install`. **Gotcha penting (untuk tim saat clone):** (1) `.env` & symlink `backend/.env` **gitignored → TIDAK ikut clone** — buat `.env` dari `.env.example` lalu `ln -sf ../.env backend/.env`; (2) `APP_*_PATH` di `.env` harus menunjuk path **absolut repo INI** (skills/wiki/templates/v6), kalau tidak skill 0/200-default. Backend :8000 + frontend :3000 verified 200, 17 skills.
 - [ ] **D2 — Database v8**: putuskan DB terpisah `audit_v8` vs lanjut `audit_v7` (dev). Jalankan migrasi schema auth (B1). `.env` sudah disalin dari v7 (DATABASE_URL `localhost:5432/audit_v7`).
 - [ ] **D3 — Deploy**: perbarui `DEPLOY.md`, `fly.toml`, `docker-compose.yml`, Dockerfile untuk identitas v8.
 - [ ] **D4 — Repo GitHub v8** (opsional): saat ini folder lokal + branch `v8-main`, remote `v7source` → v7 lokal (untuk cherry-pick). Buat repo `audit-system-v8` bila user mau (butuh konfirmasi).

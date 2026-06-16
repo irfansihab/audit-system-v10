@@ -208,7 +208,7 @@
 
   <div class="ws">
     <div class="head"><span class="tag">D</span><h3>Infra &amp; bootstrap v8</h3></div>
-    <div class="task"><div class="box"></div><div class="t"><b>D1 — Bootstrap dev</b> (node_modules/.venv tidak ikut clone): npm install + venv/pip install.</div></div>
+    <div class="task"><div class="box" style="background:var(--green);border-color:var(--green)"></div><div class="t"><b>D1 — Bootstrap dev</b> <span class="pill keep">selesai</span><span class="sub">Backend .venv Python 3.12 (bukan sistem 3.9) + pip install; frontend npm install. Verified :8000 &amp; :3000 = 200, 17 skills. Gotcha tim saat clone: .env + symlink backend/.env gitignored (buat dari .env.example + ln -sf ../.env backend/.env); APP_*_PATH harus absolut ke repo ini.</span></div></div>
     <div class="task"><div class="box"></div><div class="t"><b>D2 — Database v8</b>: putuskan DB terpisah audit_v8 vs lanjut audit_v7; jalankan migrasi schema auth.</div></div>
     <div class="task"><div class="box"></div><div class="t"><b>D3 — Deploy</b>: perbarui DEPLOY.md, fly.toml, docker-compose, Dockerfile untuk identitas v8.</div></div>
     <div class="task"><div class="box"></div><div class="t"><b>D4 — Repo GitHub v8</b> (opsional): saat ini folder lokal + branch v8-main; buat repo audit-system-v8 bila perlu.</div></div>
