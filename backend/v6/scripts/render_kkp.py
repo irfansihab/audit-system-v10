@@ -8,9 +8,10 @@ Output : penugasan/[nama]/_KKP/KKP-[Nama-Anggota].docx
 Konsumsi sumber kebenaran (temuan.json) dan menghasilkan view per anggota
 tim sesuai filter `anggota_tim.nama_lengkap`. Format kolom mengikuti
 paradigma jenis pengawasan:
-  - audit-pengadaan / audit-kinerja: No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
-  - reviu-* / evaluasi-*           : No, Sasaran, Judul, Kondisi, Kriteria, Akibat, Sumber  (tanpa Sebab)
-  - pemantauan-*                   : No, Sasaran, Judul, Kondisi, Kriteria, Sumber          (tanpa Akibat)
+  - audit / reviu / evaluasi       : No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
+  - pemantauan-*                   : No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Sumber   (tanpa Akibat)
+  Sejak 17 Jun 2026 kolom Sebab ada di SEMUA jenis (anti-mengarang: "Tidak ditemukan
+  penyebab"/"Tidak cukup data" bila tak terbukti).
   - konsultasi-pengadaan           : No, Pertanyaan, Analisis, Dasar Hukum, Rekomendasi    (kolom khusus)
 
 Contoh:
@@ -39,14 +40,14 @@ except ImportError:
 JENIS_KOLOM = {
     "audit-pengadaan":          ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
     "audit-kinerja":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
-    "reviu-pengadaan":          ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "reviu-rka-kl":             ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "evaluasi-sakip":           ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "evaluasi-spip":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "evaluasi-reformasi-birokrasi": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "evaluasi-manajemen-risiko":   ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
-    "pemantauan-pengadaan":     ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sumber Dokumen"],
-    "pemantauan-tindak-lanjut": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sumber Dokumen"],
+    "reviu-pengadaan":          ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "reviu-rka-kl":             ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "evaluasi-sakip":           ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "evaluasi-spip":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "evaluasi-reformasi-birokrasi": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "evaluasi-manajemen-risiko":   ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "pemantauan-pengadaan":     ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
+    "pemantauan-tindak-lanjut": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
 }
 
 WIDTHS = {
@@ -212,12 +213,8 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
                     p0._element.getparent().remove(p0._element)
 
     doc.add_paragraph()
-    if jenis.startswith("reviu") or jenis.startswith("pemantauan"):
-        add_p(doc, "Catatan paradigma reviu/pemantauan: kolom Sebab dan Rekomendasi tidak diisi pada KKP. Rekomendasi dirumuskan saat penyusunan Laporan Hasil Reviu (Task 04) bersama Ketua Tim.",
-              italic=True, size=9)
-    else:
-        add_p(doc, "Catatan: KKP audit memuat kolom Sebab. Rekomendasi dirumuskan di Task 04 (LHP) bersama Ketua Tim setelah seluruh temuan terkonfirmasi.",
-              italic=True, size=9)
+    add_p(doc, "Catatan: kolom Sebab diisi untuk semua jenis pengawasan berdasarkan bukti; bila penyebab tidak ditemukan atau bukti tidak cukup, ditulis \"Tidak ditemukan penyebab\"/\"Tidak cukup data\" (tidak dikarang). Rekomendasi final dirumuskan saat penyusunan Laporan Hasil bersama Ketua Tim.",
+          italic=True, size=9)
     doc.add_paragraph()
     add_p(doc, "⚠ KKP INI ADALAH DRAFT — Mohon berikan feedback ke Ketua Tim sebelum LHP dibuat.",
           bold=True, size=10, align=WD_ALIGN_PARAGRAPH.CENTER)

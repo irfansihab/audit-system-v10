@@ -242,7 +242,7 @@ def _normalize_temuan_input(raw: dict) -> dict:
     out.setdefault("kondisi", "")
     out.setdefault("kriteria", "")
     out.setdefault("akibat", "")
-    out.setdefault("sebab", None)  # reviu tidak punya sebab; bisa null
+    out.setdefault("sebab", None)  # semua jenis isi bila terbukti; else "tidak ditemukan/tidak cukup data" (anti-mengarang)
     out.setdefault("dokumen_sumber", [])
 
     # Kodefikasi temuan (SIM-HP/APIP) — lihat get_kodefikasi_temuan. Format `<sub>.<param>`.
@@ -278,7 +278,8 @@ def _normalize_temuan_input(raw: dict) -> dict:
     "assigned_to, judul, kondisi, kriteria, akibat, dokumen_sumber[{file, halaman, kutipan}]. "
     "Ketertelusuran (isi bila ada): langkah_kerja_terkait (langkah PKP yang memunculkan "
     "temuan), pattern_id (id pattern wiki). KODEFIKASI (WAJIB — lihat get_kodefikasi_temuan): "
-    "kode_kondisi (wajib), kode_rekomendasi (wajib), kode_penyebab (hanya AUDIT yg punya Sebab); "
+    "kode_kondisi (wajib), kode_rekomendasi (wajib), kode_penyebab (semua jenis — isi bila penyebab "
+    "terbukti; kosongkan bila sebab='tidak ditemukan/tidak cukup data', JANGAN mengarang); "
     "format `<sub>.<param>` mis. 1.104.",
     {
         "penugasan_folder": str,

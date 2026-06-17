@@ -1,7 +1,9 @@
 # Kodefikasi Temuan (SIM-HP / standar pengawasan APIP)
 
 > Sumber: Lampiran Kodering Temuan. Dipakai SETIAP agen saat menyusun KKP untuk memberi **kode** pada tiap temuan.
-> Format kode = `<sub>.<kode_parameter>` (mis. `1.104`). Pada KKP isi: **kode_kondisi** (WAJIB), **kode_rekomendasi** (WAJIB), **kode_penyebab** (WAJIB hanya untuk AUDIT yang punya unsur Sebab; reviu/evaluasi/pemantauan/konsultansi TIDAK punya penyebab).
+> Format kode = `<sub>.<kode_parameter>` (mis. `1.104`). Pada KKP isi: **kode_kondisi** (WAJIB), **kode_rekomendasi** (WAJIB), **kode_penyebab** (SEMUA jenis pengawasan sejak 17 Juni 2026).
+>
+> **ANTI-MENGARANG:** narasi `sebab` & `kode_penyebab` HANYA diisi bila penyebab terbukti dari bukti. Bila tidak ditemukan / bukti tidak cukup → tulis `sebab` = **"Tidak ditemukan penyebab"** atau **"Tidak cukup data untuk menyimpulkan penyebab"** dan **kosongkan `kode_penyebab`**. Jangan menebak akar masalah.
 
 
 ## KONDISI (jenis temuan)
@@ -46,7 +48,7 @@
 - `4.409` — Penyimpangan terhadap peraturan perundang-undangan lainnya
 
 
-## PENYEBAB (akar masalah — basis SPIP; KHUSUS audit yang menggali Sebab)
+## PENYEBAB (akar masalah — basis SPIP; SEMUA jenis pengawasan, isi hanya bila terbukti)
 
 ### 1. Kelemahan Dalam Lingkungan Pengendalian
 - `1.101` — Integritas dan nilai etika rendah
