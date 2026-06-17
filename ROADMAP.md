@@ -75,10 +75,10 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - [x] **A4 — Versi internal v7→v8** ✅ (16 Juni) — FastAPI `title="INTEGRAL" v8.0.0` + root endpoint (`name:INTEGRAL, engine:Audit AI`); `package.json` → `integral-frontend@8.0.0`; header prompt agen AT/KT → "INTEGRAL (engine Audit AI)".
 - [x] **A5 — Rapikan penamaan teknis** ✅ (16 Juni) — rename `docs/openapi-integral-v7.yaml`→`...-v8.yaml` + `kontrak-api-integral-v7.html`→`...-v8.html` + brand internal v8. *Sisa (→ E): buang referensi legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).*
 - [ ] **A6 — Arsip** (opsional): pindahkan docs rencana "fase INTEGRAL" usang ke `docs/archive/`. Ditunda — low value.
-- [~] **A7 — Audit UI clean** (lihat Prinsip UX §2) — progres signifikan (16 Juni):
+- [x] **A7 — Audit UI clean** (lihat Prinsip UX §2) — selesai (17 Juni):
   - [x] Audit semua layar utama: **tak ada tombol mati/duplikat** (TopBar/login/dashboard/penugasan/CACM/TLHP). Header penugasan + tombol sumber PKP sudah dirapikan.
-  - [x] **Konsistensi dialog**: `alert()` native → `toast`; **SEMUA 13 `confirm()` native → modal INTEGRAL** (`lib/confirm.ts` + `ConfirmHost`, danger merah/primary, ESC/Enter). 0 confirm native tersisa. *(Terverifikasi compile+mount; render visual belum di-screenshot.)*
-  - [ ] Lanjutan: konsistensi warna tombol antar-halaman; checklist UX per halaman sebagai gate.
+  - [x] **Konsistensi dialog**: `alert()` native → `toast`; **SEMUA 13 `confirm()` native → modal INTEGRAL** (`lib/confirm.ts` + `ConfirmHost`, danger merah/primary, ESC/Enter). 0 confirm native tersisa. **Render visual terverifikasi (screenshot)** — modal terpusat, backdrop redup, tombol Batal/Hapus permanen.
+  - [x] **Konsistensi warna tombol antar-halaman**: 8 tombol aksi + 1 caret yang masih hardcoded (`violet/indigo/sky/blue-500..700`) di `penugasan/[id]` & `knowledge` → distandarkan ke token brand `bg-primary` / `hover:bg-primary-dark`. Badge severity/status tetap semantik (CRITICAL merah, HIGH/MEDIUM amber, sukses hijau). 0 tombol aksi non-brand tersisa.
 
 ## Workstream B — Autentikasi username + password (BARU, fondasi v8)
 

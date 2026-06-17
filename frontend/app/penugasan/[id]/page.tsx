@@ -1181,7 +1181,7 @@ function ChatTab({
             {streamText && (
               <div className="text-sm whitespace-pre-wrap text-gray-800 bg-white border border-gray-200 rounded p-2 mb-2 max-h-[300px] overflow-y-auto">
                 {streamText}
-                <span className="inline-block w-2 h-4 bg-blue-600 align-middle ml-0.5 animate-pulse" />
+                <span className="inline-block w-2 h-4 bg-primary align-middle ml-0.5 animate-pulse" />
               </div>
             )}
             {streamTools.length > 0 && (
@@ -1992,7 +1992,7 @@ function SetupPenugasanTab({
             </button>
             <button
               onClick={() => setPkpTplOpen((v) => !v)}
-              className="px-3 py-1.5 text-sm rounded border border-violet-500 text-violet-700 hover:bg-violet-600 hover:text-white transition"
+              className="px-3 py-1.5 text-sm rounded border border-primary text-primary hover:bg-primary hover:text-white transition"
               title="Impor sasaran/PKP dari Wiki — template & sumber terpusat di Wiki."
             >
               📚 Import dari Wiki
@@ -2501,7 +2501,7 @@ function GatePanel({
           {role === 'AT' && (
             <button
               onClick={() => onRunGate(current)}
-              className="text-xs px-3 py-1 rounded bg-violet-600 text-white font-medium"
+              className="text-xs px-3 py-1 rounded bg-primary text-white font-medium"
               title={`Buka Chat dengan perintah [MODE:GATE:${current}] terisi`}
             >
               ▶ Jalankan Gate {current}
@@ -2692,7 +2692,7 @@ function SimwasImportModal({
             <button
               onClick={submit}
               disabled={busy || !raw.trim()}
-              className="px-3 py-1.5 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40"
+              className="px-3 py-1.5 text-sm rounded bg-primary text-white hover:bg-primary-dark disabled:opacity-40"
             >
               {busy ? 'Mengirim…' : 'Impor'}
             </button>
@@ -3310,7 +3310,7 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
                 {s.status !== 'DISETUJUI_KT' && (
                   <button
                     onClick={() => ubahStatus(i, 'DISETUJUI_KT')}
-                    className="text-[11px] px-2 py-0.5 rounded bg-indigo-500 text-white hover:bg-indigo-600"
+                    className="text-[11px] px-2 py-0.5 rounded bg-primary text-white hover:bg-primary-dark"
                   >
                     Setujui
                   </button>
@@ -3348,7 +3348,7 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
         <button
           onClick={simpan}
           disabled={saving}
-          className="px-3 py-1.5 text-xs rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="px-3 py-1.5 text-xs rounded bg-primary text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? 'Menyimpan…' : 'Simpan Persetujuan'}
         </button>

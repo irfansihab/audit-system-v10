@@ -646,7 +646,7 @@ function GraduasiPanel() {
               </div>
             ))}
           </div>
-          <button onClick={run} disabled={busy} className="mt-2 text-xs px-3 py-1.5 rounded bg-violet-600 text-white font-medium disabled:opacity-50">
+          <button onClick={run} disabled={busy} className="mt-2 text-xs px-3 py-1.5 rounded bg-primary text-white font-medium disabled:opacity-50">
             ⚗ Graduasikan {selected.length > 0 ? `(${selected.length})` : ''}
           </button>
         </div>
@@ -861,7 +861,7 @@ function WritebackPanel({ role }: { role: string }) {
                     Belum ada draft untuk penugasan ini.
                   </p>
                   {canEdit ? (
-                    <button onClick={doGenerate} disabled={busy} className="px-3 py-1.5 rounded bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 disabled:opacity-50">
+                    <button onClick={doGenerate} disabled={busy} className="px-3 py-1.5 rounded bg-primary text-white text-xs font-semibold hover:bg-primary-dark disabled:opacity-50">
                       {busy ? 'Membuat…' : 'Generate draft'}
                     </button>
                   ) : (
@@ -875,7 +875,7 @@ function WritebackPanel({ role }: { role: string }) {
                       <button
                         key={t}
                         onClick={() => setTab(t)}
-                        className={`px-2 py-0.5 rounded ${tab === t ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-600'}`}
+                        className={`px-2 py-0.5 rounded ${tab === t ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`}
                       >
                         {t === 'md' ? `${proposal.nama_file}` : t === 'index' ? 'delta index.md' : 'delta log.md'}
                       </button>
