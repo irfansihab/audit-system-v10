@@ -1,8 +1,10 @@
-# Audit AI v7 — Inspektorat II Komdigi
+# INTEGRAL — Workspace Pengawasan Inspektorat II Komdigi
 
-Aplikasi web Inspektorat II Kementerian Komunikasi dan Digital berbasis Claude Agent SDK untuk dua skill prioritas: **Reviu RKA-K/L** dan **Reviu Pengadaan**.
+**INTEGRAL** adalah workspace utama auditor Inspektorat II Kementerian Komunikasi dan Digital untuk seluruh siklus pengawasan — dari informasi (Wiki), deteksi dini (CACM/EWS), eksekusi (agen Claude), hingga tindak lanjut (TLHP). Terintegrasi dengan SIMWAS v2.
 
-Prototype ini membungkus skill V6 (`audit-system-v4`) ke dalam empat agen Claude yang dipanggil lewat browser, tanpa lagi membutuhkan Cowork desktop. Logika analisis V6 **tidak ditulis ulang** — V7 hanya orchestrasi.
+> **Nama produk = INTEGRAL.** "Audit AI" (engine berbasis Claude Agent SDK) adalah mesin internal di baliknya, bukan produk terpisah. **v8** = generasi codebase saat ini (logo ∫, palette ungu `#5C4FE7`).
+
+Engine membungkus skill V6 (`audit-system-v4`) ke dalam agen Claude yang dipanggil lewat browser, tanpa Cowork desktop. Logika analisis V6 **tidak ditulis ulang** — app-layer hanya orkestrasi.
 
 > 📦 **Layout perubahan dari spek awal:** V6 sekarang di-embed di `backend/v6/` (bukan sibling folder `audit-system-v4/`). Lihat [Catatan Layout](#catatan-layout-v6) di bawah.
 

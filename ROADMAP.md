@@ -70,11 +70,11 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 > Nama tetap **INTEGRAL**. Tujuan: berhenti tampil seperti dua produk. "Audit AI v7/v8" turun jadi engine/versi internal.
 
 - [x] **A1 — Hapus framing "Powered by Audit AI v7"** ✅ (16 Juni) — landing (`page.tsx`), login, `AppShell` footer, `Sidebar`, meta title (`layout.tsx`): kini "INTEGRAL — Workspace Pengawasan Inspektorat II Komdigi"; footer "Mesin AI: Claude Agent SDK". Verified SSR: 0 sisa "Powered by Audit AI v7".
-- [ ] **A2 — Identitas tetap**: pertahankan logo **∫** + palette ungu `#5C4FE7`. Tidak ada aset baru. (Keputusan: nama tidak diganti.)
-- [ ] **A3 — Satukan narasi dokumen**: `README.md` + `HANDOVER.md` ditulis ulang sebagai **dokumen INTEGRAL tunggal** — INTEGRAL = produk, Audit AI engine = bagian internal; bukan dua hal.
-- [ ] **A4 — Versi internal v7→v8**: `config`, `package.json`, badge versi → v8 sebagai nomor build, tanpa menyentuh brand "INTEGRAL".
-- [ ] **A5 — Rapikan penamaan teknis**: `docs/openapi-integral-v7.yaml`→`openapi-integral-v8.yaml`; konsisten "integral" di slug teknis. Lanjutkan pembuangan referensi legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).
-- [ ] **A6 — Arsip**: pindahkan docs rencana "fase INTEGRAL" yang sudah usang ke `docs/archive/` (riwayat, bukan acuan aktif).
+- [x] **A2 — Identitas tetap** ✅ (16 Juni) — logo **∫** + palette ungu `#5C4FE7` dipertahankan; tak ada aset baru.
+- [x] **A3 — Narasi dokumen** ✅ (16 Juni) — `README.md` ditulis ulang INTEGRAL-first (nama produk = INTEGRAL; "Audit AI" = engine internal; v8 = generasi codebase). `HANDOVER.md` sudah INTEGRAL.
+- [x] **A4 — Versi internal v7→v8** ✅ (16 Juni) — FastAPI `title="INTEGRAL" v8.0.0` + root endpoint (`name:INTEGRAL, engine:Audit AI`); `package.json` → `integral-frontend@8.0.0`; header prompt agen AT/KT → "INTEGRAL (engine Audit AI)".
+- [x] **A5 — Rapikan penamaan teknis** ✅ (16 Juni) — rename `docs/openapi-integral-v7.yaml`→`...-v8.yaml` + `kontrak-api-integral-v7.html`→`...-v8.html` + brand internal v8. *Sisa (→ E): buang referensi legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).*
+- [ ] **A6 — Arsip** (opsional): pindahkan docs rencana "fase INTEGRAL" usang ke `docs/archive/`. Ditunda — low value.
 - [ ] **A7 — Audit UI clean** (lihat Prinsip UX §2): telusuri tiap layar, hapus tombol/kontrol mati & membingungkan, terapkan "satu aksi utama per layar" + progressive disclosure. Buat checklist UX per halaman sebagai gate sebelum fitur dianggap selesai.
 
 ## Workstream B — Autentikasi username + password (BARU, fondasi v8)

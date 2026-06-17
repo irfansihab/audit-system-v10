@@ -1,7 +1,7 @@
 openapi: 3.1.0
 
 # =============================================================================
-# KONTRAK API — INTEGRAL AI Workspace (Audit AI v7) sebagai AI engine SIMWAS v2
+# KONTRAK API — INTEGRAL (Audit AI v8) sebagai AI engine SIMWAS v2
 # -----------------------------------------------------------------------------
 # Disusun: 2026-06-11 · Inspektorat II, Kementerian Komunikasi dan Digital RI
 #
@@ -19,7 +19,7 @@ openapi: 3.1.0
 # =============================================================================
 
 info:
-  title: INTEGRAL AI Workspace — API Engine (Audit AI v7)
+  title: INTEGRAL — API Engine (Audit AI v8)
   version: 0.1.0
   description: >-
     Kontrak REST yang v7 ajukan untuk integrasi dengan SIMWAS v2 (INTEGRAL).

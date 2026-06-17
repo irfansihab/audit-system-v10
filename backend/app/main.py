@@ -71,9 +71,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Audit AI v7",
-    version="0.1.0",
-    description="Backend Audit AI v7 — Inspektorat II Komdigi",
+    title="INTEGRAL",
+    version="8.0.0",
+    description="Backend INTEGRAL — Workspace Pengawasan Inspektorat II Komdigi (engine: Audit AI).",
     lifespan=lifespan,
 )
 
@@ -103,8 +103,9 @@ app.include_router(graduasi.router)
 @app.get("/", tags=["meta"])
 async def root():
     return {
-        "name": "Audit AI v7",
-        "version": "0.1.0",
+        "name": "INTEGRAL",
+        "version": "8.0.0",
+        "engine": "Audit AI",
         "env": settings.app_env,
         "docs": "/docs",
     }

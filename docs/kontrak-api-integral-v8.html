@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kontrak API — INTEGRAL AI Workspace (Audit AI v7) ⇄ SIMWAS v2</title>
+<title>Kontrak API — INTEGRAL (Audit AI v8) ⇄ SIMWAS v2</title>
 <style>
   :root{
     --ungu:#5C4FE7; --ungu-tua:#3C3489; --ungu-muda:#EEEDFE;
@@ -62,14 +62,14 @@
 
 <header class="hero">
   <div class="eyebrow">Dokumen Kontrak Teknis · Inspektorat II Komdigi</div>
-  <h1>Kontrak API — INTEGRAL AI Workspace (Audit AI v7) ⇄ SIMWAS v2</h1>
+  <h1>Kontrak API — INTEGRAL (Audit AI v8) ⇄ SIMWAS v2</h1>
   <p>v7 = mesin AI headless · SIMWAS = orkestrator, system of record, dan UI</p>
-  <p style="margin-top:10px;font-size:13px">Disusun 11 Juni 2026 · Spesifikasi mesin: <code style="background:rgba(255,255,255,.15);border-color:transparent;color:#fff">docs/openapi-integral-v7.yaml</code></p>
+  <p style="margin-top:10px;font-size:13px">Disusun 11 Juni 2026 · Spesifikasi mesin: <code style="background:rgba(255,255,255,.15);border-color:transparent;color:#fff">docs/openapi-integral-v8.yaml</code></p>
 </header>
 
 <div class="card" style="border-left:4px solid var(--ungu)">
   <b>Ringkasan satu paragraf.</b> SIMWAS v2 memegang seluruh siklus pengawasan: data, alur kerja,
-  template, dan tampilan yang dilihat auditor. Audit AI v7 dipanggil di tahap-tahap tertentu untuk
+  template, dan tampilan yang dilihat auditor. Audit AI v8 dipanggil di tahap-tahap tertentu untuk
   pekerjaan AI berat (digest dokumen, produksi temuan, draft laporan) lalu mengembalikan hasil
   <b>terstruktur</b> (JSON) dan <b>dokumen jadi</b> (.docx). v7 tidak punya tampilan produksi —
   tim SIMWAS membangun layarnya di Laravel/Blade dan memanggil API ini.
@@ -214,7 +214,7 @@ adalah egress HTTPS ke Anthropic — ini titik yang perlu izin & keputusan kepat
   <tr><td><code>GET /skills</code></td><td>Registry skill (pemetaan jenis ST)</td><td>semua</td><td><span class="badge b-live">live</span></td></tr>
   <tr><td><code>webhook tahapSelesai</code></td><td>v7 → SIMWAS saat tahap AI selesai</td><td>HMAC</td><td><span class="badge b-proposed">proposed</span></td></tr>
 </table>
-<p class="small">Daftar lengkap dengan skema request/response ada di <code>docs/openapi-integral-v7.yaml</code>
+<p class="small">Daftar lengkap dengan skema request/response ada di <code>docs/openapi-integral-v8.yaml</code>
 (bisa diimpor ke Swagger UI / Postman).</p>
 
 <h2>7. Pembagian pekerjaan</h2>
@@ -260,8 +260,8 @@ adalah egress HTTPS ke Anthropic — ini titik yang perlu izin & keputusan kepat
 </div>
 
 <footer>
-  <span>INTEGRAL AI Workspace · Inspektorat II — Kementerian Komunikasi dan Digital RI</span>
-  <span>Kontrak API v0.1 · 11 Juni 2026 · Powered by Audit AI v7 + Claude Agent SDK</span>
+  <span>INTEGRAL · Inspektorat II — Kementerian Komunikasi dan Digital RI</span>
+  <span>Kontrak API v0.1 · 11 Juni 2026 · Powered by Audit AI v8 + Claude Agent SDK</span>
 </footer>
 
 </div>
