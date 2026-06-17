@@ -21,17 +21,28 @@ from app.routes import agen, auth, cacm, dashboard, dokumen, feedback, files, gr
 settings = get_settings()
 log = logging.getLogger(__name__)
 
-# Export ANTHROPIC_API_KEY ke env var supaya `claude-agent-sdk` subprocess
-# bisa baca saat dia spawn `claude` CLI. Pydantic-settings hanya populate
-# settings object — TIDAK set env real. Tanpa ini, agen (anggota_tim/ketua_tim)
-# gagal dgn "API Error: 401 Invalid authentication credentials" saat uvicorn
-# dijalankan dari context yg env-nya tidak punya key (mis. Claude Code shell).
+# Auth agen AT/KT (CLI claude / claude-agent-sdk). SDK MEWARISI os.environ saat
+# spawn CLI (tidak memaksa key), jadi auth ditentukan env di sini.
 #
-# Aturan: HORMATI env yg sudah ada (operator override). Hanya inject bila
-# env kosong dan settings punya nilai. Idempoten untuk reload.
-if settings.anthropic_api_key and not os.environ.get("ANTHROPIC_API_KEY"):
-    os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
-    log.info("ANTHROPIC_API_KEY di-export dari .env ke env proses (untuk SDK subprocess)")
+# Mode (AGENT_AUTH_MODE):
+#   "api" (default)  → export ANTHROPIC_API_KEY → tagih API. Wajib utk PRODUKSI/multi-user.
+#   "subscription"   → JANGAN beri API key (di-pop dari env supaya tak menang atas OAuth);
+#                      CLI pakai login langganan ~/.claude (Claude Max) atau CLAUDE_CODE_OAUTH_TOKEN.
+#                      Hemat API saat TESTING LOKAL oleh developer. ⚠ Bukan utk melayani banyak user (ToS).
+# Catatan: eval-judge & digest LLM fallback TETAP pakai API key (baca settings langsung).
+if settings.agent_auth_mode.lower() == "subscription":
+    os.environ.pop("ANTHROPIC_API_KEY", None)  # cegah API key menang atas OAuth langganan
+    if settings.claude_code_oauth_token and not os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
+        os.environ["CLAUDE_CODE_OAUTH_TOKEN"] = settings.claude_code_oauth_token
+    log.warning(
+        "AGENT_AUTH_MODE=subscription — agen pakai kuota langganan Claude Max (bukan API). "
+        "Hanya untuk TESTING lokal; JANGAN dipakai produksi multi-user."
+    )
+else:
+    # Aturan: HORMATI env yg sudah ada (operator override). Hanya inject bila kosong.
+    if settings.anthropic_api_key and not os.environ.get("ANTHROPIC_API_KEY"):
+        os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
+        log.info("ANTHROPIC_API_KEY di-export dari .env ke env proses (untuk SDK subprocess)")
 
 
 @asynccontextmanager

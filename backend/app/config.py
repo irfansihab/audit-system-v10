@@ -48,6 +48,16 @@ class Settings(BaseSettings):
 
     # Anthropic
     anthropic_api_key: str = ""
+    # Mode auth untuk agen AT/KT (lewat CLI claude / claude-agent-sdk):
+    #   "api"          → pakai ANTHROPIC_API_KEY (tagih API). DEFAULT — wajib untuk PRODUKSI.
+    #   "subscription" → JANGAN set API key; CLI pakai login langganan (Claude Max) atau
+    #                    CLAUDE_CODE_OAUTH_TOKEN. HEMAT API saat TESTING LOKAL oleh dev.
+    #   ⚠ Jangan pakai "subscription" untuk melayani banyak user (langgar ToS langganan).
+    #   Catatan: eval-judge & digest LLM fallback TETAP pakai API key (SDK Anthropic langsung).
+    agent_auth_mode: str = "api"
+    # Token OAuth langganan (hasil `claude setup-token`) — opsional; dipakai bila
+    # agent_auth_mode="subscription" dan login ~/.claude tak tersedia (mis. headless).
+    claude_code_oauth_token: str = ""
 
     # Database
     database_url: str = "postgresql+asyncpg://audit:audit@localhost:5432/audit_v7"
