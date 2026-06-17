@@ -18,5 +18,5 @@ def build_anggota_tim_agent() -> ClaudeAgentOptions:
         tools=(PIPELINE_TOOLS + KKP_TOOLS + WIKI_TOOLS + SKILL_TOOLS + GATE_TOOLS
                + LKE_TOOLS + BUKTI_TOOLS + FEEDBACK_TOOLS),
         server_name="at",
-        model="claude-sonnet-4-6",
+        # model: default settings.agent_model (Sonnet) — override via env AGENT_MODEL.
     )

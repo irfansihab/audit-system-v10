@@ -55,14 +55,19 @@ def build_agent_options(
     prompt_name: str,
     tools: list,
     server_name: str = "audit-v7",
-    model: str = "claude-sonnet-4-6",
+    model: str | None = None,
     allowed_tool_names: list[str] | None = None,
 ) -> ClaudeAgentOptions:
     """Konstruksi ClaudeAgentOptions yang konsisten untuk semua agen.
 
+    `model` default mengikuti `settings.agent_model` (Sonnet 4.6) — bisa di-override
+    ke Haiku via env `AGENT_MODEL` untuk testing hemat token.
+
     Returns:
         ClaudeAgentOptions siap dipakai ClaudeSDKClient.
     """
+    from app.config import get_settings
+    model = model or get_settings().agent_model
     server = create_sdk_mcp_server(name=server_name, version="0.1.0", tools=tools)
 
     # allowed_tool_names: format claude-agent-sdk = "mcp__{server_name}__{tool_name}"

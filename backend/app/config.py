@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     # Token OAuth langganan (hasil `claude setup-token`) — opsional; dipakai bila
     # agent_auth_mode="subscription" dan login ~/.claude tak tersedia (mis. headless).
     claude_code_oauth_token: str = ""
+    # Model agen AT/KT. Default Sonnet 4.6 (mutu). Saat TESTING hemat token, set
+    # AGENT_MODEL=claude-haiku-4-5 di .env (≈10–15× lebih murah; cukup utk uji alur,
+    # bukan uji mutu). Produksi → biarkan Sonnet.
+    agent_model: str = "claude-sonnet-4-6"
 
     # Database
     database_url: str = "postgresql+asyncpg://audit:audit@localhost:5432/audit_v7"

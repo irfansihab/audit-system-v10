@@ -35,5 +35,5 @@ def build_ketua_tim_agent() -> ClaudeAgentOptions:
         prompt_name="ketua_tim",
         tools=LHR_TOOLS + kt_extra + WIKI_TOOLS + SKILL_TOOLS + FEEDBACK_TOOLS,
         server_name="kt",
-        model="claude-sonnet-4-6",
+        # model: default settings.agent_model (Sonnet) — override via env AGENT_MODEL.
     )
