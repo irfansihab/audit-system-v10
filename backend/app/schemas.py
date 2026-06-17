@@ -9,12 +9,15 @@ from app.skills_registry import available_slugs, skill_exists
 
 # ===== Auth =====
 class LoginRequest(BaseModel):
-    """Prototype login — cukup pilih role.
+    """Login (Workstream B): username + password.
 
-    Backend auto-pick user seed pertama yang `role_default == role`.
-    Email + NIP optional (untuk kasus produksi nanti pakai SSO).
+    Jalur utama: `username` + `password` (diverifikasi bcrypt).
+    Jalur LEGACY (dev, dipertahankan agar tak memutus alur lama): `role` (+`email`)
+    tanpa password — hanya aktif bila APP_ENV != production.
     """
-    role: Role
+    username: str | None = None
+    password: str | None = None
+    role: Role | None = None
     email: EmailStr | None = None
     nip: str | None = None
 
@@ -22,6 +25,7 @@ class LoginRequest(BaseModel):
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    username: str | None = None
     email: str
     nama_lengkap: str
     nip: str

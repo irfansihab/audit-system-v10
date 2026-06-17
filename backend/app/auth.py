@@ -20,6 +20,22 @@ ALGORITHM = "HS256"
 EXPIRE_HOURS = 12
 
 
+# --- Password hashing (Workstream B) -------------------------------------- #
+def hash_password(plain: str) -> str:
+    import bcrypt
+    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(plain: str, hashed: str | None) -> bool:
+    if not hashed:
+        return False
+    import bcrypt
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except Exception:  # noqa: BLE001 — hash rusak/format lama → gagal aman
+        return False
+
+
 def create_session_token(user_id: int, role: Role) -> str:
     payload = {
         "sub": str(user_id),

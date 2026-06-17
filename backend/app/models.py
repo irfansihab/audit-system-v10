@@ -45,6 +45,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(200), unique=True, index=True)
+    # Login username+password (Workstream B). Nullable agar migrasi tabel lama aman.
+    username: Mapped[str | None] = mapped_column(String(80), unique=True, index=True, nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(String(200), nullable=True)
     nama_lengkap: Mapped[str] = mapped_column(String(200))
     nip: Mapped[str] = mapped_column(String(18))
     role_default: Mapped[Role] = mapped_column(String(4), default=Role.AT)

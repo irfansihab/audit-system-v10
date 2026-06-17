@@ -50,6 +50,14 @@ async def lifespan(app: FastAPI):
     # Buat tabel saat startup (idempoten). Untuk migrasi lebih ketat pakai Alembic.
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    # Seed auth (username+password seed users, migrasi kolom — Workstream B, idempoten).
+    try:
+        from app.init_db import seed_auth
+        async with SessionLocal() as db:
+            await seed_auth(db)
+            log.info("Seed auth: username+password seed users OK")
+    except Exception:  # noqa: BLE001 — best-effort
+        log.exception("Seed auth gagal (lanjut)")
     # Seed dummy TLHP bila tabel kosong (C5 — idempoten).
     try:
         from app.routes.tlhp import seed_tlhp_dummy

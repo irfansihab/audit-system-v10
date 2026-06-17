@@ -86,6 +86,7 @@ export interface GateStatus {
 
 export interface User {
   id: number;
+  username?: string | null;
   email: string;
   nama_lengkap: string;
   nip: string;
@@ -127,13 +128,12 @@ export interface Dokumen {
 
 // ===== API =====
 export const api = {
-  /** Prototype login: cukup pilih role. Backend auto-pick user seed pertama
-   * dengan `role_default == role`. Email optional untuk override pilih user
-   * tertentu (production nanti SSO). */
-  login: (role: Role, email?: string) =>
+  /** Login (Workstream B): username + password. Jalur legacy {role,email} masih
+   * didukung backend di dev (untuk transisi), tapi UI utama pakai username+password. */
+  login: (body: { username?: string; password?: string; role?: Role; email?: string }) =>
     request<Session>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ role, email }),
+      body: JSON.stringify(body),
     }),
 
   /** Daftar user seed (opsional filter role). Dipakai layar login untuk

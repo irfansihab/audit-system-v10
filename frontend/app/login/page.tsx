@@ -1,89 +1,70 @@
 'use client';
 
+/**
+ * Login INTEGRAL (Workstream B) — username + password.
+ * Plus "Login cepat (dev)": kartu per akun yang AUTO-ISI username+password
+ * lalu masuk — untuk testing cepat berbagai role. Di produksi, matikan bagian dev.
+ */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, setToken, setSession, Role, User } from '@/lib/api';
 
-type RoleOption = {
-  role: Role;
-  label: string;
-  nama_seed: string;
-  description: string;
-  badge_color: string;
-};
+// Password dev bersama (selaras backend init_db.DEV_PASSWORD). Hanya untuk dev.
+const DEV_PASSWORD = 'audit2026';
 
-const ROLE_OPTIONS: RoleOption[] = [
-  {
-    role: 'PT',
-    label: 'Pengendali Teknis',
-    nama_seed: 'Inspektorat II Komdigi',
-    description: 'Buat penugasan baru. Kontrol overall pelaksanaan reviu.',
-    badge_color: 'bg-purple-100 text-purple-800',
-  },
-  {
-    role: 'KT',
-    label: 'Ketua Tim',
-    nama_seed: 'Budi Hartono',
-    description: 'Setup sasaran, approve KKP, susun LHR, rekomendasi, gate QC.',
-    badge_color: 'bg-emerald-100 text-emerald-800',
-  },
-  {
-    role: 'AT',
-    label: 'Anggota Tim',
-    nama_seed: 'Sarah Aulia',
-    description: 'Upload dokumen, analisis, susun KKP per sasaran reviu.',
-    badge_color: 'bg-blue-100 text-blue-800',
-  },
-];
+const ROLE_META: Record<string, { label: string; cls: string }> = {
+  PT: { label: 'Pengendali Teknis', cls: 'bg-purple-100 text-purple-800' },
+  PM: { label: 'Pengendali Mutu', cls: 'bg-fuchsia-100 text-fuchsia-800' },
+  KT: { label: 'Ketua Tim', cls: 'bg-emerald-100 text-emerald-800' },
+  AT: { label: 'Anggota Tim', cls: 'bg-blue-100 text-blue-800' },
+};
 
 export default function LoginPage() {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [atUsers, setAtUsers] = useState<User[]>([]);
-  const [expanded, setExpanded] = useState<Role | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
 
-  // Ambil daftar Anggota Tim agar kartu AT bisa memilih orang spesifik
-  // (multi-anggota: satu penugasan bisa punya >1 AT).
   useEffect(() => {
-    api
-      .listUsers('AT')
-      .then(setAtUsers)
-      .catch(() => setAtUsers([]));
+    api.listUsers().then(setUsers).catch(() => setUsers([]));
   }, []);
 
-  const doLogin = async (role: Role, email?: string) => {
-    setLoading(email || role);
+  const doLogin = async (un: string, pw: string, tag: string) => {
+    setLoading(tag);
     setError(null);
     try {
-      const session = await api.login(role, email);
+      const session = await api.login({ username: un, password: pw });
       setToken(session.token);
       setSession(session);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Gagal masuk');
     } finally {
       setLoading(null);
     }
   };
 
-  const handleCard = (role: Role) => {
-    // Bila AT punya >1 orang, kartu jadi pemilih orang (expand). Selain itu
-    // langsung login (role tunggal auto-pick user seed di backend).
-    if (role === 'AT' && atUsers.length > 1) {
-      setExpanded((prev) => (prev === 'AT' ? null : 'AT'));
-      return;
-    }
-    doLogin(role);
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !password) { setError('Isi username dan password.'); return; }
+    doLogin(username, password, 'form');
+  };
+
+  // Quick-login dev: isi form (auto-fill) lalu masuk.
+  const quick = (u: User) => {
+    const un = u.username || '';
+    setUsername(un);
+    setPassword(DEV_PASSWORD);
+    doLogin(un, DEV_PASSWORD, un);
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-blue-50 to-white">
-      <div className="w-full max-w-2xl">
+    <main className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-primary-50 to-white">
+      <div className="w-full max-w-md">
         <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-14 h-14 rounded-xl bg-primary text-white font-bold text-2xl flex items-center justify-center shadow-lg">
-            ∫
-          </div>
+          <div className="w-14 h-14 rounded-xl bg-primary text-white font-bold text-2xl flex items-center justify-center shadow-lg">∫</div>
           <div>
             <h1 className="text-2xl font-bold text-primary-dark">INTEGRAL</h1>
             <p className="text-sm text-gray-500">Workspace Pengawasan · Inspektorat II Komdigi</p>
@@ -91,74 +72,75 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Pilih Peran</h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Prototype internal — tidak perlu NIP atau password. Klik kartu peran untuk masuk.
-            Setiap peran punya akses yang berbeda di sistem.
-          </p>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Masuk</h2>
 
           {error && (
-            <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
-              {error}
+            <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
+          )}
+
+          <form onSubmit={submit} className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Username</label>
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none"
+                placeholder="mis. budi"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading !== null}
+              className="w-full py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition disabled:opacity-50"
+            >
+              {loading === 'form' ? 'Memproses…' : 'Masuk'}
+            </button>
+          </form>
+
+          {/* Login cepat (dev) — auto-isi username+password per role */}
+          {users.length > 0 && (
+            <div className="mt-6 pt-5 border-t border-gray-100">
+              <p className="text-xs text-gray-400 mb-2">⚡ Login cepat (dev) — klik untuk masuk sebagai:</p>
+              <div className="grid grid-cols-2 gap-2">
+                {users.map((u) => {
+                  const r = String(u.role_default);
+                  const meta = ROLE_META[r] || { label: r, cls: 'bg-gray-100 text-gray-700' };
+                  return (
+                    <button
+                      key={u.id}
+                      onClick={() => quick(u)}
+                      disabled={loading !== null || !u.username}
+                      title={`@${u.username} · ${meta.label}`}
+                      className="text-left px-3 py-2 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary/5 transition disabled:opacity-40"
+                    >
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${meta.cls}`}>{r}</span>
+                        <span className="text-[11px] text-gray-400">
+                          {loading === u.username ? '⏳' : `@${u.username}`}
+                        </span>
+                      </div>
+                      <div className="text-xs font-medium text-gray-800 truncate">{u.nama_lengkap}</div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          <div className="grid gap-3">
-            {ROLE_OPTIONS.map((opt) => {
-              const multiAT = opt.role === 'AT' && atUsers.length > 1;
-              const isExpanded = expanded === opt.role;
-              return (
-                <div key={opt.role}>
-                  <button
-                    onClick={() => handleCard(opt.role)}
-                    disabled={loading !== null}
-                    className="w-full text-left p-4 border-2 border-gray-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${opt.badge_color}`}>
-                          {opt.role}
-                        </span>
-                        <span className="font-semibold text-gray-800">{opt.label}</span>
-                      </div>
-                      <span className="text-gray-400 group-hover:text-primary transition">
-                        {loading === opt.role ? '⏳' : multiAT ? (isExpanded ? '▾' : '▸') : '→'}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-500 ml-1">
-                      {multiAT ? (
-                        <>Pilih anggota: <span className="font-medium text-gray-700">{atUsers.length} orang</span></>
-                      ) : (
-                        <>Akun: <span className="font-medium text-gray-700">{opt.nama_seed}</span></>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1.5">{opt.description}</p>
-                  </button>
-
-                  {multiAT && isExpanded && (
-                    <div className="mt-2 ml-4 grid gap-2">
-                      {atUsers.map((u) => (
-                        <button
-                          key={u.id}
-                          onClick={() => doLogin('AT', u.email)}
-                          disabled={loading !== null}
-                          className="text-left px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all disabled:opacity-40 flex items-center justify-between"
-                        >
-                          <span className="text-sm font-medium text-gray-800">{u.nama_lengkap}</span>
-                          <span className="text-gray-400 text-sm">
-                            {loading === u.email ? '⏳' : '→'}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="mt-6 text-xs text-gray-400 text-center">
-            Production nanti login akan via SSO Komdigi (OIDC). Untuk dev/prototype, role-based simple login.
+          <p className="mt-5 text-xs text-gray-400 text-center">
+            Produksi nanti via SSO Komdigi (OIDC). Login cepat dimatikan di produksi.
           </p>
         </div>
       </div>

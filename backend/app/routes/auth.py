@@ -10,7 +10,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import create_session_token
+from app.auth import create_session_token, verify_password
+from app.config import get_settings
 from app.database import get_db
 from app.models import Role, User
 from app.schemas import LoginRequest, SessionOut, UserOut
@@ -20,51 +21,42 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login", response_model=SessionOut)
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)) -> SessionOut:
-    """Login dengan role saja (prototype).
+    """Login username + password (Workstream B).
 
-    - Wajib: `role` (AT/KT/PT/PM)
-    - Optional: `email` — kalau diberikan, pilih user tertentu dengan email itu
-    - Optional: `nip` — di prototype ini diabaikan (boleh dikirim untuk forward-compat)
-
-    Strategy pemilihan user:
-    1. Bila `email` diberikan → pilih user dengan email itu (tidak peduli role_default)
-    2. Bila `email` kosong → pilih user pertama yang `role_default == role`
-    3. Bila tidak ada match → 404
+    Jalur utama: `username` + `password` → verifikasi bcrypt → token (role = role_default user).
+    Jalur LEGACY (dev only, APP_ENV != production): `role` (+ optional `email`) tanpa password.
     """
-    user: User | None = None
-
-    if req.email:
+    # --- Jalur utama: username + password ---
+    if req.username and req.password:
         user = (
-            await db.execute(select(User).where(User.email == req.email))
+            await db.execute(select(User).where(User.username == req.username))
         ).scalar_one_or_none()
-        if not user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND,
-                f"User dengan email {req.email} tidak ditemukan",
-            )
-    else:
-        # Pick user pertama yang role_default match
-        user = (
-            await db.execute(
-                select(User)
-                .where(User.role_default == req.role)
-                .order_by(User.id)
-                .limit(1)
-            )
-        ).scalar_one_or_none()
-        if not user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND,
-                f"Belum ada user dengan role default {req.role.value}. "
-                f"Edit backend/app/init_db.py untuk seed user, lalu jalankan ulang.",
-            )
+        if not user or not verify_password(req.password, user.password_hash):
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Username atau password salah.")
+        # role_default tersimpan sbg str di kolom → normalkan ke enum Role.
+        role = user.role_default if isinstance(user.role_default, Role) else Role(user.role_default)
+        token = create_session_token(user.id, role)
+        return SessionOut(user=UserOut.model_validate(user), role_aktif=role, token=token)
 
-    token = create_session_token(user.id, req.role)
-    return SessionOut(
-        user=UserOut.model_validate(user),
-        role_aktif=req.role,
-        token=token,
-    )
+    # --- Jalur legacy (dev): role saja, tanpa password ---
+    if req.role is not None:
+        if get_settings().app_env.lower().startswith("prod"):
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                "Login role-only dimatikan di produksi. Gunakan username + password.",
+            )
+        if req.email:
+            user = (await db.execute(select(User).where(User.email == req.email))).scalar_one_or_none()
+        else:
+            user = (await db.execute(
+                select(User).where(User.role_default == req.role).order_by(User.id).limit(1)
+            )).scalar_one_or_none()
+        if not user:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"User role {req.role.value} tidak ditemukan.")
+        token = create_session_token(user.id, req.role)
+        return SessionOut(user=UserOut.model_validate(user), role_aktif=req.role, token=token)
+
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, "Sertakan username + password.")
 
 
 @router.get("/users", response_model=list[UserOut])
