@@ -35,7 +35,7 @@ changelog:
 | **R0 — Validasi & Konteks** | Tentukan scope (Perencanaan/Pemilihan/Penuh) dari KP; pastikan KAK/HPS/kontrak tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Tujuan, lingkup, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Aspek reviu per sasaran (KAK, HPS, metode, kontrak). | KT (UI Setup) |
-| **R3 — Pelaksanaan** | `run_batch_pbj` (12 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/A/R, **tanpa Sebab**) + `record_pkp_assessment`. | AT (auto) |
+| **R3 — Pelaksanaan** | `run_batch_pbj` (12 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `record_pkp_assessment`. | AT (auto) |
 | **R4 — Laporan (LHR)** | Render LHR + Nota Dinas; polish narasi & simpulan keyakinan terbatas. | KT |
 
 ### Analisis Substantif Wajib (Tahap R3)
@@ -66,7 +66,7 @@ Rules deterministik (R3 pipeline) hanya menangkap inkonsistensi struktural seder
 | 5. | **Analisis kewajaran metode pemilihan** | Cek nilai HPS vs ambang batas metode pemilihan (Tender, Tender Cepat, Penunjukan Langsung, dst per Perpres 16/2018 Pasal 41). Bila metode tidak sesuai nilai → temuan PERINGATAN. |
 | 6. | **Tambahkan temuan substantif via `append_temuan`** | Setiap temuan baru di-append dengan status "DRAFT", `sasaran_id` sesuai sasaran yang ditugaskan, `assigned_to` = nama AT dari `sasaran-assignment.json`. Sertakan `langkah_kerja_terkait` + `pattern_id` (ketertelusuran). |
 
-**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur lengkap K/K/A/R (tanpa Sebab) + `dokumen_sumber` + status "DRAFT". Setelah selesai, panggil **`record_pkp_assessment`** (kememadaian PKP per sasaran).
+**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur lengkap K/K/S/A/R (Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `dokumen_sumber` + status "DRAFT". Setelah selesai, panggil **`record_pkp_assessment`** (kememadaian PKP per sasaran).
 
 **Setelah semua analisis substantif selesai, BARU lapor ke auditor** dengan ringkasan: total temuan rule-based + total temuan substantif + per-severity breakdown. Hindari kalimat "Mau saya lanjut ...?" — tampilkan langsung hasil.
 
@@ -121,7 +121,7 @@ Pipeline dipanggil agen via tool **`run_batch_pbj(penugasan_folder, role="AT")`*
 | RP.11 | Perencanaan | KAK menyebut >1 nilai SLA berbeda (inkonsistensi internal) |
 | **RP.12** | **Perencanaan** | **Justifikasi/KAK belum memuat 5 elemen wajib** (kebutuhan, spek teknis & fungsi, metode pengadaan, waktu penyelesaian, output) — deteksi otomatis kelengkapan justifikasi |
 
-Perbedaan kolom KKP vs audit-pengadaan: **tanpa Sebab**, hanya Kondisi-Kriteria-Akibat-Rekomendasi.
+Kolom KKP: Kondisi-Kriteria-**Sebab**-Akibat-Rekomendasi (sejak 17 Jun 2026 Sebab diisi semua jenis, anti-mengarang). Beda dengan audit: reviu tak menghitung kerugian negara & lingkup terbatas (sehingga sebab sering "tidak cukup data").
 
 Dokumentasi lengkap: `scripts/reviu-pengadaan/README.md`.
 
@@ -136,7 +136,7 @@ Dokumentasi lengkap: `scripts/reviu-pengadaan/README.md`.
 | Tingkat keyakinan | Memadai | **Terbatas** | Tidak ada | Tidak ada |
 | Ruang lingkup | Seluruh siklus | **Perencanaan + pemilihan saja** | Pelaksanaan aktif saja | Sesuai pertanyaan |
 | Pengujian bukti | Sangat mendalam | **Kesesuaian administratif dokumen** | Pelaporan status | Analisis regulasi |
-| Sebab | ✅ Wajib | **❌ Tidak digunakan** | Opsional | ❌ |
+| Sebab | ✅ Wajib (gali akar masalah) | **✅ Diisi (anti-mengarang)** | ✅ Diisi (anti-mengarang) | ❌ |
 | Kerugian negara | ✅ Dihitung | **❌ Tidak dihitung** | ❌ | ❌ |
 | Kapan digunakan | Pekerjaan selesai / isu serius | **Sebelum tender atau kontrak ditandatangani** | Selama kontrak berjalan | Pertanyaan teknis |
 
@@ -199,7 +199,7 @@ Dokumentasi lengkap: `scripts/reviu-pengadaan/README.md`.
 | **Judul Temuan** | ✅ Wajib | Kalimat deskriptif menggambarkan kondisi: positif ("...telah sesuai") atau negatif ("...belum ditetapkan", "terdapat inkonsistensi...") |
 | **Kondisi** | ✅ Wajib | Fakta administratif yang ditemukan — dokumen apa, bagian mana, isinya apa |
 | **Kriteria** | ✅ Wajib | Pasal/ketentuan yang menjadi tolok ukur penilaian |
-| **Sebab** | ❌ Tidak digunakan | Reviu tidak menganalisis penyebab ketidaksesuaian |
+| **Sebab** | ✅ Diisi (anti-mengarang) | Diisi bila terbukti dari bukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data". Jangan mengarang (lingkup reviu terbatas, jadi sering "tidak cukup data") |
 | **Akibat** | ✅ Wajib | Konsekuensi/risiko jika kondisi tidak sesuai; jika sudah sesuai: nyatakan tidak ada dampak negatif |
 | **Rekomendasi** | ✅ Jika ada catatan | Tindakan perbaikan konkret — siapa, apa, kapan. Boleh null jika kondisi sudah sesuai |
 

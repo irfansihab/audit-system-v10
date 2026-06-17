@@ -29,7 +29,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline P3:** *tidak ada tool v7 — manual* (baca dokumen/rekomendasi ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** P0→P3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft Laporan Pemantauan**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → cek status TL per rekomendasi → `append_temuan` (status TL; Sebab opsional) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → cek status TL per rekomendasi → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Pemantauan (P0–P4)
 
@@ -38,7 +38,7 @@ changelog:
 | **P0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; daftar rekomendasi/temuan yang dipantau + bukti TL tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **P1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan pemantauan, ruang lingkup (rekomendasi/periode), metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **P2 — Program Kerja Pengawasan (PKP)** | Per sasaran: daftar rekomendasi yang dipantau · bukti TL yang diminta · kriteria status TL. | KT (UI Setup) |
-| **P3 — Pelaksanaan** | Per rekomendasi: nilai status TL (Selesai / Dalam Proses / Belum Ditindaklanjuti / Tidak Dapat Ditindaklanjuti) berdasarkan bukti + hitung umur (aging) → `append_temuan` (status; Sebab opsional) → `record_pkp_assessment`. | AT (auto) |
+| **P3 — Pelaksanaan** | Per rekomendasi: nilai status TL (Selesai / Dalam Proses / Belum Ditindaklanjuti / Tidak Dapat Ditindaklanjuti) berdasarkan bukti + hitung umur (aging) → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `record_pkp_assessment`. | AT (auto) |
 | **P4 — Laporan Pemantauan** | Render Laporan Hasil Pemantauan TLHP + Nota Dinas; rekap status TL, aging per PIC & daftar rekomendasi kritis yang masih terbuka. | KT |
 
 ## Tujuan
@@ -54,7 +54,7 @@ Memastikan seluruh rekomendasi pengawasan eksternal (BPK) dan internal (BPKP, It
 
 ## Paradigma
 
-**Monitoring** — bukan assurance. Auditor mencatat status *apa adanya* berdasarkan bukti tindak lanjut yang diserahkan unit kerja. **Analisis Sebab opsional** (boleh dicatat bila relevan untuk menjelaskan keterlambatan TL, tidak wajib); pemantauan tidak menghitung kerugian.
+**Monitoring** — bukan assurance. Auditor mencatat status *apa adanya* berdasarkan bukti tindak lanjut yang diserahkan unit kerja. **Analisis Sebab (anti-mengarang)** — diisi bila terbukti dari bukti (mis. penyebab keterlambatan TL); bila tidak ditemukan/bukti tidak cukup → tulis "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang. Pemantauan tidak menghitung kerugian.
 
 ## Kolom KKP / Tabel Pemantauan
 

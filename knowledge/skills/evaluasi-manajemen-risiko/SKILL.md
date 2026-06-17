@@ -26,7 +26,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline E3:** *tidak ada tool v7 — criteria-driven manual* (baca dokumen ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** E0→E3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHE**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian maturitas per kriteria → `append_temuan` (TANPA Sebab) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian maturitas per kriteria → `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Evaluasi (E0–E4)
 
@@ -35,7 +35,7 @@ changelog:
 | **E0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; kriteria (Pedoman Menkomdigi 6/2017 + dokumen MR objek) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **E1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan, ruang lingkup, kriteria/dimensi maturitas MR yang dinilai (struktur MR, konteks, profil risiko, penanganan, pemantauan, TKPMR), metodologi uji petik — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **E2 — Program Kerja Pengawasan (PKP)** | Per sasaran: dimensi/parameter MR yang dinilai · langkah penelaahan · bukti (formulir/dokumen MR). | KT (UI Setup) |
-| **E3 — Pelaksanaan & KKP** | Per dimensi/parameter: nilai maturitas/kesesuaian terhadap kriteria → catatan KKA (Kondisi/Kriteria/Akibat — **TANPA Sebab**) → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
+| **E3 — Pelaksanaan & KKP** | Per dimensi/parameter: nilai maturitas/kesesuaian terhadap kriteria → catatan KKSA (Kondisi/Kriteria/**Sebab**/Akibat — Sebab anti-mengarang: diisi bila terbukti, jika tidak "tidak ditemukan/tidak cukup data") → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
 | **E4 — Laporan (LHE)** | Render LHE + Nota Dinas; simpulan tingkat maturitas MR (keyakinan terbatas) & rekomendasi perbaikan (dikompilasi terpisah). | KT |
 
 ---
@@ -65,7 +65,7 @@ File ini memuat seluruh substansi kriteria evaluasi yang bersumber dari **Pedoma
 ## ⚠️ Struktur Laporan Khusus
 
 Laporan evaluasi manajemen risiko memiliki struktur yang **berbeda** dari audit atau reviu:
-- Seksi **F. Hasil Evaluasi** = berisi **catatan naratif bernomor** menggunakan format KKA (Kondisi–Kriteria–Akibat)
+- Seksi **F. Hasil Evaluasi** = berisi **catatan naratif bernomor** menggunakan format KKSA (Kondisi–Kriteria–**Sebab**–Akibat; Sebab anti-mengarang — contoh di bawah memakai format lama tanpa Sebab, tambahkan unsur Sebab bila terbukti)
 - Seksi **G. Rekomendasi** = dikompilasi TERPISAH dari F (bukan bagian dari setiap catatan)
 - Seksi **H. Apresiasi** = penutup
 

@@ -31,7 +31,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline E3:** *tidak ada tool v7 — criteria/LKE-driven manual* (baca dokumen ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** E0→E3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHE**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per area perubahan/komponen → `append_temuan` (TANPA Sebab) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per area perubahan/komponen → `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Evaluasi (E0–E4)
 
@@ -40,7 +40,7 @@ changelog:
 | **E0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; LKE/kriteria + dokumen objek (Roadmap RB, Rencana Aksi, bukti dukung) tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **E1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan, ruang lingkup, jenis evaluasi (Ex-Ante/On-Going TW), komponen Rencana Aksi RB yang dinilai, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **E2 — Program Kerja Pengawasan (PKP)** | Per sasaran: komponen/sub-komponen Rencana Aksi RB yang dinilai · langkah penelaahan (4 dimensi) · bukti. | KT (UI Setup) |
-| **E3 — Pelaksanaan & KKP** | Per komponen Rencana Aksi: nilai kesesuaian 4 dimensi (Ketepatan Pelaksanaan / Ketercapaian Output / Kualitas Pelaksanaan / Kesesuaian Waktu) → temuan/catatan (TANPA Sebab) → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
+| **E3 — Pelaksanaan & KKP** | Per komponen Rencana Aksi: nilai kesesuaian 4 dimensi (Ketepatan Pelaksanaan / Ketercapaian Output / Kualitas Pelaksanaan / Kesesuaian Waktu) → temuan/catatan (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
 | **E4 — Laporan (LHE)** | Render LHEI + Nota Dinas; simpulan kesesuaian per dimensi & saran perbaikan RB. | KT |
 
 ## Peran Claude

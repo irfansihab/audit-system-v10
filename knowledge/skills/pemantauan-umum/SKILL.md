@@ -73,7 +73,7 @@ Dalam pemantauan, "kriteria" sering berupa:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline P3:** *tidak ada tool v7 — manual* (digest generik via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** P0→P3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft Laporan Pemantauan**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → pantau status per objek → `append_temuan` (status; Sebab opsional) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → pantau status per objek → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Pemantauan (P0–P4)
 

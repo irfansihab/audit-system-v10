@@ -27,7 +27,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline P3:** *tidak ada tool v7 — manual* (baca dokumen kontrak/progres/pembayaran ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** P0→P3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft Laporan Pemantauan**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → pantau status/progres per paket → `append_temuan` (status; Sebab opsional) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → pantau status/progres per paket → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Pemantauan (P0–P4)
 
@@ -36,10 +36,10 @@ changelog:
 | **P0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; dokumen kontrak/progres/pembayaran tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **P1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan pemantauan, ruang lingkup (paket/periode), metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **P2 — Program Kerja Pengawasan (PKP)** | Per sasaran: paket/aspek yang dipantau · bukti diminta · kriteria status. | KT (UI Setup) |
-| **P3 — Pelaksanaan** | Per paket: pantau progres fisik vs pembayaran, kepatuhan jadwal/kontrak → `append_temuan` (status/catatan; Sebab opsional) → `record_pkp_assessment`. Indikasi penyimpangan serius → eskalasi audit-pengadaan. | AT (auto) |
+| **P3 — Pelaksanaan** | Per paket: pantau progres fisik vs pembayaran, kepatuhan jadwal/kontrak → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `record_pkp_assessment`. Indikasi penyimpangan serius → eskalasi audit-pengadaan. | AT (auto) |
 | **P4 — Laporan Pemantauan** | Render Laporan Pemantauan + Nota Dinas; rekap status paket & isu yang perlu tindak lanjut. | KT |
 
-**Analisis substantif yang wajib dilakukan AT pada P3** (status, bukan temuan formal — Sebab opsional):
+**Analisis substantif yang wajib dilakukan AT pada P3** (status — Sebab diisi bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang):
 - **Kewajaran progres fisik vs keuangan** — hitung deviasi % progres fisik aktual vs % pembayaran kumulatif. Bayar > fisik signifikan → risiko over-payment; fisik > bayar signifikan → klaim penyedia tertunda.
 - **Pola amandemen** — frekuensi & nilai kumulatif addendum. Addendum berulang atau > 10% nilai kontrak → indikasi perencanaan lemah.
 - **Kepatuhan SLA penyedia** — bandingkan laporan berkala penyedia dengan SLA kontrak; catat pelanggaran SLA sebagai isu.

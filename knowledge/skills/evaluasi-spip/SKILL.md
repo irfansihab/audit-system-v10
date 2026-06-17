@@ -21,7 +21,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dibaca dari `_PKP/sasaran-assignment.json` (diisi Ketua Tim via UI Setup). AT hanya mengerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline E3:** *tidak ada tool v7 — criteria/LKE-driven manual* (LKE SPIP diisi/diolah manual; baca dokumen ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** E0→E3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHE** (bukan stop tiap tahap).
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per komponen/sub-unsur SPIP → `append_temuan` (TANPA Sebab) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per komponen/sub-unsur SPIP → `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Evaluasi (E0–E4)
 
@@ -30,7 +30,7 @@ changelog:
 | **E0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; LKE SPIP (template `references/templates/lke-spip-kementerian.xlsx`) + dokumen pendukung per unsur tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **E1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan, ruang lingkup, komponen/unsur SPIP yang dinilai (Penetapan Tujuan, Struktur & Proses, Pencapaian Tujuan), metodologi PK atas PM — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **E2 — Program Kerja Pengawasan (PKP)** | Per sasaran: unsur/sub-unsur SPIP yang dinilai · langkah pengujian bukti · bukti yang dicari. | KT (UI Setup) |
-| **E3 — Pelaksanaan & KKP** | Per unsur/sub-unsur: tetapkan Nilai PK (skor maturitas 1–5 LKE, independen dari Nilai PM) berdasar bukti → catatan/AoI (TANPA Sebab) → `append_temuan` + `record_pkp_assessment`. Veto penalti via `KK4_PENALTI` bila ada kasus korupsi (lihat seksi Mekanisme Penalti). | AT (auto) |
+| **E3 — Pelaksanaan & KKP** | Per unsur/sub-unsur: tetapkan Nilai PK (skor maturitas 1–5 LKE, independen dari Nilai PM) berdasar bukti → catatan/AoI (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `append_temuan` + `record_pkp_assessment`. Veto penalti via `KK4_PENALTI` bila ada kasus korupsi (lihat seksi Mekanisme Penalti). | AT (auto) |
 | **E4 — Laporan (LHE)** | Render LHE + Nota Dinas; simpulan tingkat maturitas SPIP (Level 1–5) & Area of Improvement prioritas. | KT |
 
 ## Posisi dalam Keluarga Skill Kinerja
@@ -98,7 +98,7 @@ Sebelum mulai analisis dokumen, ikuti panduan berikut agar eksekusi cepat tanpa 
 
 1. **Jangan re-read dokumen yang sudah di-ingest**. Pakai `read_ingested_digest` untuk membaca ringkasan dokumen pendukung; re-read dokumen asli hanya untuk verifikasi halaman yang akan dikutip ke `dokumen_sumber[*].kutipan`.
 2. **Render KKP & LHE via tool v7**: KKP DOCX dengan `render_kkp_docx`, lalu QC dengan `run_qc_kkp`. LHE didraf oleh Ketua Tim pada Tahap E4.
-3. **Catat penilaian per sub-unsur** lewat `record_pkp_assessment` dan temuan/AoI lewat `append_temuan` (TANPA Sebab) — hindari menulis ulang file JSON secara manual.
+3. **Catat penilaian per sub-unsur** lewat `record_pkp_assessment` dan temuan/AoI lewat `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) — hindari menulis ulang file JSON secara manual.
 
 
 ## Peran Claude sebagai APIP Penjamin Kualitas

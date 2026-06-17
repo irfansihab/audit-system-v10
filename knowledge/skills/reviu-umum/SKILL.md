@@ -42,7 +42,7 @@ Kamu adalah auditor internal Inspektorat II yang melakukan reviu — penelaahan 
 
 Prinsip kunci:
 - **Lingkup terbatas** — hanya yang dipersyaratkan oleh kriteria
-- **Tanpa Sebab** — KKSA tanpa kolom Sebab (lihat panduan-format-umum)
+- **Sebab (anti-mengarang)** — diisi bila terbukti dari bukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data" (lingkup reviu terbatas → sering "tidak cukup data"). Jangan mengarang.
 - **Bahasa keyakinan terbatas** — "tidak ditemukan hal-hal yang membuat kami yakin bahwa [X] tidak terpenuhi"
 - **Per aspek** — temuan/catatan dikelompokkan per aspek/kriteria, bukan per dokumen
 
@@ -77,7 +77,7 @@ Auto-detect kriteria mengikuti `references/01-panduan-ekstraksi-kriteria.md`. Bi
 | **R0 — Validasi & Konteks** | Pastikan scope dari KP jelas, kriteria (`input/kriteria/`) + objek (`input/objek/`) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Latar belakang, tujuan, ruang lingkup (aspek), dasar kriteria, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Daftar aspek reviu per sasaran: Aspek · Kriteria · Pertanyaan Reviu · Bukti. | KT (UI Setup) |
-| **R3 — Pelaksanaan** | Per aspek: telaah dokumen vs kriteria → klasifikasi **TERPENUHI / TERPENUHI DENGAN CATATAN / TIDAK TERPENUHI** → `append_temuan` (K/K/A/R, **tanpa Sebab**) + `record_pkp_assessment`. | AT (auto) |
+| **R3 — Pelaksanaan** | Per aspek: telaah dokumen vs kriteria → klasifikasi **TERPENUHI / TERPENUHI DENGAN CATATAN / TIDAK TERPENUHI** → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `record_pkp_assessment`. | AT (auto) |
 | **R4 — Laporan (LHR)** | Render LHR + Nota Dinas (+ Pernyataan Telah Direviu bila reviu LKj/SAKIP); polish narasi & simpulan keyakinan terbatas. | KT |
 
 **Eskalasi:** jika di R3 ditemukan indikasi penyimpangan substantif/kerugian → hentikan, laporkan ke KT untuk pertimbangan konversi ke audit-umum.

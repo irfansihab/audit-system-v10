@@ -21,7 +21,7 @@ changelog:
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dibaca dari `_PKP/sasaran-assignment.json` (diisi Ketua Tim via UI Setup). AT hanya mengerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline E3:** *tidak ada tool v7 — criteria/LKE-driven manual* (AT mengisi/mengolah LKE & baca dokumen bukti dukung ter-ingest via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** E0→E3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHE** (bukan stop tiap tahap).
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per komponen/kriteria (predikat APIP per kriteria LKE) → `append_temuan` (TANPA Sebab) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per komponen/kriteria (predikat APIP per kriteria LKE) → `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Evaluasi (E0–E4)
 
@@ -30,7 +30,7 @@ changelog:
 | **E0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode/objek dari KP jelas; LKE PermenPAN-RB 88/2021 + folder bukti dukung (1_a … 4_c) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **E1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan evaluasi AKIP, ruang lingkup (unit kerja & periode), kriteria (4 komponen / 12 sub-komponen / 79 kriteria LKE), metodologi penilaian predikat — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **E2 — Program Kerja Pengawasan (PKP)** | Per sasaran: komponen/sub-komponen yang dinilai · langkah penilaian (keberadaan/kualitas/pemanfaatan) · bukti dukung yang dicari. | KT (UI Setup) |
-| **E3 — Pelaksanaan & KKP** | Per kriteria: nilai kesesuaian → predikat APIP (skor LKE) berdasar bukti → temuan/catatan & AoI (TANPA Sebab) → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
+| **E3 — Pelaksanaan & KKP** | Per kriteria: nilai kesesuaian → predikat APIP (skor LKE) berdasar bukti → temuan/catatan & AoI (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
 | **E4 — Laporan (LHE)** | Render LHE + Nota Dinas (ikuti `panduan-format-umum/PANDUAN.md`); polish narasi per komponen & rekomendasi; simpulan nilai/kategori AKIP (keyakinan terbatas). | KT |
 
 ---
@@ -235,7 +235,7 @@ Setelah semua kriteria dinilai:
 
 ### Isi LKE & Catat Penilaian
 
-Untuk setiap kriteria, isi predikat APIP + catatan/AoI ke LKE (kolom penilaian APIP), lalu catat hasilnya melalui tool v7: `append_temuan` (temuan/AoI **TANPA Sebab** — evaluasi memberi keyakinan terbatas, tidak menggali akar masalah) dan `record_pkp_assessment` (predikat & nilai per komponen).
+Untuk setiap kriteria, isi predikat APIP + catatan/AoI ke LKE (kolom penilaian APIP), lalu catat hasilnya melalui tool v7: `append_temuan` (temuan/AoI dengan **Sebab** — diisi bila terbukti; bila tidak "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) dan `record_pkp_assessment` (predikat & nilai per komponen).
 
 ---
 
@@ -309,7 +309,7 @@ Yang dinilai:
 |---|---|
 | `read_context` | Baca KP/PKP/context.md penugasan |
 | `read_ingested_digest` / `search_bukti` | Baca teks bukti dukung yang sudah di-ingest |
-| `append_temuan` | Catat temuan/AoI per kriteria (TANPA Sebab) |
+| `append_temuan` | Catat temuan/AoI per kriteria (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) |
 | `record_pkp_assessment` | Catat predikat & nilai per komponen |
 | `render_kkp_docx` | Render KKP (AT) |
 | `run_qc_kkp` | QC kelengkapan KKP sebelum diajukan ke KT |

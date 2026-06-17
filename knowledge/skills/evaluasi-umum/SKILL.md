@@ -41,7 +41,7 @@ Untuk evaluasi yang belum punya skill spesifik. Jika ada (evaluasi-sakip, evalua
 Kamu adalah evaluator Inspektorat II yang menilai **efektivitas, kinerja, atau kesesuaian** suatu objek terhadap kriteria evaluasi. Berbeda dari reviu (administratif) dan audit (kepatuhan terperinci), evaluasi bersifat **substantif** dan menilai apakah suatu sistem/program **berfungsi sebagaimana mestinya**.
 
 Karakteristik:
-- **Temuan tanpa Sebab** — Kondisi, Kriteria, Akibat, Rekomendasi (keyakinan terbatas; akar masalah TIDAK digali seperti audit)
+- **Temuan dengan Sebab (anti-mengarang)** — Kondisi, Kriteria, Sebab, Akibat, Rekomendasi. Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data" (lingkup evaluasi terbatas → sering "tidak cukup data"). Jangan mengarang.
 - Rekomendasi **dikompilasi terpisah di Bab G** LHE (bukan per temuan seperti audit pengadaan)
 - Sering memakai **dimensi/skor** (mis. tertib administrasi 1-4, kualitas 1-5)
 - Hasil dapat berbentuk **predikat/level** (mis. "Sangat Baik", "Baik", "Cukup", "Kurang")
@@ -69,7 +69,7 @@ Kriteria evaluasi sering kompleks: pedoman teknis + lembar kerja evaluasi (LKE) 
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
 - **Pipeline E3:** *tidak ada tool v7 — criteria-driven manual* (digest generik via `read_ingested_digest`).
 - **Mode:** AT **auto-execute** E0→E3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHE**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per kriteria → `append_temuan` (TANPA Sebab) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → penilaian per kriteria → `append_temuan` (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
 ## Tahap Evaluasi (E0–E4)
 
@@ -78,7 +78,7 @@ Kriteria evaluasi sering kompleks: pedoman teknis + lembar kerja evaluasi (LKE) 
 | **E0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode/objek dari KP jelas; kriteria + instrumen (LKE/rubrik bila ada) + objek tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **E1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan evaluasi, ruang lingkup, **dimensi/aspek penilaian** + **rubrik/skor** (bila ada), metodologi (telaah dokumen, wawancara, observasi, analisis data) — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **E2 — Program Kerja Pengawasan (PKP)** | Per sasaran: aspek/sub-aspek/indikator yang dinilai · bobot · sumber data · metode · langkah · bukti. | KT (UI Setup) |
-| **E3 — Pelaksanaan & KKE** | Per aspek/indikator: kumpulkan bukti → nilai sesuai rubrik (skor + % capaian) → temuan/catatan (TANPA Sebab) untuk hal yang butuh rekomendasi sistem → `append_temuan` + `record_pkp_assessment`. Skor di bawah ambang / temuan signifikan ditandai agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
+| **E3 — Pelaksanaan & KKE** | Per aspek/indikator: kumpulkan bukti → nilai sesuai rubrik (skor + % capaian) → temuan/catatan (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang) untuk hal yang butuh rekomendasi sistem → `append_temuan` + `record_pkp_assessment`. Skor di bawah ambang / temuan signifikan ditandai agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
 | **E4 — Laporan (LHE)** | Render LHE + Nota Dinas (ikuti `panduan-format-umum/PANDUAN.md`); simpulan keyakinan **terbatas** (nilai/predikat sesuai metodologi); rekomendasi terpilih di Bab G. | KT |
 
 **Eskalasi:** temuan strategis (mempengaruhi capaian misi/sasaran organisasi) → flag + eskalasi ke Inspektur (lihat tabel Materialitas).
@@ -97,7 +97,7 @@ Sheet "Cover", "Matriks Kriteria & Bobot", "Daftar Bukti", "Audit Trail", lalu:
 
 | Dimensi | Bobot | Skor | % | Predikat |
 
-**Sheet "Temuan"** (untuk hal yang membutuhkan rekomendasi sistem — TANPA unsur Sebab):
+**Sheet "Temuan"** (untuk hal yang membutuhkan rekomendasi sistem — Sebab diisi anti-mengarang):
 
 | ID | Aspek | **Kondisi** | **Kriteria** | **Akibat** | **Rekomendasi** | Bukti |
 
@@ -113,7 +113,7 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi:
   - E.1 Skor per Dimensi (tabel rekapitulasi)
   - E.2 Predikat & Posisi (jika ada level/tingkat)
   - E.3 Analisis Per Dimensi (narasi)
-- **F. Temuan & Catatan** — Kondisi/Kriteria/Akibat/Rekomendasi per temuan (TANPA Sebab)
+- **F. Temuan & Catatan** — Kondisi/Kriteria/Akibat/Rekomendasi per temuan (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang)
 - **G. Rekomendasi** — kompilasi rekomendasi terpilih (sistem-level, bukan per temuan)
 - **H. Simpulan**
 - **I. Apresiasi**
@@ -136,8 +136,8 @@ Tidak menggunakan ambang rupiah seperti audit. Evaluasi memakai:
 | Level | Kriteria | Aksi |
 |-------|----------|------|
 | Catatan minor | Skor di bawah target tetapi bukan dimensi utama | Cantumkan di Bagian E.3 |
-| Temuan signifikan | Skor di bawah target di dimensi utama, **atau** indikasi sistem tidak berjalan | Temuan tanpa Sebab + rekomendasi di Bagian G |
-| Temuan strategis | Mempengaruhi capaian misi/sasaran organisasi | Temuan tanpa Sebab + eskalasi ke Inspektur |
+| Temuan signifikan | Skor di bawah target di dimensi utama, **atau** indikasi sistem tidak berjalan | Temuan (Sebab anti-mengarang) + rekomendasi di Bagian G |
+| Temuan strategis | Mempengaruhi capaian misi/sasaran organisasi | Temuan (Sebab anti-mengarang) + eskalasi ke Inspektur |
 
 ## Output JSON KKP
 
@@ -167,7 +167,7 @@ Tidak menggunakan ambang rupiah seperti audit. Evaluasi memakai:
 
 ## Referensi Wajib Dibaca
 - `references/01-panduan-ekstraksi-kriteria.md`
-- `panduan-format-umum/PANDUAN.md` — terutama matriks elemen (Kondisi/Kriteria/Akibat/Rekomendasi, tanpa Sebab, untuk evaluasi)
+- `panduan-format-umum/PANDUAN.md` — terutama matriks elemen (Kondisi/Kriteria/Sebab/Akibat/Rekomendasi, Sebab anti-mengarang, untuk evaluasi)
 - (jika tersedia) `references/02-rubrik-skoring.md`
 
 ## Catatan Khusus
