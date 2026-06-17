@@ -188,8 +188,8 @@
   </div>
 
   <div class="ws new">
-    <div class="head"><span class="tag">B</span><h3>Autentikasi username + password <span class="pill new">baru · fondasi</span></h3></div>
-    <p class="desc">Saat ini login = prototype role-only (pilih AT/KT/PT/PM tanpa password). v8 ganti ke kredensial nyata.</p>
+    <div class="head"><span class="tag">B</span><h3>Autentikasi username + password <span class="pill keep">B1–B3 selesai</span></h3></div>
+    <p class="desc"><b>✅ Login username+password (16 Juni)</b> — User +username+password_hash (bcrypt), 5 akun seed (incl. PM Doddy), /auth/login verifikasi bcrypt→JWT. Frontend: form + "Login cepat (dev)" 5 kartu auto-isi per role. Sisa: B4 keamanan (rate-limit/ganti password), B5 SSO. ⚠ Produksi: matikan login cepat + ganti DEV_PASSWORD.</p>
     <div class="task"><div class="box"></div><div class="t"><b>B1 — Skema</b>: username (unik) + password_hash di tabel User; hash argon2/bcrypt (jangan plaintext).</div></div>
     <div class="task"><div class="box"></div><div class="t"><b>B2 — Backend auth</b>: login → JWT, seeding admin awal, ganti password. Klaim role tetap (RBAC AT/KT/PT/PM).</div></div>
     <div class="task"><div class="box"></div><div class="t"><b>B3 — Frontend</b>: form login username+password (ganti kartu peran), guard route, halaman ganti password.</div></div>
