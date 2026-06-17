@@ -1,2 +1,2 @@
-"""Audit AI v7 — Backend FastAPI + Claude Agent SDK."""
+"""INTEGRAL (engine Audit AI) — Backend FastAPI + Claude Agent SDK."""
 __version__ = "0.1.0"

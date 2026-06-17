@@ -1,4 +1,4 @@
-"""Agen Claude untuk Audit AI v7.
+"""Agen Claude untuk INTEGRAL (engine Audit AI).
 
 Dua agen ber-LLM (hardened): Anggota Tim (susun KKP) + Ketua Tim (susun LHR).
 Ingestion = worker DETERMINISTIK (routes/agen._run_ingestion), bukan agen.
