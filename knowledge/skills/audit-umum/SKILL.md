@@ -1,11 +1,13 @@
 ---
 name: audit-umum
 format_laporan: kksa
-version: 1.0
+version: 1.1
 jenis: Audit (umum — kriteria fleksibel)
 fungsi: Assurance — Keyakinan Memadai
 output: KKA (.xlsx) + LHA (.docx) + JSON KKP
 model: claude-sonnet-4-6
+changelog:
+  - v1.1 (2026-06-17): Refactor orkestrasi ke v7 — pisah substansi domain dari orkestrasi; struktur seragam Tahap A0–A4; hapus Workflow Gate-Based/STOP & TANYA AUDITOR (paradigma lama audit-system-v4); role+sasaran via sasaran-assignment.json; AT auto-execute, HITL = KT approve KKP → KT draft LHA.
 ---
 
 # Skill: Audit Umum (Generic, Criteria-Driven)
@@ -59,52 +61,26 @@ penugasan/[ID-PENUGASAN]/
 
 **Auto-detect kriteria:** Ikuti `references/01-panduan-ekstraksi-kriteria.md`. Skill membaca seluruh file di `input/kriteria/`, mengklasifikasi (regulasi nasional vs internal, mengikat vs non-mengikat, level: UU/PP/Perpres/Permen/Perdirjen/SOP), dan menyusun **matriks kriteria internal** yang dipakai sebagai acuan pengujian.
 
-## Workflow Gate-Based
+## Eksekusi di v7 (orkestrasi — seragam semua skill audit)
 
-### Gate 0 — Validasi Input
-1. Baca `00-surat-tugas/` → tentukan tujuan, ruang lingkup, periode, objek
-2. Validasi `input/kriteria/` tidak kosong
-3. Validasi `input/objek/` tidak kosong
-4. Hitung ringkasan: jumlah file kriteria, jumlah file objek, total halaman
-5. **STOP & TANYA AUDITOR**: "Lingkup dan dokumen sudah lengkap?" sebelum lanjut
+> **Skill ini = substansi domain.** Cara menjalankan (role, pipeline, urutan tool, titik HITL) diatur seragam oleh agen Anggota Tim v7 di `backend/app/prompts/anggota_tim.md` — BUKAN oleh skill ini. Skill ini **TIDAK** memakai bash, `run_batch.py`, `Task 00/01`, `_ROLE.md`, atau `AskUserQuestion` (itu paradigma lama audit-system-v4).
 
-### Gate 1 — Kerangka Penugasan (KP)
-**Output:** `_KKP/01-KP.md` (manual review oleh auditor di INTEGRAL atau di sini)
+- **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dibaca dari `_PKP/sasaran-assignment.json` (diisi Ketua Tim via UI Setup). AT hanya mengerjakan sasaran yang `assigned_to`-nya memuat namanya.
+- **Pipeline A3:** *tidak ada — criteria-driven manual* (digest generik `digest_generic` otomatis berjalan saat upload; baca via `read_ingested_digest`).
+- **Mode:** AT **auto-execute** A0→A3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHA** (bukan stop tiap tahap).
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → analisis CCSAA → `append_temuan` → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
-Susun:
-- Latar belakang penugasan
-- Tujuan audit (3–5 poin SMART)
-- Ruang lingkup (apa yang diaudit, apa yang TIDAK)
-- Kriteria audit (matriks ekstraksi dari `input/kriteria/`)
-- Metodologi (sampling? populasi penuh? pendekatan risiko?)
-- Susunan tim
-- Jadwal
+## Tahap Audit (A0–A4)
 
-**STOP & TANYA AUDITOR**: konfirmasi KP sebelum lanjut ke PKP.
+| Tahap | Aktivitas | Pelaku |
+|---|---|---|
+| **A0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode/objek dari KP jelas; kriteria (`input/kriteria/`) + objek (`input/objek/`) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
+| **A1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan audit (3–5 poin SMART), ruang lingkup (yang diaudit & yang TIDAK), kriteria (matriks ekstraksi), metodologi (sampling/populasi/pendekatan risiko) — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
+| **A2 — Program Kerja Pengujian (PKP)** | Per sasaran: Aspek · Tujuan Pengujian · Prosedur · Sampel · Bukti yang Dicari. | KT (UI Setup) |
+| **A3 — Pelaksanaan & KKA** | Per langkah/aspek: uji objek vs kriteria → temuan **CCSAA** (Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi) + nilai Rp & level risiko → `append_temuan` + `record_pkp_assessment`. Temuan material (>Rp 500 jt) ditandai `level_risiko` agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
+| **A4 — Laporan (LHA)** | Render LHA + Nota Dinas (ikuti `panduan-format-umum/PANDUAN.md`); polish narasi per aspek, rekomendasi material, simpulan **keyakinan memadai**. | KT |
 
-### Gate 2 — Program Kerja Pengujian (PKP)
-**Output:** `_KKP/02-PKP.xlsx` — satu baris per langkah pengujian
-
-Format PKP:
-| No | Aspek | Tujuan Pengujian | Prosedur | Sampel | Bukti yang Dicari | Penanggung Jawab |
-
-**STOP & TANYA AUDITOR**: konfirmasi PKP. PKP boleh diedit manual di Excel.
-
-### Gate 3 — Pelaksanaan & KKA
-Untuk setiap langkah PKP:
-1. Baca dokumen objek yang relevan
-2. Bandingkan dengan kriteria → hasilkan **temuan CCSAA**
-3. Catat di `_KKP/03-KKA-[no].xlsx`
-4. Update `_KKP/temuan.json` (audit trail terstruktur)
-
-**STOP & TANYA AUDITOR setelah setiap temuan material** (>Rp 500 jt) sebelum dimasukkan ke laporan.
-
-### Gate 4 — Laporan Hasil Audit (LHA)
-**Output:**
-- `_LHP/Nota-Dinas.docx` (pengantar)
-- `_LHP/LHA-[ID].docx` (format surat dinas — ikuti `panduan-format-umum/PANDUAN.md`)
-
-**STOP & TANYA AUDITOR**: review final sebelum penomoran resmi.
+**Eskalasi:** temuan >Rp 1 M atau indikasi pidana → flag MERAH + eskalasi ke PT/Inspektur (lihat tabel Materialitas).
 
 ## Format KKA (Kertas Kerja Audit)
 
@@ -121,7 +97,7 @@ Sheet 5 — **Audit Trail**: Timestamp | Tindakan | File yang Dibaca | Auditor
 
 ## Format Laporan Hasil Audit (LHA)
 
-Ikuti `audit-system-v4/skills/panduan-format-umum/PANDUAN.md` (Nota Dinas + format surat dinas). Struktur isi LHA:
+Ikuti `panduan-format-umum/PANDUAN.md` (Nota Dinas + format surat dinas). Struktur isi LHA:
 
 - **A. Dasar** — ST, ND permintaan jika ada
 - **B. Tujuan** — disalin dari KP
@@ -186,4 +162,4 @@ File: `_KKP/temuan.json`
 ## Referensi Wajib Dibaca
 - `references/01-panduan-ekstraksi-kriteria.md` — cara baca folder kriteria
 - `references/02-checklist-bukti-audit.md` — kelengkapan & kualitas bukti
-- `audit-system-v4/skills/panduan-format-umum/PANDUAN.md` — format LHA
+- `panduan-format-umum/PANDUAN.md` — format LHA

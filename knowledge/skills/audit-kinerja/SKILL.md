@@ -1,20 +1,19 @@
 ---
 name: audit-kinerja
 format_laporan: kksa
-version: 3.0
+version: 3.1
 jenis: Audit Kinerja — Efektivitas dan Efisiensi Program/Kegiatan
 dasar-hukum: PP 60/2008, Perpres 29/2014, Standar Audit Intern Pemerintah Indonesia (AAIPI)
 dimensi: 2E (efektivitas, efisiensi)
 model: claude-sonnet-4-6
 output: Memo Survey Pendahuluan + KKP + LHA Kinerja
 changelog:
+  - v3.1 (2026-06-17): Refactor orkestrasi ke v7 — tambah blok "Eksekusi di v7" + struktur seragam Tahap A0–A4 (A0 memuat Survey Pendahuluan); hapus checklist gate-by-gate & seksi Hemat Token berbasis script (render_kkp.py/qc_saipi.py/Task 01-03 → tool v7); role+sasaran via sasaran-assignment.json. Substansi 8-aspek/why-tree/Survey Pendahuluan dipertahankan utuh.
   - v3.0 (2026-06-14): Kerangka Pemeriksaan Multi-Aspek (8 aspek × 3 lapis) menggantikan "Dimensi Audit (2)"; aspek diturunkan dari sasaran KP + langkah kerja PKP (bukan dipilih bebas); penelusuran Sebab antaraspek (why-tree); lingkup ditegaskan 2E (ekonomis → eskalasi audit-pengadaan). Audit internal (AAIPI) — tanpa rujukan INTOSAI.
   - v2.2: Survey pendahuluan + research online + aturan anti-halusinasi.
 ---
 
 # Skill: Audit Kinerja — Efektivitas dan Efisiensi Program/Kegiatan
-
-> **Checklist gate-by-gate:** Lihat `audit-system-v4/checklists/audit-kinerja.md` untuk daftar pemeriksaan tahap demi tahap.
 
 > **Model**: `claude-sonnet-4-6`
 
@@ -81,18 +80,31 @@ audit-kinerja-[program]/  ← SUB-SKILL (dibuat terpisah per program)
 
 ---
 
-## Hemat Token & Eksekusi (v4.0.4)
+## Eksekusi di v7 (orkestrasi — seragam semua skill audit)
 
-Sebelum mulai analisis dokumen, ikuti panduan berikut agar eksekusi cepat tanpa mengorbankan kualitas:
+> **Skill ini = substansi domain.** Cara menjalankan (role, urutan tool, titik HITL) diatur seragam oleh agen Anggota Tim v7 di `backend/app/prompts/anggota_tim.md` — BUKAN oleh skill ini. Skill ini **TIDAK** memakai bash, `run_batch.py`, `Task 00/01`, `_ROLE.md`, atau `AskUserQuestion` (paradigma lama audit-system-v4).
 
-1. **Jangan re-read dokumen yang sudah di-digest**. Bila skill ini punya pipeline pre-digest (`scripts/[skill]/digest_*.py` + `cross_check.py`), pakai langsung field `parsed.*` di output JSON. Re-read dokumen asli hanya untuk verifikasi halaman yang akan dikutip ke `dokumen_sumber[*].kutipan` atau cross-check false positive rule.
-2. **Render KKP & LHP via script terstandar** (v4.0.4):
-   - KKP DOCX: `python3 scripts/render_kkp.py --penugasan ... --all-anggota`
-   - LHP DOCX: `python3 scripts/render_lhp.py --penugasan ... --rekomendasi-file ...` (template skeleton di `templates/_skeleton-lhp/template-lhp-[skill].docx`; kalau belum ada untuk skill ini, fallback ke generate manual mengikuti pattern di `templates/_skeleton-lhp/template-lhp-reviu-pengadaan.docx`)
-3. **Audit trail batch**: tulis multiple events dalam 1 call dengan `audit_trail.py log-batch --events '[...]'`. Hindari chain `log-event` x N.
-4. **Preflight QC SAIPI** di akhir Task 01: `qc_saipi.py --preflight-context` cek context.md sebelum analisis Task 03 mulai (mencegah KRITIS context.md baru ketahuan saat KKP sudah disusun).
-5. **Auto-gen QA placeholder**: `init_qa_artifacts.py` di akhir Task 01 menulis `_QA-SAIPI/deklarasi-independensi.md`, `jawaban-needs-review.md`, `justifikasi.md` — mencegah iterasi NEEDS_REVIEW di Task 03/04.
+- **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dibaca dari `_PKP/sasaran-assignment.json` (diisi Ketua Tim via UI Setup). AT membaca **skill induk ini + sub-skill program** (bila tersedia) untuk kriteria spesifik.
+- **Pipeline A3:** *tidak ada — criteria-driven* (kriteria dari proses bisnis/SOP/PK program; baca dokumen ter-ingest via `read_ingested_digest`).
+- **Mode:** AT **auto-execute** A0→A3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft LHA**. (Survey Pendahuluan & penajaman sasaran di A0–A1 melibatkan KT/PT.)
+- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` (+ riset online via WebSearch/WebFetch bila tersedia) → analisis 8-aspek + why-tree → `append_temuan` (CCSAA, **wajib Sebab**) → `record_pkp_assessment` → `render_kkp_docx` → `run_qc_kkp`.
 
+## Tahap Audit Kinerja (A0–A4)
+
+| Tahap | Aktivitas | Pelaku |
+|---|---|---|
+| **A0 — Validasi, Konteks & Survey Pendahuluan** | Pastikan tujuan/objek dari ST/KP jelas; kumpulkan dokumen desain program (TOR/PK/proses bisnis); lakukan **Survey Pendahuluan** (pemahaman program, pemetaan risiko per 8 aspek, analytical review, research online) → Memo SP. | AT (auto) + KT/PT |
+| **A1 — Kerangka Penugasan (KP)** | Sasaran & ruang lingkup **diambil dari Memo SP** (bukan verbatim ST); tiap sasaran menyebut aspek yang disasar (dari 8 aspek). | KT (UI) / PT |
+| **A2 — Program Kerja Pengawasan (PKP)** | Langkah kerja per sasaran diturunkan dari hipotesis audit awal di Memo SP; tiap langkah menyebut aspek yang disasar. | KT (UI Setup) |
+| **A3 — Pelaksanaan & KKP** | Petakan sasaran/langkah → aspek; uji **hanya aspek yang tercermin di KP/PKP**; telusuri **Sebab antaraspek (why-tree)**; temuan **CCSAA** (wajib **Sebab**) + dimensi 2E + aspek → `append_temuan` + `record_pkp_assessment`. | AT (auto) |
+| **A4 — Laporan (LHA Kinerja)** | Render LHA; temuan dilaporkan per dimensi 2E (tiap temuan ditandai aspeknya); simpulan **keyakinan memadai**. | KT |
+
+**Eskalasi:** indikasi ekonomisitas/kewajaran harga → eskalasi `audit-pengadaan`; indikasi fraud → catat & eskalasi ke pimpinan.
+
+## Hemat Token
+
+- **Jangan re-read dokumen yang sudah di-ingest.** Baca via `read_ingested_digest` (field `parsed.*`); buka dokumen asli (`search_bukti`/`read_file`) hanya untuk verifikasi halaman yang akan dikutip ke `dokumen_sumber[*].kutipan` saat `append_temuan`.
+- **Render & QC pakai tool v7** — bukan script: KKP via `render_kkp_docx`, QC via `run_qc_kkp`. LHA dirender terpisah oleh KT.
 
 ## Peran Claude
 
@@ -122,7 +134,7 @@ Kriteria audit kinerja bersumber dari **proses bisnis dan kebijakan internal pro
 → Baca sub-skill tersebut — kriteria sudah dikonversi dari proses bisnis ke format referensi
 
 **Jika sub-skill belum tersedia (kondisi umum):**
-→ Minta auditor upload dokumen berikut ke folder `00-surat-tugas/` atau `01-peraturan-internal/` sebelum memulai Task 03:
+→ Minta auditor upload dokumen berikut ke folder `00-surat-tugas/` atau `01-peraturan-internal/` sebelum memulai pengujian (A3):
 ```
 Dokumen sumber kriteria (wajib tersedia sebelum menyusun KKP):
 1. Proses bisnis internal program — alur kerja dari perencanaan s.d. output
@@ -301,7 +313,7 @@ C. Unit Pelaksana       : [Unit]
    [dugaan temuan yang akan diuji → dasar langkah kerja PKP]
 
 9. DOKUMEN YANG MASIH DIBUTUHKAN
-   [daftar dokumen yang harus diminta sebelum Task 03]
+   [daftar dokumen yang harus diminta sebelum A3 (pengujian)]
 
 Disusun oleh: [Ketua Tim]         Tanggal: [...]
 Disetujui oleh: [Pengendali Teknis] Tanggal: [...]
@@ -374,7 +386,7 @@ Audit kinerja itu luas. Untuk sampai pada simpulan **efektivitas & efisiensi (2E
 
 **Ruang lingkup aspek yang diaudit = aspek yang tercermin pada SASARAN di Kartu Penugasan (KP) + LANGKAH KERJA di Program Kerja Pengawasan (PKP).** 8 aspek di atas berperan dua kali:
 - **Di hulu (perencanaan):** checklist saat survey pendahuluan merumuskan sasaran & langkah kerja → dituangkan ke KP (oleh PT) dan PKP (oleh KT).
-- **Di eksekusi (Task 03/KKP):** lensa pemetaan.
+- **Di eksekusi (A3/KKP):** lensa pemetaan.
 
 **Langkah wajib di awal KKP — Pemetaan Sasaran/Langkah → Aspek:**
 1. Baca sasaran di KP dan langkah kerja di `_PKP/sasaran-assignment.json`.
@@ -442,7 +454,7 @@ atau alokasi sumber daya ulang. Sebutkan: siapa bertanggung jawab, apa yang dila
 |----|-------------|-------------|--------------|---------|----------|-------|--------|
 | 1 | [Judul] | [aspek terkait] | Efektivitas / Efisiensi | [Fakta] | [Target/Acuan] | [Root cause] | [Dampak] |
 
-> Simpan `aspek` & `dimensi` sebagai field di `temuan.json` (metadata + ditampilkan di narasi KKP). Kolom DOCX hasil `render_kkp.py` tidak wajib berubah — penanda aspek boleh muncul di narasi temuan saja.
+> Simpan `aspek` & `dimensi` sebagai field di `temuan.json` (metadata + ditampilkan di narasi KKP). Kolom DOCX hasil `render_kkp_docx` tidak wajib berubah — penanda aspek boleh muncul di narasi temuan saja.
 
 ---
 
