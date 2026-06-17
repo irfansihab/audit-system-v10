@@ -148,6 +148,15 @@ export const api = {
   /** Ringkasan beranda (1 panggilan, di-cache backend ~30s) — widget dashboard. */
   getDashboardSummary: () => request<any>('/dashboard/summary'),
 
+  /** Lembar Reviu berjenjang (level KT / PT) — aspek baku + isian + paraf. */
+  getLembarReviu: (penugasanId: number, level: 'KT' | 'PT') =>
+    request<any>(`/penugasan/${penugasanId}/lembar-reviu/${level}`),
+  saveLembarReviu: (penugasanId: number, level: 'KT' | 'PT', body: any) =>
+    request<any>(`/penugasan/${penugasanId}/lembar-reviu/${level}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
   /** Daftar rekomendasi TLHP (ber-aging). Filter opsional satker/status. */
   listTlhp: (params?: { satker_kode?: string; status?: string }) => {
     const qs = new URLSearchParams();

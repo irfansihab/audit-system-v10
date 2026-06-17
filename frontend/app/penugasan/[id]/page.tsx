@@ -7,6 +7,7 @@ import { api, getSession, Dokumen, Penugasan, Role, Session, GateStatus } from '
 import { AppShell } from '@/components/AppShell';
 import { HeroPenugasan } from '@/components/HeroPenugasan';
 import { TemplatePickerKpPkp } from '@/components/TemplatePickerKpPkp';
+import { LembarReviuPanel } from '@/components/LembarReviuPanel';
 
 // NAVIGASI = KARTU TAHAPAN (ala SIMWAS "Detail Pelaksanaan Penugasan").
 // Tidak ada tab bar terpisah — klik kartu tahapan di hero membuka workspace
@@ -238,6 +239,12 @@ export default function DetailPenugasanPage() {
                 }}
               />
             )}
+            <LembarReviuPanel
+              penugasanId={id}
+              level="KT"
+              canEdit={['KT', 'PT', 'PM'].includes(session?.role_aktif || '')}
+              key={`lr-kt-${id}`}
+            />
           </div>
         )}
 
@@ -270,6 +277,12 @@ export default function DetailPenugasanPage() {
               penugasanId={id}
               role={session.role_aktif}
               onReviewed={(s) => setLhpStatus(s)}
+            />
+            <LembarReviuPanel
+              penugasanId={id}
+              level="PT"
+              canEdit={['PT', 'PM'].includes(session?.role_aktif || '')}
+              key={`lr-pt-${id}`}
             />
           </div>
         )}

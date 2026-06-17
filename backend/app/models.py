@@ -367,3 +367,31 @@ class TlhpRekomendasi(Base):
     bukti_tl: Mapped[str | None] = mapped_column(Text, nullable=True)
     sumber: Mapped[str] = mapped_column(String(20), default="dummy")  # dummy | ingest
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class LembarReviu(Base):
+    """Lembar Reviu berjenjang (format INTEGRAL/SIMWAS) — checklist supervisi.
+
+    `level`: "KT" (Reviu Ketua Tim atas Kertas Kerja, tahapan 4) atau
+    "PT" (Reviu Pengendali Teknis atas Konsep LHP, tahapan 6).
+    Aspek (A–D) baku per level (lihat `lembar_reviu.py`); di sini disimpan
+    isian reviewer per aspek (`items`) + sign-off (paraf). 1 lembar per (penugasan, level).
+    """
+
+    __tablename__ = "lembar_reviu"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    penugasan_id: Mapped[int] = mapped_column(ForeignKey("penugasan.id"), index=True)
+    level: Mapped[str] = mapped_column(String(4), index=True)  # KT | PT
+    # items = [{"kode":"A","status":"Sesuai","penyelesaian":"..."}]
+    items: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    catatan: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reviewer_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewer_nama: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    reviewer_nip: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    tanggal: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    diparaf: Mapped[bool] = mapped_column(default=False)  # sign-off
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
