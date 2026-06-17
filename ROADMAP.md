@@ -73,7 +73,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - [x] **A2 — Identitas tetap** ✅ (16 Juni) — logo **∫** + palette ungu `#5C4FE7` dipertahankan; tak ada aset baru.
 - [x] **A3 — Narasi dokumen** ✅ (16 Juni) — `README.md` ditulis ulang INTEGRAL-first (nama produk = INTEGRAL; "Audit AI" = engine internal; v8 = generasi codebase). `HANDOVER.md` sudah INTEGRAL.
 - [x] **A4 — Versi internal v7→v8** ✅ (16 Juni) — FastAPI `title="INTEGRAL" v8.0.0` + root endpoint (`name:INTEGRAL, engine:Audit AI`); `package.json` → `integral-frontend@8.0.0`; header prompt agen AT/KT → "INTEGRAL (engine Audit AI)".
-- [x] **A5 — Rapikan penamaan teknis** ✅ (16 Juni) — rename `docs/openapi-integral-v7.yaml`→`...-v8.yaml` + `kontrak-api-integral-v7.html`→`...-v8.html` + brand internal v8. *Sisa (→ E): buang referensi legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu (reviu sudah R0–R4).*
+- [x] **A5 — Rapikan penamaan teknis** ✅ (16 Juni) — rename `docs/openapi-integral-v7.yaml`→`...-v8.yaml` + `kontrak-api-integral-v7.html`→`...-v8.html` + brand internal v8. *Sisa legacy `audit-system-v4` (bash/Task/_ROLE) di skill non-reviu → SELESAI di C4 (17 Juni).*
 - [ ] **A6 — Arsip** (opsional): pindahkan docs rencana "fase INTEGRAL" usang ke `docs/archive/`. Ditunda — low value.
 - [x] **A7 — Audit UI clean** (lihat Prinsip UX §2) — selesai (17 Juni):
   - [x] Audit semua layar utama: **tak ada tombol mati/duplikat** (TopBar/login/dashboard/penugasan/CACM/TLHP). Header penugasan + tombol sumber PKP sudah dirapikan.
@@ -100,7 +100,9 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
   - [x] **Lembar Reviu berjenjang KT & PT** ✅ (replikasi format INTEGRAL/SIMWAS) — `models.LembarReviu` + `routes/lembar_reviu.py` (aspek baku A–D per level: KT atas KKP, PT atas LHP + kolom Penyelesaian) + `LembarReviuPanel` di Tahapan 4 (KT) & 6 (PT): status per aspek + paraf (reviewer/NIP/tanggal). Role-gated. Teruji.
 - [ ] **C2 — Integrasi SIMWAS v2**: finalisasi kontrak REST (`openapi`→v8), JWKS SSO, webhook; selaras dengan B5.
 - [ ] **C3 — CACM/EWS**: modul `CACM/` + `CacmRun`/`EwsFinding` + halaman CACM dipertahankan & diverifikasi.
-- [ ] **C4 — Mutu agen & eval (lanjutan v7)**: skill **R0–R4** untuk reviu sudah selesai → **lanjutkan ke rumpun audit/evaluasi/pemantauan** (hati-hati: paradigma stop-confirm berbeda per rumpun); PKP-di-feedback; `backend/eval` (rubrik, golden, judge, verification pass).
+- [~] **C4 — Mutu agen & eval (lanjutan v7)**:
+  - [x] **Orkestrasi seragam SEMUA skill** ✅ (17 Juni) — 13/13 skill non-reviu di-refactor ke pola v7 (blok "Eksekusi di v7" + tabel Tahap), selaras reviu (R0–R4): **AUDIT** A0–A4 (wajib Sebab; audit-pengadaan pakai tool `run_batch_audit_pbj`), **EVALUASI** E0–E4 (tanpa Sebab; criteria/LKE-driven manual), **PEMANTAUAN** P0–P4 (monitoring), **KONSULTANSI** K0–K3 (advisory). Legacy bash/Task/_ROLE/AskUserQuestion/Gate/audit-system-v4 dibuang. Substansi domain dipertahankan; registry 17 skill OK. Hanya 3 tool pipeline v7 ada (rka/pbj/audit_pbj).
+  - [ ] Lanjutan: PKP-di-feedback; `backend/eval` (rubrik, golden, judge, verification pass).
 - [~] **C5 — TLHP sebagai pilar penuh (BARU)** — fase 1 & 2 ✅ (16 Juni):
   - [x] Backend `routes/tlhp.py`: `GET /tlhp` (list+filter) & `/tlhp/summary`; **umur/warna aging** (HIJAU/KUNING/ORANGE/MERAH) + flag **kritis** (>365 hari belum tuntas).
   - [x] UI: **menu "Tindak Lanjut"** + halaman `app/tlhp/page.tsx` + widget F4 dashboard.
@@ -118,7 +120,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 ## Workstream E — Backlog warisan v7 (tetap berlaku — detail di arsip)
 
 - [ ] Konsistensi skill rumpun **audit/evaluasi/pemantauan** → pola Tahap (lihat [[project-skill-orkestrasi-v7]] di memori).
-- [ ] Gap audit skill: `audit-kinerja` wajib riset online tapi agen tak punya tool web; unsur **Sebab** pada `evaluasi-mr`/`evaluasi-umum` kontradiktif dgn aturan "sebab hanya audit". (TLHP skeleton → sudah diangkat ke **C5**.)
+- [ ] Gap audit skill: `audit-kinerja` "research online" mengasumsikan AT punya WebSearch/WebFetch — pastikan tool web tersedia di runtime agen. (Unsur **Sebab** pada `evaluasi-mr`/`evaluasi-umum` → **RESOLVED di C4**: Sebab dihapus dari rumpun evaluasi. TLHP skeleton → **C5**.)
 - [ ] Eval P3–P5: perkuat grounding+coverage; token logging (`agent_runs`) + instrumen HITL; ukur akurasi digest.
 - [ ] A3 laporan bespoke (dashboard pemantauan, tabel aspek evaluasi).
 - [ ] Fix kosmetik: warning duplicate-key `Sidebar.tsx`; cap 14000 char `load_skill` untuk 2 skill pipeline besar.
