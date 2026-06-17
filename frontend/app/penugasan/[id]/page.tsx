@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { api, getSession, Dokumen, Penugasan, Role, Session, GateStatus } from '@/lib/api';
 import { AppShell } from '@/components/AppShell';
 import { HeroPenugasan } from '@/components/HeroPenugasan';
@@ -2442,7 +2443,7 @@ function GatePanel({
       await api.recordGateDecision(penugasanId, gateId, decision);
       await refetch();
     } catch (e: any) {
-      alert(e.message);
+      toast.error(e.message || 'Gagal menyimpan keputusan gate.');
     } finally {
       setBusy(false);
     }
