@@ -412,7 +412,7 @@ Paralel — aspek 8 (data): apakah kinerja yang "dilaporkan" memang nyata?
 
 ## Framework Elemen Temuan (CCSAA)
 
-Setiap temuan audit kinerja WAJIB memiliki 5 elemen lengkap:
+Setiap temuan audit kinerja punya 5 elemen (CCSAA). **Penting — pembagian KKP vs LHA:** di **KKP**, Anggota Tim mengisi **Kondisi · Kriteria · Sebab · Akibat** (+ kode temuan & `dokumen_sumber`). **Unsur Rekomendasi TIDAK ditulis di KKP** — disusun **Ketua Tim** saat menyusun **LHA** (konsisten dgn orkestrasi v7: AT tak menulis Rekomendasi di KKP). Template di bawah (memuat Rekomendasi) adalah bentuk lengkap pada **Laporan**; tabel KKP di seksi berikut sudah K/K/S/A:
 
 ```
 **TEMUAN [NOMOR]: [JUDUL SINGKAT SPESIFIK — masalah kinerja yang ditemukan]**

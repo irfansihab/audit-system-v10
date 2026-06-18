@@ -50,7 +50,7 @@ changelog:
 | 7. | **Verifikasi kerugian negara** | Untuk temuan terkait pembayaran/kontrak/hasil pekerjaan, hitung perkiraan kerugian negara bila relevan (Rp x Volume x Selisih) — termasuk kelebihan bayar akibat hasil < kontrak dari Task #5. |
 | 8. | **Cek konflik kepentingan** | Bila auditor punya akses data historis pengadaan auditee, cek pola: vendor yang sama berulang kali menang? Pejabat yang sama tanda tangan kontrak besar? |
 
-**Setiap temuan substantif WAJIB di-`append_temuan`** sebagai entry baru (CCSAA lengkap: Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi + `dokumen_sumber` + nilai Rp + level risiko). Status awal DRAFT — final saat KT approve KKP.
+**Setiap temuan substantif WAJIB di-`append_temuan`** sebagai entry baru (di KKP: Kondisi/Kriteria/**Sebab**/Akibat + `dokumen_sumber` + nilai Rp + level risiko; **Rekomendasi TIDAK ditulis di KKP — disusun Ketua Tim di LHA**). Status awal DRAFT — final saat KT approve KKP.
 
 **Setelah semua analisis substantif selesai, lapor ringkasan** (total temuan rule-based + substantif + per-severity). Hindari kalimat "Mau saya lanjut ...?" — AT auto-execute, tampilkan langsung hasil.
 
@@ -72,7 +72,7 @@ Fokus utama audit pengadaan:
 - **Kewajaran harga** — apakah harga yang dibayar wajar, tidak melebihi HPS/nilai pasar?
 - **Legalitas kontrak** — apakah kontrak sah, penyedia memenuhi kualifikasi, tidak ada konflik kepentingan?
 - **Kepatuhan prosedur menyeluruh** — dari perencanaan hingga pembayaran
-- **Analisis CCSAA lengkap** — setiap temuan wajib memiliki Kondisi, Kriteria, **Sebab**, Akibat, dan Rekomendasi
+- **Analisis CCSAA** — setiap temuan di KKP wajib memiliki Kondisi, Kriteria, **Sebab**, Akibat (Rekomendasi disusun Ketua Tim di LHA, bukan di KKP)
 
 **Langkah pertama setiap penugasan:** Baca file `references/06-checklist-audit-pengadaan.md` untuk checklist dan red flags per tahap.
 
@@ -199,6 +199,8 @@ Pipeline meng-handle deteksi struktural deterministik. Claude menangani:
 
 ## Format Temuan CCSAA
 
+> **KKP vs LHA — unsur Rekomendasi.** Di **KKP**, Anggota Tim mengisi **Kondisi · Kriteria · Sebab · Akibat** (+ kode & `dokumen_sumber`). **Rekomendasi TIDAK ditulis di KKP** — disusun **Ketua Tim** di **LHA**. Template lengkap di bawah (memuat Rekomendasi) adalah bentuk pada **Laporan**.
+
 ```
 **TEMUAN [NOMOR]: [JUDUL SINGKAT SPESIFIK]**
 
@@ -224,7 +226,7 @@ Pipeline meng-handle deteksi struktural deterministik. Claude menangani:
 1. **Cover:** Nomor ST, Obyek Audit, Periode, Tim Auditor
 2. **Program Audit:** Tujuan, Ruang Lingkup, Prosedur per Area
 3. **Tabel Ringkasan Temuan:** No | Judul Temuan | Nilai (Rp) | Level Risiko | Status
-4. **Uraian Temuan:** Format CCSAA lengkap per temuan
+4. **Uraian Temuan:** Kondisi/Kriteria/Sebab/Akibat per temuan (**tanpa Rekomendasi** — Rekomendasi disusun KT di LHA)
 5. **Daftar Dokumen Sumber:** Semua dokumen yang digunakan sebagai bukti
 
 ### Area Audit yang Dicakup:

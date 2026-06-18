@@ -78,13 +78,13 @@ penugasan/[ID-PENUGASAN]/
 | **A0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode/objek dari KP jelas; kriteria (`input/kriteria/`) + objek (`input/objek/`) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **A1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan audit (3–5 poin SMART), ruang lingkup (yang diaudit & yang TIDAK), kriteria (matriks ekstraksi), metodologi (sampling/populasi/pendekatan risiko) — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **A2 — Program Kerja Pengujian (PKP)** | Per sasaran: Aspek · Tujuan Pengujian · Prosedur · Sampel · Bukti yang Dicari. | KT (UI Setup) |
-| **A3 — Pelaksanaan & KKA** | Per langkah/aspek: uji objek vs kriteria → temuan **CCSAA** (Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi) + nilai Rp & level risiko → `append_temuan`. Temuan material (>Rp 500 jt) ditandai `level_risiko` agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
+| **A3 — Pelaksanaan & KKA** | Per langkah/aspek: uji objek vs kriteria → temuan (Kondisi/Kriteria/**Sebab**/Akibat + nilai Rp & level risiko) → `append_temuan`. **Rekomendasi TIDAK di KKP — disusun KT di LHA.** Temuan material (>Rp 500 jt) ditandai `level_risiko` agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
 | **A4 — Laporan (LHA)** | Render LHA + Nota Dinas (ikuti `panduan-format-umum/PANDUAN.md`); polish narasi per aspek, rekomendasi material, simpulan **keyakinan memadai**. | KT |
 
 **Eskalasi:** temuan >Rp 1 M atau indikasi pidana → flag MERAH + eskalasi ke PT/Inspektur (lihat tabel Materialitas).
 
 > ### ⚡ Dekomposisi sasaran generik (WAJIB sebelum menilai)
-> Sasaran audit sering generik (mis. *"memastikan kesesuaian dokumen dengan kriteria"*). Jangan dijawab melebar/global. **Uraikan dulu** sasaran jadi daftar **kriteria/elemen konkret** dari `input/kriteria/` (regulasi/SOP/SK yang diunggah), lalu uji kesesuaian **per kriteria/elemen** — satu temuan per elemen yang tidak sesuai (CCSAA lengkap dengan **Sebab**). Yang sesuai → nyatakan eksplisit "telah memenuhi". **Jangan menyimpulkan "sesuai" tanpa menelusuri tiap kriteria.** (Skill berdomain spesifik mis. audit-pengadaan punya checklist baku + rule deterministik; di sini checklist diturunkan dari kriteria yang diunggah.)
+> Sasaran audit sering generik (mis. *"memastikan kesesuaian dokumen dengan kriteria"*). Jangan dijawab melebar/global. **Uraikan dulu** sasaran jadi daftar **kriteria/elemen konkret** dari `input/kriteria/` (regulasi/SOP/SK yang diunggah), lalu uji kesesuaian **per kriteria/elemen** — satu temuan per elemen yang tidak sesuai (unsur K/K/S/A — termasuk **Sebab**; Rekomendasi di LHA). Yang sesuai → nyatakan eksplisit "telah memenuhi". **Jangan menyimpulkan "sesuai" tanpa menelusuri tiap kriteria.** (Skill berdomain spesifik mis. audit-pengadaan punya checklist baku + rule deterministik; di sini checklist diturunkan dari kriteria yang diunggah.)
 
 ## Format KKA (Kertas Kerja Audit)
 
@@ -92,9 +92,9 @@ File: `_KKP/03-KKA-[no].xlsx`
 
 Sheet 1 — **Cover**: Nomor ST, Objek, Periode, Tim
 Sheet 2 — **Matriks Kriteria**: ID | Sumber | Pasal/Butir | Kutipan | Kategori
-Sheet 3 — **Temuan**: setiap baris adalah satu temuan dengan kolom CCSAA penuh:
+Sheet 3 — **Temuan**: setiap baris satu temuan, unsur K/K/S/A (**Rekomendasi TIDAK di KKA — disusun KT di LHA**):
 
-| No | Judul | **Kondisi** | **Kriteria** (ID) | **Sebab** | **Akibat** | **Rekomendasi** | Nilai Rp | Level Risiko | Bukti (file:hal) |
+| No | Judul | **Kondisi** | **Kriteria** (ID) | **Sebab** | **Akibat** | Nilai Rp | Level Risiko | Bukti (file:hal) |
 
 Sheet 4 — **Daftar Bukti**: ID Bukti | Nama File | Halaman | Tipe | Ringkasan
 Sheet 5 — **Audit Trail**: Timestamp | Tindakan | File yang Dibaca | Auditor

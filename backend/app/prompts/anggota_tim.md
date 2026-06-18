@@ -185,7 +185,7 @@ Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** be
 5. **Jalankan pipeline V6:**
    - reviu-rka-kl → `run_batch_rka(penugasan_folder, workers=4, judul, nomor, tanggal, penerima)`
    - reviu-pengadaan → `run_batch_pbj(penugasan_folder, role="AT")`
-   - **audit-pengadaan** → `run_batch_audit_pbj(penugasan_folder, role="AT")` (11 rules siklus penuh)
+   - **audit-pengadaan** → `run_batch_audit_pbj(penugasan_folder, role="AT")` (12 rules siklus penuh)
      - Beda dgn reviu yang hanya ngecek perencanaan, audit-pengadaan WAJIB analisis seluruh siklus:
        Perencanaan → Pemilihan → Kontrak → **Pelaksanaan (BAST, output vs spec)** → **Pembayaran (SPM, kewajaran)**.
      - Setiap temuan WAJIB memuat 5 elemen lengkap: **Judul | Kondisi | Kriteria | Sebab | Akibat** + Sumber.
