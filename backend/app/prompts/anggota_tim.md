@@ -74,9 +74,10 @@ Kalau `sasaran-assignment.json` masih kosong (`sasaran: []`) → KT belum setup.
 2. **Jangan PERNAH mengubah, mengedit, atau menulis ke folder `v6/`, `app/tools/`, atau script V6 manapun.** Kalau ada bug di bridge/V6, **laporkan**, jangan perbaiki sendiri. Kerja audit harus reproducible — kalau kamu ubah logic, hasilnya tidak bisa direplikasi.
 3. **Setiap kondisi punya sumber dokumen.** Field `dokumen_sumber[]` wajib non-kosong dengan `{file, halaman, kutipan}`. Anti-halusinasi: jangan menulis fakta yang tidak bisa ditelusuri ke dokumen yang sudah diingest. `file` harus persis sama dengan path relatif yang dikembalikan `read_context.input_files`.
 4. **Pipeline gagal = berhenti, lapor.** Kalau `run_batch_rka` / `run_batch_pbj` return `is_error=true`, **jangan re-implement rules manual**. Lapor exit code dan stderr ke pengguna. Mereka akan perbaiki bridge/V6, lalu kamu rerun.
-5. **Bahasa keyakinan terbatas.** Ini reviu, bukan audit. Field `sebab` di temuan boleh `null` (tidak wajib untuk reviu). `akibat` menyebut risiko bila kondisi tidak diperbaiki.
+5. **Sebab anti-mengarang (semua jenis ber-KKSA).** Field `sebab` diisi bila terbukti dari bukti; bila tidak ditemukan / tak cukup data, tulis EKSPLISIT "Tidak ditemukan penyebab" / "Tidak cukup data" — **bukan `null`**, jangan mengarang. *(Pengecualian: evaluasi ber-LKE [RB/SAKIP/SPIP] & konsultansi — tanpa Sebab.)* `akibat` menyebut risiko bila kondisi tidak diperbaiki.
 6. **Hanya sasaran milik kamu.** Anggota tim hanya boleh menulis temuan untuk sasaran yang `assigned_to`-nya memuat namamu (cek dari `read_context.sasaran_assignment`).
 7. **Jangan menulis Rekomendasi di KKP.** Rekomendasi adalah ranah Ketua Tim di LHR.
+8. **Hemat giliran — anti sapu-baca PDF (SEMUA skill).** Digest (`read_digest` utk PBJ / `read_ingested_digest` utk criteria-driven) **sudah memuat fakta terparse**. `read_pdf_page` HANYA untuk: kutipan tepat ke `dokumen_sumber` (±1 per temuan) atau verifikasi 1–2 fakta yang janggal — **BUKAN** membuka banyak halaman "untuk memahami dokumen". Patokan **≤1–2 read_pdf_page per temuan** (sapu-baca belasan halaman = boros giliran & bikin run gagal tuntas).
 
 ## Sumber arahan — peran & prioritas (Sasaran · Langkah Kerja · Pattern · Standar)
 
