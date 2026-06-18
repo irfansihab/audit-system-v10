@@ -37,7 +37,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - **`backend/v6/` READ-ONLY** — semua perubahan di app-layer (`backend/app`) + template. V6 (digest, cross-check, render) tak ditulis ulang.
 - **2 agen Claude**: Anggota Tim (AT) & Ketua Tim (KT); ingestion & QC SAIPI = deterministik/sinkron (bukan agen).
 - **Skill registry folder-driven** (`knowledge/skills`, `APP_SKILLS_PATH`); skill = substansi domain, orkestrasi di prompt agen (Tahap R0–R4).
-- **Anti-halusinasi**: tiap temuan ber-`dokumen_sumber`; `sebab` hanya untuk skill AUDIT.
+- **Anti-halusinasi**: tiap temuan ber-`dokumen_sumber`; **unsur `sebab` diisi anti-mengarang untuk SEMUA jenis ber-KKSA** (audit/reviu/evaluasi non-LKE/pemantauan) — bila tak terbukti tulis "Tidak ditemukan penyebab"/"Tidak cukup data" (sejak 17 Juni). **KECUALI** evaluasi ber-LKE (RB/SAKIP/SPIP) & Konsultansi → tanpa Sebab. Lihat `panduan-format-umum/PANDUAN.md`.
 
 ## 2. Prinsip UX v8 — UI clean & minim friksi (WAJIB di semua layar)
 
@@ -102,6 +102,10 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - [ ] **C3 — CACM/EWS**: modul `CACM/` + `CacmRun`/`EwsFinding` + halaman CACM dipertahankan & diverifikasi.
 - [~] **C4 — Mutu agen & eval (lanjutan v7)**:
   - [x] **Orkestrasi seragam SEMUA skill** ✅ (17 Juni) — 13/13 skill non-reviu di-refactor ke pola v7 (blok "Eksekusi di v7" + tabel Tahap), selaras reviu (R0–R4): **AUDIT** A0–A4 (wajib Sebab; audit-pengadaan pakai tool `run_batch_audit_pbj`), **EVALUASI** E0–E4 (tanpa Sebab; criteria/LKE-driven manual), **PEMANTAUAN** P0–P4 (monitoring), **KONSULTANSI** K0–K3 (advisory). Legacy bash/Task/_ROLE/AskUserQuestion/Gate/audit-system-v4 dibuang. Substansi domain dipertahankan; registry 17 skill OK. Hanya 3 tool pipeline v7 ada (rka/pbj/audit_pbj).
+  - [x] **Konsistensi doktrin Sebab + rezim LKE** ✅ (18 Juni) — bersihkan kontradiksi changelog-vs-body lintas skill; reviu (rka/pbj) hitungan rule & path diperbaiki; **trio LKE (RB/SAKIP/SPIP) = tanpa Sebab** (instrumen LKE + AoI, bukan KKSA) konsisten di prompt agen (klausul OVERRIDE dikecualikan) + PANDUAN + `render_kkp.py` (kolom Sebab dilepas utk trio LKE). Sumber: arahan user (SAKIP/SPIP punya LKE sendiri → ikut rezim RB).
+  - [x] **SPIP/SAKIP/RB → 1-shot (buang gate bertahap)** ✅ (18 Juni) — evaluasi ber-LKE tak lagi gate-demi-gate (≈10 stop manual); kini auto-execute satu lintasan, HITL hanya KT-approve (selaras v8). **Infra gate dihapus tuntas**: `gate_registry.py`, `tools/gate_tools.py`, `tasks/*-bertahap.md`, endpoint `/gates`, GatePanel frontend, `api.ts` gate, config `tasks_path`. Backend & tsc verified.
+  - [x] **KKP rekap skor LKE (pola RB)** ✅ (18 Juni) — tool baru `write_penilaian_lke` → `_KKP/penilaian-lke-<skill>.json`; `render_kkp.py` tampilkan tabel "Rekap Penilaian (LKE)" (komponen/bobot/Nilai PM/Nilai APIP/predikat) + AoI. Bug phantom `record_pkp_assessment` (dirujuk 14 skill, bukan tool) dibersihkan total.
+  - [ ] **LHE SAKIP & SPIP — format laporan sendiri (BELUM)** — saat ini frontmatter `format_laporan: kksa`, padahal SAKIP/SPIP punya format LHE sendiri (seperti RB sudah `rb-4dim`). Buat profil render LHE khusus (mis. `lke-sakip`/`lke-spip`: rekap predikat per komponen + AoI + Pernyataan/simpulan kategori), tambah ke dispatcher `render_report` di `lhr_tools.py`, sesuaikan frontmatter & `ketua_tim.md`. *(Lingkup KKP sudah beres; ini level laporan/KT.)*
   - [ ] Lanjutan: PKP-di-feedback; `backend/eval` (rubrik, golden, judge, verification pass).
 - [~] **C5 — TLHP sebagai pilar penuh (BARU)** — fase 1 & 2 ✅ (16 Juni):
   - [x] Backend `routes/tlhp.py`: `GET /tlhp` (list+filter) & `/tlhp/summary`; **umur/warna aging** (HIJAU/KUNING/ORANGE/MERAH) + flag **kritis** (>365 hari belum tuntas).
@@ -119,7 +123,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 
 ## Workstream E — Backlog warisan v7 (tetap berlaku — detail di arsip)
 
-- [ ] Konsistensi skill rumpun **audit/evaluasi/pemantauan** → pola Tahap (lihat [[project-skill-orkestrasi-v7]] di memori).
+- [x] Konsistensi skill rumpun **audit/evaluasi/pemantauan** → pola Tahap ✅ (RESOLVED di C4, 17–18 Juni; termasuk doktrin Sebab, rezim LKE, gate→1-shot).
 - [ ] Gap audit skill: `audit-kinerja` "research online" mengasumsikan AT punya WebSearch/WebFetch — pastikan tool web tersedia di runtime agen. (Unsur **Sebab** pada `evaluasi-mr`/`evaluasi-umum` → **RESOLVED di C4**: Sebab dihapus dari rumpun evaluasi. TLHP skeleton → **C5**.)
 - [ ] Eval P3–P5: perkuat grounding+coverage; token logging (`agent_runs`) + instrumen HITL; ukur akurasi digest.
 - [ ] A3 laporan bespoke (dashboard pemantauan, tabel aspek evaluasi).

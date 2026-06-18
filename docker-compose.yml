@@ -32,7 +32,6 @@ services:
       APP_SKILLS_PATH: /skills
       APP_TEMPLATES_PATH: /templates
       APP_WIKI_PATH: /wiki
-      APP_TASKS_PATH: /tasks
       APP_CORS_ORIGINS: http://localhost:3000
       # Tier-2 digestion: pulihkan field hilang via LLM murah (on default sejak
       # 3 Jun 2026 — KAK/HPS pengadaan banyak non-standar; lihat
@@ -43,11 +42,10 @@ services:
       - ./backend/app:/app/app
       - audit_v7_data:/data
       - ../audit-system-v4:/v6:ro
-      # Aset cowork (registry skill, template LHP, pattern wiki, gate task) — read-only
+      # Aset cowork (registry skill, template LHP, pattern wiki) — read-only
       - ./knowledge/skills:/skills:ro
       - ./knowledge/templates:/templates:ro
       - ./knowledge/wiki:/wiki:ro
-      - ./knowledge/tasks:/tasks:ro
     ports:
       - "8000:8000"
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

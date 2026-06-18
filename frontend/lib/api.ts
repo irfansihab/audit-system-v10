@@ -77,24 +77,6 @@ export interface SkillInfo {
   has_pipeline: boolean;
 }
 
-export interface GateItem {
-  id: string;
-  judul: string;
-  status?: 'PENDING' | 'IN_PROGRESS' | 'DONE' | 'NEEDS_REVISION';
-  catatan?: string;
-}
-export interface GateStatus {
-  gated: boolean;
-  skill: string;
-  gates: GateItem[];
-  progress: {
-    skill: string;
-    total_gates: number;
-    current_gate: string | null;
-    gates: GateItem[];
-    updated_at?: string;
-  } | null;
-}
 
 export interface User {
   id: number;
@@ -185,10 +167,6 @@ export const api = {
     return request<{ total: number; items: any[] }>(`/tlhp${q ? `?${q}` : ''}`);
   },
 
-  /** Status evaluasi bertahap (gate-based). gated=false untuk skill non-bertahap. */
-  getGates: (penugasanId: number) =>
-    request<GateStatus>(`/penugasan/${penugasanId}/gates`),
-
   // ===== Graduasi (meta-skill) =====
   getGraduasiCandidates: () =>
     request<{ groups: { skill: string; penugasan: { kode: string; obyek: string; n_temuan: number }[] }[] }>(
@@ -213,18 +191,6 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ nama }),
     }),
-
-  /** Keputusan auditor atas satu gate: LANJUT / KOREKSI / ULANG. */
-  recordGateDecision: (
-    penugasanId: number,
-    gateId: string,
-    decision: 'LANJUT' | 'KOREKSI' | 'ULANG',
-    catatan?: string
-  ) =>
-    request<{ ok: boolean; progress: GateStatus['progress'] }>(
-      `/penugasan/${penugasanId}/gates/${gateId}/decision`,
-      { method: 'POST', body: JSON.stringify({ decision, catatan }) }
-    ),
 
   listPenugasan: () => request<Penugasan[]>('/penugasan'),
 
