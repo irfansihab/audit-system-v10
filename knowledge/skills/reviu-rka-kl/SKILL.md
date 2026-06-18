@@ -36,7 +36,7 @@ changelog:
 | **R0 — Validasi & Konteks** | Pastikan struktur input (TOR/RAB/RKA-Satker) ada; **catat juga bila ada LAMPIRAN/data dukung TOR yang diupload (opsional)** — dipakai di R3 untuk memperkuat substansi; tentukan tahap pagu (indikatif/anggaran/alokasi) dari KP; susun `context.md` bila placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Tujuan, lingkup, metodologi (desk review) — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Matriks 6 aspek Pasal 61(2) × N RO per sasaran. | KT (UI Setup) |
-| **R3 — Pelaksanaan** | `run_batch_rka` (40 rules) → verifikasi false positive (terutama C.alt-2, E.alt-2) → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang). | AT (auto) |
+| **R3 — Pelaksanaan** | `run_batch_rka` (40 rules) → verifikasi false positive (terutama C.alt-2, E.alt-2) → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang; **Rekomendasi TIDAK di KKP — disusun KT di LHR**). | AT (auto) |
 | **R4 — Laporan (LHR)** | Polish LHR (Bab C Hasil Reviu, Bab E Rekomendasi) + Nota Dinas; konfirmasi simpulan keyakinan terbatas. | KT |
 
 ### Analisis Substantif Wajib (Tahap R3)
@@ -67,7 +67,7 @@ Rules deterministik (R3 pipeline) hanya menangkap inkonsistensi struktural seder
 | 5. | **Analisis penandaan anggaran** | Setiap RO wajib punya penandaan (Prioritas Nasional, Gender, Stunting, dll. sesuai kategori yang berlaku). Bila penandaan kosong atau tidak relevan dengan substansi RO → temuan PERINGATAN. |
 | 6. | **Tambahkan temuan substantif via `append_temuan`** | Setiap temuan baru di-append dengan status "DRAFT", `sasaran_id` sesuai sasaran yang ditugaskan, `assigned_to` = nama AT. Sertakan `langkah_kerja_terkait` + `pattern_id` (ketertelusuran). |
 
-**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur lengkap K/K/S/A/R (Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `dokumen_sumber` + status "DRAFT".
+**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur K/K/S/A (Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `dokumen_sumber` + status "DRAFT". **Rekomendasi TIDAK ditulis di KKP — disusun KT di LHR.**
 
 **Setelah semua analisis substantif selesai, BARU lapor ke auditor** dengan ringkasan: total temuan rule-based + total temuan substantif + per-severity breakdown. Hindari kalimat "Mau saya lanjut ...?" — tampilkan langsung hasil.
 

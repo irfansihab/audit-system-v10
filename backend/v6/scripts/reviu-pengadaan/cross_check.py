@@ -436,44 +436,46 @@ def rule_rp12_kelengkapan_justifikasi(digest):
     )
 
 
-def rule_rp13_analisis_kebutuhan_tanpa_dasar_kuantitas(digest):
-    """RP.13 — Analisis kebutuhan tidak memuat dasar kuantitas (kememadaian kebutuhan).
+def rule_rp13_pengadaan_tanpa_identifikasi_kebutuhan(digest):
+    """RP.13 — Pengadaan menyebut kuantitas tanpa IDENTIFIKASI KEBUTUHAN yang memadai.
 
-    LAYER-1 (yang BISA dinilai reviu dari dokumen): apakah KAK menjustifikasi
-    KUANTITAS yang diadakan dengan dasar kuantitatif (jumlah pegawai, beban kerja/
-    ABK, unit kerja, aset existing, perhitungan kebutuhan)? Bila KAK menyebut
-    kuantitas tapi tanpa dasar → kuantitas tidak terjustifikasi (mis. mengadakan
-    50 unit tanpa menjelaskan dasar 50).
+    Inti: yang penting **ada identifikasi kebutuhan** yang mendasari pengadaan —
+    bukan asal sebut angka. Berlaku lintas konteks (barang/jasa/konstruksi), bukan
+    hanya komputer. Lebih ketat dari RP.12 (yang lolos bila ada "latar belakang"
+    naratif): RP.13 menuntut identifikasi/analisis/perhitungan kebutuhan ATAU dasar
+    kuantitatif (jumlah pegawai, ABK, unit kerja, aset existing, standar barang).
 
+    LAYER-1 (BISA dinilai reviu dari dokumen): adakah identifikasi kebutuhannya?
     LAYER-2 (kewajaran vs realita — mis. 50 unit untuk 30 pegawai riil) **DI LUAR
-    lingkup reviu** karena perlu data eksternal (kepegawaian/BMN/aset); reviewer
-    mengarahkan ke verifikasi/audit. Heuristik presence-only → PERINGATAN.
+    lingkup reviu** (perlu data kepegawaian/BMN/aset) → arahkan ke verifikasi/audit.
+    Heuristik presence-only → PERINGATAN.
     """
     kak = _parsed(_first(digest, "kak"))
     if not kak:
         return None
-    # Hanya menilai bila ada kuantitas yang disebut (kalau tak ada angka, tak bisa dinilai)
+    # Hanya menilai bila ada kuantitas/volume yang disebut (kalau tak ada, tak bisa dinilai di sini)
     if not kak.get("kuantitas_pengadaan_disebut"):
         return None
-    if kak.get("dasar_kuantitas"):
+    if kak.get("identifikasi_kebutuhan"):
         return None
     return _rule(
         "RP.13", PERINGATAN, "Perencanaan",
-        "Analisis kebutuhan tidak memuat dasar kuantitas pengadaan",
-        "KAK menyebut kuantitas yang diadakan namun tidak menjelaskan dasar perhitungan kuantitas tersebut.",
-        bukti={"kuantitas_disebut": True, "dasar_kuantitas_terdeteksi": False},
+        "Pengadaan menyebut kuantitas tanpa identifikasi kebutuhan yang memadai",
+        "KAK menyebut kuantitas/volume yang diadakan namun tidak memuat identifikasi kebutuhan yang mendasarinya.",
+        bukti={"kuantitas_disebut": True, "identifikasi_kebutuhan_terdeteksi": False},
         draft={
-            "kondisi": ("KAK mencantumkan kuantitas barang/jasa yang akan diadakan, namun tidak "
-                        "ditemukan dasar perhitungan kuantitas (mis. jumlah pegawai, analisis beban "
-                        "kerja, unit kerja, aset existing/yang telah dimiliki, atau standar barang). "
+            "kondisi": ("KAK mencantumkan kuantitas/volume barang/jasa yang akan diadakan, namun tidak "
+                        "ditemukan identifikasi kebutuhan yang mendasarinya — mis. analisis/perhitungan "
+                        "kebutuhan, jumlah pegawai, analisis beban kerja, unit kerja, aset existing/yang "
+                        "telah dimiliki, atau standar barang. Kuantitas tampak disebut tanpa dasar. "
                         "(Deteksi otomatis — reviewer wajib konfirmasi ke dokumen.)"),
             "kriteria": ("Perpres 16/2018 Pasal 18 jo. Perlem LKPP 12/2021 — perencanaan pengadaan "
-                         "didahului identifikasi kebutuhan yang menjelaskan jenis, fungsi, DAN jumlah/"
+                         "didahului IDENTIFIKASI KEBUTUHAN yang menjelaskan jenis, fungsi, DAN jumlah/"
                          "kuantitas barang/jasa secara proporsional terhadap kebutuhan nyata."),
             "akibat": ("Kuantitas pengadaan berisiko tidak proporsional dengan kebutuhan riil "
                        "(berlebih/kurang); dasar penilaian kewajaran jumlah menjadi lemah. "
-                       "Verifikasi kebutuhan riil (data kepegawaian/aset) di luar lingkup reviu — "
-                       "rekomendasikan kepada unit/auditor untuk pembuktian lebih lanjut."),
+                       "Pembuktian kewajaran vs realita (data kepegawaian/aset) di luar lingkup reviu — "
+                       "rekomendasikan kepada unit/auditor untuk verifikasi lebih lanjut."),
         }
     )
 
@@ -491,7 +493,7 @@ ALL_RULES = [
     rule_rp10_hps_tanpa_breakdown,
     rule_rp11_sla_internal_inkonsisten_kak,
     rule_rp12_kelengkapan_justifikasi,
-    rule_rp13_analisis_kebutuhan_tanpa_dasar_kuantitas,
+    rule_rp13_pengadaan_tanpa_identifikasi_kebutuhan,
 ]
 
 

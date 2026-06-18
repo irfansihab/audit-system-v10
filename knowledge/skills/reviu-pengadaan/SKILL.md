@@ -36,7 +36,7 @@ changelog:
 | **R0 — Validasi & Konteks** | Tentukan scope (Perencanaan/Pemilihan/Penuh) dari KP; pastikan KAK/HPS/kontrak tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Tujuan, lingkup, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Aspek reviu per sasaran (KAK, HPS, metode, kontrak). | KT (UI Setup) |
-| **R3 — Pelaksanaan** | `run_batch_pbj` (13 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang). | AT (auto) |
+| **R3 — Pelaksanaan** | `run_batch_pbj` (13 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang; **Rekomendasi TIDAK di KKP — disusun KT di LHR**). | AT (auto) |
 | **R4 — Laporan (LHR)** | Render LHR + Nota Dinas; polish narasi & simpulan keyakinan terbatas. | KT |
 
 ### Analisis Substantif Wajib (Tahap R3)
@@ -67,7 +67,7 @@ Rules deterministik (R3 pipeline) hanya menangkap inkonsistensi struktural seder
 | 5. | **Analisis kewajaran metode pemilihan** | Cek nilai HPS vs ambang batas metode pemilihan (Tender, Tender Cepat, Penunjukan Langsung, dst per Perpres 16/2018 Pasal 41). Bila metode tidak sesuai nilai → temuan PERINGATAN. |
 | 6. | **Tambahkan temuan substantif via `append_temuan`** | Setiap temuan baru di-append dengan status "DRAFT", `sasaran_id` sesuai sasaran yang ditugaskan, `assigned_to` = nama AT dari `sasaran-assignment.json`. Sertakan `langkah_kerja_terkait` + `pattern_id` (ketertelusuran). |
 
-**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur lengkap K/K/S/A/R (Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `dokumen_sumber` + status "DRAFT".
+**Setiap temuan substantif WAJIB di-append** via `append_temuan` dengan struktur K/K/S/A (Sebab diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang) + `dokumen_sumber` + status "DRAFT". **Rekomendasi TIDAK ditulis di KKP — disusun KT di LHR.**
 
 **Setelah semua analisis substantif selesai, BARU lapor ke auditor** dengan ringkasan: total temuan rule-based + total temuan substantif + per-severity breakdown. Hindari kalimat "Mau saya lanjut ...?" — tampilkan langsung hasil.
 
@@ -121,11 +121,11 @@ Pipeline dipanggil agen via tool **`run_batch_pbj(penugasan_folder, role="AT")`*
 | RP.10 | Perencanaan | HPS 1 line item total tanpa breakdown komponen |
 | RP.11 | Perencanaan | KAK menyebut >1 nilai SLA berbeda (inkonsistensi internal) |
 | **RP.12** | **Perencanaan** | **Justifikasi/KAK belum memuat 5 elemen wajib** (kebutuhan, spek teknis & fungsi, metode pengadaan, waktu penyelesaian, output) — deteksi otomatis kelengkapan justifikasi |
-| **RP.13** | **Perencanaan** | **Analisis kebutuhan tidak memuat dasar kuantitas** — KAK menyebut kuantitas yang diadakan tapi tak menjelaskan dasarnya (jumlah pegawai/beban kerja/ABK/unit kerja/aset existing). Antisipasi over-procurement pada level dokumen |
+| **RP.13** | **Perencanaan** | **Pengadaan tanpa identifikasi kebutuhan yang memadai** — KAK menyebut kuantitas/volume tapi tak memuat identifikasi kebutuhan yang mendasarinya (identifikasi/analisis/perhitungan kebutuhan, jumlah pegawai/ABK/unit kerja/aset existing/standar barang). **Yang penting ADA identifikasi kebutuhan, bukan asal sebut angka.** Generik lintas konteks (barang/jasa/konstruksi), lebih ketat dari RP.12 (yang lolos bila ada "latar belakang" naratif) |
 
 > **Batas RP.13 — LAYER-1 vs LAYER-2 (penting).** Reviu hanya bisa menilai **kememadaian justifikasi kuantitas di dalam KAK** (Layer-1: apakah jumlah X dijelaskan dasarnya). **Kewajaran vs realita** (mis. 50 unit untuk 30 pegawai riil / kebutuhan riil 15 — Layer-2) **di luar lingkup reviu**: butuh data eksternal (kepegawaian/BMN/aset) yang tak ada di berkas pengadaan. Bila kuantitas tampak tak proporsional namun tak terbukti dari dokumen → **catat sebagai keterbatasan + rekomendasikan verifikasi kebutuhan riil ke unit/auditor (audit/RKBMN)**, jangan paksakan jadi temuan reviu.
 
-Kolom KKP: Kondisi-Kriteria-**Sebab**-Akibat-Rekomendasi (sejak 17 Jun 2026 Sebab diisi semua jenis, anti-mengarang). Beda dengan audit: reviu tak menghitung kerugian negara & lingkup terbatas (sehingga sebab sering "tidak cukup data").
+Kolom KKP: Kondisi-Kriteria-**Sebab**-Akibat (**Rekomendasi disusun KT di LHR, tidak di KKP**; sejak 17 Jun 2026 Sebab diisi semua jenis, anti-mengarang). Beda dengan audit: reviu tak menghitung kerugian negara & lingkup terbatas (sehingga sebab sering "tidak cukup data").
 
 Dokumentasi lengkap: `scripts/reviu-pengadaan/README.md`.
 

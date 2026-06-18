@@ -82,7 +82,7 @@ Dalam pemantauan, "kriteria" sering berupa:
 | **P0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode/objek dari KP jelas; acuan target/rencana (kriteria pemantauan) + data realisasi terkini tersedia; tetapkan periode pelaporan (cut-off date); susun `context.md` bila placeholder. | AT (auto) |
 | **P1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan pemantauan, ruang lingkup (objek + periode), indikator status, metodologi (sumber data, frekuensi) — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **P2 — Program Kerja Pengawasan (PKP)** | Per sasaran: item/kegiatan yang dipantau · target & tenggat · penanggung jawab · sumber data realisasi · indikator/kriteria status. | KT (UI Setup) |
-| **P3 — Pelaksanaan** | Per item: bandingkan realisasi vs target, hitung % capaian, tetapkan status warna (🟢/🟡/🔴) → `append_temuan` (status/catatan + rekomendasi percepatan; Sebab deviasi anti-mengarang: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data"). Item 🔴 ditandai agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
+| **P3 — Pelaksanaan** | Per item: bandingkan realisasi vs target, hitung % capaian, tetapkan status warna (🟢/🟡/🔴) → `append_temuan` (status/catatan + **usulan** percepatan; Sebab deviasi anti-mengarang: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data"; **rekomendasi formal disusun KT di Laporan Pemantauan**). Item 🔴 ditandai agar ditinjau KT saat approve KKP (bukan stop). | AT (auto) |
 | **P4 — Laporan Pemantauan** | Render Laporan Pemantauan + Nota Dinas; rekap status agregat & isu (🔴/🟡) yang perlu tindak lanjut/intervensi. | KT |
 
 ## Format KKPemantauan

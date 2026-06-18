@@ -301,20 +301,32 @@ def parse_kak(pages: list[str]) -> dict:
             r"produk\s+yang\s+dihasilkan|sasaran\s+keluaran",
             text, re.I)),
     }
-    # Analisis kebutuhan — apakah KUANTITAS pengadaan didukung DASAR kuantitatif?
-    # Dipakai rule reviu RP.13 (kememadaian analisis kebutuhan, anti over-procurement
-    # pada level dokumen). Heuristik presence-only — reviewer wajib konfirmasi.
+    # Analisis kebutuhan (untuk rule reviu RP.13). Inti: yang penting ADA
+    # IDENTIFIKASI KEBUTUHAN yang mendasari pengadaan — bukan asal sebut angka.
+    # GENERIK lintas konteks (barang/jasa/konstruksi), bukan hanya komputer.
+    # Heuristik presence-only — reviewer wajib konfirmasi.
+    #
+    # (a) kuantitas/volume disebut? — satuan UMUM + frasa "sebanyak/sejumlah N",
+    #     bukan jenis barang spesifik (berlaku barang/jasa/konstruksi):
     out["kuantitas_pengadaan_disebut"] = bool(re.search(
-        r"\b\d{1,5}\s*(?:unit|buah|set|pcs|paket|lisensi|user|node|titik|lembar|"
-        r"kursi|meja|laptop|komputer|\bpc\b|server|perangkat|kendaraan|sepeda\s+motor)\b",
+        r"\b(?:sebanyak|sejumlah)\s+\d{1,6}\b|"
+        r"\b\d{1,6}(?:[.,]\d{3})*\s*(?:unit|buah|set|pcs|paket|rim|dus|box|kotak|"
+        r"lisensi|user|node|titik|lembar|orang[-\s]?bulan|\bOB\b|man[-\s]?month|"
+        r"meter|\bm2\b|\bm3\b|\bkm\b|kg|ton|liter|kavling|bidang)\b",
         text, re.I))
-    out["dasar_kuantitas"] = bool(re.search(
-        r"jumlah\s+pegawai|sebanyak\s+\d+\s+(?:pegawai|orang|staf|personil|pejabat)|"
-        r"\d+\s+(?:pegawai|orang|staf|personil)\b|analisis\s+beban\s+kerja|\bABK\b|"
-        r"beban\s+kerja|unit\s+kerja|satuan\s+kerja|kondisi\s+(?:existing|saat\s+ini|eksisting)|"
+    # (b) identifikasi kebutuhan yang MENDASARI pengadaan ada? — lebih ketat dari
+    #     sekadar "latar belakang" naratif (itu sudah dicek RP.12). Butuh identifikasi/
+    #     analisis/perhitungan kebutuhan ATAU dasar kuantitatif (pegawai/ABK/aset/standar).
+    #     Catatan: "orang" telanjang TIDAK dipakai (tabrakan dgn satuan jasa "orang-bulan").
+    out["identifikasi_kebutuhan"] = bool(re.search(
+        r"identifikasi\s+kebutuhan|analisis\s+kebutuhan|kajian\s+kebutuhan|"
+        r"perhitungan\s+kebutuhan|rincian\s+kebutuhan|dasar\s+(?:perhitungan|kebutuhan)|"
+        r"justifikasi\s+(?:jumlah|kuantitas|volume|kebutuhan)|kebutuhan\s+riil|"
+        r"jumlah\s+pegawai|sebanyak\s+\d+\s+(?:pegawai|orang(?![-\s]?bulan)|staf|personil|pejabat)|"
+        r"\d+\s+(?:pegawai|staf|personil|pejabat)\b|analisis\s+beban\s+kerja|\bABK\b|beban\s+kerja|"
+        r"unit\s+kerja|satuan\s+kerja|kondisi\s+(?:existing|saat\s+ini|eksisting)|"
         r"aset\s+(?:existing|eksisting|yang\s+(?:ada|dimiliki))|telah\s+dimiliki|barang\s+lama|"
-        r"perhitungan\s+kebutuhan|rincian\s+kebutuhan|dasar\s+perhitungan|"
-        r"standar\s+(?:barang|kebutuhan)|rasio\s+kebutuhan",
+        r"standar\s+(?:barang|kebutuhan|harga)|rasio\s+kebutuhan|kapasitas\s+terpasang",
         text, re.I))
     return out
 

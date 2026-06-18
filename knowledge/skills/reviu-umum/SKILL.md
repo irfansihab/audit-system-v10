@@ -77,7 +77,7 @@ Auto-detect kriteria mengikuti `references/01-panduan-ekstraksi-kriteria.md`. Bi
 | **R0 — Validasi & Konteks** | Pastikan scope dari KP jelas, kriteria (`input/kriteria/`) + objek (`input/objek/`) tersedia; susun `context.md` bila masih placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Latar belakang, tujuan, ruang lingkup (aspek), dasar kriteria, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Daftar aspek reviu per sasaran: Aspek · Kriteria · Pertanyaan Reviu · Bukti. | KT (UI Setup) |
-| **R3 — Pelaksanaan** | Per aspek: telaah dokumen vs kriteria → klasifikasi **TERPENUHI / TERPENUHI DENGAN CATATAN / TIDAK TERPENUHI** → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang). | AT (auto) |
+| **R3 — Pelaksanaan** | Per aspek: telaah dokumen vs kriteria → klasifikasi **TERPENUHI / TERPENUHI DENGAN CATATAN / TIDAK TERPENUHI** → `append_temuan` (K/K/S/A — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang; **Rekomendasi TIDAK di KKP — disusun KT di LHR**). | AT (auto) |
 | **R4 — Laporan (LHR)** | Render LHR + Nota Dinas (+ Pernyataan Telah Direviu bila reviu LKj/SAKIP); polish narasi & simpulan keyakinan terbatas. | KT |
 
 **Eskalasi:** jika di R3 ditemukan indikasi penyimpangan substantif/kerugian → hentikan, laporkan ke KT untuk pertimbangan konversi ke audit-umum.
