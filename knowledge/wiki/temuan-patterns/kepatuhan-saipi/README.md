@@ -12,6 +12,7 @@ Index pattern temuan yang berlaku untuk skill `kepatuhan-saipi` (kepatuhan terha
 | SAIPI-63 | Telaah Sejawat Eksternal Kedaluwarsa (>3 Tahun) | SAIPI-1300 | MEDIUM | SAIPI 1300 (program jaminan & peningkatan mutu) |
 | SAIPI-64 | Register Risiko Fraud Belum Disusun | SAIPI-2210 | HIGH | SAIPI 2210 + IEPK/SPIP |
 | SAIPI-65 | KKA/KKP Tidak Memuat Root Cause & Atribut Temuan Lengkap | SAIPI-2300 | HIGH | SAIPI 2300 (dokumentasi & supervisi) |
+| SAIPI-66 | Framework APIP Multi-Elemen Belum Terintegrasi (Piagam + KKSAR + Pedoman + SOP + IACM) | SAIPI-1300 | HIGH | SAIPI 1300 (Program Jaminan & Peningkatan Mutu) + IPPF 2017 + PP 60/2008 |
 
 ## Kategori yang dipakai (mengikuti penomoran SAIPI)
 

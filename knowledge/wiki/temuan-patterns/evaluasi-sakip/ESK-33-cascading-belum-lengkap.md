@@ -55,6 +55,13 @@ Permenpan-RB 88/2021 — kinerja harus dijabarkan berjenjang (cascading) dari Ke
 
 - **LHE AKIP eksternal Kemenpan-RB 2023–2024** — penjenjangan kinerja hingga Eselon II belum lengkap di esr.menpan.go.id; kualitas cascading belum terukur; aplikasi manajemen kinerja belum efektif; monev belum berjenjang sampai pegawai. Lihat [[lhe-akip-eksternal-kemenpanrb-2023-2024]], [[lhe-akip-internal-itjen-2023-2025]].
 
+- **ND-121/134/142 Cascading Eselon II Implementation Gap (Mei 2026)** — Kemkomdigi cascading shows systematic issue:
+  - **ND-121** (Cascading rencana strategis belum lengkap): RKT/RENSTRA tidak tercascade penuh ke unit Eselon II — ditemukan mismatch antara RENSTRA top-level vs actual RPKA per direktorat
+  - **ND-134** (RPJM & cascading progress): Meski RPJM sudah disiapkan, cascading implementasi per unit II masih incompleted; timeline penyelesaian overdue vs planning
+  - **ND-142** (RKA per unit alignment): RKA per unit II menunjukkan indikator yang NOT aligned dengan RENSTRA parent — cascading quality belum terukur, hanya kelengkapan dokumen tanpa substance check
+  - **Pattern**: Cascading process is annual (harus ulang tiap tahun), tapi gaps belum teratasi → masalah berulang, menjadi root cause ESK-30 (AKIP stagnation)
+  - Evidence: Lihat [[nota-dinas-ir2-mei-2026-batch2]] (ND-121, ND-134, ND-142), [[lhe-akip-2025-kemkomdigi]], [[surat-tugas-ir2-mei-2026]] (ST-106 cascading template improvements)
+
 ## Catatan
 
 - Rekomendasi: lengkapi penjenjangan s.d. Eselon II di aplikasi; nilai keselarasan pohon kinerja.

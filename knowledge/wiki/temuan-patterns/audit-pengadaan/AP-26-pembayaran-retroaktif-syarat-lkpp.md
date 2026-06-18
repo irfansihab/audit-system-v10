@@ -57,6 +57,14 @@ Surat LKPP **22441/D.4.1/10/2025** + Perpres 46/2025 Pasal 9(1)f² mensyaratkan 
 
 - **KHA Revisi-2 OM TKPPSE (Rp16M–Rp57M)** — framework LKPP 22441 mensyaratkan 3 syarat (analisis urgensi, reviu APIP, audit BPKP); **ketiganya gagal** → Rp57,34M tidak dapat diakui sebagai tunggakan. Lihat [[kha-revisi2-om-tkppse-2024-rp16-rp57]], [[surat-bpkp-pelimpahan-audit-tkppse-2026]], [[pattern-temuan]] P-07.
 
+- **ND-148 Pemantauan Tindak Lanjut OM TKPPSE (Mei 2026)** — Perpres 46/2025 framework untuk kontrak retroaktif **belum finalisasi**. Rp57M OM TKPPSE pembayaran diusulkan, namun:
+  - Syarat #1 (analisis urgensi): Unclear in recent record
+  - Syarat #2 (reviu APIP): Unclear status
+  - Syarat #3 (audit BPKP): **DITOLAK** — kategori "OM Tidak Dapat Didukung" (ND-148)
+  - **Result**: Perpres 46/2025 Pasal 9(1)f² framework NOT YET FINAL + BPKP rejection = pembayaran menjadi berisiko kerugian negara
+  - Outstanding Rp92M (OM TKPPSE + JAR + P3KJT), semua mengandung risiko legal framework yang belum matang
+  - Evidence: Lihat [[nota-dinas-ir2-mei-2026-batch2]] (ND-148 Pemantauan TL, ND-150/151 per-program asimetri), [[pemantauan-tlhp-wasdig-november-2025]], [[surat-bpkp-pelimpahan-audit-tkppse-2026]]
+
 ## Catatan
 
 - Catatan penting: APIP **harus** issue Laporan Hasil Verifikasi sebelum bayar; eskalasi ke BPKP jika nilai >Rp10M.

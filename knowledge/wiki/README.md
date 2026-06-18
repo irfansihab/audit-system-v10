@@ -18,18 +18,20 @@ Saat agen menjalankan analisis, dia akan (urutan disarankan):
 ## Skill yang punya pattern (selaras dengan registry `knowledge/skills/`)
 
 Tiap **skill spesifik** punya 1 folder pattern (1:1 dengan skill di `knowledge/skills/`).
-Skill **`*-umum`** (audit/reviu/pemantauan/evaluasi/konsultansi-umum) **tidak** punya
-folder pattern — bersifat *criteria-driven* (kriteria diunggah auditor saat penugasan),
-jadi tak butuh pustaka pattern.
+Skill **`*-umum`** (audit/reviu/pemantauan/evaluasi/konsultansi-umum) bersifat
+*criteria-driven* (kriteria diunggah auditor saat penugasan), jadi hanya memuat
+**beberapa pattern generik** sebagai contoh format (prefix huruf kecil: `au-`, `ev-`,
+`pm-`, `rv-`, `ks-`) — bukan pustaka lengkap.
 
 | Skill | Prefix ID | Skill | Prefix ID |
 |-------|-----------|-------|-----------|
 | `reviu-rka-kl` | `RKA-` | `evaluasi-spip` | `ESP-` |
-| `reviu-pengadaan` | `RP-` | `evaluasi-sakip` | `ESA-` |
-| `audit-pengadaan` | `AP-` | `evaluasi-manajemen-risiko` | `EMR-` |
-| `audit-kinerja` | `AK-` | `evaluasi-reformasi-birokrasi` | `ERB-` |
-| `konsultasi-pengadaan` | `KP-` | `kepatuhan-saipi` | `KS-` |
-| `pemantauan-pengadaan` | `PP-` | `pemantauan-tindak-lanjut` | `PTL-` |
+| `reviu-pengadaan` | `RP-` | `evaluasi-sakip` | `ESK-` |
+| `reviu-keuangan` | `RK-` | `evaluasi-manajemen-risiko` | `EMR-` |
+| `audit-pengadaan` | `AP-` | `evaluasi-reformasi-birokrasi` | `ERB-` |
+| `audit-kinerja` | `AK-` | `kepatuhan-saipi` | `SAIPI-` |
+| `konsultasi-pengadaan` | `KSP-` | `pemantauan-pengadaan` | `PMP-` |
+| `pemantauan-tindak-lanjut` | `PTL-` | | |
 
 > Daftar di atas indikatif — sumber kebenaran adalah folder yang ADA di
 > `temuan-patterns/`. `list_temuan_patterns` menurunkan skill valid dari folder
@@ -45,7 +47,7 @@ wiki/
 │   │   ├── README.md                  # index pattern skill itu
 │   │   ├── <ID>-<slug-judul>.md       # mis. RP-08-hps-rfi-minimum.md
 │   │   └── ...
-│   └── ...                            # 12 folder skill (~65 pattern total)
+│   └── ...                            # 18 folder skill (~84 pattern total)
 └── konteks/
     ├── README.md
     ├── pola-temuan-berulang.md        # 9 akar masalah lintas LHP/LHR 2025-2026

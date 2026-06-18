@@ -63,6 +63,14 @@ Permenpan-RB 88/2021 — evaluasi AKIP menghasilkan nilai + predikat; instansi d
 
 - **ND-133 Atensi SAKIP (B/505/AA.05/2025)** — nilai AKIP Kemkomdigi **68,19 (2023) → 68,45 (2024) → 69,14 (2025)**, tetap predikat **B** 3 tahun; belum ada roadmap menuju BB/A/AA. Lihat [[nota-dinas-ir2-mei-2026]] (ND-133), [[lhe-akip-2025-kemkomdigi]], [[pattern-temuan]] P-33.
 
+- **ND-121/134/142 Root Cause: Cascading Eselon II Incomplete (Mei 2026)** — LHE AKIP Kemkomdigi stagnasi B selama 3 tahun di-trace ke **root cause: cascading perencanaan kinerja belum lengkap di level Eselon II** (directorate level):
+  - ND-121: Cascading rencana strategis masih belum lengkap → RKA tidak mencerminkan RENSTRA
+  - ND-134: RPJP/RPJM/RENSTRA ada, tapi cascading ke unit II belum finalized
+  - ND-142: RKA per unit II masih menunjukkan misalignment dengan RENSTRA, penyebab nilai AKIP tidak naik (karena pengukuran kinerja fragmented)
+  - **Findings**: Cascading incomplete at Eselon II = perencanaan tidak coherent → pengukuran tidak sesuai real targets → AKIP stuck at 68-69 (B)
+  - This is not 3-year-independent incidents, tapi **repeating structural gap**: cascading is yearly activity belum fix
+  - Evidence: Lihat [[nota-dinas-ir2-mei-2026-batch2]] (ND-121 Cascading, ND-134 RPJM/cascading, ND-142 RKA alignment), [[lhe-akip-2025-kemkomdigi]], [[surat-tugas-ir2-mei-2026]] (ST-106 cascading improvements template)
+
 ## Catatan
 
 - Rekomendasi: susun **roadmap peningkatan SAKIP** dengan milestone + PIC menuju BB.

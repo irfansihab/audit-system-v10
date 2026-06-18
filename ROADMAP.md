@@ -128,6 +128,7 @@ Alur ideal: **EWS (CACM) menemukan risiko → penugasan dibuat → agen menganal
 - [ ] Eval P3–P5: perkuat grounding+coverage; token logging (`agent_runs`) + instrumen HITL; ukur akurasi digest.
 - [ ] A3 laporan bespoke (dashboard pemantauan, tabel aspek evaluasi).
 - [ ] Fix kosmetik: warning duplicate-key `Sidebar.tsx`; cap 14000 char `load_skill` untuk 2 skill pipeline besar.
+- [ ] **Skill `reviu-keuangan` (BARU)** — pustaka pattern sudah ada (`temuan-patterns/reviu-keuangan/` RK-67/68/69, sinkron 18 Juni dari vault). Belum ada `knowledge/skills/reviu-keuangan/SKILL.md`; reviu LK sementara ditangani `reviu-umum` (criteria-driven). Scaffold skill penuh pola v7 (R0–R4) bila diputuskan jadi skill spesifik.
 
 ## Workstream F — Dashboard beranda (pusat informasi pimpinan & auditor)
 
