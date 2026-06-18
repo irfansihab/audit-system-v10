@@ -172,4 +172,30 @@ async def read_lke(args: dict) -> dict:
     return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)}]}
 
 
-LKE_TOOLS = [read_lke, fill_lke]
+@tool(
+    "write_penilaian_lke",
+    "Tulis (overwrite) _KKP/penilaian-lke-<skill>.json — REKAP skor/predikat hasil "
+    "evaluasi ber-LKE (SAKIP/SPIP), sumber tunggal untuk rekap di KKP. Panggil SEKALI "
+    "setelah SEMUA unsur/komponen dinilai & fill_lke selesai. Struktur `penilaian` = "
+    "{komponen:[{nama, bobot, nilai_pm, nilai_apip, predikat, catatan?}], total_pm?, "
+    "total_apip?, predikat_akhir?}. nilai_pm = penilaian mandiri auditee, nilai_apip = "
+    "hasil penjaminan APIP. render_kkp_docx akan menampilkan tabel 'Rekap Penilaian (LKE)' "
+    "dari file ini di atas daftar AoI.",
+    {"penugasan_folder": str, "skill": str, "penilaian": dict},
+)
+async def write_penilaian_lke(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    skill = _slug(args.get("skill", ""))
+    pen = args.get("penilaian") or {}
+    if not skill:
+        return {"content": [{"type": "text", "text": "FAILED|skill kosong"}], "is_error": True}
+    out_dir = folder / "_KKP"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"penilaian-lke-{skill}.json"
+    pen.setdefault("skill", skill)
+    out.write_text(json.dumps(pen, ensure_ascii=False, indent=2), encoding="utf-8")
+    n = len(pen.get("komponen", []) or [])
+    return {"content": [{"type": "text", "text": f"OK|penilaian-lke ditulis|n_komponen={n}|{out.relative_to(folder)}"}]}
+
+
+LKE_TOOLS = [read_lke, fill_lke, write_penilaian_lke]

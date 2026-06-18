@@ -115,6 +115,57 @@ def parse_context_meta(context_path: Path) -> dict:
     return out
 
 
+# Trio evaluasi ber-LKE: KKP memuat rekap skor/predikat (dari penilaian-lke-<skill>.json
+# yang ditulis tool write_penilaian_lke) + tabel AoI. Sumber skor tunggal = file ini.
+_LKE_SKILLS = {"evaluasi-sakip", "evaluasi-spip", "evaluasi-reformasi-birokrasi"}
+
+
+def render_lke_recap(doc, penugasan_dir: Path, jenis: str) -> bool:
+    """Render tabel 'Rekap Penilaian (LKE)' untuk skill ber-LKE bila
+    _KKP/penilaian-lke-<jenis>.json ada. Return True bila ter-render."""
+    if jenis not in _LKE_SKILLS:
+        return False
+    src = penugasan_dir / "_KKP" / f"penilaian-lke-{jenis}.json"
+    if not src.exists():
+        return False
+    try:
+        pen = json.loads(src.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    komponen = pen.get("komponen") or []
+    if not komponen:
+        return False
+    add_p(doc, "REKAP PENILAIAN (LKE)", bold=True, size=12)
+    cols = ["No", "Komponen / Unsur", "Bobot", "Nilai PM (auditee)", "Nilai APIP", "Predikat"]
+    t = doc.add_table(rows=len(komponen) + 1, cols=len(cols))
+    t.style = "Table Grid"
+    for j, h in enumerate(cols):
+        c = t.rows[0].cells[j]; c.text = ""
+        r = c.paragraphs[0].add_run(h)
+        r.bold = True; r.font.size = Pt(10); r.font.name = "Arial"
+        c.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        shade(c, "D9D9D9")
+    for i, k in enumerate(komponen, start=1):
+        vals = [str(i), str(k.get("nama", "")), str(k.get("bobot", "")),
+                str(k.get("nilai_pm", "")), str(k.get("nilai_apip", "")), str(k.get("predikat", ""))]
+        for j, v in enumerate(vals):
+            cell = t.rows[i].cells[j]; cell.text = ""
+            cell.paragraphs[0].add_run(v).font.size = Pt(9)
+    total_apip = pen.get("total_apip") or pen.get("nilai_akhir") or ""
+    total_pm = pen.get("total_pm") or ""
+    predikat = pen.get("predikat_akhir") or pen.get("predikat") or ""
+    ringkas = "Hasil Penilaian APIP"
+    if total_apip != "":
+        ringkas += f": {total_apip}"
+    if predikat:
+        ringkas += f" (Predikat {predikat})"
+    if total_pm != "":
+        ringkas += f" — Penilaian Mandiri auditee: {total_pm}"
+    add_p(doc, ringkas, bold=True, size=10)
+    doc.add_paragraph()
+    return True
+
+
 def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     kkp_path = penugasan_dir / "_KKP" / "temuan.json"
     if not kkp_path.exists():
@@ -149,6 +200,8 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     add_p(doc, f"Anggota Pengisi KKP: {anggota_nama} | Sasaran: {', '.join(sasaran_list) if sasaran_list else '(tidak ada temuan)'}",
           size=10, italic=True, align=WD_ALIGN_PARAGRAPH.CENTER)
     doc.add_paragraph()
+    # Skill ber-LKE: rekap skor/predikat dulu (kertas kerja mencerminkan instrumen), baru AoI
+    render_lke_recap(doc, penugasan_dir, jenis)
     add_p(doc, "DAFTAR CATATAN / TEMUAN", bold=True, size=12)
 
     if not my_temuan:
