@@ -8,6 +8,7 @@ model: claude-sonnet-4-6
 auto_execute: true
 auto_execute_command: "tool: run_batch_audit_pbj(penugasan_folder, role=\"AT\")"
 changelog:
+  - v2.7 (2026-06-18): Deteksi dokumen pemeriksaan dibuat UMUM lintas direktorat — nama dokumen beda-beda, jadi klasifikasi tak lagi bergantung nama file. Tambah `classify_content()` di digest: bila nama file tak dikenal, ISI file dibaca & diklasifikasi dari FUNGSI dokumen (sinyal "memeriksa/pemeriksaan/penerimaan hasil" + konteks "kesesuaian/kuantitas/spesifikasi"). Pola nama `ba_pemeriksaan` dilonggarkan. Diuji: dok bernama lokal (serah terima/cek fisik/penerimaan) tertangkap; kontrak/HPS/laporan tidak salah tangkap.
   - v2.6 (2026-06-18): Perkuat deteksi output-vs-kontrak & kelebihan bayar atas output kurang. Kenali **dokumen PEMERIKSAAN hasil pekerjaan** (PPK/PPHP/PjPHP/tim teknis) sebagai jenis dokumen tersendiri di digest (pivot audit — beda dari BAST yang sering formalitas). +2 rule deterministik: PL.2 (pembayaran tanpa dokumen pemeriksaan — KRITIS) & PL.3 (pemeriksaan tanpa rincian kuantitas/spek — formalitas). Tugas substantif #5 dipusatkan ke dokumen pemeriksaan + perbandingan tiga arah kontrak↔diterima↔dibayar (kelebihan bayar = (qty dibayar − qty diterima) × harga satuan). Cross-check kini 14 rules.
   - v2.5 (2026-06-18): Audit dibuka dengan SURVEY PENDAHULUAN (Tahap A0) — orientasi paket, pemetaan risiko per tahap siklus, inventarisasi dokumen, analytical review awal, hipotesis area pengujian → mengarahkan fokus 8 tugas substantif. Selaras prinsip "semua audit didahului survey pendahuluan". A0 row & tool-inti diperbarui; orkestrasi di anggota_tim.md.
   - v2.4 (2026-06-18): Pipeline berlaku SELURUH jenis pengadaan. P.4 digeneralisasi dari "migrasi" (spesifik TI) → "komponen ruang lingkup KAK tak teralokasi di HPS" (migrasi/instalasi/pelatihan/pemeliharaan/garansi/pengujian/lisensi) via deteksi `lingkup_komponen` di digest. K.3 diberi guard ambang nilai (hanya flag kontrak > Rp200 jt — hindari false positive kontrak kecil/konsultansi/e-purchasing). P.3 & K.2 ditandai KONDISIONAL (pengadaan ber-SLA; sudah ber-guard, tak false-fire). Tabel rule dipisah Universal vs Kondisional. Tetap 12 rules.
@@ -102,7 +103,7 @@ Tool `run_batch_audit_pbj` menjalankan pipeline deterministik sebagai **akselera
 
 | Komponen | Fungsi | Output |
 |---|---|---|
-| `digest_pengadaan` | Scan folder, klasifikasi 14 jenis dokumen (KAK/HPS/Kontrak/BAST/Pembayaran/dll.), parse ke JSON | `_KKP/pengadaan-digest.json` |
+| `digest_pengadaan` | Scan folder, klasifikasi jenis dokumen (KAK/HPS/Kontrak/BAST/Pembayaran/**pemeriksaan**/dll.) **by nama file + fallback by ISI** (dokumen bernama lokal beda tiap direktorat, mis. dokumen pemeriksaan — dikenali dari fungsi di teksnya), parse ke JSON | `_KKP/pengadaan-digest.json` |
 | `cross_check` | 14 rules deterministik (Perencanaan/Kontrak/Pelaksanaan/Pembayaran/Dokumentasi) | `_KKP/anomalies.json` |
 
 Render KKP/LHA dilakukan terpisah via tool `render_kkp_docx` (AT) dan oleh KT untuk LHA — bukan oleh pipeline ini.

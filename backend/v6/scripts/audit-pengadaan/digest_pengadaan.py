@@ -56,14 +56,50 @@ FILENAME_PATTERNS = {
     # Dokumen PEMERIKSAAN/penerimaan hasil pekerjaan oleh PPK/PPHP/PjPHP/tim teknis
     # — INI pivot audit output-vs-kontrak (verifikasi kuantitas/spek barang diterima),
     # berbeda dari BAST (serah terima, sering formalitas tanda tangan).
+    # Pola nama LONGGAR (nama dokumen beda tiap direktorat) — klasifikasi utama
+    # untuk dokumen pemeriksaan ada di classify_content() berbasis ISI di bawah.
     "ba_pemeriksaan": [
-        r"Pemeriksaan\s+Hasil\s+Pekerjaan", r"Penerimaan\s+Hasil\s+Pekerjaan",
-        r"BA\s*P?HP\b", r"\bPPHP\b", r"\bPjPHP\b", r"Pejabat\s+Pemeriksa",
-        r"Panitia\s+Pemeriksa", r"Panitia\s+Penerima", r"Berita\s+Acara\s+Pemeriksaan",
-        r"Hasil\s+Pemeriksaan\s+Barang", r"Pemeriksaan\s+Bersama",
+        r"pemeriksa", r"penerimaan\s+hasil", r"PPHP", r"PjPHP",
+        r"BA\s*P?HP\b", r"cek\s*fisik", r"uji\s*terima", r"serah\s*terima\s+barang",
     ],
     "laporan_bulanan": [r"Laporan\s+Bulanan"],
 }
+
+# ============================================================
+# KLASIFIKASI BERBASIS ISI (general lintas direktorat)
+# Dipakai HANYA bila klasifikasi nama file gagal — banyak dokumen (mis.
+# pemeriksaan/penerimaan hasil pekerjaan) dinamai beda-beda tiap direktorat,
+# jadi nama file tak bisa diandalkan. Deteksi dari FUNGSI dokumen di teksnya.
+# ============================================================
+
+_CONTENT_SIGNALS = {
+    # Dokumen pemeriksaan/penerimaan hasil pekerjaan: butuh sinyal "aksi memeriksa"
+    # + "konteks objek/kesesuaian" agar tak salah tangkap kontrak/laporan biasa.
+    "ba_pemeriksaan": {
+        "any": [r"pemeriksa", r"memeriksa", r"diperiksa", r"uji\s*terima",
+                r"pemeriksaan\s+hasil", r"penerimaan\s+hasil", r"\bPPHP\b", r"\bPjPHP\b",
+                r"berita\s+acara\s+(?:pemeriksaan|penerimaan|serah\s*terima)"],
+        "context": [r"hasil\s+pekerjaan", r"barang", r"diterima", r"kesesuaian",
+                    r"sesuai\s+(?:dengan\s+)?(?:kontrak|spesifikasi|spek|kak)",
+                    r"kuantitas", r"volume", r"spesifikasi"],
+    },
+}
+
+
+def classify_content(text: str) -> str | None:
+    """Klasifikasi dokumen dari ISI (fallback bila nama file tak dikenal).
+
+    General lintas direktorat: deteksi berdasarkan fungsi dokumen, bukan namanya.
+    Butuh sinyal `any` (aksi) DAN `context` (objek) agar tidak salah klasifikasi.
+    """
+    if not text:
+        return None
+    head = text[:6000]
+    for doc_type, sig in _CONTENT_SIGNALS.items():
+        if any(re.search(p, head, re.I) for p in sig["any"]) and \
+           any(re.search(p, head, re.I) for p in sig["context"]):
+            return doc_type
+    return None
 
 
 def classify_file(filename: str) -> str | None:
@@ -490,20 +526,30 @@ def scan_folder(folder: Path) -> dict:
             continue
 
         doc_type = classify_file(f.name)
+        pages = None
+        classified_by = "nama"
         if not doc_type:
-            out["unclassified_files"].append(str(f.relative_to(folder)))
-            continue
+            # Nama file tak dikenal → baca ISI lalu klasifikasi berbasis fungsi
+            # (general lintas direktorat). Pages di-cache agar tak baca dua kali.
+            pages = _extract_text(f)
+            doc_type = classify_content("\n".join(pages) if pages else "")
+            classified_by = "isi"
+            if not doc_type:
+                out["unclassified_files"].append(str(f.relative_to(folder)))
+                continue
 
         parser = PARSERS.get(doc_type)
         entry = {
             "filename": f.name,
             "path": str(f.relative_to(folder)),
             "jenis_dokumen": doc_type,
+            "classified_by": classified_by,
             "parsed": None,
         }
         if parser:
             try:
-                pages = _extract_text(f)
+                if pages is None:
+                    pages = _extract_text(f)
                 entry["parsed"] = parser(pages)
                 entry["parsed"]["_raw_first_chars"] = ("\n".join(pages))[:2500] if pages else ""
             except Exception as e:
