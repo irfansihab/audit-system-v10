@@ -391,7 +391,16 @@ def _strip_big(d, _depth=0):
     "(id + ringkas TOR/RAB); dengan arg `ro=<id>` mengembalikan digest LENGKAP RO itu "
     "(7 blok substansi TOR + komponen RAB). Pakai INI sebagai sumber fakta utama (hemat "
     "token, JANGAN baca ulang semua PDF); read_pdf_page hanya verifikasi halaman/kutipan.",
-    {"penugasan_folder": str, "ro": str},
+    {
+        "type": "object",
+        "properties": {
+            "penugasan_folder": {"type": "string"},
+            "ro": {"type": "string",
+                   "description": "OPSIONAL. ID RO (RKA-K/L) untuk detail satu RO; "
+                                  "kosongkan untuk INDEX semua RO atau digest PBJ."},
+        },
+        "required": ["penugasan_folder"],
+    },
 )
 async def read_digest(args: dict) -> dict:
     kkp = Path(args["penugasan_folder"]) / "_KKP"
