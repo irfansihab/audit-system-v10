@@ -7,7 +7,7 @@ fungsi: Assurance — Penilaian Efektivitas/Sistem
 output: KKE (.xlsx) + LHE (.docx) + JSON KKP
 model: claude-sonnet-4-6
 changelog:
-  - v1.1 (2026-06-17): Refactor orkestrasi ke v7 — Tahap E0–E4 seragam; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); HAPUS unsur Sebab; role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Substansi domain dipertahankan.
+  - v1.1 (2026-06-17): Refactor orkestrasi ke v7 — Tahap E0–E4 seragam; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); Sebab diisi anti-mengarang (semua jenis sejak 17 Jun 2026 — bila tidak terbukti tulis "Tidak ditemukan penyebab"/"Tidak cukup data"); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Substansi domain dipertahankan.
 ---
 
 # Skill: Evaluasi Umum (Generic, Criteria-Driven)

@@ -7,7 +7,7 @@ dasar-hukum: Pedoman Menkomdigi 6/2017, ISO 31000:2018
 model: claude-sonnet-4-6
 output: Nota Dinas + LHE dengan catatan naratif bernomor + Rekomendasi terpisah
 changelog:
-  - v2.1 (2026-06-17): Refactor orkestrasi ke v7 — Tahap E0–E4 seragam; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); HAPUS unsur Sebab (evaluasi tak menggali sebab); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Substansi maturitas MR dipertahankan.
+  - v2.1 (2026-06-17): Refactor orkestrasi ke v7 — Tahap E0–E4 seragam; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); Sebab diisi anti-mengarang (format KKSA, sejak 17 Jun 2026 — bila tidak terbukti tulis "Tidak ditemukan penyebab"/"Tidak cukup data"); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Substansi maturitas MR dipertahankan.
 ---
 
 # Skill: Evaluasi Manajemen Risiko
@@ -73,9 +73,10 @@ Setiap catatan di F berisi:
 1. **Judul catatan** — kalimat singkat yang menggambarkan masalah
 2. **Kondisi** — fakta dari dokumen: apa yang ada, apa yang belum ada, apa yang tidak sesuai; sertakan nama dokumen + detail teknis
 3. **Kriteria** — ketentuan yang menjadi acuan dari Pedoman Menkomdigi 6/2017 (sebutkan Bab/Bagian); ISO 31000:2018 sebagai pendukung jika perlu
-4. **Akibat** — dampak konkret pada tata kelola dan pencapaian tujuan organisasi
+4. **Sebab** — penyebab kondisi, anti-mengarang: diisi bila terbukti dari bukti; bila tidak ditemukan/tidak cukup data, tulis "Tidak ditemukan penyebab"/"Tidak cukup data" (jangan mengarang)
+5. **Akibat** — dampak konkret pada tata kelola dan pencapaian tujuan organisasi
 
-> **Catatan paradigma evaluasi:** evaluasi memberikan **keyakinan terbatas** dan **tidak menggali Sebab/akar masalah** (itu ranah audit). Catatan cukup memuat Kondisi–Kriteria–Akibat, lalu rekomendasi perbaikan dikompilasi terpisah di Seksi G.
+> **Catatan paradigma evaluasi:** evaluasi memberikan **keyakinan terbatas**. Sejak 17 Jun 2026 unsur **Sebab tetap diisi (anti-mengarang)** — karena lingkup evaluasi terbatas, wajar bila banyak catatan ber-Sebab "Tidak cukup data untuk menyimpulkan penyebab". Catatan memuat Kondisi–Kriteria–Sebab–Akibat (KKSA); rekomendasi perbaikan dikompilasi terpisah di Seksi G.
 
 ---
 

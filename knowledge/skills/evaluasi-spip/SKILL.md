@@ -9,7 +9,7 @@ output: Lembar Kerja Evaluasi (xlsx) — kolom Nilai PK terisi + Catatan + AoI
 template: references/templates/lke-spip-kementerian.xlsx
 auto_execute: false
 changelog:
-  - v1.6 (2026-06-17): Refactor orkestrasi ke v7 — struktur seragam Tahap E0–E4; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Tidak ada unsur Sebab pada keluarga evaluasi (penjaminan, bukan audit). Substansi SPIP (komponen/unsur/sub-unsur, LKE, kriteria gradasi, bobot, penalti) dipertahankan utuh.
+  - v1.6 (2026-06-17): Refactor orkestrasi ke v7 — struktur seragam Tahap E0–E4; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft LHE. Sebab diisi anti-mengarang (sejak 17 Jun 2026 — diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data"). Substansi SPIP (komponen/unsur/sub-unsur, LKE, kriteria gradasi, bobot, penalti) dipertahankan utuh.
 ---
 
 # Skill: Evaluasi SPIP — Penjaminan Kualitas (PK) oleh APIP

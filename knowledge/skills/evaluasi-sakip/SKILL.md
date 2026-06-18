@@ -8,7 +8,7 @@ model: claude-sonnet-4-6
 output: LKE Excel terisi (APIP) + LHE AKIP (.docx) + KKP Markdown
 auto_execute: false
 changelog:
-  - v5.2 (2026-06-17): Refactor orkestrasi ke v7 — struktur seragam Tahap E0–E4; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); role+sasaran via sasaran-assignment.json; AT auto-execute, HITL=KT approve KKP→KT draft LHE; hapus unsur Sebab dari format temuan (evaluasi = keyakinan terbatas, tanpa penggalian akar masalah). Substansi domain (LKE/komponen/kriteria PermenPAN-RB 88/2021) dipertahankan.
+  - v5.2 (2026-06-17): Refactor orkestrasi ke v7 — struktur seragam Tahap E0–E4; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); role+sasaran via sasaran-assignment.json; AT auto-execute, HITL=KT approve KKP→KT draft LHE; Sebab diisi anti-mengarang (sejak 17 Jun 2026 — diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data"). Substansi domain (LKE/komponen/kriteria PermenPAN-RB 88/2021) dipertahankan.
 ---
 
 # Skill: Evaluasi SAKIP — Versi 5.2

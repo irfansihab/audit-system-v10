@@ -1,6 +1,6 @@
 # Scripts Pendukung — evaluasi-sakip (legacy + bukti dukung)
 
-Folder ini memuat 4 script pendukung untuk skill `evaluasi-sakip`. **BUKAN pipeline utama** — pipeline produksi v5.x ada di `audit-system-v4/scripts/evaluasi-sakip/{digest_lke,cross_check,render_lhe}.py` (uses openpyxl, .xlsx-native).
+Folder ini memuat 4 script pendukung untuk skill `evaluasi-sakip`. **BUKAN pipeline utama.** Di v7/v8 evaluasi-sakip dijalankan secara agen-driven (orkestrasi via `backend/app/prompts/anggota_tim.md`), bukan pipeline batch. Script `digest_lke`/`cross_check`/`render_lhe` dari sistem lama (audit-system-v4) tidak dibawa ke v7/v8.
 
 ## Daftar Script
 
