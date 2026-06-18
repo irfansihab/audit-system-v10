@@ -301,6 +301,21 @@ def parse_kak(pages: list[str]) -> dict:
             r"produk\s+yang\s+dihasilkan|sasaran\s+keluaran",
             text, re.I)),
     }
+    # Analisis kebutuhan — apakah KUANTITAS pengadaan didukung DASAR kuantitatif?
+    # Dipakai rule reviu RP.13 (kememadaian analisis kebutuhan, anti over-procurement
+    # pada level dokumen). Heuristik presence-only — reviewer wajib konfirmasi.
+    out["kuantitas_pengadaan_disebut"] = bool(re.search(
+        r"\b\d{1,5}\s*(?:unit|buah|set|pcs|paket|lisensi|user|node|titik|lembar|"
+        r"kursi|meja|laptop|komputer|\bpc\b|server|perangkat|kendaraan|sepeda\s+motor)\b",
+        text, re.I))
+    out["dasar_kuantitas"] = bool(re.search(
+        r"jumlah\s+pegawai|sebanyak\s+\d+\s+(?:pegawai|orang|staf|personil|pejabat)|"
+        r"\d+\s+(?:pegawai|orang|staf|personil)\b|analisis\s+beban\s+kerja|\bABK\b|"
+        r"beban\s+kerja|unit\s+kerja|satuan\s+kerja|kondisi\s+(?:existing|saat\s+ini|eksisting)|"
+        r"aset\s+(?:existing|eksisting|yang\s+(?:ada|dimiliki))|telah\s+dimiliki|barang\s+lama|"
+        r"perhitungan\s+kebutuhan|rincian\s+kebutuhan|dasar\s+perhitungan|"
+        r"standar\s+(?:barang|kebutuhan)|rasio\s+kebutuhan",
+        text, re.I))
     return out
 
 

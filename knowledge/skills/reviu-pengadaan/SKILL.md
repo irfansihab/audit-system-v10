@@ -1,13 +1,14 @@
 ---
 name: reviu-pengadaan
 format_laporan: kksa
-version: 1.5
+version: 1.6
 jenis: Reviu Perencanaan dan Pemilihan Pengadaan Barang/Jasa
 dasar-hukum: Perpres 16/2018 jo. Perpres 12/2021, Perlem LKPP 12/2021
 model: claude-sonnet-4-6
 auto_execute: true
 auto_execute_command: "tool: run_batch_pbj(penugasan_folder, role=\"AT\")"
 changelog:
+  - v1.6 (2026-06-18): Tambah rule RP.13 — kememadaian analisis kebutuhan (deteksi KAK menyebut kuantitas tanpa dasar perhitungan: jumlah pegawai/beban kerja/ABK/unit kerja/aset existing). Antisipasi over-procurement (mis. 50 komputer untuk 30 pegawai) pada LEVEL DOKUMEN. Deteksi `dasar_kuantitas` ditambah di parse_kak (digest reuse). Batas eksplisit Layer-1 (kememadaian justifikasi — bisa reviu) vs Layer-2 (kewajaran vs realita — butuh data kepegawaian/aset, di luar reviu → eskalasi). Pipeline 12→13 rules.
   - v1.5 (2026-06-17): Tambah Checklist Kelengkapan Justifikasi WAJIB (5 elemen — kebutuhan, spesifikasi teknis & fungsi, rencana metode pengadaan, waktu penyelesaian, output) + aturan dekomposisi sasaran generik di R3, dan perjelas kriteria KAK Bagian B. Fix feedback — untuk sasaran kesesuaian dokumen dengan kriteria, agen kini menilai per-elemen tanpa perlu prompt manual.
   - v1.4 (2026-06-14): Refactor orkestrasi ke v7 — pisah substansi domain dari orkestrasi; struktur seragam Tahap R0–R4; hapus referensi bash/Task/_ROLE/AskUserQuestion (legacy audit-system-v4); pipeline via tool run_batch_pbj. Lengkapi Batasan yang terpotong.
   - v1.3 (2026-05-06): Tambah orchestrator run_batch.py (reuse digest_pengadaan dari audit-pengadaan + cross_check reviu-pengadaan); set auto_execute true.
@@ -24,7 +25,7 @@ changelog:
 > **Skill ini = substansi domain.** Cara menjalankan (role, pipeline, urutan tool, titik HITL) diatur seragam oleh agen Anggota Tim v7 di `backend/app/prompts/anggota_tim.md` — BUKAN oleh skill ini. Skill ini **TIDAK** memakai bash, `run_batch.py`, `Task 00/01/03/04`, `_ROLE.md`, atau `AskUserQuestion` (itu paradigma lama audit-system-v4).
 
 - **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dibaca dari `_PKP/sasaran-assignment.json` (diisi Ketua Tim via UI Setup). AT hanya mengerjakan sasaran yang `assigned_to`-nya memuat namanya.
-- **Pipeline R3:** tool **`run_batch_pbj(penugasan_folder, role="AT")`** (12 rules, reuse digest pengadaan). KT/PT/PM tidak men-generate KKP — hanya approve & draft LHR.
+- **Pipeline R3:** tool **`run_batch_pbj(penugasan_folder, role="AT")`** (13 rules, reuse digest pengadaan). KT/PT/PM tidak men-generate KKP — hanya approve & draft LHR.
 - **Mode:** AT **auto-execute** R0→R3 tanpa berhenti tiap tahap (jangan tanya "Mau saya lanjut?"). Titik HITL: **KT approve KKP**, lalu **KT draft LHR**.
 - **Tool inti:** `read_context` → `run_batch_pbj` → `read_anomalies` → analisis substantif → `append_temuan` → `render_kkp_docx` → `run_qc_kkp`.
 
@@ -35,7 +36,7 @@ changelog:
 | **R0 — Validasi & Konteks** | Tentukan scope (Perencanaan/Pemilihan/Penuh) dari KP; pastikan KAK/HPS/kontrak tersedia; susun `context.md` bila placeholder. | AT (auto) |
 | **R1 — Kerangka Reviu (KP-R)** | Tujuan, lingkup, metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
 | **R2 — Program Kerja (PKP-R)** | Aspek reviu per sasaran (KAK, HPS, metode, kontrak). | KT (UI Setup) |
-| **R3 — Pelaksanaan** | `run_batch_pbj` (12 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang). | AT (auto) |
+| **R3 — Pelaksanaan** | `run_batch_pbj` (13 rules) → verifikasi false positive → **analisis substantif wajib** (tabel di bawah) → `append_temuan` (K/K/S/A/R — **Sebab** diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab"/"Tidak cukup data", jangan mengarang). | AT (auto) |
 | **R4 — Laporan (LHR)** | Render LHR + Nota Dinas; polish narasi & simpulan keyakinan terbatas. | KT |
 
 ### Analisis Substantif Wajib (Tahap R3)
@@ -59,7 +60,7 @@ Rules deterministik (R3 pipeline) hanya menangkap inkonsistensi struktural seder
 
 | # | Tugas Substantif | Detail |
 |---|------------------|--------|
-| 1. | **Verifikasi false positive rules** | Buka PDF di halaman yang dirujuk RP.1–RP.12. Konfirmasi temuan benar atau false positive (mis. RP.2 "Periode KAK = 45 Tahun" mungkin parser glitch dari nomor pasal). Hapus false positive dari _KKP/temuan.json. |
+| 1. | **Verifikasi false positive rules** | Buka PDF di halaman yang dirujuk RP.1–RP.13. Konfirmasi temuan benar atau false positive (mis. RP.2 "Periode KAK = 45 Tahun" mungkin parser glitch dari nomor pasal). Hapus false positive dari _KKP/temuan.json. |
 | 2. | **Analisis kewajaran HPS vs RFI Vendor** | Baca semua RFI di 00-input/. Validasi: vendor memberikan harga atau hanya refusal participation? Bila HPS hanya berbasis 1 RFI valid (misal RFI lain tidak bersedia) → temuan KRITIS multi-source HPS (Perpres 16/2018 Pasal 26 ayat 5: HPS dibuat dari minimal 2 sumber harga independen). |
 | 3. | **Konsistensi dasar hukum HPS dengan Tahun Anggaran** | Baca header HPS bagian DASAR PERHITUNGAN. Cek apakah SBM dirujuk = SBM TA pelaksanaan? Cek Pedoman Pelaksanaan Anggaran = TA pelaksanaan? Bila SBM/Pedoman rujukan ≠ TA DIPA → temuan PERINGATAN. |
 | 4. | **Konsistensi spek KAK ↔ komponen HPS** | Setiap kebutuhan teknis di KAK harus traceable ke line item HPS detail. Setiap line item HPS harus traceable ke kebutuhan KAK. Bila ada komponen HPS tanpa pembentuk harga atau tanpa basis di KAK → temuan PERINGATAN. |
@@ -104,7 +105,7 @@ Pipeline dipanggil agen via tool **`run_batch_pbj(penugasan_folder, role="AT")`*
 
 **Tidak boleh** re-read full PDF "untuk memahami konteks". Setiap re-read full PDF menambah ~3-8k token tanpa nilai tambah substansi.
 
-### Rules deteksi (RP.1–RP.12)
+### Rules deteksi (RP.1–RP.13)
 
 | ID | Aspek | Rule |
 |---|---|---|
@@ -120,6 +121,9 @@ Pipeline dipanggil agen via tool **`run_batch_pbj(penugasan_folder, role="AT")`*
 | RP.10 | Perencanaan | HPS 1 line item total tanpa breakdown komponen |
 | RP.11 | Perencanaan | KAK menyebut >1 nilai SLA berbeda (inkonsistensi internal) |
 | **RP.12** | **Perencanaan** | **Justifikasi/KAK belum memuat 5 elemen wajib** (kebutuhan, spek teknis & fungsi, metode pengadaan, waktu penyelesaian, output) — deteksi otomatis kelengkapan justifikasi |
+| **RP.13** | **Perencanaan** | **Analisis kebutuhan tidak memuat dasar kuantitas** — KAK menyebut kuantitas yang diadakan tapi tak menjelaskan dasarnya (jumlah pegawai/beban kerja/ABK/unit kerja/aset existing). Antisipasi over-procurement pada level dokumen |
+
+> **Batas RP.13 — LAYER-1 vs LAYER-2 (penting).** Reviu hanya bisa menilai **kememadaian justifikasi kuantitas di dalam KAK** (Layer-1: apakah jumlah X dijelaskan dasarnya). **Kewajaran vs realita** (mis. 50 unit untuk 30 pegawai riil / kebutuhan riil 15 — Layer-2) **di luar lingkup reviu**: butuh data eksternal (kepegawaian/BMN/aset) yang tak ada di berkas pengadaan. Bila kuantitas tampak tak proporsional namun tak terbukti dari dokumen → **catat sebagai keterbatasan + rekomendasikan verifikasi kebutuhan riil ke unit/auditor (audit/RKBMN)**, jangan paksakan jadi temuan reviu.
 
 Kolom KKP: Kondisi-Kriteria-**Sebab**-Akibat-Rekomendasi (sejak 17 Jun 2026 Sebab diisi semua jenis, anti-mengarang). Beda dengan audit: reviu tak menghitung kerugian negara & lingkup terbatas (sehingga sebab sering "tidak cukup data").
 
