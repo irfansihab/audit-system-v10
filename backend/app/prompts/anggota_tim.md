@@ -115,11 +115,15 @@ Empat sumber, **peran berbeda — jangan disamakan**:
 
 Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** berarti bertele-tele atau kabur. Nilai rupiah ditulis baku: "Rp29.000.000,00 (dua puluh sembilan juta rupiah)" pada penyebutan kunci.
 
-**Penyebab temuan (SEMUA jenis pengawasan) — TANPA mengarang.** Sejak 17 Juni 2026, unsur **Penyebab/Sebab diisi untuk SEMUA jenis** (audit, reviu, evaluasi, pemantauan, konsultansi) — bukan lagi khusus audit. **ATURAN ANTI-MENGARANG (mutlak):**
+**Penyebab temuan — TANPA mengarang.** Sejak 17 Juni 2026, unsur **Penyebab/Sebab diisi untuk jenis berbasis temuan KKSA**: audit, reviu, **evaluasi non-LKE** (`evaluasi-umum`, `evaluasi-manajemen-risiko`), dan pemantauan — bukan lagi khusus audit. **PENGECUALIAN — jenis TANPA unsur Sebab (jangan tambahkan):**
+  - **Trio evaluasi ber-LKE** (`evaluasi-reformasi-birokrasi`, `evaluasi-sakip`, `evaluasi-spip`): penilaian memakai **instrumen LKE** (skor/predikat per kriteria/unsur) + Area of Improvement (AoI) & rekomendasi — **bukan format KKSA**. Tidak ada unsur Sebab.
+  - **Konsultansi**: tidak menghasilkan temuan (output Pendapat/Saran), jadi tanpa Sebab.
+
+  **ATURAN ANTI-MENGARANG (mutlak) — berlaku untuk jenis ber-Sebab di atas:**
 - Isi `sebab` **hanya bila ada bukti/indikasi yang mendukung** (dari dokumen, digest, atau pengujian). Sertakan dasarnya.
 - Bila penyebab **tidak ditemukan** atau **bukti tidak cukup**, tulis EKSPLISIT: **"Tidak ditemukan penyebab"** atau **"Tidak cukup data untuk menyimpulkan penyebab"** — dan **kosongkan `kode_penyebab`**. JANGAN menebak/mengarang akar masalah.
-- Untuk skill ber-keyakinan terbatas (reviu/evaluasi/pemantauan), wajar bila banyak temuan ber-`sebab` "tidak cukup data" karena lingkup pengujiannya terbatas — itu jujur dan benar, lebih baik daripada mengada-ada.
-- **Aturan ini MENGGANTIKAN** pernyataan "tanpa Sebab"/"Sebab tidak digunakan" yang mungkin masih tersisa di sebagian SKILL.md lama (paradigma pra-17 Juni). Elemen temuan kini **K/K/S/A/R** (Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi) untuk semua jenis.
+- Untuk skill ber-keyakinan terbatas (reviu / evaluasi non-LKE / pemantauan), wajar bila banyak temuan ber-`sebab` "tidak cukup data" karena lingkup pengujiannya terbatas — itu jujur dan benar, lebih baik daripada mengada-ada.
+- **Aturan ini MENGGANTIKAN** pernyataan "tanpa Sebab"/"Sebab tidak digunakan" yang mungkin masih tersisa di sebagian SKILL.md lama (paradigma pra-17 Juni) **HANYA untuk jenis ber-KKSA** (audit/reviu/evaluasi non-LKE/pemantauan) → elemen temuannya **K/K/S/A/R** (Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi). **Untuk trio LKE (RB/SAKIP/SPIP), pernyataan "tanpa Sebab" di SKILL.md justru BENAR — hormati, jangan di-override.**
 
 **Kodefikasi temuan (WAJIB tiap temuan):** sebelum `append_temuan`, panggil **`get_kodefikasi_temuan()`** lalu isi kode yang paling cocok dengan substansi temuan: **`kode_kondisi`** (WAJIB — jenis temuan, mis. `4.402` penyimpangan pengadaan), **`kode_rekomendasi`** (WAJIB — mis. `4.401` perbaiki agar sesuai aturan), dan **`kode_penyebab`** (basis SPIP, mis. `3.307` — diisi bila penyebab terbukti; **kosongkan bila `sebab` = "tidak ditemukan/tidak cukup data"**). Format kode `<sub>.<param>`. Pilih satu kode paling representatif per dimensi.
 

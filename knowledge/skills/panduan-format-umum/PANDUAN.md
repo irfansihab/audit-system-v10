@@ -33,7 +33,9 @@ Ini adalah aturan inti yang menentukan elemen apa yang **wajib, opsional, atau t
 | **Reviu SPIP** | ✅ Per unsur | ✅ PP 60/2008 | ✅ Diisi (anti-mengarang) | ❌ Tidak perlu | ✅ Jika ada catatan | Format catatan reviu per unsur SPIP |
 | **Konsultasi** | — | ✅ Dasar hukum | — | — | ✅ Pendapat/Saran | Format memo konsultasi (tanpa temuan/Sebab) |
 
-> **Sebab — semua jenis (sejak 17 Jun 2026, kecuali Konsultasi & Eval RB).** Unsur Sebab kini **diisi untuk semua jenis pengawasan** dengan **anti-mengarang**: isi hanya bila terbukti dari bukti; bila tidak ditemukan/bukti tidak cukup → tulis **"Tidak ditemukan penyebab"** / **"Tidak cukup data untuk menyimpulkan penyebab"** (jangan menebak). Reviu/evaluasi berlingkup terbatas → wajar sering "tidak cukup data".
+> **Sebab — semua jenis (sejak 17 Jun 2026), KECUALI evaluasi ber-LKE & Konsultasi.** Unsur Sebab kini **diisi untuk semua jenis pengawasan** dengan **anti-mengarang**: isi hanya bila terbukti dari bukti; bila tidak ditemukan/bukti tidak cukup → tulis **"Tidak ditemukan penyebab"** / **"Tidak cukup data untuk menyimpulkan penyebab"** (jangan menebak). Reviu/evaluasi berlingkup terbatas → wajar sering "tidak cukup data".
+>
+> **Pengecualian (TANPA unsur Sebab):** (1) **evaluasi berbasis LKE** — **Eval RB, Eval SAKIP, Eval SPIP** — memakai instrumen LKE (skor/predikat per kriteria/unsur) + AoI/rekomendasi, **bukan format KKSA**; (2) **Konsultasi** — tidak menghasilkan temuan (output Pendapat/Saran). *Catatan: "Reviu LKj (SAKIP)" dan "Reviu SPIP" pada tabel di atas adalah **reviu** (rezim reviu, tetap ber-Sebab), berbeda dari skill **evaluasi**-sakip/spip yang ber-LKE.*
 
 ### Penyajian unsur KONDISI — kronologis dulu, baru isu/deviasi (WAJIB semua jenis)
 
@@ -50,8 +52,8 @@ Evaluasi ini menilai efektivitas sistem/pelaksanaan secara substantif, bukan sek
 **Sebab pada Reviu (sejak 17 Jun 2026):**
 Reviu memberikan keyakinan terbatas atas aspek administratif/prosedural. Unsur **Sebab tetap diisi** bila penyebab terbukti dari bukti; namun karena lingkup pengujian reviu terbatas (fokus "terpenuhi/tidak terpenuhi"), **wajar bila banyak temuan ber-Sebab "Tidak cukup data untuk menyimpulkan penyebab"** — itu jujur dan benar. **Jangan mengarang** akar masalah. Rekomendasi tetap diberikan berdasarkan kondisi yang ditemukan.
 
-**Evaluasi RB punya format khusus:**
-Evaluasi RB diatur oleh PermenPAN-RB dengan instrumen evaluasi spesifik (tabel 4 dimensi). Tidak menggunakan KKSA — menggunakan format lembar evaluasi on going sesuai Juknis.
+**Evaluasi ber-LKE (RB, SAKIP, SPIP) punya format khusus:**
+Ketiganya diatur oleh PermenPAN-RB / pedoman SPIP dengan **instrumen Lembar Kerja Evaluasi (LKE)** spesifik — Eval RB (tabel 4 dimensi: Ketepatan/Ketercapaian/Kualitas/Kesesuaian), Eval SAKIP (LKE PermenPAN-RB 88/2021, predikat per kriteria), Eval SPIP (LKE maturitas 1–5 per unsur). **Tidak menggunakan KKSA dan tidak memuat unsur Sebab** — penilaian = skor/predikat LKE + Area of Improvement (AoI) + rekomendasi, sesuai Juknis masing-masing.
 
 ---
 

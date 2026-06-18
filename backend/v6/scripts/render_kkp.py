@@ -8,10 +8,12 @@ Output : penugasan/[nama]/_KKP/KKP-[Nama-Anggota].docx
 Konsumsi sumber kebenaran (temuan.json) dan menghasilkan view per anggota
 tim sesuai filter `anggota_tim.nama_lengkap`. Format kolom mengikuti
 paradigma jenis pengawasan:
-  - audit / reviu / evaluasi       : No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
+  - audit / reviu / evaluasi non-LKE: No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
   - pemantauan-*                   : No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Sumber   (tanpa Akibat)
-  Sejak 17 Jun 2026 kolom Sebab ada di SEMUA jenis (anti-mengarang: "Tidak ditemukan
-  penyebab"/"Tidak cukup data" bila tak terbukti).
+  - evaluasi ber-LKE (RB/SAKIP/SPIP): No, Sasaran, Judul, Kondisi, Kriteria, Akibat, Sumber  (TANPA Sebab — rezim LKE)
+  Sejak 17 Jun 2026 kolom Sebab ada di semua jenis ber-KKSA (anti-mengarang: "Tidak ditemukan
+  penyebab"/"Tidak cukup data" bila tak terbukti). KECUALI evaluasi ber-LKE (RB/SAKIP/SPIP) yang
+  memakai instrumen LKE + AoI, bukan KKSA → tanpa kolom Sebab.
   - konsultasi-pengadaan           : No, Pertanyaan, Analisis, Dasar Hukum, Rekomendasi    (kolom khusus)
 
 Contoh:
@@ -42,9 +44,10 @@ JENIS_KOLOM = {
     "audit-kinerja":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
     "reviu-pengadaan":          ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
     "reviu-rka-kl":             ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
-    "evaluasi-sakip":           ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
-    "evaluasi-spip":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
-    "evaluasi-reformasi-birokrasi": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    # Evaluasi ber-LKE (RB/SAKIP/SPIP): rezim LKE — instrumen + AoI, BUKAN KKSA → tanpa kolom Sebab
+    "evaluasi-sakip":           ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
+    "evaluasi-spip":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
+    "evaluasi-reformasi-birokrasi": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
     "evaluasi-manajemen-risiko":   ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
     "pemantauan-pengadaan":     ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
     "pemantauan-tindak-lanjut": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
@@ -213,8 +216,15 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
                     p0._element.getparent().remove(p0._element)
 
     doc.add_paragraph()
-    add_p(doc, "Catatan: kolom Sebab diisi untuk semua jenis pengawasan berdasarkan bukti; bila penyebab tidak ditemukan atau bukti tidak cukup, ditulis \"Tidak ditemukan penyebab\"/\"Tidak cukup data\" (tidak dikarang). Rekomendasi final dirumuskan saat penyusunan Laporan Hasil bersama Ketua Tim.",
-          italic=True, size=9)
+    if "Sebab" in kolom:
+        catatan_sebab = ("Catatan: kolom Sebab diisi berdasarkan bukti; bila penyebab tidak ditemukan "
+                         "atau bukti tidak cukup, ditulis \"Tidak ditemukan penyebab\"/\"Tidak cukup data\" "
+                         "(tidak dikarang). Rekomendasi final dirumuskan saat penyusunan Laporan Hasil bersama Ketua Tim.")
+    else:
+        catatan_sebab = ("Catatan: penilaian memakai instrumen Lembar Kerja Evaluasi (LKE) — skor/predikat per "
+                         "kriteria/unsur + Area of Improvement (AoI); tidak memuat unsur Sebab (bukan format KKSA). "
+                         "Rekomendasi final dirumuskan saat penyusunan Laporan Hasil bersama Ketua Tim.")
+    add_p(doc, catatan_sebab, italic=True, size=9)
     doc.add_paragraph()
     add_p(doc, "⚠ KKP INI ADALAH DRAFT — Mohon berikan feedback ke Ketua Tim sebelum LHP dibuat.",
           bold=True, size=10, align=WD_ALIGN_PARAGRAPH.CENTER)
