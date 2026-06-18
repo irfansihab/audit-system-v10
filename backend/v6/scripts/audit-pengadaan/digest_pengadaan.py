@@ -53,6 +53,15 @@ FILENAME_PATTERNS = {
                       r"SPM.+LS", r"Pembayaran\s+LS"],
     "sptb": [r"SPTB", r"Surat\s+Pernyataan\s+Tanggungjawab\s+Belanja"],
     "ba_rekonsiliasi": [r"BA\s+Rekonsiliasi", r"Berita\s+Acara.+SLA"],
+    # Dokumen PEMERIKSAAN/penerimaan hasil pekerjaan oleh PPK/PPHP/PjPHP/tim teknis
+    # — INI pivot audit output-vs-kontrak (verifikasi kuantitas/spek barang diterima),
+    # berbeda dari BAST (serah terima, sering formalitas tanda tangan).
+    "ba_pemeriksaan": [
+        r"Pemeriksaan\s+Hasil\s+Pekerjaan", r"Penerimaan\s+Hasil\s+Pekerjaan",
+        r"BA\s*P?HP\b", r"\bPPHP\b", r"\bPjPHP\b", r"Pejabat\s+Pemeriksa",
+        r"Panitia\s+Pemeriksa", r"Panitia\s+Penerima", r"Berita\s+Acara\s+Pemeriksaan",
+        r"Hasil\s+Pemeriksaan\s+Barang", r"Pemeriksaan\s+Bersama",
+    ],
     "laporan_bulanan": [r"Laporan\s+Bulanan"],
 }
 
@@ -376,11 +385,44 @@ def parse_pembayaran(pages: list[str]) -> dict:
     return out
 
 
+def parse_pemeriksaan(pages: list[str]) -> dict:
+    """Dokumen pemeriksaan/penerimaan hasil pekerjaan (PPK/PPHP/PjPHP/tim teknis).
+
+    Fokus audit output-vs-kontrak: apakah dokumen MERINCI kuantitas/spesifikasi
+    per item (verifikasi nyata) atau hanya tanda tangan (formalitas), dan apakah
+    mencatat ketidaksesuaian. Dipakai rule PL.2/PL.3 + analisis substantif #5.
+    """
+    text = "\n".join(pages)
+    out = {
+        "nomor": None, "tanggal": None,
+        "rincian_per_item": False,          # ada daftar/tabel kuantitas-spesifikasi diperiksa
+        "mencatat_ketidaksesuaian": False,  # dokumen mencatat kurang/cacat/tidak sesuai
+        "halaman": len(pages),
+    }
+    m = re.search(r"Nomor\s*:?\s*(\S+)", text[:1500])
+    if m:
+        out["nomor"] = m.group(1)[:80]
+    # rincian per item: indikasi kuantitas/spesifikasi yang diperiksa (bukan sekadar tanda tangan)
+    qty_lines = re.findall(
+        r"\b\d+\s*(?:unit|buah|set|pcs|lembar|paket|meter|m2|m3|kg|liter|titik|lisensi|user|node)\b",
+        text, re.I)
+    has_kolom = bool(re.search(
+        r"kuantitas|kuantiti|volume|jumlah\s+diterima|spesifikasi\s+diterima|"
+        r"hasil\s+pemeriksaan|sesuai\s*/\s*tidak\s+sesuai", text, re.I))
+    out["rincian_per_item"] = len(qty_lines) >= 3 or (has_kolom and len(qty_lines) >= 1)
+    # mencatat ketidaksesuaian (kurang/cacat/selisih)
+    if re.search(r"\bkurang\b|tidak\s+sesuai|selisih|cacat|tidak\s+lengkap|kekurangan|reject",
+                 text, re.I):
+        out["mencatat_ketidaksesuaian"] = True
+    return out
+
+
 PARSERS = {
     "kak": parse_kak,
     "hps": parse_hps,
     "kontrak": parse_kontrak,
     "ba_rekonsiliasi": parse_bast,
+    "ba_pemeriksaan": parse_pemeriksaan,
     "pembayaran_ls": parse_pembayaran,
     "sptb": parse_pembayaran,
 }

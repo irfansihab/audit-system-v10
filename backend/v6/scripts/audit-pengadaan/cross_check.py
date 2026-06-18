@@ -336,6 +336,64 @@ def rule_pl1_bast_tidak_ditemukan(digest: dict) -> dict | None:
     )
 
 
+def rule_pl2_pembayaran_tanpa_pemeriksaan(digest: dict) -> dict | None:
+    """PL.2 — Pembayaran dilakukan tapi TIDAK ada dokumen pemeriksaan hasil pekerjaan.
+
+    Pivot audit output-vs-kontrak: pemeriksaan oleh PPK/PPHP/PjPHP/tim teknis adalah
+    verifikasi kuantitas & spesifikasi yang DITERIMA — dasar agar pembayaran sesuai
+    output riil. Tanpa dokumen ini, kelebihan bayar atas output kurang (mis. kontrak
+    20, diterima 18, dibayar penuh) lolos dari pengendalian. BAST saja tak cukup.
+    """
+    pembayaran = _first(digest, "pembayaran_ls") or _first(digest, "sptb")
+    if not pembayaran:
+        return None  # belum bayar — wajar belum ada pemeriksaan
+    if _first(digest, "ba_pemeriksaan"):
+        return None
+    return _rule(
+        "PL.2", KRITIS, "Pelaksanaan",
+        "Pembayaran dilakukan tanpa dokumen pemeriksaan hasil pekerjaan (PPK/PPHP/tim teknis)",
+        "Tidak ada dokumen pemeriksaan yang memverifikasi kuantitas & spesifikasi output yang diterima.",
+        bukti={"pembayaran": pembayaran.get("filename")},
+        draft={
+            "kondisi": "Terdapat dokumen pembayaran, namun tidak ditemukan dokumen pemeriksaan/"
+                       "penerimaan hasil pekerjaan (oleh PPK/PPHP/PjPHP/tim teknis) yang memverifikasi "
+                       "kuantitas dan spesifikasi barang/jasa yang benar-benar diterima.",
+            "kriteria": "Perpres 16/2018 Pasal 27 jo. Perlem LKPP 12/2021 — penerimaan hasil pekerjaan "
+                        "didahului pemeriksaan kesesuaian kuantitas/spesifikasi/mutu terhadap kontrak; "
+                        "PMK 190/2012 — pembayaran APBN atas prestasi yang telah diverifikasi.",
+            "sebab": "[Auditor lengkapi] — pemeriksaan mungkin tidak didokumentasikan, atau dokumennya "
+                     "berada di luar berkas yang diserahkan ke tim audit.",
+            "akibat": "Pembayaran berisiko tidak sesuai output riil (dibayar penuh padahal kuantitas/"
+                      "spesifikasi diterima kurang) tanpa terdeteksi — potensi kelebihan bayar & kerugian negara.",
+        }
+    )
+
+
+def rule_pl3_pemeriksaan_tanpa_rincian(digest: dict) -> dict | None:
+    """PL.3 — Dokumen pemeriksaan ADA tapi tanpa rincian kuantitas/spesifikasi (formalitas)."""
+    pemeriksaan = _parsed(_first(digest, "ba_pemeriksaan"))
+    if not pemeriksaan:
+        return None
+    if pemeriksaan.get("rincian_per_item"):
+        return None
+    return _rule(
+        "PL.3", PERINGATAN, "Pelaksanaan",
+        "Dokumen pemeriksaan hasil pekerjaan tanpa rincian kuantitas/spesifikasi",
+        "Dokumen pemeriksaan tidak memuat rincian item yang diperiksa — indikasi pemeriksaan formalitas.",
+        bukti={"pemeriksaan": pemeriksaan.get("nomor")},
+        draft={
+            "kondisi": "Dokumen pemeriksaan hasil pekerjaan ditemukan, namun tidak memuat rincian "
+                       "kuantitas/spesifikasi per item yang diperiksa (hanya pernyataan/tanda tangan).",
+            "kriteria": "Perpres 16/2018 Pasal 27 jo. Perlem LKPP 12/2021 — pemeriksaan hasil pekerjaan "
+                        "wajib menguji kesesuaian kuantitas, spesifikasi, dan mutu terhadap kontrak.",
+            "sebab": "[Auditor lengkapi] — pemeriksaan dilakukan administratif tanpa verifikasi fisik "
+                     "per item, atau hasil verifikasi tidak dituangkan dalam berita acara.",
+            "akibat": "Kekurangan kuantitas/penurunan spesifikasi dapat lolos tanpa terdeteksi; "
+                      "pembayaran berpotensi tidak sesuai output yang benar-benar diterima.",
+        }
+    )
+
+
 def rule_b1_pembayaran_tanpa_bukti_lengkap(digest: dict) -> dict | None:
     """B.1 — Pembayaran LS/SPTB tanpa kelengkapan bukti pendukung."""
     pembayaran = _parsed(_first(digest, "pembayaran_ls")) or _parsed(_first(digest, "sptb"))
@@ -444,6 +502,8 @@ ALL_RULES = [
     rule_k2_kontrak_tanpa_sla,
     rule_k3_kontrak_tanpa_jaminan,
     rule_pl1_bast_tidak_ditemukan,
+    rule_pl2_pembayaran_tanpa_pemeriksaan,
+    rule_pl3_pemeriksaan_tanpa_rincian,
     rule_b1_pembayaran_tanpa_bukti_lengkap,
     rule_d2_unclassified_banyak,
 ]
