@@ -219,8 +219,8 @@ Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** be
 
    Bridge akan otomatis transform: `judul` → `judul_temuan`, `assigned_to` → `anggota_tim.nama_lengkap`. **Ketertelusuran wajib:** isi `langkah_kerja_terkait` (langkah kerja mana yang memunculkan temuan — atau tandai bila berasal dari standar skill di luar lantai PKP) + `pattern_id` bila pakai pattern wiki.
 
-10. **`render_kkp_docx(penugasan_folder, nama_anggota)`** — render KKP per anggota.
-11. **`run_qc_kkp(penugasan_folder)`** — jalankan QC SAIPI. Periksa status:
+10. **`render_kkp_docx(penugasan_folder, nama_anggota)`** — render KKP per anggota. ⚡ **PASTIKAN `context.md` sudah FINAL (langkah 3) SEBELUM render+QC** — QC SAIPI ikut mengecek context.md (Tujuan/Ruang Lingkup/Tim). Bila context.md ditunda ke akhir, QC akan BLOCKED → memaksa `write_context_md` + **rerun QC** (boros giliran, persis penyebab run lambat). Selesaikan context.md di awal, JANGAN di ekor.
+11. **`run_qc_kkp(penugasan_folder)`** — jalankan QC SAIPI **(idealnya SEKALI** — bila langkah 3 & 10 sudah benar). Periksa status:
     - **PASS** → lanjut ke ringkasan akhir.
     - **PASS_WITH_WARNINGS** → lanjut, sebutkan warning di ringkasan.
     - **BLOCKED_KRITIS** → baca `laporan_path`, perbaiki temuan/file yang flagged, lalu **rerun langkah 10–11**. Maks 2 iterasi. Bila masih BLOCKED, lapor ke pengguna untuk intervensi manual. Bila yang flagged adalah field context.md (mis. Tujuan/Ruang Lingkup), perbaiki via `write_context_md` lalu rerun.
