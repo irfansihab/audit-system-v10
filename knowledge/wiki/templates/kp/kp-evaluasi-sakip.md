@@ -1,7 +1,7 @@
 ---
 jenis: kp_template
 skill: evaluasi-sakip
-versi: 1.0
+versi: 2.0
 output_format: docx
 field_required:
   - nomor_st
@@ -16,6 +16,10 @@ field_optional:
   - referensi_regulasi
   - dasar_penugasan_tambahan
   - catatan_pt
+sumber_wiki:
+  - "pattern: ESK-30 dari temuan-patterns/evaluasi-sakip/"
+  - "PermenPAN-RB 88/2021 tentang Evaluasi AKIP"
+  - "konteks: pola-temuan-berulang"
 ---
 
 # Kartu Penugasan — Evaluasi SAKIP
@@ -28,7 +32,7 @@ field_optional:
 
 ## Dasar Hukum & Referensi Regulasi
 
-Permenpan RB 88/2021 tentang Evaluasi AKIP
+PermenPAN-RB Nomor 88 Tahun 2021 tentang Evaluasi Akuntabilitas Kinerja Instansi Pemerintah (AKIP).
 
 {{#referensi_regulasi}}
 Tambahan referensi yang dirujuk auditor: {{referensi_regulasi}}
@@ -38,13 +42,22 @@ Tambahan referensi yang dirujuk auditor: {{referensi_regulasi}}
 
 {{tujuan_pengawasan}}
 
-Tujuan baku skill ini: Memberikan penilaian atas implementasi SAKIP unit kerja sesuai Permenpan RB 88/2021.
+Tujuan baku skill ini: Menilai implementasi SAKIP unit kerja terhadap kriteria LKE PermenPAN-RB 88/2021 dan menyimpulkan predikat AKIP (evaluasi ber-LKE — keyakinan terbatas).
 
 ## Ruang Lingkup
 
 {{ruang_lingkup}}
 
-Ruang lingkup baku: LKE SAKIP unit kerja periode yang dievaluasi.
+Ruang lingkup baku: 4 komponen / 12 sub-komponen / 79 kriteria LKE AKIP pada unit kerja dan periode yang dievaluasi, berdasarkan folder bukti dukung.
+
+## Sasaran Pengawasan
+
+Sasaran baku untuk skill `evaluasi-sakip` (impor → daftar Sasaran KP; otomatis sync ke PKP saat disimpan):
+
+- Menilai komponen Perencanaan Kinerja (bobot 30%)
+- Menilai komponen Pengukuran Kinerja (bobot 30%)
+- Menilai komponen Pelaporan Kinerja (bobot 15%)
+- Menilai komponen Evaluasi Akuntabilitas Kinerja Internal (bobot 25%)
 
 ## Jadwal Pelaksanaan
 
@@ -59,6 +72,13 @@ Ruang lingkup baku: LKE SAKIP unit kerja periode yang dievaluasi.
 
 {{catatan_pt}}
 
+## Sumber Wiki Terkait
+
+- Pattern: [[ESK-30]] (stagnasi predikat AKIP; lihat juga ESK-31 s.d. ESK-34)
+- Regulasi/Pedoman: [[regulasi-kunci]] (PermenPAN-RB 88/2021 tentang Evaluasi AKIP)
+- Konteks: [[pola-temuan-berulang]]
+- PANDUAN substansi: `knowledge/skills/evaluasi-sakip/SKILL.md`
+
 ---
 
-*Template ini diisi oleh Pengendali Teknis (PT) saat tahapan 1 penugasan baru. Setelah disimpan, KT akan mendetailkan menjadi Program Kerja Pengawasan (PKP).*
+*Diisi Pengendali Teknis (PT) di tahapan 1; setelah disimpan, KT mendetailkan jadi Program Kerja Pengawasan (PKP).*

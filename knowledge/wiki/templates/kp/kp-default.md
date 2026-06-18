@@ -1,7 +1,7 @@
 ---
 jenis: kp_template
 skill: default
-versi: 1.0
+versi: 2.0
 output_format: docx
 field_required:
   - nomor_st
@@ -16,9 +16,12 @@ field_optional:
   - referensi_regulasi
   - dasar_penugasan_tambahan
   - catatan_pt
+sumber_wiki:
+  - "konteks: pola-temuan-berulang, regulasi-kunci"
+  - "PANDUAN skill spesifik penugasan"
 ---
 
-# Kartu Penugasan — Skill Umum
+# Kartu Penugasan — Default (fallback lintas skill)
 
 ## Identitas Penugasan
 
@@ -28,7 +31,7 @@ field_optional:
 
 ## Dasar Hukum & Referensi Regulasi
 
-[diisi auditor sesuai jenis pengawasan]
+Sesuai jenis pengawasan — rujuk regulasi-kunci di wiki dan PANDUAN skill terkait.
 
 {{#referensi_regulasi}}
 Tambahan referensi yang dirujuk auditor: {{referensi_regulasi}}
@@ -38,13 +41,21 @@ Tambahan referensi yang dirujuk auditor: {{referensi_regulasi}}
 
 {{tujuan_pengawasan}}
 
-Tujuan baku skill ini: [diisi auditor]
+Tujuan baku skill ini: Memperoleh hasil pengawasan yang memadai atas kesesuaian objek terhadap kriteria/standar yang berlaku, serta merumuskan simpulan dan rekomendasi perbaikan.
 
 ## Ruang Lingkup
 
 {{ruang_lingkup}}
 
-Ruang lingkup baku: [diisi auditor]
+Ruang lingkup baku: Objek pengawasan sesuai Surat Tugas, periode dan unit kerja yang ditetapkan.
+
+## Sasaran Pengawasan
+
+Sasaran baku untuk skill `default` (impor → daftar Sasaran KP; otomatis sync ke PKP saat disimpan) — sesuaikan dengan PANDUAN skill:
+
+- Menilai kesesuaian objek pengawasan terhadap kriteria/standar yang berlaku
+- Mengidentifikasi simpulan/temuan substantif beserta dampaknya
+- Merumuskan rekomendasi/saran perbaikan
 
 ## Jadwal Pelaksanaan
 
@@ -59,6 +70,11 @@ Ruang lingkup baku: [diisi auditor]
 
 {{catatan_pt}}
 
+## Sumber Wiki Terkait
+
+- Konteks: [[pola-temuan-berulang]], [[regulasi-kunci]], [[glossary-komdigi]]
+- PANDUAN substansi: `knowledge/skills/<skill>/SKILL.md`
+
 ---
 
-*Template ini diisi oleh Pengendali Teknis (PT) saat tahapan 1 penugasan baru. Setelah disimpan, KT akan mendetailkan menjadi Program Kerja Pengawasan (PKP).*
+*Template fallback. Untuk skill spesifik, gunakan `kp-<skill>.md`. Diisi Pengendali Teknis (PT) di tahapan 1; setelah disimpan, KT mendetailkan jadi Program Kerja Pengawasan (PKP).*

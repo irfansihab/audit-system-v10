@@ -1,52 +1,64 @@
 ---
 jenis: pkp_template
 skill: default
-versi: 1.0
+versi: 2.0
 output_format: docx
 field_required:
-  - judul_program
-  - sasaran_utama
+  - nomor_pkp
+  - sasaran_list
   - langkah_kerja_list
   - tim_anggota_assignment
 field_optional:
   - referensi_kp
   - risk_profile
   - timeline_per_langkah
+sumber_wiki:
+  - "konteks: pola-temuan-berulang, regulasi-kunci"
+  - "PANDUAN skill spesifik penugasan"
 ---
 
-# Program Kerja Pengawasan (PKP) — Skill Umum
+# Program Kerja Pengawasan (PKP) — Default (fallback lintas skill)
 
 ## Identitas
 
-Detail dari Kartu Penugasan: {{nomor_st}} ({{tanggal_st}}).
+Nomor PKP: {{nomor_pkp}} — detail operasional dari Kartu Penugasan (KP) {{nomor_st}} ({{tanggal_st}}).
 
 **Judul Program**: {{judul_program}}
 
-## Sasaran Utama Pengawasan
+## I. Perencanaan
 
-{{sasaran_utama}}
+- Pelajari Kartu Penugasan (KP), Surat Tugas, dan hasil survei pendahuluan/penjajakan
+- Pahami tujuan, sasaran, dan ruang lingkup penugasan
+- Tetapkan kriteria/standar pengawasan yang relevan (rujuk regulasi-kunci di wiki)
+- Susun program kerja terinci, jadwal, dan alokasi anggota tim
+- Identifikasi & kumpulkan dokumen/data yang dibutuhkan (KP, PKP, bahan auditi)
 
-Sasaran baku untuk skill `default`:
-- Mengevaluasi [diisi auditor]
-- Mengidentifikasi temuan substantif sesuai PANDUAN skill default
-- Memberikan rekomendasi perbaikan
+## II. Pelaksanaan
 
-## Langkah Kerja & Penanggung Jawab
+Sasaran baku (impor → baris Sasaran; sub-butir → Langkah Kerja per sasaran) — sesuaikan dengan PANDUAN skill:
 
-{{#langkah_kerja_list}}
-- **Langkah {{nomor}}**: {{deskripsi_langkah}}
-  - Penanggung jawab: {{anggota_assigned}}
-  - Timeline: {{timeline}}
-  - Output: {{output_expected}}
-{{/langkah_kerja_list}}
+- Menilai kesesuaian objek pengawasan terhadap kriteria/standar yang berlaku
+  - Bandingkan kondisi aktual dengan kriteria yang ditetapkan
+  - Dokumentasikan bukti yang memadai pada KKP
+- Mengidentifikasi simpulan/temuan substantif beserta dampaknya
+  - Susun unsur Kondisi–Kriteria–Sebab–Akibat (sesuai doktrin skill)
+  - Verifikasi bukti pendukung sebelum disimpulkan
+- Merumuskan rekomendasi/saran perbaikan
+  - Pastikan rekomendasi dapat ditindaklanjuti dan terukur
 
-## Assignment Tim Anggota
+## III. Pelaporan
 
-{{tim_anggota_assignment}}
+- Kompilasi & reviu kertas kerja (KKP) berikut bukti pendukung
+- Susun simpulan dan daftar temuan/saran
+- Bahas hasil dengan unit auditi (exit meeting/konfirmasi)
+- Susun draft laporan hasil pengawasan sesuai jenis penugasan
+- Reviu berjenjang (AT → KT → PT → Inspektur) dan finalisasi via SIMWAS
 
-## Risk Profile (Opsional — dari Survey Pendahuluan)
+## Sumber Wiki Terkait
 
-{{risk_profile}}
+- Konteks: [[pola-temuan-berulang]], [[regulasi-kunci]], [[glossary-komdigi]]
+- Pattern temuan: lihat folder `temuan-patterns/<skill>/` sesuai jenis penugasan
+- PANDUAN substansi: `knowledge/skills/<skill>/SKILL.md`
 
 ## Catatan Ketua Tim
 
@@ -54,4 +66,4 @@ Sasaran baku untuk skill `default`:
 
 ---
 
-*Template ini diisi oleh Ketua Tim (KT) saat tahapan 2 penugasan baru. PKP merupakan detail operasional dari Kartu Penugasan (KP).*
+*Template fallback. Untuk skill spesifik, gunakan `pkp-<skill>.md`. Diisi Ketua Tim (KT) di tahapan 2 — PKP = detail operasional Kartu Penugasan (KP).*

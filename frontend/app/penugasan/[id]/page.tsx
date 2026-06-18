@@ -435,26 +435,49 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [penugasan.id]);
 
-  // Template wiki → prefill tujuan/ruang lingkup/dasar baku skill (hanya ke
-  // field yang masih kosong — isian manual PT tidak ditimpa).
+  // Template wiki → prefill Tujuan/Ruang Lingkup/Dasar baku skill (hanya ke
+  // field yang masih kosong — isian manual PT tidak ditimpa) + impor daftar
+  // "Sasaran baku" ke Sasaran Pengawasan (otomatis sync ke PKP saat disimpan).
   const useTemplate = (t: { slug: string; body: string; meta: Record<string, any> }) => {
     const sections: Array<[string, RegExp]> = [
       ['tujuan', /tujuan/i],
       ['ruang_lingkup', /ruang lingkup/i],
       ['dasar', /dasar|referensi regulasi/i],
     ];
+    let filledFields = 0;
     setFields((prev) => {
       const next = { ...prev };
       for (const [key, re] of sections) {
         if (!(next[key] || '').trim()) {
           const text = extractTemplateSection(t.body, re);
-          if (text) next[key] = text;
+          if (text) {
+            next[key] = text;
+            filledFields++;
+          }
         }
       }
       return next;
     });
+    // Sasaran baku (deskripsi) → daftar Sasaran KP (dedup, buang baris kosong)
+    const baku = extractSasaranBakuFromTemplate(t.body).map((s) => s.deskripsi);
+    let addedSasaran = 0;
+    if (baku.length) {
+      setSasaran((prev) => {
+        const cur = prev.filter((s) => s.trim());
+        const existing = new Set(cur.map((s) => s.trim().toLowerCase()));
+        const add = baku.filter((d) => !existing.has(d.trim().toLowerCase()));
+        addedSasaran = add.length;
+        const merged = [...cur, ...add];
+        return merged.length ? merged : [''];
+      });
+    }
     setTemplateSlug(t.slug);
     setShowTpl(false);
+    toast.success(
+      `Template "${t.slug}" diterapkan: ${filledFields} field` +
+        (addedSasaran ? `, ${addedSasaran} sasaran` : '') +
+        '. Lengkapi & klik Simpan KP.',
+    );
   };
 
   const setF = (k: string, v: string) => setFields((p) => ({ ...p, [k]: v }));
@@ -510,9 +533,9 @@ function KpTab({ penugasan, role }: { penugasan: Penugasan; role: Role }) {
       {canEdit && (
         <div className="integral-card p-4">
           <button onClick={() => setShowTpl((v) => !v)} className="text-sm text-primary font-medium">
-            {showTpl ? '▾' : '▸'} Pakai Template KP dari Wiki
+            {showTpl ? '▾' : '▸'} Import dari Wiki — Pakai Template KP
             <span className="ml-2 text-[11px] text-gray-400 font-normal">
-              mengisi Tujuan / Ruang Lingkup / Dasar baku skill ke field yang masih kosong
+              mengisi Tujuan / Ruang Lingkup / Dasar baku skill (ke field kosong) + daftar Sasaran (sync ke PKP)
             </span>
             {templateSlug && (
               <span className="ml-2 px-2 py-0.5 rounded-full bg-primary-50 text-primary text-[11px] font-mono">
@@ -1399,21 +1422,51 @@ function LangkahUmumEditor({
   );
 }
 
-/** Ambil butir daftar di bawah heading/baris "Sasaran baku ..." dari body
- * template PKP wiki → jadi baris sasaran. Berhenti di baris kosong setelah
- * butir pertama atau heading berikutnya. */
-function extractSasaranBakuFromTemplate(body: string): string[] {
+/** Parse "Sasaran baku" dari body template PKP wiki (format INTEGRAL).
+ * Butir top-level (`- …`) → deskripsi sasaran (II. Pelaksanaan); sub-butir
+ * berindentasi (`  - …`) → langkah kerja sasaran tsb. Template lama tanpa
+ * sub-butir tetap jalan (langkah_kerja kosong). Berhenti di heading berikutnya
+ * atau baris kosong setelah daftar dimulai. */
+function extractSasaranBakuFromTemplate(
+  body: string,
+): Array<{ deskripsi: string; langkah_kerja: string[] }> {
   const lines = body.split('\n');
   const start = lines.findIndex((l) => /sasaran baku/i.test(l));
   if (start === -1) return [];
+  const out: Array<{ deskripsi: string; langkah_kerja: string[] }> = [];
+  for (let j = start + 1; j < lines.length; j++) {
+    const raw = lines[j];
+    const m = raw.match(/^(\s*)[-*]\s+(.*)$/);
+    if (m) {
+      const indent = m[1].replace(/\t/g, '  ').length;
+      const text = m[2].trim();
+      if (!text) continue;
+      if (indent >= 2 && out.length > 0) out[out.length - 1].langkah_kerja.push(text);
+      else out.push({ deskripsi: text, langkah_kerja: [] });
+    } else if (raw.trim().startsWith('#')) {
+      break; // heading berikutnya
+    } else if (raw.trim() === '' && out.length > 0) {
+      break; // baris kosong setelah daftar = akhir blok
+    }
+  }
+  return out.filter((s) => s.deskripsi);
+}
+
+/** Ambil butir daftar (flat) di bawah heading tertentu (mis. "## I. Perencanaan"
+ * atau "## III. Pelaporan") sampai heading berikutnya. Lewati komentar & baris
+ * kosong. Dipakai impor PKP untuk mengisi kelompok I. Perencanaan & III. Pelaporan. */
+function extractLangkahSection(body: string, headingRe: RegExp): string[] {
+  const lines = body.split('\n');
+  const start = lines.findIndex((l) => /^#{1,6}\s/.test(l) && headingRe.test(l));
+  if (start === -1) return [];
   const out: string[] = [];
   for (let j = start + 1; j < lines.length; j++) {
-    const l = lines[j].trim();
-    if (l.startsWith('- ')) out.push(l.slice(2).trim());
-    else if (out.length > 0 && (l === '' || l.startsWith('#'))) break;
-    else if (l.startsWith('#')) break;
+    const raw = lines[j];
+    if (/^#{1,6}\s/.test(raw)) break; // heading berikutnya
+    const m = raw.match(/^\s*[-*]\s+(.*)$/);
+    if (m && m[1].trim()) out.push(m[1].trim());
   }
-  return out.filter(Boolean);
+  return out;
 }
 
 function SetupPenugasanTab({
@@ -1989,24 +2042,44 @@ function SetupPenugasanTab({
         {canEditSasaran && pkpTplOpen && (
           <div className="px-5 py-4 border-t border-gray-200 bg-violet-50/30">
             <p className="text-xs text-gray-500 mb-3">
-              Pilih template PKP wiki — butir <strong>"Sasaran baku"</strong> template otomatis
-              ditambahkan sebagai baris sasaran (lengkapi waktu/assignment setelahnya).
+              Pilih template PKP wiki — impor mengikuti <strong>format INTEGRAL</strong>: butir
+              <strong> Sasaran baku</strong> → baris Sasaran (sub-butir → Langkah Kerja),
+              <strong> I. Perencanaan</strong> & <strong>III. Pelaporan</strong> → langkah kerja
+              kelompoknya (hanya bila masih kosong; tak menimpa isian Anda). Lengkapi waktu/assignment setelahnya.
             </p>
             <TemplatePickerKpPkp
               kind="pkp"
               skill={skill || ''}
               onUse={(t) => {
                 const baku = extractSasaranBakuFromTemplate(t.body);
-                if (baku.length === 0) {
-                  setErr('Template ini tidak memuat daftar "Sasaran baku" — pakai sebagai referensi manual.');
+                const peren = extractLangkahSection(t.body, /I\.\s*Perencanaan/i);
+                const pelap = extractLangkahSection(t.body, /III\.\s*Pelaporan/i);
+                if (baku.length === 0 && peren.length === 0 && pelap.length === 0) {
+                  setErr('Template ini tidak memuat "Sasaran baku" / langkah I/III — pakai sebagai referensi manual.');
                   return;
                 }
+                // II. Pelaksanaan — sasaran + langkah kerja (dedup by deskripsi)
                 const cur = sasaran || [];
                 const existing = new Set(cur.map((x) => x.deskripsi.trim().toLowerCase()));
                 const rows = baku
-                  .filter((d) => !existing.has(d.trim().toLowerCase()))
-                  .map((d, i) => ({ ...emptySasaran(cur.length + i + 1), deskripsi: d }));
-                setSasaran([...cur, ...rows]);
+                  .filter((d) => !existing.has(d.deskripsi.trim().toLowerCase()))
+                  .map((d, i) => ({
+                    ...emptySasaran(cur.length + i + 1),
+                    deskripsi: d.deskripsi,
+                    langkah_kerja: d.langkah_kerja,
+                  }));
+                if (rows.length) setSasaran([...cur, ...rows]);
+                // I. Perencanaan & III. Pelaporan — isi hanya bila masih kosong
+                const fillPeren = peren.length > 0 && perencanaan.length === 0;
+                const fillPelap = pelap.length > 0 && pelaporan.length === 0;
+                if (fillPeren) setPerencanaan(peren.map((l) => ({ langkah: l, pelaksana: '', waktu: '' })));
+                if (fillPelap) setPelaporan(pelap.map((l) => ({ langkah: l, pelaksana: '', waktu: '' })));
+                toast.success(
+                  `Diimpor dari Wiki: ${rows.length} sasaran` +
+                    (fillPeren ? `, ${peren.length} langkah Perencanaan` : '') +
+                    (fillPelap ? `, ${pelap.length} langkah Pelaporan` : '') +
+                    '. Jangan lupa Simpan Sasaran.',
+                );
                 setPkpTplOpen(false);
               }}
             />
