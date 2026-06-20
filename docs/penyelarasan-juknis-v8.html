@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penyelarasan Konsep SK Juknis Pengawasan dengan Audit AI v8 (INTEGRAL)</title>
+<style>
+  :root{
+    --navy:#13314f; --navy2:#1d4a73; --teal:#0f766e; --amber:#b45309;
+    --rose:#b91c1c; --emerald:#047857; --slate:#475569; --line:#e2e8f0;
+    --bg:#f6f8fb; --ink:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);
+    background:var(--bg);margin:0;line-height:1.55;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 28px 64px}
+  header.doc{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+    border-radius:16px;padding:30px 34px;margin-bottom:26px;box-shadow:0 8px 24px rgba(19,49,79,.18)}
+  header.doc .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+  header.doc h1{margin:8px 0 6px;font-size:25px;line-height:1.25}
+  header.doc .sub{opacity:.92;font-size:15px}
+  header.doc .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px}
+  header.doc .meta span{background:rgba(255,255,255,.14);padding:5px 11px;border-radius:999px}
+  h2{color:var(--navy);font-size:19px;margin:34px 0 12px;padding-bottom:7px;border-bottom:2px solid var(--line)}
+  h2 .n{display:inline-block;background:var(--navy);color:#fff;border-radius:7px;
+    width:26px;height:26px;line-height:26px;text-align:center;font-size:14px;margin-right:9px}
+  h3{color:var(--navy2);font-size:15.5px;margin:18px 0 7px}
+  p{margin:8px 0}
+  .lead{font-size:15.5px;color:var(--slate)}
+  .callout{background:#fff;border:1px solid var(--line);border-left:5px solid var(--teal);
+    border-radius:10px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .callout.warn{border-left-color:var(--amber);background:#fffbeb}
+  .callout.key{border-left-color:var(--navy);background:#eef4fb}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card .big{font-size:30px;font-weight:700;color:var(--rose);line-height:1}
+  .card .big.ok{color:var(--emerald)} .card .big.nv{color:var(--navy)}
+  .card .lbl{font-size:13px;color:var(--muted);margin-top:6px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px}
+  th{background:var(--navy);color:#fff;text-align:left;padding:9px 11px;font-weight:600}
+  td{padding:9px 11px;border-top:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafcfe}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .t-adopt{background:#e0f2fe;color:#075985} .t-have{background:#dcfce7;color:#166534}
+  .t-field{background:#fef9c3;color:#854d0e} .t-export{background:#ede9fe;color:#5b21b6}
+  .t-admin{background:#fee2e2;color:#991b1b}
+  .flow{display:flex;align-items:stretch;gap:0;margin:16px 0;flex-wrap:wrap}
+  .flow .stage{flex:1;min-width:104px;background:#fff;border:1px solid var(--line);
+    padding:11px 10px;text-align:center;font-size:12.5px;position:relative}
+  .flow .stage.prod{border-top:3px solid var(--teal)}
+  .flow .stage.finish{border-top:3px solid var(--rose);background:#fff5f5;font-weight:700}
+  .flow .stage.admin{border-top:3px solid var(--amber);background:#fffbeb}
+  .flow .stage b{display:block;color:var(--navy);font-size:12px}
+  .flow .stage small{color:var(--muted);font-size:11px}
+  .band{display:flex;gap:12px;margin:6px 0 18px;font-size:12.5px;flex-wrap:wrap}
+  .band span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  ul.clean{margin:8px 0;padding-left:20px} ul.clean li{margin:5px 0}
+  .checkY{color:var(--emerald);font-weight:700} .checkN{color:#cbd5e1}
+  .checkO{color:var(--amber);font-weight:700}
+  .step{display:flex;gap:13px;margin:11px 0}
+  .step .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;
+    text-align:center;line-height:28px;font-weight:700;font-size:14px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+  footer{margin-top:36px;padding-top:16px;border-top:2px solid var(--line);color:var(--muted);font-size:12.5px}
+  .pill{display:inline-block;background:var(--navy);color:#fff;border-radius:999px;padding:3px 11px;font-size:12px;font-weight:600}
+  @media(max-width:720px){.grid3,.two{grid-template-columns:1fr}.flow{flex-direction:column}}
+  @media print{body{background:#fff}.wrap{max-width:100%;padding:0}header.doc{box-shadow:none}
+    .card,.callout,table{box-shadow:none}h2{break-after:avoid}table{break-inside:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Inspektorat II · Kementerian Komunikasi dan Digital</div>
+  <h1>Penyelarasan Konsep SK Juknis Pengawasan<br>dengan Sistem Audit AI v8 (INTEGRAL)</h1>
+  <div class="sub">Ringkasan untuk Pimpinan — perbandingan, prinsip pembatas, dan rencana penyelarasan</div>
+  <div class="meta">
+    <span>📄 Acuan: Konsep SK Irjen "Standar Dokumen Penugasan Pengawasan"</span>
+    <span>⚙️ Sistem: Audit AI v8 / INTEGRAL</span>
+    <span>🗓️ Juni 2026</span>
+    <span>Status: Bahan diskusi</span>
+  </div>
+</header>
+
+<div class="callout key">
+  <strong>Inti gagasan.</strong> Konsep SK menstandarkan <strong>36 template dokumen</strong> (27 wajib).
+  Cakupannya kaya, namun <strong>terlalu administratif, banyak yang berulang, dan belum konsisten</strong> —
+  sehingga berat diterapkan. Usulan: <strong>SK diselaraskan mengikuti alur sistem v8</strong> (v8 sebagai jangkar),
+  dan <strong>hanya template yang memperkaya mutu produksi</strong> yang diadopsi ke v8 — agar SK dan sistem
+  <em>saling menguatkan</em>. Fokus v8 dijaga pada <strong>mesin produksi substansi</strong>; segala hal
+  <strong>setelah laporan disetujui adalah ranah administrasi</strong> dan berada di luar v8.
+</div>
+
+<h2><span class="n">1</span>Mengapa SK perlu diselaraskan</h2>
+<p class="lead">Tiga masalah utama yang membuat juknis sulit diterapkan — semuanya berbasis bukti dari isi dokumen:</p>
+<div class="grid3">
+  <div class="card"><div class="big">36</div><div class="lbl">template distandarkan (27 <b>WAJIB</b> + 9 opsional), tanpa penjenjangan per jenis penugasan</div></div>
+  <div class="card"><div class="big">4 dok · 9 ttd</div><div class="lbl">untuk menuntaskan <b>satu temuan</b> — klien menandatangani persetujuan yang sama <b>3×</b></div></div>
+  <div class="card"><div class="big">3×</div><div class="lbl">anggaran dicatat berulang (Kartu Penugasan, Alokasi Waktu, Alokasi Anggaran)</div></div>
+</div>
+<div class="two">
+  <div class="callout warn"><strong>Terlalu administratif & berulang.</strong>
+    <ul class="clean">
+      <li>"Daftar temuan" dilahirkan ulang di <strong>5 template</strong> (DHP, Surat Penyampaian, BA Pembahasan, Lembar Persetujuan, Surat Pengantar Masalah).</li>
+      <li>Laporan monitoring penugasan <strong>mingguan, manual</strong>.</li>
+      <li>3 dokumen mutu (Reviu Supervisi, Daftar Periksa QA/QC, Sign‑off) menulis ulang reviu berjenjang yang sama.</li>
+      <li>Catatan Hasil Pengujian ≈ isi KKP; Laporan TL per‑temuan ≈ Laporan Pemantauan TL.</li>
+    </ul>
+  </div>
+  <div class="callout warn"><strong>Belum konsisten.</strong>
+    <ul class="clean">
+      <li>Struktur laporan campur: LHA pakai "BAB I–IV", LHR/LHE/Pemantauan pakai "A/B/C".</li>
+      <li>Istilah <strong>ADTT vs PDTT</strong> dipakai bergantian; kata "audit/diaudit" bocor di template lintas‑jenis.</li>
+      <li>Ringkasan Eksekutif memakai frasa <em>"keyakinan memadai"</em> walau dipakai untuk Pemantauan/Konsultansi (non‑assurance).</li>
+      <li>Survei Pendahuluan 100% bernuansa audit, tetapi diwajibkan untuk semua jenis penugasan.</li>
+      <li>Kesalahan teknis: dua bagian berlabel "F" di Kartu Penugasan; PM hilang dari identitas PKP namun ikut menandatangani.</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="n">2</span>Prinsip pembatas: Produksi vs Administrasi</h2>
+<p class="lead">v8 berperan sebagai <strong>mesin produksi substansi</strong> dan berhenti di garis finis
+<strong>"laporan disetujui"</strong>. Sesudahnya = ranah administrasi (surat‑menyurat, persetujuan klien,
+distribusi, pemantauan tindak lanjut, pengarsipan) — diatur SK, dijalankan SIMWAS/manual, bukan beban v8.</p>
+<div class="flow">
+  <div class="stage prod"><b>Survei</b><small>Pendahuluan (audit)</small></div>
+  <div class="stage prod"><b>KP</b><small>Kartu Penugasan</small></div>
+  <div class="stage prod"><b>PKP</b><small>Program Kerja</small></div>
+  <div class="stage prod"><b>KKP</b><small>Kertas kerja & temuan</small></div>
+  <div class="stage prod"><b>Reviu KT</b><small>Lembar Reviu</small></div>
+  <div class="stage prod"><b>Laporan</b><small>LHA/LHR/LHE/dll</small></div>
+  <div class="stage finish"><b>QA/QC + Disetujui</b><small>★ GARIS FINIS v8</small></div>
+  <div class="stage admin"><b>Tahapan 8 · Administrasi</b><small>oleh TU — handoff &amp; register</small></div>
+</div>
+<div class="band">
+  <span><span class="dot" style="background:var(--teal)"></span> Mesin produksi v8 (substansi)</span>
+  <span><span class="dot" style="background:var(--rose)"></span> Garis finis = laporan disetujui</span>
+  <span><span class="dot" style="background:var(--amber)"></span> Ranah administrasi (di luar v8)</span>
+</div>
+<div class="callout"><strong>Garis serah (handoff).</strong> Tepat di garis finis, v8 <strong>mengekspor</strong>
+  dua hal ke administrasi: <strong>LHP final</strong> dan <strong>Daftar Temuan &amp; Rekomendasi</strong> —
+  sebagai pemicu administrasi, bukan untuk diproduksi ulang berkali‑kali.</div>
+
+<h3 style="margin-top:22px">Tahapan 8 — Administrasi / Pasca‑Pengawasan <span class="pill">peran baru: TU</span></h3>
+<p>Tahap baru milik <strong>Tata Usaha (TU)</strong>, <strong>terbuka otomatis saat laporan disetujui</strong> dan
+sudah ter‑prefill dari paket ekspor. Auditor (AT/KT/PT/PM) tidak menyentuh tahap ini — fokus produksi tetap terjaga,
+administrasi punya penanggung jawab sendiri.</p>
+<div class="two">
+  <div class="card">
+    <h3 style="margin-top:0">Dikerjakan TU di v8 <span style="font-weight:400;color:var(--muted);font-size:12px">(handoff + register ringkas)</span></h3>
+    <ul class="clean">
+      <li>Paket ekspor: <strong>LHP final + Daftar Temuan &amp; Rekomendasi</strong>.</li>
+      <li><strong>Draft surat penyampaian</strong> LHP ke klien (otomatis dari LHP; TU lengkapi nomor agenda &amp; tanggal kirim).</li>
+      <li><strong>Register tindak lanjut</strong>: status komitmen klien &amp; pemantauan TL.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Tetap di SIMWAS / manual</h3>
+    <ul class="clean">
+      <li>Penomoran surat resmi &amp; tanda tangan elektronik (TTE).</li>
+      <li>Distribusi formal &amp; tanda terima resmi.</li>
+      <li>Arsip negara &amp; retensi — v8 cukup <strong>menyerahkan paket</strong>.</li>
+    </ul>
+  </div>
+</div>
+<table>
+  <thead><tr><th style="width:200px">Peran</th><th style="width:230px">Wilayah</th><th>Akses</th></tr></thead>
+  <tbody>
+    <tr><td>AT · KT · PT · PM</td><td>Produksi (Tahapan 0–7)</td><td>Substansi: KKP, temuan, laporan, kendali mutu</td></tr>
+    <tr><td><strong>TU</strong> <span class="tag t-adopt">peran baru</span></td><td><strong>Administrasi (Tahapan 8)</strong></td><td>Read‑only ke substansi; mengisi dokumen administrasi</td></tr>
+    <tr><td>ADMIN</td><td>Teknis / superuser</td><td>File JSON mentah, jejak audit</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">3</span>Re‑klasifikasi 36 template SDP</h2>
+<div class="band">
+  <span><span class="tag t-adopt">ADOPSI</span> perkaya produksi v8</span>
+  <span><span class="tag t-have">SUDAH ADA</span> di v8</span>
+  <span><span class="tag t-field">JADI FIELD</span> bukan dokumen</span>
+  <span><span class="tag t-export">EKSPOR</span> di garis serah</span>
+  <span><span class="tag t-admin">ADMINISTRASI</span> di luar v8</span>
+</div>
+<table>
+  <thead><tr><th style="width:120px">Kelas</th><th>Template SDP</th><th style="width:230px">Perlakuan</th></tr></thead>
+  <tbody>
+    <tr><td><span class="tag t-adopt">ADOPSI</span></td>
+      <td>Daftar Periksa QA/QC (M.02, 14 butir) · 7‑area Reviu Supervisi (M.01) · Sign‑off berjenjang (M.03) · Ringkasan Eksekutif (L.06) · CCCE + rekomendasi 3‑tingkat (LHA) · indeksasi/metadata KKP (PL.10)</td>
+      <td>Diserap ke mesin v8 — inilah yang <em>saling menguatkan</em></td></tr>
+    <tr><td><span class="tag t-have">SUDAH ADA</span></td>
+      <td>Laporan LHA/LHR/LHE/Pemantauan/Memo (L.01–05) · Kartu Penugasan (P.02) · Survei Pendahuluan (P.05) · PKP (P.06) · KKP (PL.08) · Lembar Reviu Supervisi (M.01)</td>
+      <td>Dipertahankan; diberi label kode SDP</td></tr>
+    <tr><td><span class="tag t-field">JADI FIELD</span></td>
+      <td>Alokasi Waktu (P.03) · Alokasi Anggaran (P.04)</td>
+      <td>Cukup <strong>field</strong> di KP/PKP — hapus dokumen + tanda tangan terpisah (stop pencatatan anggaran 3×)</td></tr>
+    <tr><td><span class="tag t-export">EKSPOR</span></td>
+      <td>Daftar Temuan &amp; Rekomendasi (≈ DHP, K.01)</td>
+      <td>Di‑generate otomatis dari data temuan → diserahkan ke administrasi</td></tr>
+    <tr><td><span class="tag t-admin">ADMINISTRASI</span></td>
+      <td>Surat Tugas (P.01) · seluruh surat/pakta/notulensi/permintaan‑penyerahan‑penolakan data (PL.01–07) · penyampaian/BA pembahasan/persetujuan/log (K.02–07) · pemantauan tindak lanjut (TL.01–03)</td>
+      <td>Diatur SK, dijalankan SIMWAS/manual. v8 cukup menyediakan data ekspornya — <strong>tidak memproduksi paperwork ini</strong></td></tr>
+  </tbody>
+</table>
+<p style="font-size:13px;color:var(--muted)"><em>Catatan: pemantauan tindak lanjut sebagai penugasan tetap diproduksi v8 (menghasilkan Laporan Hasil Pemantauan). Yang keluar dari v8 hanyalah berkas administratif tindak lanjut (BA pemutakhiran, form TL yang diisi klien) — karena terjadi setelah laporan disetujui.</em></p>
+
+<h2><span class="n">4</span>Rencana penyelarasan (dua arah, v8 jangkar)</h2>
+<div class="two">
+  <div>
+    <h3>A. SK disesuaikan ke v8</h3>
+    <div class="step"><div class="num">1</div><div><strong>Strukturkan SK mengikuti alur produksi v8</strong> (Survei→KP→PKP→KKP→Laporan→QA/QC→persetujuan), dengan bab terpisah "Dokumen Administrasi (pasca‑persetujuan)".</div></div>
+    <div class="step"><div class="num">2</div><div><strong>Klausul digital‑native:</strong> dokumen boleh dihasilkan sistem; validasi berjenjang &amp; keterlacakan dianggap terpenuhi via jejak audit sistem — bukan ketik/tanda tangan manual berlapis.</div></div>
+    <div class="step"><div class="num">3</div><div><strong>Penjenjangan proporsional:</strong> daftar WAJIB disesuaikan per jenis penugasan; mayoritas template administrasi menjadi opsional/kondisional.</div></div>
+    <div class="step"><div class="num">4</div><div><strong>Perbaikan konsistensi (errata):</strong> seragamkan struktur laporan, istilah (ADTT/PDTT), frasa Ringkasan Eksekutif per jenis, Survei wajib‑audit‑saja, dan koreksi kesalahan teknis penomoran/penandatangan.</div></div>
+  </div>
+  <div>
+    <h3>B. Template penguat diadopsi v8</h3>
+    <p>Hanya yang menambah <strong>mutu produksi</strong> (lihat kelas ADOPSI). Menjadi backlog pengembangan v8:</p>
+    <div class="step"><div class="num">1</div><div><strong>Lembar Kendali Mutu Berjenjang</strong> — gabung 3 dokumen mutu jadi satu (KT self‑review / PT supervisi 7‑area / PM QA‑QC 14‑butir + sign‑off).</div></div>
+    <div class="step"><div class="num">2</div><div><strong>Ringkasan Eksekutif</strong> otomatis sebagai bagian laporan, sesuai jenis penugasan.</div></div>
+    <div class="step"><div class="num">3</div><div><strong>Struktur temuan diperkaya</strong> — Kondisi‑Kriteria‑Sebab‑Akibat eksplisit + rekomendasi 3‑tingkat prioritas.</div></div>
+    <div class="step"><div class="num">4</div><div><strong>Daftar Temuan &amp; Rekomendasi</strong> di‑generate otomatis sebagai artefak ekspor di garis serah.</div></div>
+    <div class="step"><div class="num">5</div><div><strong>Indeksasi/metadata KKP</strong> otomatis (mengganti tickmark manual).</div></div>
+  </div>
+</div>
+
+<h2><span class="n">5</span>Matriks proporsionalitas dokumen WAJIB per jenis penugasan</h2>
+<p class="lead">Usulan pengganti "27 wajib seragam" — dokumen produksi disesuaikan dengan sifat tiap penugasan.</p>
+<table>
+  <thead><tr>
+    <th>Dokumen produksi</th><th style="text-align:center">Audit</th><th style="text-align:center">Reviu</th>
+    <th style="text-align:center">Evaluasi</th><th style="text-align:center">Pemantauan</th><th style="text-align:center">Konsultansi</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>Survei Pendahuluan</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkO">○</span></td><td align="center"><span class="checkO">○</span></td><td align="center"><span class="checkN">–</span></td><td align="center"><span class="checkN">–</span></td></tr>
+    <tr><td>Kartu Penugasan (KP)</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td></tr>
+    <tr><td>Program Kerja Pengawasan (PKP)</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkO">○</span></td></tr>
+    <tr><td>KKP &amp; Temuan</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkO">○</span></td></tr>
+    <tr><td>Lembar Kendali Mutu Berjenjang</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkO">○</span></td></tr>
+    <tr><td>Laporan hasil + Ringkasan Eksekutif</td><td align="center">LHA</td><td align="center">LHR</td><td align="center">LHE</td><td align="center">LHP</td><td align="center">Memo</td></tr>
+    <tr><td>Daftar Temuan &amp; Rekomendasi (ekspor)</td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkY">✓</span></td><td align="center"><span class="checkN">–</span></td></tr>
+  </tbody>
+</table>
+<div class="band">
+  <span><span class="checkY">✓</span> wajib</span>
+  <span><span class="checkO">○</span> kondisional (sesuai kompleksitas)</span>
+  <span><span class="checkN">–</span> tidak relevan</span>
+</div>
+<p style="font-size:13px;color:var(--muted)"><em>Konsultansi bersifat advisory — tanpa "temuan"; menghasilkan saran. Unsur "Sebab" pada temuan diisi untuk audit/reviu/evaluasi non‑LKE/pemantauan, dan tidak untuk evaluasi ber‑LKE (RB/SAKIP/SPIP) maupun konsultansi.</em></p>
+
+<h2><span class="n">6</span>Format laporan: model KKSAR v8 vs Juknis</h2>
+<p class="lead">v8 memakai paradigma temuan <strong>KKSAR — Kondisi · Kriteria · Sebab · Akibat · Rekomendasi</strong> —
+sebagai <strong>kerangka induk yang seragam</strong>, dengan <strong>pengurangan unsur yang terdokumentasi per jenis</strong>
+(berprinsip, bukan acak). Format Juknis L.01–L.06 justru berbeda‑beda tanpa prinsip dan dengan penamaan unsur yang tidak baku.</p>
+
+<h3>Model v8 (KKSAR + jenis‑aware)</h3>
+<table>
+  <thead><tr><th>Jenis (laporan)</th><th>Unsur inti temuan</th><th>Keterangan</th></tr></thead>
+  <tbody>
+    <tr><td>Audit (LHA)</td><td><b>K · K · S · A</b> + R</td><td>KKSAR penuh, keyakinan memadai (SAIPI)</td></tr>
+    <tr><td>Reviu (LHR)</td><td><b>K · K · S · A</b> + R</td><td>keyakinan terbatas; Sebab anti‑mengarang</td></tr>
+    <tr><td>Evaluasi non‑LKE (MR)</td><td><b>K · K · S · A</b> + R</td><td>KKSA penuh</td></tr>
+    <tr><td>Evaluasi ber‑LKE (RB/SAKIP/SPIP)</td><td>K · K · <b>A</b> + LKE/AoI <span style="color:var(--muted)">(tanpa Sebab)</span></td><td>rezim LKE — skor/predikat, bukan KKSA</td></tr>
+    <tr><td>Pemantauan (LHP)</td><td><b>K · K · S · A</b> + status TL <span class="tag t-have">diperbaiki</span></td><td><b>Akibat kini dimasukkan</b> (sebelumnya keliru dihilangkan)</td></tr>
+    <tr><td>Konsultansi (Memo)</td><td>advisory — tanpa temuan</td><td>Pertanyaan / Analisis / Dasar Hukum / Saran</td></tr>
+  </tbody>
+</table>
+
+<h3>Format Juknis (L.01–L.06) — sumber inkonsistensi</h3>
+<table>
+  <thead><tr><th>Juknis</th><th>Shell</th><th>Representasi temuan</th><th>Selisih vs KKSAR</th></tr></thead>
+  <tbody>
+    <tr><td>L.01 LHA</td><td>BAB I–IV</td><td>Kondisi / <b>Analisis Penyebab</b> / <b>Dampak‑Risiko</b> / Rekomendasi / Tanggapan</td><td>label beda (Sebab→"Analisis Penyebab", Akibat→"Dampak/Risiko"); rekomendasi muncul 3×</td></tr>
+    <tr><td>L.02 LHR</td><td>A–F</td><td>tabel <b>Area / Kondisi / Catatan</b></td><td>jauh lebih tipis; tanpa Kriteria‑Sebab‑Akibat eksplisit; bagian D &amp; F tumpang tindih</td></tr>
+    <tr><td>L.03 LHE</td><td>A–D</td><td>tabel Kriteria / Indikator / Kondisi / Analisis / Tingkat Capaian</td><td>skema lain; <b>tidak membedakan LKE vs non‑LKE</b></td></tr>
+    <tr><td>L.04 Pemantauan</td><td>A–E</td><td>tabel Aspek / Kriteria‑Target / Kondisi / Status</td><td>mendekati v8, label beda</td></tr>
+    <tr><td>L.05 Memo</td><td>memo</td><td>Latar / Masalah / Analisis / Saran</td><td>relatif selaras ✓</td></tr>
+    <tr><td>L.06 Ringkasan Eksekutif</td><td>komponen</td><td>narasi assurance baku</td><td>frasa "keyakinan memadai" bocor ke jenis non‑assurance</td></tr>
+  </tbody>
+</table>
+
+<div class="two">
+  <div class="callout warn"><strong>Tiga lapis inkonsistensi Juknis.</strong>
+    <ul class="clean">
+      <li><b>Shell tak seragam</b> — BAB I–IV vs A/B/C vs memo, tanpa alasan substantif.</li>
+      <li><b>Istilah unsur "liar"</b> — "Analisis Penyebab / Dampak‑Risiko / Catatan / Tingkat Capaian" untuk hal yang di v8 = Sebab/Akibat.</li>
+      <li><b>Variasi tak berprinsip</b> — membedakan per jenis tetapi tidak menyatakan prinsipnya; LHE menyamakan SAKIP/SPIP (LKE) dengan evaluasi non‑LKE.</li>
+    </ul>
+  </div>
+  <div class="callout key"><strong>Arah penyelarasan (SK → v8).</strong>
+    <ul class="clean">
+      <li><b>Shell seragam</b>: Nota Dinas → Cover → Isi (Pendahuluan → Hasil → Simpulan → Rekomendasi).</li>
+      <li><b>Baku‑kan istilah ke KKSAR</b> (Analisis Penyebab→Sebab; Dampak/Risiko→Akibat).</li>
+      <li><b>Lampirkan tabel pengurangan unsur per jenis</b> (model v8 di atas) sebagai standar SK.</li>
+      <li>Perbaiki Ringkasan Eksekutif per‑jenis + logo/judul yang salah‑tempel.</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="n">7</span>Manfaat &amp; langkah selanjutnya</h2>
+<div class="two">
+  <div class="callout"><strong>Manfaat.</strong>
+    <ul class="clean">
+      <li>Beban administratif auditor turun drastis — dokumen produksi <strong>dihasilkan sistem</strong>, bukan diketik manual.</li>
+      <li>SK menjadi <strong>ringkas, konsisten, dan dapat diterapkan</strong> selaras sistem.</li>
+      <li>Mutu &amp; keterlacakan justru <strong>menguat</strong> (jejak audit otomatis) tanpa menambah paperwork.</li>
+      <li>Batas tegas produksi vs administrasi memperjelas tanggung jawab dan titik serah ke SIMWAS.</li>
+    </ul>
+  </div>
+  <div class="callout key"><strong>Keputusan yang dimohon.</strong>
+    <ul class="clean">
+      <li>Persetujuan arah: <strong>SK diselaraskan ke v8</strong> + adopsi selektif template penguat.</li>
+      <li>Persetujuan <strong>garis finis v8 = laporan disetujui</strong> (administrasi di luar v8).</li>
+      <li>Penunjukan tim kecil untuk menyusun <strong>draf revisi SK</strong> + daftar errata.</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  Disusun sebagai bahan diskusi penyelarasan Konsep SK Standar Dokumen Penugasan Pengawasan dengan Sistem Audit AI v8 (INTEGRAL),
+  Inspektorat II — Kementerian Komunikasi dan Digital. Dokumen kerja internal · Juni 2026.
+</footer>
+
+</div>
+</body>
+</html>
