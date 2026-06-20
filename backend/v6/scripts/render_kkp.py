@@ -8,8 +8,7 @@ Output : penugasan/[nama]/_KKP/KKP-[Nama-Anggota].docx
 Konsumsi sumber kebenaran (temuan.json) dan menghasilkan view per anggota
 tim sesuai filter `anggota_tim.nama_lengkap`. Format kolom mengikuti
 paradigma jenis pengawasan:
-  - audit / reviu / evaluasi non-LKE: No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
-  - pemantauan-*                   : No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Sumber   (tanpa Akibat)
+  - audit / reviu / evaluasi non-LKE / pemantauan: No, Sasaran, Judul, Kondisi, Kriteria, Sebab, Akibat, Sumber
   - evaluasi ber-LKE (RB/SAKIP/SPIP): No, Sasaran, Judul, Kondisi, Kriteria, Akibat, Sumber  (TANPA Sebab — rezim LKE)
   Sejak 17 Jun 2026 kolom Sebab ada di semua jenis ber-KKSA (anti-mengarang: "Tidak ditemukan
   penyebab"/"Tidak cukup data" bila tak terbukti). KECUALI evaluasi ber-LKE (RB/SAKIP/SPIP) yang
@@ -49,8 +48,8 @@ JENIS_KOLOM = {
     "evaluasi-spip":            ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
     "evaluasi-reformasi-birokrasi": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Akibat", "Sumber Dokumen"],
     "evaluasi-manajemen-risiko":   ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
-    "pemantauan-pengadaan":     ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
-    "pemantauan-tindak-lanjut": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Sumber Dokumen"],
+    "pemantauan-pengadaan":     ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
+    "pemantauan-tindak-lanjut": ["No", "Sasaran", "Judul Temuan", "Kondisi", "Kriteria", "Sebab", "Akibat", "Sumber Dokumen"],
 }
 
 WIDTHS = {

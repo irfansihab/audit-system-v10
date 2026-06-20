@@ -27,6 +27,7 @@ Ini adalah aturan inti yang menentukan elemen apa yang **wajib, opsional, atau t
 |-------|:-------:|:--------:|:-----:|:------:|:-----------:|---------|
 | **Audit** (Pengadaan, Keuangan) | ✅ Wajib | ✅ Wajib | ✅ Wajib | ✅ Wajib | ✅ Wajib | Format KKSA penuh — setiap temuan |
 | **Evaluasi Kinerja / MR** | ✅ Wajib | ✅ Wajib | ✅ Wajib | ✅ Wajib | ✅ Wajib (di G) | Format KKSA — Rekomendasi dikompilasi di seksi G terpisah |
+| **Pemantauan** (Pengadaan, Tindak Lanjut) | ✅ Wajib | ✅ Wajib | ✅ Diisi (anti-mengarang) | ✅ Wajib | ✅ Jika ada catatan | Format KKSA penuh + status tindak lanjut (Selesai/Proses/Belum) |
 | **Evaluasi RB** | — | — | — | ✅ (Analisis Dampak) | ✅ (jika ada catatan) | Format tabel khusus PermenPAN-RB: Ketepatan/Ketercapaian/Kualitas/Kesesuaian |
 | **Reviu Dokumen Kontrak** | ✅ Per aspek | ✅ Per aspek | ✅ Diisi (anti-mengarang) | ✅ Jika ada catatan | ✅ Jika ada catatan | Format naratif per aspek (justifikasi/harga/output) |
 | **Reviu LKj (SAKIP)** | ✅ Hasil per kriteria | ✅ Kriteria PermenPAN-RB | ✅ Diisi (anti-mengarang) | ❌ Tidak perlu | ✅ Jika ada catatan | Format tabel 3 aspek + Pernyataan Telah Direviu |

@@ -305,7 +305,7 @@ Untuk setiap catatan: apakah kondisi/kriteria sudah tepat? Ada yang perlu ditamb
 
 **v4.0.4 — pakai renderer terstandar daripada generate dari scratch.**
 
-KKP DOCX dihasilkan oleh `scripts/render_kkp.py` yang baca `_KKP/temuan.json` (sumber kebenaran) + `context.md`, lalu render tabel sesuai paradigma jenis pengawasan (kolom audit pakai Sebab; reviu/evaluasi tanpa Sebab; pemantauan tanpa Akibat — di-handle otomatis).
+KKP DOCX dihasilkan oleh `scripts/render_kkp.py` yang baca `_KKP/temuan.json` (sumber kebenaran) + `context.md`, lalu render tabel sesuai paradigma jenis pengawasan — KKSA penuh (Kondisi-Kriteria-Sebab-Akibat) untuk audit/reviu/evaluasi non-LKE/**pemantauan**; evaluasi ber-LKE (RB/SAKIP/SPIP) tanpa kolom Sebab (rezim LKE); konsultasi pakai kolom khusus — di-handle otomatis.
 
 ```bash
 # Render KKP untuk anggota saat ini (dari _ROLE.md)
