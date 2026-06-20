@@ -885,6 +885,112 @@ async def write_penilaian_rb(args: dict) -> dict:
     return {"content": [{"type": "text", "text": f"OK|n_komponen={n}"}]}
 
 
+def _latest_lhp_docx(folder: Path) -> Path | None:
+    """Docx laporan hasil terbaru di _LHP/ (hasil render_report) untuk disisipi
+    tabel/diagram. Abaikan file lock Word (~$)."""
+    lhp = folder / "_LHP"
+    if not lhp.is_dir():
+        return None
+    docs = [p for p in lhp.glob("*.docx") if not p.name.startswith("~$")]
+    return max(docs, key=lambda p: p.stat().st_mtime) if docs else None
+
+
+@tool(
+    "append_lampiran_tabel",
+    "Sisipkan TABEL ke laporan hasil (docx terbaru di _LHP/) — mis. rekap temuan per "
+    "aspek, matriks nilai/severity, status tindak lanjut. Data WAJIB dari sumber "
+    "kebenaran (temuan.json/TLHP/konteks), JANGAN dikarang. Panggil SETELAH render_report. "
+    "Args: judul (caption), headers (list kolom), rows (list of list, per baris).",
+    {"penugasan_folder": str, "judul": str, "headers": list, "rows": list},
+)
+async def append_lampiran_tabel(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    doc_path = _latest_lhp_docx(folder)
+    if doc_path is None:
+        return {"content": [{"type": "text", "text": "FAILED|laporan di _LHP belum ada — render_report dulu"}], "is_error": True}
+    headers = args.get("headers") or []
+    rows = args.get("rows") or []
+    if not headers or not rows:
+        return {"content": [{"type": "text", "text": "FAILED|headers & rows wajib (list non-kosong)"}], "is_error": True}
+    try:
+        doc = Document(str(doc_path))
+        doc.add_heading(str(args.get("judul") or "Tabel"), level=2)
+        table = doc.add_table(rows=1, cols=len(headers))
+        try:
+            table.style = "Light Grid Accent 1"
+        except Exception:  # noqa: BLE001 — style opsional
+            pass
+        for i, h in enumerate(headers):
+            table.rows[0].cells[i].text = str(h)
+        for r in rows:
+            cells = table.add_row().cells
+            for i in range(len(headers)):
+                cells[i].text = str(r[i]) if isinstance(r, (list, tuple)) and i < len(r) else ""
+        doc.save(str(doc_path))
+    except Exception as e:  # noqa: BLE001
+        return {"content": [{"type": "text", "text": f"FAILED|tulis tabel: {e}"}], "is_error": True}
+    return {"content": [{"type": "text", "text": f"OK|tabel '{args.get('judul')}' ({len(rows)} baris) → {doc_path.name}"}]}
+
+
+@tool(
+    "append_lampiran_diagram",
+    "Sisipkan DIAGRAM gambar (bar/pie/line) ke laporan hasil (docx terbaru di _LHP/) — "
+    "mis. jumlah temuan per severity/aspek, status TL. Data WAJIB dari sumber kebenaran, "
+    "JANGAN dikarang. Panggil SETELAH render_report. Args: judul, tipe ('bar'|'pie'|'line'), "
+    "kategori (list label), nilai (list angka, sama panjang dgn kategori).",
+    {"penugasan_folder": str, "judul": str, "tipe": str, "kategori": list, "nilai": list},
+)
+async def append_lampiran_diagram(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    doc_path = _latest_lhp_docx(folder)
+    if doc_path is None:
+        return {"content": [{"type": "text", "text": "FAILED|laporan di _LHP belum ada — render_report dulu"}], "is_error": True}
+    kategori = args.get("kategori") or []
+    nilai = args.get("nilai") or []
+    if not kategori or len(kategori) != len(nilai):
+        return {"content": [{"type": "text", "text": "FAILED|kategori & nilai wajib & sama panjang"}], "is_error": True}
+    try:
+        nums = [float(x) for x in nilai]
+    except (TypeError, ValueError):
+        return {"content": [{"type": "text", "text": "FAILED|nilai harus angka"}], "is_error": True}
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return {"content": [{"type": "text", "text": "FAILED|matplotlib belum terpasang — pakai append_lampiran_tabel sebagai gantinya"}], "is_error": True}
+    tipe = (args.get("tipe") or "bar").lower()
+    judul = str(args.get("judul") or "Diagram")
+    labels = [str(k) for k in kategori]
+    try:
+        fig, ax = plt.subplots(figsize=(6.2, 3.6))
+        if tipe == "pie":
+            ax.pie(nums, labels=labels, autopct="%1.0f%%", startangle=90)
+            ax.axis("equal")
+        elif tipe == "line":
+            ax.plot(labels, nums, marker="o", color="#0f766e")
+            ax.grid(True, axis="y", alpha=0.3)
+        else:  # bar (default)
+            ax.bar(labels, nums, color="#1d4a73")
+            ax.grid(True, axis="y", alpha=0.3)
+        ax.set_title(judul)
+        if tipe != "pie":
+            fig.autofmt_xdate(rotation=20)
+        fig.tight_layout()
+        slug = re.sub(r"[^a-z0-9]+", "-", judul.lower()).strip("-")[:32] or "diagram"
+        img = folder / "_LHP" / f"_diagram-{slug}.png"
+        fig.savefig(str(img), dpi=130)
+        plt.close(fig)
+        from docx.shared import Inches
+        doc = Document(str(doc_path))
+        doc.add_heading(judul, level=2)
+        doc.add_picture(str(img), width=Inches(5.5))
+        doc.save(str(doc_path))
+    except Exception as e:  # noqa: BLE001
+        return {"content": [{"type": "text", "text": f"FAILED|buat diagram: {e}"}], "is_error": True}
+    return {"content": [{"type": "text", "text": f"OK|diagram {tipe} '{judul}' → {doc_path.name}"}]}
+
+
 LHR_TOOLS = [
     write_sasaran_assignment,  # Setup Penugasan mode
     read_temuan_json,
@@ -895,5 +1001,7 @@ LHR_TOOLS = [
     append_saran,      # Memo Konsultansi (konsultansi-umum)
     append_kegiatan_pendampingan,  # Laporan Pendampingan (konsultasi-pengadaan)
     write_penilaian_rb,  # Evaluasi RB 4-dimensi
+    append_lampiran_tabel,    # 1B — tabel rekap ke laporan (data dari sumber kebenaran)
+    append_lampiran_diagram,  # 1B — diagram bar/pie/line ke laporan (matplotlib)
     run_qc_lhp,
 ]

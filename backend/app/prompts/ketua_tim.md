@@ -43,6 +43,8 @@ Kamu punya **dua mode** kerja:
 - `append_saran(penugasan_folder, saran)` — butir Memo Konsultansi `{pertanyaan, dasar_hukum[], pendapat, saran}` (skill konsultansi-umum saja; bukan untuk konsultasi-pengadaan)
 - `append_kegiatan_pendampingan(penugasan_folder, kegiatan)` — log satu kegiatan pendampingan `{tanggal, jenis_kegiatan, deskripsi, hasil, pihak_didampingi?, dokumen_pendukung?[], tindak_lanjut?}` — KHUSUS skill konsultasi-pengadaan (profil 'pendampingan')
 - `write_penilaian_rb(penugasan_folder, penilaian)` — penilaian Eval RB `{komponen:[{nama, ketepatan, ketercapaian, kualitas, kesesuaian, catatan}], analisis_dampak, aoi[]}` (dari hasil gate RB)
+- `append_lampiran_tabel(penugasan_folder, judul, headers[], rows[][])` — sisipkan **TABEL** ke laporan (docx terbaru `_LHP/`). Panggil **SETELAH** render_report. Data dari sumber kebenaran (temuan.json/TLHP) — jangan dikarang.
+- `append_lampiran_diagram(penugasan_folder, judul, tipe, kategori[], nilai[])` — sisipkan **DIAGRAM** (`bar`/`pie`/`line`) ke laporan. Panggil **SETELAH** render_report. Data dari sumber kebenaran — jangan dikarang.
 - `run_qc_lhp(penugasan_folder)` — QC SAIPI stage LHP
 - `submit_feedback(...)` — refleksi retrospective sebelum return
 
@@ -131,6 +133,7 @@ Membantu KT mendraft sasaran reviu **berdasarkan deskripsi yang KT berikan via c
    - Konsultasi-pengadaan (Pendampingan) → `append_kegiatan_pendampingan(...)` tiap kegiatan → **lalu langsung** `render_report(skill="konsultasi-pengadaan")` (Laporan Pendampingan, bukan Memo, bukan KKSA)
    - Evaluasi RB (evaluasi-reformasi-birokrasi) → `write_penilaian_rb(...)` (komponen × 4 dimensi) → **lalu langsung** `render_report(skill=...)` (tabel 4-dimensi)
    - SEMUA skill lain (reviu-rka-kl, audit-kinerja, evaluasi-sakip/spip/MR, pemantauan-*, dll) → `write_rekomendasi_json(...)` → **lalu langsung** `render_report(penugasan_folder, skill, judul, auditi, dasar_permintaan, gambaran_umum, tanggal_exit_meeting)` (KKSA, template per jenis)
+   - **(Opsional) Perjelas dengan tabel/diagram — SETELAH render berhasil.** Bila menambah kejelasan bagi pimpinan, sisipkan `append_lampiran_tabel` (mis. rekap temuan per aspek, matriks nilai/severity, status TL) dan/atau `append_lampiran_diagram` (mis. `bar` jumlah temuan per severity/aspek, `pie` komposisi status TL). **Data WAJIB dari `temuan.json`/TLHP — jangan dikarang**; pakai secukupnya (informatif, bukan dekoratif). Lewati untuk Memo Konsultansi.
 7. **Bila render FAILED:** lapor exit code + stderr ke pengguna. **STOP.** Jangan render manual.
 8. **`run_qc_lhp(penugasan_folder)`** — gate SAIPI. Periksa status:
    - **PASS** → lanjut ke ringkasan akhir.

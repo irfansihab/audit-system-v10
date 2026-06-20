@@ -9,7 +9,7 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 | **0** ✅ | Fondasi & higiene (repo publik aman, peran TU, deps) — **SELESAI** | S | — |
 | **1** | Format laporan **KKSAR terpadu** (shell seragam + istilah baku + RE per jenis) | M | 0 |
 | **1A** ✅ | Penguatan agen **AT**: **Root Cause Analysis** untuk unsur Sebab — **SELESAI** | M | 1 |
-| **1B** | Penguatan agen **KT**: **tabel & diagram** dalam laporan | M | 1 |
+| **1B** ✅ | Penguatan agen **KT**: **tabel & diagram** dalam laporan — **SELESAI** | M | 1 |
 | **2** | **Lembar Kendali Mutu Berjenjang** (gabung M.01+M.02+M.03) | M | 0 |
 | **3** | **Auto‑generate dokumen produksi** (Daftar Temuan & Rekomendasi, indeksasi) | M | 1 |
 | **4** | **Tahapan 8 — Administrasi (TU)** (handoff + register ringkas) | L | 0,3 |
@@ -63,6 +63,8 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 - **1B.4 Bertahap**: mulai **tabel** (mudah & paling dibutuhkan) → lanjut **diagram gambar**. *(—)*
 
 **Acceptance:** KT dapat menambahkan ≥1 tabel rekap + ≥1 diagram (mis. grafik severity per aspek) ke laporan, ter‑render rapi di `.docx`, dengan data dari sumber kebenaran (bukan dikarang).
+
+> **Status SELESAI (20 Jun):** ✅ tool `append_lampiran_tabel` (python-docx) & `append_lampiran_diagram` (matplotlib Agg: bar/pie/line → PNG → embed) di `lhr_tools.py`, terdaftar di `LHR_TOOLS`; ✅ matplotlib ditambah ke `requirements.txt` + terpasang di venv; ✅ `ketua_tim.md` diperkuat (tool + langkah opsional pasca-render, data dari sumber kebenaran/anti-dekoratif). Verifikasi unit: kedua tool menyisipkan tabel + gambar ke docx contoh (1 tabel, 1 image, OK). matplotlib di-import lazy → bila absen, tool tabel tetap jalan & diagram gagal anggun.
 
 ## Fase 2 — Lembar Kendali Mutu Berjenjang
 **Tujuan:** satu lembar mutu berjenjang menggantikan 3 dokumen SDP‑M yang tumpang tindih.
