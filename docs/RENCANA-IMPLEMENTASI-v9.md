@@ -7,7 +7,7 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 | Fase | Tujuan | Bobot | Bergantung |
 |---|---|---|---|
 | **0** ✅ | Fondasi & higiene (repo publik aman, peran TU, deps) — **SELESAI** | S | — |
-| **1** | Format laporan **KKSAR terpadu** (shell seragam + istilah baku + RE per jenis) | M | 0 |
+| **1** ✅ | Format laporan **KKSAR terpadu** (shell seragam + istilah baku + RE per jenis) — **SELESAI** | M | 0 |
 | **1A** ✅ | Penguatan agen **AT**: **Root Cause Analysis** untuk unsur Sebab — **SELESAI** | M | 1 |
 | **1B** ✅ | Penguatan agen **KT**: **tabel & diagram** dalam laporan — **SELESAI** | M | 1 |
 | **2** | **Lembar Kendali Mutu Berjenjang** (gabung M.01+M.02+M.03) | M | 0 |
@@ -28,7 +28,7 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 **Acceptance:** tak ada kredensial hidup/keras di repo; login `tu` menghasilkan `role_aktif: TU`; backend `:8000` & frontend `:3000` 200.
 
 > **Status SELESAI (20 Jun):** ✅ password seed via `DEV_SEED_PASSWORD` (acak bila kosong) + quick-login FE via `NEXT_PUBLIC_DEV_PASSWORD` (mati bila kosong); ✅ peran `TU` (enum + seed user `tu` + tipe FE + label TopBar + default stage); ✅ deps v9 ter-install (npm + venv py3.12); ✅ DB diisolasi ke `audit_v9`. Verifikasi: backend app import OK (Role.TU, env terbaca), `tsc` 0 error.
-> **Sisa (live smoke, butuh Docker):** nyalakan Docker → `createdb audit_v9` (atau `docker exec <db> createdb -U audit audit_v9`) → jalankan backend (seed otomatis) → uji login `tu`.
+> **Live smoke SELESAI (20 Jun):** ✅ Docker up → `audit_v9` dibuat di `sistemauditv7-db-1` → backend v9 :8001 seed otomatis → login `tu`/audit2026 = **role TU**, budi=KT, admin=ADMIN; password salah → 401; 7 seed user (DEV_SEED_PASSWORD dihormati, bukan acak).
 
 ---
 
@@ -40,6 +40,8 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 - **1.4 Ringkasan Eksekutif (L.06) jenis‑aware**: tambah section + frasa assurance/non‑assurance yang benar (hindari "keyakinan memadai" di pemantauan/konsultansi). File: `lhr_tools.py` + template. *(M)*
 
 **Acceptance:** 6 jenis (LHA/LHR/LHE/LP/Memo + RE) render dengan shell konsisten; istilah unsur = KKSAR; RE benar per jenis. Uji render 1 sampel tiap jenis.
+
+> **Status SELESAI (20 Jun):** v9 **sudah KKSAR-first by construction** — temuan ini terkonfirmasi saat audit: (1.1) **shell seragam** — 18 skeleton LHP semua **kop-only** dari base sama, body diisi V6 render_lhp → struktur identik antar-jenis; (1.2/1.4) **istilah + assurance per jenis sudah baku** di `_SUBSTANCE` (audit=KKSAR keyakinan memadai, evaluasi=KKAR terbatas, pemantauan=pelaporan status). Pekerjaan v9: ✅ **kunci istilah baku KKSAR** di `PANDUAN.md` (larang sinonim "Analisis Penyebab"/"Dampak-Risiko"/"Tingkat Capaian"); ✅ polish paradigma pemantauan ke KKSA (+Akibat, selaras fix sebelumnya); (1.3) matriks pengurangan unsur per jenis = single source of truth di `PANDUAN.md` (tabel framework) + `render_kkp.py`. *Inkonsistensi format ada di sisi JUKNIS, bukan v9 → diselesaikan saat penyusunan paket usulan SK (Fase 5).* Verifikasi: lhr_tools import OK; skeleton shell uniform.
 
 ---
 

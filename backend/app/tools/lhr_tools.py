@@ -273,7 +273,7 @@ _SUBSTANCE = {
     },
     "pemantauan": {
         "desk review": "Pemantauan dilaksanakan melalui penelaahan laporan berkala dan data status pelaksanaan dari auditi/pengawas pekerjaan, dengan membandingkan realisasi terhadap target serta ketentuan kontrak/rencana.",
-        "dikelompokkan ke dalam": "Berdasarkan pemantauan, tim Inspektorat II mencatat {n} ({nt}) isu/kondisi yang perlu perhatian, dikelompokkan ke dalam {m} ({mt}) aspek. Pemantauan bersifat pelaporan status dan tidak memberikan keyakinan atas kebenaran substansi.",
+        "dikelompokkan ke dalam": "Berdasarkan pemantauan, tim Inspektorat II mencatat {n} ({nt}) isu/kondisi yang perlu perhatian, dikelompokkan ke dalam {m} ({mt}) aspek. Kondisi dirumuskan dengan paradigma Kondisi-Kriteria-Sebab-Akibat. Pemantauan bersifat pelaporan status dan tidak memberikan keyakinan atas kebenaran substansi.",
         "limited assurance": "Berdasarkan hasil pemantauan, terdapat {n} ({nt}) kondisi yang perlu perhatian sebagaimana diuraikan. Laporan ini bersifat pelaporan status — tidak memberikan keyakinan dan tidak menyimpulkan pelanggaran; tindak lanjut menjadi kewenangan pihak pengelola kegiatan.",
     },
 }

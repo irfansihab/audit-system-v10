@@ -38,6 +38,10 @@ Ini adalah aturan inti yang menentukan elemen apa yang **wajib, opsional, atau t
 >
 > **Pengecualian (TANPA unsur Sebab):** (1) **evaluasi berbasis LKE** — **Eval RB, Eval SAKIP, Eval SPIP** — memakai instrumen LKE (skor/predikat per kriteria/unsur) + AoI/rekomendasi, **bukan format KKSA**; (2) **Konsultasi** — tidak menghasilkan temuan (output Pendapat/Saran). *Catatan: "Reviu LKj (SAKIP)" dan "Reviu SPIP" pada tabel di atas adalah **reviu** (rezim reviu, tetap ber-Sebab), berbeda dari skill **evaluasi**-sakip/spip yang ber-LKE.*
 
+### Istilah unsur BAKU (KKSAR) — kunci konsistensi format laporan
+
+Gunakan istilah unsur **PERSIS**: **Kondisi · Kriteria · Sebab · Akibat · Rekomendasi** (KKSAR). **JANGAN** memakai sinonim/varian seperti *"Analisis Penyebab"* (→ pakai **Sebab**), *"Dampak/Dampak-Risiko"* (→ pakai **Akibat**), *"Catatan"/"Tingkat Capaian"* sebagai pengganti unsur. Variasi per jenis hanya berupa **pengurangan unsur yang terdokumentasi** (lihat tabel di atas), **bukan** penggantian nama unsur. Shell laporan seragam semua jenis (lihat "Struktur Dokumen Standar" di bawah): Nota Dinas → Cover → Isi (Pendahuluan → Hasil → Simpulan → Rekomendasi/Saran). Standar ini berlaku untuk KKP (AT), narasi Laporan (KT), dan menjadi acuan penyelarasan format dengan Juknis SK.
+
 ### Penyajian unsur KONDISI — kronologis dulu, baru isu/deviasi (WAJIB semua jenis)
 
 Tulis **Kondisi** sebagai **runtutan fakta secara kronologis** (urut waktu/tahapan: peristiwa, tanggal/nomor dokumen, nilai, pihak — dengan kutipan/sumber), **lalu di bagian akhir** baru nyatakan **isu/deviasinya** (yang menyimpang dari kriteria). Pola: *"[tahap 1: fakta + tgl/dok] → [tahap 2: fakta] → … Atas rangkaian tersebut, terdapat [isu/deviasi]: …"*. **Jangan** membuka Kondisi dengan vonis penyimpangan sebelum fakta kronologisnya dibangun — deviasi adalah simpulan dari kronologi, bukan kalimat pembuka. Berlaku untuk KKP (Anggota Tim) maupun narasi Laporan (Ketua Tim).
