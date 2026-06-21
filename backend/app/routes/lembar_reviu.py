@@ -48,16 +48,42 @@ PT_ASPEK = [
 ]
 
 STATUS_OPTIONS = ["Sesuai", "Belum Sesuai"]
+PM_STATUS_OPTIONS = ["Ya", "Tidak"]
+
+# Daftar Periksa Kendali Mutu (QA/QC) — Pengendali Mutu (SDP-M.02), 14 butir Ya/Tidak.
+# Jenjang ke-3 kendali mutu: KT (self-review) → PT (supervisi) → PM (QA/QC) + sign-off.
+PM_ASPEK = [
+    {"kode": "1", "aspek": "Program kerja & prosedur", "deskripsi": "Program kerja disusun dan prosedur dijalankan sesuai PKP"},
+    {"kode": "2", "aspek": "Kesesuaian standar (SAIPI)", "deskripsi": "Pelaksanaan penugasan sesuai Standar Audit Intern Pemerintah Indonesia"},
+    {"kode": "3", "aspek": "Kelengkapan & keterlacakan KKP", "deskripsi": "Kertas kerja lengkap, terindeks, dan dapat ditelusuri ke bukti"},
+    {"kode": "4", "aspek": "Kecukupan bukti", "deskripsi": "Bukti cukup, relevan, dan andal mendukung temuan"},
+    {"kode": "5", "aspek": "Unsur temuan (KKSA)", "deskripsi": "Temuan memuat unsur Kondisi-Kriteria-Sebab-Akibat secara memadai"},
+    {"kode": "6", "aspek": "Bukti pendukung memadai", "deskripsi": "Setiap temuan didukung dokumentasi/bukti yang memadai"},
+    {"kode": "7", "aspek": "Kualitas rekomendasi", "deskripsi": "Rekomendasi jelas, spesifik, menyentuh akar, dan dapat ditindaklanjuti"},
+    {"kode": "8", "aspek": "Pembahasan/Exit meeting", "deskripsi": "Hasil dibahas dengan auditi (exit meeting/konfirmasi)"},
+    {"kode": "9", "aspek": "Tindak lanjut reviu supervisi", "deskripsi": "Catatan reviu KT & PT telah ditindaklanjuti tim"},
+    {"kode": "10", "aspek": "Konsistensi antar-dokumen", "deskripsi": "KKP–temuan–simpulan–laporan konsisten"},
+    {"kode": "11", "aspek": "Kesesuaian konsep laporan", "deskripsi": "Konsep laporan sesuai format & istilah baku (KKSAR)"},
+    {"kode": "12", "aspek": "Reviu berjenjang", "deskripsi": "Simpulan telah direviu berjenjang (KT→PT→PM)"},
+    {"kode": "13", "aspek": "Kelengkapan dokumentasi", "deskripsi": "Seluruh dokumentasi penugasan lengkap & tersimpan"},
+    {"kode": "14", "aspek": "Kesiapan finalisasi", "deskripsi": "Laporan siap diterbitkan/finalisasi"},
+]
+
+_ASPEK = {"KT": KT_ASPEK, "PT": PT_ASPEK, "PM": PM_ASPEK}
 
 
 def _baku(level: str) -> list[dict]:
-    return KT_ASPEK if level == "KT" else PT_ASPEK
+    return _ASPEK.get(level, PT_ASPEK)
+
+
+def _status_opts(level: str) -> list[str]:
+    return PM_STATUS_OPTIONS if level == "PM" else STATUS_OPTIONS
 
 
 def _normalize_level(level: str) -> str:
     lv = (level or "").upper()
-    if lv not in ("KT", "PT"):
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "level harus KT atau PT")
+    if lv not in ("KT", "PT", "PM"):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "level harus KT, PT, atau PM")
     return lv
 
 
@@ -77,21 +103,27 @@ def _merge(level: str, saved: LembarReviu | None) -> dict:
     """Gabungkan aspek baku + isian tersimpan → siap dirender frontend."""
     saved_items = {i.get("kode"): i for i in (saved.items or [])} if saved else {}
     has_peny = level == "PT"
+    default_status = _status_opts(level)[0]
     aspek = []
     for b in _baku(level):
         si = saved_items.get(b["kode"], {})
         row = {
             "kode": b["kode"], "aspek": b["aspek"], "deskripsi": b["deskripsi"],
-            "status": si.get("status", "Sesuai"),
+            "status": si.get("status", default_status),
         }
         if has_peny:
             row["penyelesaian"] = si.get("penyelesaian", b.get("penyelesaian_default", ""))
         aspek.append(row)
+    judul = {
+        "KT": "Reviu Ketua Tim",
+        "PT": "Reviu Pengendali Teknis",
+        "PM": "Daftar Periksa Kendali Mutu (QA/QC) — Pengendali Mutu",
+    }.get(level, "Lembar Reviu")
     return {
         "level": level,
-        "judul": "Reviu Ketua Tim" if level == "KT" else "Reviu Pengendali Teknis",
+        "judul": judul,
         "has_penyelesaian": has_peny,
-        "status_options": STATUS_OPTIONS,
+        "status_options": _status_opts(level),
         "aspek": aspek,
         "catatan": saved.catatan if saved else None,
         "diparaf": saved.diparaf if saved else False,
@@ -137,14 +169,17 @@ async def save_lembar_reviu(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Lembar Reviu KT hanya untuk Ketua Tim/Pengendali.")
     if lv == "PT" and role not in (Role.PT, Role.PM):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Lembar Reviu PT hanya untuk Pengendali Teknis/Mutu.")
+    if lv == "PM" and role not in (Role.PM, Role.PT):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Daftar Periksa QA/QC (PM) hanya untuk Pengendali Mutu/Teknis.")
     p = (await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))).scalar_one_or_none()
     if not p:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Penugasan tidak ditemukan.")
 
     # Bersihkan items ke kode baku saja.
     valid_kode = {b["kode"] for b in _baku(lv)}
+    opts = _status_opts(lv)
     items = [
-        {"kode": it.kode, "status": it.status if it.status in STATUS_OPTIONS else "Sesuai",
+        {"kode": it.kode, "status": it.status if it.status in opts else opts[0],
          **({"penyelesaian": (it.penyelesaian or "")} if lv == "PT" else {})}
         for it in payload.items if it.kode in valid_kode
     ]

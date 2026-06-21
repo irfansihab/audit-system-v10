@@ -10,7 +10,7 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 | **1** ✅ | Format laporan **KKSAR terpadu** (shell seragam + istilah baku + RE per jenis) — **SELESAI** | M | 0 |
 | **1A** ✅ | Penguatan agen **AT**: **Root Cause Analysis** untuk unsur Sebab — **SELESAI** | M | 1 |
 | **1B** ✅ | Penguatan agen **KT**: **tabel & diagram** dalam laporan — **SELESAI** | M | 1 |
-| **2** | **Lembar Kendali Mutu Berjenjang** (gabung M.01+M.02+M.03) | M | 0 |
+| **2** ✅ | **Lembar Kendali Mutu Berjenjang** (gabung M.01+M.02+M.03) — **SELESAI** | M | 0 |
 | **3** | **Auto‑generate dokumen produksi** (Daftar Temuan & Rekomendasi, indeksasi) | M | 1 |
 | **4** | **Tahapan 8 — Administrasi (TU)** (handoff + register ringkas) | L | 0,3 |
 | **5** | **Proporsionalitas per jenis** + paket usulan revisi SK | M | 1–4 |
@@ -75,6 +75,8 @@ Prinsip: **SK mengikuti sistem (v9 = jangkar)** · **v9 = mesin produksi substan
 - **2.3 Sinkron status**: paraf/sign‑off berjenjang tetap memicu approval (yang sudah menarik rekomendasi ke garis serah). *(S)*
 
 **Acceptance:** satu komponen mutu menampilkan 3 level + checklist 14 butir + sign‑off; approval tetap jalan (TLHP handoff tak putus).
+
+> **Status SELESAI (20 Jun):** ✅ jenjang ke-3 **PM (QA/QC 14 butir, Ya/Tidak)** ditambah di `lembar_reviu.py` (`PM_ASPEK`, level-aware status_opts & role-gate PM/PT) — melengkapi KT (self-review, Tahapan 4) + PT (supervisi + sign-off verdict, Tahapan 6); ✅ `LembarReviuPanel` di-widen ke 'PM' + panel PM dirender di Tahapan 6 (paraf untuk KT & PM; verdict di PT); ✅ `api.ts` level diperluas. Verifikasi live: GET PM = 14 butir + opsi Ya/Tidak; KT/PT tak berubah; tsc 0 error; sign-off/approval (verdict PT→TLHP) tetap utuh. **Catatan desain:** form KT/PT tetap 4-aspek "PERSIS INTEGRAL" (fidelity, bukan dipaksa 7-area); butir QA/QC = lembar PM MANUAL (M.02), `run_qc_kkp` tetap pre-check otomatis (komplementer). Penyelarasan 7-area/auto-QC ke SK → Fase 5.
 
 ---
 

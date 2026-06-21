@@ -257,18 +257,24 @@ export default function DetailPenugasanPage() {
         {stage === 6 && (
           <div key={`s6-${id}`} className="space-y-6">
             <WorkspaceBanner
-              title="🛡 Tahapan 6 — LRS LHP — reviu Pengendali Teknis / Mutu"
-              steps={['Unduh & baca konsep LHP di bawah', 'Setujui atau minta revisi + catatan', 'Approved → lanjut finalisasi']}
+              title="🛡 Tahapan 6 — LRS LHP — Kendali Mutu Berjenjang (PT supervisi + PM QA/QC)"
+              steps={['PT: reviu supervisi → Setujui / Minta Revisi', 'PM: Daftar Periksa QA/QC (14 butir) + paraf', 'Approved → lanjut finalisasi']}
             />
             <LhpFilesPanel penugasanId={id} key={`lhp-files-pt-${id}`} />
-            {/* Lembar Reviu PT = satu-satunya panel reviu konsep LHP: aspek A–D +
-                keputusan Setujui/Minta Revisi (sebelumnya terpisah & redundan). */}
+            {/* Kendali Mutu Berjenjang (Fase 2): PT supervisi (+ keputusan Setujui/
+                Minta Revisi) → PM QA/QC 14 butir. Jenjang KT ada di Tahapan 4. */}
             <LembarReviuPanel
               penugasanId={id}
               level="PT"
               canEdit={['PT', 'PM'].includes(session?.role_aktif || '')}
               onReviewed={(s) => setLhpStatus(s)}
               key={`lr-pt-${id}`}
+            />
+            <LembarReviuPanel
+              penugasanId={id}
+              level="PM"
+              canEdit={['PM', 'PT'].includes(session?.role_aktif || '')}
+              key={`lr-pm-${id}`}
             />
           </div>
         )}

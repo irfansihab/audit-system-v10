@@ -21,7 +21,7 @@ export function LembarReviuPanel({
   onReviewed,
 }: {
   penugasanId: number;
-  level: 'KT' | 'PT';
+  level: 'KT' | 'PT' | 'PM';
   canEdit: boolean;
   // Hanya level PT: keputusan reviu konsep LHP (Setujui / Minta Revisi).
   onReviewed?: (status: 'APPROVED' | 'NEEDS_REVISION' | null) => void;
@@ -172,9 +172,9 @@ export function LembarReviuPanel({
               className="px-3 py-1.5 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50">
               Simpan draft
             </button>
-            {/* Paraf lembar aspek: untuk KT berdiri sendiri; untuk PT menyatu di
-                tombol "Paraf & Setujui Konsep LHP" pada bagian keputusan di bawah. */}
-            {level === 'KT' && (
+            {/* Paraf lembar aspek: KT (self-review) & PM (QA/QC) berdiri sendiri;
+                untuk PT menyatu di tombol "Paraf & Setujui Konsep LHP" di bawah. */}
+            {level !== 'PT' && (
               <button onClick={() => save(true)} disabled={saving}
                 className="px-4 py-1.5 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark disabled:opacity-50">
                 ✍ Paraf & Simpan

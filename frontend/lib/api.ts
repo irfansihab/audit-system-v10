@@ -150,9 +150,9 @@ export const api = {
   getDashboardSummary: () => request<any>('/dashboard/summary'),
 
   /** Lembar Reviu berjenjang (level KT / PT) — aspek baku + isian + paraf. */
-  getLembarReviu: (penugasanId: number, level: 'KT' | 'PT') =>
+  getLembarReviu: (penugasanId: number, level: 'KT' | 'PT' | 'PM') =>
     request<any>(`/penugasan/${penugasanId}/lembar-reviu/${level}`),
-  saveLembarReviu: (penugasanId: number, level: 'KT' | 'PT', body: any) =>
+  saveLembarReviu: (penugasanId: number, level: 'KT' | 'PT' | 'PM', body: any) =>
     request<any>(`/penugasan/${penugasanId}/lembar-reviu/${level}`, {
       method: 'POST',
       body: JSON.stringify(body),
