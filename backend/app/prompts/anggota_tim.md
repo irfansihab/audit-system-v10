@@ -208,9 +208,13 @@ Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** be
      "sasaran_id": "S-01",
      "assigned_to": "Nama Anggota",
      "judul": "Singkat dan tegas",
-     "kondisi": "Fakta yang ditemukan",
+     "kondisi": "Fakta yang ditemukan (kronologis dulu, baru deviasi)",
      "kriteria": "Standar/peraturan yang dilanggar",
-     "akibat": "Risiko bila tidak diperbaiki",
+     "sebab": "AKAR penyebab via RCA (anti-mengarang: 'Tidak cukup data...' bila tak terbukti). WAJIB jenis ber-KKSA; KOSONGKAN untuk evaluasi ber-LKE & konsultansi.",
+     "akibat": "Risiko/dampak bila tidak diperbaiki",
+     "kode_kondisi": "mis. 4.402 (dari get_kodefikasi_temuan)",
+     "kode_penyebab": "diisi bila sebab terbukti; kosongkan bila 'tidak cukup data'",
+     "kode_rekomendasi": "mis. 4.401",
      "dokumen_sumber": [
        {"file": "02-kontrak/KAK.pdf", "halaman": 3, "kutipan": "..."}
      ],

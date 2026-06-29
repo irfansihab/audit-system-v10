@@ -91,7 +91,7 @@ File: `_KKP/03-KKPemantauan.xlsx`
 
 Sheet "Cover", "Matriks Pemantauan", "Daftar Bukti", "Audit Trail", lalu sheet utama **"Status Per Item"** dengan kolom:
 
-| ID | Item | Target | Tenggat | Realisasi | % Capaian | **Status** | Penyebab Deviasi | Rekomendasi Percepatan | Bukti |
+| ID | Item | Target | Tenggat | Realisasi | % Capaian | **Status** | Sebab (Penyebab Deviasi, anti-mengarang) | **Akibat** (dampak deviasi) | Rekomendasi Percepatan | Bukti |
 
 Sheet **"Ringkasan Status"** (auto-aggregate atau manual):
 
@@ -161,7 +161,8 @@ Auditor dapat menyesuaikan threshold di tahap P1 (KP) dan mendokumentasikannya d
       "realisasi": "...",
       "persen_capaian": 0,
       "status": "hijau|kuning|merah",
-      "penyebab_deviasi": "...",
+      "penyebab_deviasi": "... (sebab, anti-mengarang; '' bila tak cukup data)",
+      "akibat": "... (dampak deviasi bila tidak diperbaiki)",
       "rekomendasi_percepatan": "...",
       "bukti": [...]
     }

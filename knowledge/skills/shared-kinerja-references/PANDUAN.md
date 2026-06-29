@@ -34,10 +34,12 @@ Keempat jenis pengawasan kinerja berpijak pada regulasi yang sama. Yang membedak
 | **Objek yang Diperiksa** | Program prioritas tertentu — keluaran, hasil, dampak | Seluruh sistem SAKIP (5 komponen, nilai 0–100) | Dokumen LKj yang sudah disusun | Dokumen RKA/KL yang sedang disusun |
 | **Ruang Lingkup** | Efektivitas (apakah target tercapai), Efisiensi (biaya per output), Ekonomis (kewajaran sumber daya) | Perencanaan kinerja, Pengukuran, Pelaporan, Evaluasi internal, Capaian kinerja | Format, Mekanisme penyusunan, Substansi (23 kriteria) | Keselarasan program, kualitas output/outcome, kewajaran biaya |
 | **Elemen Temuan** | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + Akibat + Rekomendasi | Tabel 3 aspek (Format/Mekanisme/Substansi) + Catatan | Catatan per aspek + Rekomendasi |
-| **Sebab** | ✅ Wajib (root cause) | ⚠️ Dianalisis jika diperlukan | ❌ Tidak dianalisis | ❌ Tidak dianalisis |
+| **Sebab** | ✅ Wajib (root cause) | ❌ Tidak (rezim LKE) | ✅ Diisi (anti-mengarang) | ✅ Diisi (anti-mengarang) |
+
+> Sejak 17 Jun 2026 unsur **Sebab diisi semua jenis ber-KKSA** (audit/reviu/evaluasi non-LKE/pemantauan) dengan anti-mengarang ("Tidak ditemukan penyebab"/"Tidak cukup data" bila tak terbukti). **KECUALI** evaluasi ber-LKE (RB/SAKIP/SPIP) — memakai instrumen LKE + AoI, tanpa unsur Sebab.
 | **Output Laporan** | LHA Kinerja | LHE SAKIP | LHR LKj + Pernyataan Telah Direviu | LHR RKA/KL |
 | **Kode Nomor Surat** | PW.04.04 | PW.04.05 | PW.04.04 | PW.04.04 |
-| **Format KKP** | No \| Judul \| Kondisi \| Kriteria \| Sebab \| Akibat | No \| Komponen \| Kondisi \| Nilai \| Kriteria \| Rekomendasi | Tabel: Kriteria \| Hasil Reviu | Tabel: Aspek \| Kondisi \| Catatan |
+| **Format KKP** | No \| Judul \| Kondisi \| Kriteria \| Sebab \| Akibat | No \| Komponen \| Kondisi \| Nilai \| Kriteria \| Rekomendasi | Tabel: Kriteria \| Hasil Reviu \| **Sebab** | No \| Judul \| Kondisi \| Kriteria \| **Sebab** \| Akibat |
 
 ---
 

@@ -44,12 +44,12 @@ skills/audit-pengadaan/references/
 | **Ruang Lingkup** | Perencanaan → pemilihan → kontrak → pelaksanaan → pembayaran (seluruh siklus) | Perencanaan → pemilihan saja | Pelaksanaan kontrak saja | Sesuai isu yang ditanyakan |
 | **Fokus Pengujian** | Kesesuaian + kewajaran + legalitas + output vs kontrak | Kesesuaian administratif dokumen terhadap ketentuan | Progres fisik vs jadwal, progres keuangan, kepatuhan penyedia | Analisis regulasi terhadap situasi spesifik |
 | **Pengujian Bukti** | **Sangat mendalam** — sampai dokumen sumber, verifikasi silang | **Terbatas** — hanya memeriksa dokumen yang tersedia | **Deskriptif** — melaporkan apa yang ada, bukan memverifikasi kebenaran | **Regulasi** — tidak menguji bukti fisik |
-| **Elemen Temuan** | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + **Sebab** + Potensi Risiko + Rekomendasi | Pertanyaan + Dasar Hukum + Analisis + Pendapat |
+| **Elemen Temuan** | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + **Sebab** + **Akibat** + Rekomendasi | Pertanyaan + Dasar Hukum + Analisis + Pendapat |
 | **Sebab** | ✅ Wajib — gali akar masalah | ✅ Diisi (anti-mengarang) | ✅ Diisi (anti-mengarang) | ❌ Tidak relevan |
 > Sejak 17 Jun 2026 unsur **Sebab diisi semua jenis** (kecuali konsultansi): bila tak terbukti tulis "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang. Reviu/evaluasi/pemantauan berlingkup terbatas → sering "tidak cukup data".
 | **Kerugian Negara** | ✅ Dihitung jika ada | ❌ Tidak dihitung | ❌ Tidak dihitung | ❌ Tidak dihitung |
 | **Format Output** | KKP (tabel Word) → LHP Audit | KKP (tabel Word) → LHR (Laporan Hasil Reviu) | KKP (tabel Word) → LHP Pemantauan + Dashboard | Memo Konsultasi |
-| **Format KKP** | No \| Judul \| Kondisi \| Kriteria \| **Sebab** \| Akibat | No \| Judul \| Kondisi \| Kriteria \| Akibat | No \| Kondisi Terkini \| Target/Kriteria \| Isu/Risiko | Tidak ada KKP formal — analisis langsung |
+| **Format KKP** | No \| Judul \| Kondisi \| Kriteria \| **Sebab** \| Akibat | No \| Judul \| Kondisi \| Kriteria \| **Sebab** \| Akibat | No \| Judul \| Kondisi \| Kriteria \| **Sebab** \| Akibat | Tidak ada KKP formal — analisis langsung |
 | **Kode Nomor Surat** | PW.04.04 | PW.04.04 | PW.04.06 | Tidak ada kode khusus / memo internal |
 
 ---
@@ -93,7 +93,7 @@ Apakah ada pertanyaan teknis atau isu yang perlu pendapat APIP?
 | Hal | Audit | Reviu | Pemantauan | Konsultasi |
 |-----|-------|-------|------------|------------|
 | Menghitung kerugian negara | ✅ | ❌ | ❌ | ❌ |
-| Menganalisis sebab (root cause) | ✅ | ❌ | Opsional | ❌ |
+| Menganalisis sebab (root cause) | ✅ | ✅ (anti-mengarang) | ✅ (anti-mengarang) | ❌ |
 | Menilai kewajaran harga | ✅ | Terbatas (HPS saja) | ❌ | Pendapat umum |
 | Menilai kualitas fisik pekerjaan | ✅ | ❌ | Dari laporan saja | ❌ |
 | Menyimpulkan pelanggaran | ✅ | Terbatas | ❌ (gunakan "isu") | ❌ |

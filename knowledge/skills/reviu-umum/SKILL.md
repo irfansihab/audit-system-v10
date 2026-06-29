@@ -83,7 +83,7 @@ Auto-detect kriteria mengikuti `references/01-panduan-ekstraksi-kriteria.md`. Bi
 **Eskalasi:** jika di R3 ditemukan indikasi penyimpangan substantif/kerugian → hentikan, laporkan ke KT untuk pertimbangan konversi ke audit-umum.
 
 > ### ⚡ Dekomposisi sasaran generik (WAJIB sebelum menilai)
-> Sasaran reviu sering generik (mis. *"memastikan kesesuaian dokumen dengan kriteria"*). Jangan dijawab melebar/global. **Uraikan dulu** sasaran jadi daftar **kriteria/elemen konkret** dari `input/kriteria/` (juklak/juknis/SOP/format yang diunggah), lalu nilai kesesuaian **per kriteria/elemen** — satu baris catatan per elemen. Tidak sesuai → catatan (Kondisi → Kriteria → Akibat → Rekomendasi); sesuai → nyatakan eksplisit "telah memenuhi". **Jangan menyimpulkan "sesuai" tanpa menelusuri tiap kriteria satu per satu.** (Skill berdomain spesifik mis. reviu-pengadaan/reviu-rka-kl punya checklist baku; di sini checklist diturunkan dari kriteria yang diunggah.)
+> Sasaran reviu sering generik (mis. *"memastikan kesesuaian dokumen dengan kriteria"*). Jangan dijawab melebar/global. **Uraikan dulu** sasaran jadi daftar **kriteria/elemen konkret** dari `input/kriteria/` (juklak/juknis/SOP/format yang diunggah), lalu nilai kesesuaian **per kriteria/elemen** — satu baris catatan per elemen. Tidak sesuai → catatan (Kondisi → Kriteria → **Sebab** (anti-mengarang) → Akibat → Rekomendasi); sesuai → nyatakan eksplisit "telah memenuhi". **Jangan menyimpulkan "sesuai" tanpa menelusuri tiap kriteria satu per satu.** (Skill berdomain spesifik mis. reviu-pengadaan/reviu-rka-kl punya checklist baku; di sini checklist diturunkan dari kriteria yang diunggah.)
 
 ## Format KKR (Kertas Kerja Reviu)
 
@@ -91,7 +91,7 @@ File: `_KKP/03-KKR.xlsx`
 
 Sheet "Cover", "Matriks Kriteria", lalu sheet "Catatan Reviu" dengan kolom:
 
-| No | Aspek | **Kondisi** (per aspek) | **Kriteria** (ID) | **Catatan/Akibat** | **Rekomendasi** | Status | Bukti |
+| No | Aspek | **Kondisi** (per aspek) | **Kriteria** (ID) | **Sebab** (anti-mengarang) | **Akibat** | **Rekomendasi** | Status | Bukti |
 
 **Tidak ada kolom Sebab** — sesuai PANDUAN format umum.
 
@@ -149,7 +149,8 @@ File: `_KKP/temuan.json`
       "aspek": "...",
       "kondisi": "...",
       "kriteria_ids": ["K02"],
-      "catatan_akibat": "...",
+      "sebab": "... (anti-mengarang; '' / 'tidak cukup data' bila tak terbukti)",
+      "akibat": "...",
       "rekomendasi": "...",
       "status": "terpenuhi-dengan-catatan",
       "bukti": [...]

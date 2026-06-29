@@ -367,7 +367,7 @@ F. APRESIASI
 | Dokumen | Lokasi | Isi |
 |---------|--------|-----|
 | Pedoman Reviu PMK 107/2024 | `references/01-pmk-107-2024-pedoman-reviu.md` | Pasal 61, 6 aspek reviu, checklist, red flag |
-| PMK SBM (SBM tahun berjalan) | `references/02-sbm-[tahun].md` | Satuan biaya input (belum tersedia — perlu disiapkan) |
+| PMK SBM (SBM tahun berjalan) | `references/02-sbm-2026-pmk-32-2025.md` | Satuan biaya input (TERSEDIA — dasar uji kewajaran biaya Aspek A) |
 | Klasifikasi Anggaran & Akun | `references/03-klasifikasi-anggaran.md` | PMK 102/2018 jo. 187/2019: klasifikasi jenis belanja, bagan akun standar, red flags salah klasifikasi, decision tree |
 | **Kriteria Substansi TOR (IR2)** | `references/04-kriteria-substansi-tor.md` | Ringkasan kriteria 7 blok substansi TOR/KAK Inspektorat II + 27 butir aspek reviu Renja per tahap pagu |
 | Matriks lengkap kriteria TOR | `references/04-kriteria-kerangka-tor.xlsx` | File sumber Excel — pembanding PMK 107, PMK 62, Bappenas, DJED, IR2 |

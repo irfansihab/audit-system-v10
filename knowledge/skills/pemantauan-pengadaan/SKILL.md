@@ -104,8 +104,11 @@ Kondisi Terkini:
 Seharusnya (Kriteria):
 [Target/ketentuan dari kontrak atau regulasi. Sebutkan pasal/klausul jika ada]
 
-Potensi Risiko: *(jika relevan)*
-[Apa yang bisa terjadi jika tidak segera ditangani]
+Sebab: *(anti-mengarang)*
+[Akar penyebab deviasi bila terbukti; jika tidak → "Tidak cukup data untuk menyimpulkan penyebab"]
+
+Akibat:
+[Dampak/risiko bila tidak segera ditangani]
 
 Tindakan yang Direkomendasikan:
 [Langkah konkret, oleh siapa, dalam berapa hari]
@@ -151,7 +154,7 @@ C. STATUS PELAKSANAAN (per tanggal laporan)
    [Dashboard progres — lihat template di bawah]
 
 D. ISU DAN PERMASALAHAN
-   [Setiap isu dalam format Kondisi → Kriteria → Potensi Risiko → Rekomendasi]
+   [Setiap isu dalam format KKSAR: Kondisi → Kriteria → Sebab (anti-mengarang) → Akibat → Rekomendasi]
 
 E. PERUBAHAN KONTRAK (jika ada addendum)
    [Ringkasan addendum yang sudah terjadi]
@@ -186,7 +189,7 @@ H. APRESIASI
 
 ### KKP Pemantauan (tabel Word sederhana):
 
-| No | Kondisi Terkini | Target / Kriteria | Isu / Risiko | Rekomendasi |
+| No | Kondisi | Kriteria | Sebab (anti-mengarang) | Akibat | Rekomendasi |
 |----|-----------------|-------------------|--------------|-------------|
 | 1  | [fakta + sumber] | [kontrak/regulasi] | [risiko jika dibiarkan] | [tindakan konkret] |
 

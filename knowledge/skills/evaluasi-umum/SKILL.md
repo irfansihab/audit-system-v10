@@ -99,7 +99,7 @@ Sheet "Cover", "Matriks Kriteria & Bobot", "Daftar Bukti", "Audit Trail", lalu:
 
 **Sheet "Temuan"** (untuk hal yang membutuhkan rekomendasi sistem — Sebab diisi anti-mengarang):
 
-| ID | Aspek | **Kondisi** | **Kriteria** | **Akibat** | **Rekomendasi** | Bukti |
+| ID | Aspek | **Kondisi** | **Kriteria** | **Sebab** | **Akibat** | **Rekomendasi** | Bukti |
 
 ## Format LHE
 
@@ -113,7 +113,7 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi:
   - E.1 Skor per Dimensi (tabel rekapitulasi)
   - E.2 Predikat & Posisi (jika ada level/tingkat)
   - E.3 Analisis Per Dimensi (narasi)
-- **F. Temuan & Catatan** — Kondisi/Kriteria/Akibat/Rekomendasi per temuan (Sebab: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang)
+- **F. Temuan & Catatan** — Kondisi/Kriteria/**Sebab**/Akibat/Rekomendasi per temuan (Sebab anti-mengarang: diisi bila terbukti, jika tidak "Tidak ditemukan penyebab"/"Tidak cukup data" — jangan mengarang)
 - **G. Rekomendasi** — kompilasi rekomendasi terpilih (sistem-level, bukan per temuan)
 - **H. Simpulan**
 - **I. Apresiasi**
@@ -157,7 +157,7 @@ Tidak menggunakan ambang rupiah seperti audit. Evaluasi memakai:
     {"dimensi": "...", "skor": 0, "persen": 0, "predikat": "..."}
   ],
   "temuan": [
-    {"id": "T01", "kondisi": "...", "kriteria": "...", "akibat": "...", "rekomendasi": "..."}
+    {"id": "T01", "kondisi": "...", "kriteria": "...", "sebab": "... (anti-mengarang; '' bila tak cukup data)", "akibat": "...", "rekomendasi": "..."}
   ],
   "predikat_total": "...",
   "skor_total": 0,
