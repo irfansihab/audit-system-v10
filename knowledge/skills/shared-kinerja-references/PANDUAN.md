@@ -26,6 +26,8 @@ Keempat jenis pengawasan kinerja berpijak pada regulasi yang sama. Yang membedak
 
 ### Ringkasan Satu Halaman
 
+> **Sumber kebenaran doktrin unsur (Kondisi/Kriteria/Sebab/Akibat/Rekomendasi & kapan Sebab diisi) = `panduan-format-umum/PANDUAN.md`.** Tabel di bawah adalah turunan untuk konteks kinerja — bila berbeda, ikuti PANDUAN pusat.
+
 | Aspek | Audit Kinerja | Evaluasi SAKIP | Reviu LKj | Reviu RKA/KL |
 |-------|:-------------:|:--------------:|:---------:|:------------:|
 | **Tujuan** | Keyakinan memadai atas efektivitas, efisiensi, dan ekonomisitas program | Menilai implementasi SAKIP secara komprehensif (5 komponen) | Keyakinan terbatas atas akurasi dan keandalan penyajian LKj | Keyakinan terbatas atas kesesuaian dan kualitas perencanaan anggaran |

@@ -10,7 +10,7 @@ Folder ini memuat rujukan untuk skill `evaluasi-manajemen-risiko`. Saat ini baru
 | 02 | `02-iso-31000-ringkasan.md` | Prinsip, kerangka, dan proses manajemen risiko ISO 31000:2018 | ⬜ TODO |
 | 03 | `03-bpkp-mri-indeks-maturitas-risiko.md` | MRI (Maturity Risk Index) BPKP — level 1–5 + indikator | ⬜ TODO |
 | 04 | `04-coso-erm-2017.md` | COSO ERM 2017 — 5 komponen, 20 prinsip (sebagai pembanding) | ⬜ TODO |
-| 05 | `05-aoi-pattern-manajemen-risiko.md` | Pola AoI yang sering muncul di evaluasi MR K/L (dari hasil audit BPK/BPKP terpublikasi) | ⬜ TODO |
+| 05 | `05-aoi-pattern-manajemen-risiko.md` | Pola AoI yang sering muncul di evaluasi MR K/L (dari hasil audit BPK/BPKP terpublikasi) | ✅ ADA |
 | 06 | `06-checklist-evaluasi-komponen.md` | Checklist per komponen ISO/COSO: kriteria, bukti yang dicari, indikasi kelemahan | ⬜ TODO |
 | 07 | `07-template-lhe-manajemen-risiko.md` | Template Laporan Hasil Evaluasi Manajemen Risiko — struktur, bahasa keyakinan terbatas | ⬜ TODO |
 

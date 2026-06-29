@@ -36,6 +36,8 @@ skills/audit-pengadaan/references/
 
 ### Ringkasan Satu Halaman
 
+> **Sumber kebenaran doktrin unsur (Kondisi/Kriteria/Sebab/Akibat/Rekomendasi & kapan Sebab diisi) = `panduan-format-umum/PANDUAN.md`.** Tabel di bawah adalah turunan untuk konteks PBJ — bila berbeda, ikuti PANDUAN pusat.
+
 | Aspek | Audit | Reviu | Pemantauan | Konsultasi |
 |-------|-------|-------|------------|------------|
 | **Tujuan** | Memberikan keyakinan memadai atas seluruh siklus pengadaan | Memberikan keyakinan terbatas atas kesesuaian dokumen perencanaan dan pemilihan | Memantau progres pelaksanaan dan menyampaikan isu aktif sebagai peringatan dini | Memberikan pendapat teknis atas isu yang dihadapi dalam proses pengadaan |

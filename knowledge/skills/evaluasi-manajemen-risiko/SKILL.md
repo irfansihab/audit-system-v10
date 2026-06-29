@@ -65,18 +65,18 @@ File ini memuat seluruh substansi kriteria evaluasi yang bersumber dari **Pedoma
 ## ⚠️ Struktur Laporan Khusus
 
 Laporan evaluasi manajemen risiko memiliki struktur yang **berbeda** dari audit atau reviu:
-- Seksi **F. Hasil Evaluasi** = berisi **catatan naratif bernomor** menggunakan format KKSA (Kondisi–Kriteria–**Sebab**–Akibat; Sebab anti-mengarang — contoh di bawah memakai format lama tanpa Sebab, tambahkan unsur Sebab bila terbukti)
+- Seksi **F. Hasil Evaluasi** = **catatan naratif bernomor** dengan format **KKSAR** (Kondisi–Kriteria–**Sebab**–Akibat–Rekomendasi); Sebab WAJIB diisi anti-mengarang
 - Seksi **G. Rekomendasi** = dikompilasi TERPISAH dari F (bukan bagian dari setiap catatan)
 - Seksi **H. Apresiasi** = penutup
 
 Setiap catatan di F berisi:
 1. **Judul catatan** — kalimat singkat yang menggambarkan masalah
 2. **Kondisi** — fakta dari dokumen: apa yang ada, apa yang belum ada, apa yang tidak sesuai; sertakan nama dokumen + detail teknis
-3. **Kriteria** — ketentuan yang menjadi acuan dari Pedoman Menkomdigi 6/2017 (sebutkan Bab/Bagian); ISO 31000:2018 sebagai pendukung jika perlu
-4. **Sebab** — penyebab kondisi, anti-mengarang: diisi bila terbukti dari bukti; bila tidak ditemukan/tidak cukup data, tulis "Tidak ditemukan penyebab"/"Tidak cukup data" (jangan mengarang)
+3. **Kriteria** — ketentuan acuan dari Pedoman Menkomdigi 6/2017 (sebutkan Bab/Bagian); ISO 31000:2018 sebagai pendukung jika perlu
+4. **Sebab** — penyebab kondisi, **anti-mengarang**: diisi bila terbukti dari bukti; bila tidak ditemukan/tidak cukup data, tulis "Tidak ditemukan penyebab"/"Tidak cukup data" (jangan mengarang)
 5. **Akibat** — dampak konkret pada tata kelola dan pencapaian tujuan organisasi
 
-> **Catatan paradigma evaluasi:** evaluasi memberikan **keyakinan terbatas**. Sejak 17 Jun 2026 unsur **Sebab tetap diisi (anti-mengarang)** — karena lingkup evaluasi terbatas, wajar bila banyak catatan ber-Sebab "Tidak cukup data untuk menyimpulkan penyebab". Catatan memuat Kondisi–Kriteria–Sebab–Akibat (KKSA); rekomendasi perbaikan dikompilasi terpisah di Seksi G.
+> **Paradigma evaluasi = keyakinan terbatas.** Sejak 17 Jun 2026 unsur **Sebab WAJIB diisi (anti-mengarang)** — karena lingkup evaluasi terbatas, wajar bila banyak catatan ber-Sebab "Tidak cukup data untuk menyimpulkan penyebab". Rekomendasi (per catatan) dikompilasi terpisah di Seksi G.
 
 ---
 
@@ -139,30 +139,34 @@ E. Gambaran Umum
    sistem informasi yang digunakan, kondisi umum implementasi]
 
 F. Hasil Evaluasi
-   [Setiap catatan menggunakan format KKA — lihat panduan di bawah]
+   [Setiap catatan menggunakan format KKSAR — Sebab WAJIB, anti-mengarang]
 
    [Nomor]. [Judul Catatan]
 
    Kondisi:
-   [Fakta yang ditemukan berdasarkan dokumen. Sertakan:
-   - Nama formulir/dokumen yang menjadi sumber
-   - Data spesifik (nama, nomor, fitur yang ada/tidak ada, jumlah)
-   - Deskripsi gap antara kondisi aktual dan yang seharusnya]
+   [Fakta dari dokumen. Sertakan: nama formulir/dokumen sumber; data
+   spesifik (nama, nomor, fitur ada/tidak ada, jumlah); gap antara kondisi
+   aktual dan yang seharusnya]
 
    Kriteria:
-   [Ketentuan dari Pedoman Menkomdigi 6/2017 Bab/Bagian [X]: [isi normatif]
-   ISO 31000:2018 Klausul [X]: [kutipan singkat] — jika pedoman internal belum mengatur]
+   [Pedoman Menkomdigi 6/2017 Bab/Bagian [X]: [isi normatif].
+   ISO 31000:2018 Klausul [X] — sebagai pendukung jika pedoman internal
+   belum mengatur]
+
+   Sebab:
+   [Penyebab kondisi, ANTI-MENGARANG: diisi bila terbukti dari bukti;
+   bila tidak ditemukan/tidak cukup data, tulis "Tidak ditemukan
+   penyebab"/"Tidak cukup data untuk menyimpulkan penyebab"]
 
    Akibat:
-   [Dampak konkret jika kondisi tidak diperbaiki:
-   - Pada governance dan pengambilan keputusan
-   - Pada pencapaian sasaran organisasi]
+   [Dampak konkret jika kondisi tidak diperbaiki: pada governance/
+   pengambilan keputusan; pada pencapaian sasaran organisasi]
 
    [Ulangi untuk setiap catatan...]
 
 G. Rekomendasi
    [Berdasarkan kondisi-kondisi tersebut, Inspektorat II merekomendasikan agar:]
-   1. [Rekomendasi 1 — dimulai dengan kata kerja aktif, spesifik dan terukur]
+   1. [Rekomendasi 1 — dimulai dengan kata kerja aktif, spesifik & terukur]
    2. [Rekomendasi 2]
    3. [dst...]
 
@@ -172,96 +176,103 @@ H. Apresiasi
 
 ---
 
-## Panduan Konten per Area — Contoh KKA
+## Contoh Catatan KKSAR (representatif)
 
-### Contoh 1: Kelengkapan Formulir Konteks
+> Tiga contoh inti di bawah. Pola AoI tambahan (kerangka kerja, Three Lines
+> Model, kompetensi SDM, sistem informasi, integrasi, insiden/QA) ada di
+> `references/05-aoi-pattern-manajemen-risiko.md`.
+
+### Contoh 1 — Kelengkapan Formulir Konteks
 ```
 Judul: "Belum Lengkapnya Elemen Konteks Manajemen Risiko yang Ditetapkan"
 
 Kondisi:
-Formulir 1 Konteks Manajemen Risiko [unit] tahun [YYYY] belum memuat
-seluruh elemen yang dipersyaratkan. Berdasarkan penelaahan, terdapat
-elemen yang belum tersedia, antara lain: [sebutkan elemen yang kosong,
-misalnya: daftar stakeholder, peraturan perundang-undangan yang terkait,
-dan/atau penjelasan kriteria kemungkinan per level].
+Formulir 1 Konteks Manajemen Risiko [unit] tahun [YYYY] belum memuat seluruh
+elemen yang dipersyaratkan. Berdasarkan penelaahan, elemen yang belum tersedia
+antara lain: [mis. daftar stakeholder, peraturan terkait, dan/atau penjelasan
+kriteria kemungkinan per level].
 
 Kriteria:
-Bab III.A.2 Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan bahwa
-penetapan konteks MR meliputi 7 elemen: sasaran organisasi, struktur UPR,
-identifikasi stakeholder, identifikasi peraturan terkait, kategori risiko,
-kriteria risiko, serta matriks analisis risiko dan selera risiko.
+Bab III.A.2 Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan konteks MR meliputi
+7 elemen: sasaran organisasi, struktur UPR, identifikasi stakeholder, identifikasi
+peraturan terkait, kategori risiko, kriteria risiko, serta matriks analisis risiko
+dan selera risiko.
+
+Sebab:
+[bila terbukti, mis. "template Formulir 1 yang dipakai UPR belum diperbarui
+mengikuti pedoman"; bila tidak terbukti: "Tidak cukup data untuk menyimpulkan
+penyebab"]
 
 Akibat:
-Penetapan konteks yang tidak lengkap berdampak pada kualitas proses
-identifikasi dan analisis risiko yang tidak memiliki batasan dan parameter
-yang jelas, sehingga profil risiko yang dihasilkan berpotensi tidak
-komprehensif dan tidak dapat dibandingkan antar unit.
+Penetapan konteks yang tidak lengkap menurunkan kualitas identifikasi & analisis
+risiko karena batasan dan parameter tidak jelas, sehingga profil risiko berpotensi
+tidak komprehensif dan tidak dapat dibandingkan antar unit.
 ```
 
-### Contoh 2: Kualitas Identifikasi Risiko
+### Contoh 2 — Kualitas Identifikasi Risiko
 ```
 Judul: "Belum Tepatnya Identifikasi Kejadian Risiko pada Profil Risiko"
 
 Kondisi:
-Berdasarkan penelaahan uji petik atas Formulir 2 Profil dan Peta Risiko
-[unit] tahun [YYYY], ditemukan bahwa kolom "Kejadian" pada sejumlah
-entri risiko diisi dengan penyebab terjadinya risiko, bukan peristiwa
-risiko (risk event) itu sendiri. Contoh: [sebutkan contoh konkret dari
-dokumen]. Sebagai akibatnya, kolom "Penyebab" cenderung diisi ulang
-dengan kejadian yang sama.
+Berdasarkan uji petik atas Formulir 2 Profil dan Peta Risiko [unit] tahun [YYYY],
+kolom "Kejadian" pada sejumlah entri diisi dengan penyebab risiko, bukan peristiwa
+risiko (risk event) itu sendiri. Contoh: [contoh konkret dari dokumen]. Akibatnya
+kolom "Penyebab" cenderung diisi ulang dengan kejadian yang sama.
 
 Kriteria:
-Bab III.A.3.a.2 Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan bahwa
-identifikasi risiko dilakukan melalui tahapan yang terpisah antara
-mengidentifikasi kejadian risiko (risk event) dan mencari penyebab
-(akar masalah), yang dapat menggunakan metode fishbone diagram.
+Bab III.A.3.a.2 Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan identifikasi
+risiko dilakukan melalui tahapan terpisah antara mengidentifikasi kejadian risiko
+(risk event) dan mencari penyebab (akar masalah), antara lain dengan fishbone
+diagram.
+
+Sebab:
+[bila terbukti, mis. "UPR belum memahami pemisahan kejadian vs penyebab; belum ada
+bimbingan teknis identifikasi risiko"; bila tidak: "Tidak ditemukan penyebab"]
 
 Akibat:
-Kesalahan identifikasi berdampak pada tidak tepatnya opsi penanganan
-yang dipilih. Rencana aksi mitigasi yang dibuat berdasarkan identifikasi
-yang keliru berpotensi tidak efektif dalam menurunkan level risiko,
-sehingga sasaran organisasi tetap terpapar risiko yang semestinya
-dapat dimitigasi.
+Kesalahan identifikasi berdampak pada ketidaktepatan opsi penanganan. Rencana aksi
+mitigasi yang dibuat atas dasar identifikasi keliru berpotensi tidak efektif
+menurunkan level risiko, sehingga sasaran organisasi tetap terpapar risiko yang
+semestinya dapat dimitigasi.
 ```
 
-### Contoh 3: Pemantauan Triwulanan
+### Contoh 3 — Pemantauan Triwulanan
 ```
 Judul: "Belum Dilaksanakannya Pemantauan Manajemen Risiko Secara Konsisten"
 
 Kondisi:
-Berdasarkan penelaahan atas Formulir 4 Laporan Pemantauan Triwulan,
-ditemukan bahwa [unit] hanya melaksanakan [X] kali pemantauan triwulanan
-pada periode [YYYY], yaitu pada [sebutkan triwulan]. Laporan pemantauan
-Triwulan [sebutkan] tidak tersedia.
+Berdasarkan penelaahan atas Formulir 4 Laporan Pemantauan Triwulan, [unit] hanya
+melaksanakan [X] kali pemantauan triwulanan pada periode [YYYY], yaitu [sebutkan
+triwulan]. Laporan pemantauan Triwulan [sebutkan] tidak tersedia.
 
 Kriteria:
-Bab III.A.5.b Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan bahwa
-pemantauan berkala dilaksanakan secara triwulanan yaitu pada bulan April,
-Juli, Oktober, dan Januari pada tahun berikutnya, dengan penanggung jawab
-Koordinator Risiko di tingkatan yang bersangkutan.
+Bab III.A.5.b Pedoman Menkomdigi Nomor 6 Tahun 2017 menetapkan pemantauan berkala
+dilaksanakan triwulanan pada bulan April, Juli, Oktober, dan Januari tahun
+berikutnya, dengan penanggung jawab Koordinator Risiko di tingkatan bersangkutan.
+
+Sebab:
+[bila terbukti, mis. "belum ada mekanisme pengingat/jadwal pemantauan yang
+ditetapkan KMR"; bila tidak: "Tidak cukup data untuk menyimpulkan penyebab"]
 
 Akibat:
-Ketidaklengkapan pemantauan menyebabkan tren Risiko dan efektivitas
-pelaksanaan rencana aksi penanganan Risiko tidak dapat dipantau secara
-konsisten, sehingga informasi risiko yang disampaikan kepada pimpinan
-menjadi tidak lengkap dan kurang dapat diandalkan sebagai dasar
-pengambilan keputusan.
+Ketidaklengkapan pemantauan menyebabkan tren Risiko dan efektivitas rencana aksi
+penanganan tidak dapat dipantau konsisten, sehingga informasi risiko ke pimpinan
+menjadi tidak lengkap dan kurang andal sebagai dasar pengambilan keputusan.
 ```
 
 ---
 
 ## Panduan Bahasa
 
-**Terminologi MR yang digunakan Pedoman Menkomdigi 6/2017 (gunakan konsisten):**
-- UPR (Unit Pemilik Risiko) — bukan "unit kerja" atau "satuan kerja"
-- Pemilik Risiko — bukan "risk owner"
-- Koordinator Risiko — bukan "risk officer"
-- Selera Risiko — bukan "risk appetite"
-- Piagam Manajemen Risiko — bukan "risk charter"
+**Terminologi MR (gunakan konsisten — sesuai Pedoman Menkomdigi 6/2017):**
+- UPR (Unit Pemilik Risiko) — bukan "unit kerja"/"satuan kerja"
+- Pemilik Risiko (bukan "risk owner") · Koordinator Risiko (bukan "risk officer")
+- Selera Risiko (bukan "risk appetite") · Piagam Manajemen Risiko (bukan "risk charter")
 - LED (Loss Event Database) — bukan "incident log"
 - TKPMR (Tingkat Kematangan Penerapan Manajemen Risiko)
-- Besaran Risiko — nilai numerik dari matriks (1–25)
-- Level Risiko — kategori (Sangat Rendah s/d Sangat Tinggi)
+- Besaran Risiko = nilai numerik matriks (1–25) · Level Risiko = kategori (Sangat Rendah s/d Sangat Tinggi)
+- near-miss = kejadian hampir terjadi · quality assurance = penjaminan kualitas
+- (istilah Three Lines Model / risk authority / risk champion: lihat `references/05-aoi-pattern-manajemen-risiko.md`)
 
 **Kalimat akibat yang efektif:**
 - "Kondisi tersebut berdampak pada [konsekuensi spesifik]..."
@@ -276,248 +287,7 @@ pengambilan keputusan.
 
 ## Batasan
 - Evaluasi dilakukan secara **uji petik** — tidak memeriksa setiap baris register risiko
-- Tidak memberikan penilaian skor TKPMR secara formal kecuali menggunakan instrumen resmi yang tersedia
+- Tidak memberi skor TKPMR/maturity secara formal kecuali memakai instrumen resmi (mis. MRI BPKP)
 - Jika dokumen tidak tersedia: catat `[Dokumen tidak tersedia — tidak dapat dievaluasi]`
-- Tidak memberikan keyakinan memadai atas kebenaran setiap data risiko — ini evaluasi, bukan audit
-
-## Format Output: Laporan Hasil Evaluasi (LHE) Manajemen Risiko
-
-### Struktur Laporan:
-
-```
-[Paragraf pembuka — menindaklanjuti PKPT + ST yang diterbitkan]
-
-A. Dasar Pelaksanaan Evaluasi
-   [Surat Tugas Nomor ... Tanggal ... tentang Melakukan Evaluasi Manajemen Risiko]
-   [Catatan: Dasar bisa PKPT saja — tanpa ND permintaan dari auditan]
-
-B. Tujuan Evaluasi
-   a. Tujuan: memberikan keyakinan terbatas atas pelaksanaan manajemen risiko di
-      Lingkungan [Instansi]
-   b. Sasaran: memastikan efektivitas pelaksanaan manajemen risiko di Lingkungan
-      [Instansi]
-
-C. Ruang Lingkup Evaluasi
-   [Pelaksanaan manajemen risiko di Lingkungan [Instansi] — unit yang dicakup]
-
-D. Metodologi Evaluasi
-   [Analisis dokumen serta diskusi dengan para stakeholder terkait pelaksanaan
-   manajemen risiko]
-
-E. Gambaran Umum
-   [Deskripsi kondisi manajemen risiko saat ini: pedoman yang berlaku, struktur
-   organisasi MR, sistem informasi yang digunakan, kondisi umum implementasi]
-
-F. Hasil Evaluasi
-   [Setiap catatan menggunakan format KKA lengkap:]
-
-   [Nomor]. [Judul Catatan — kalimat singkat yang menggambarkan masalah]
-
-   Kondisi:
-   [Fakta yang ditemukan berdasarkan dokumen. Wajib sertakan:
-   - Nama dokumen/instrumen/sistem yang menjadi sumber fakta
-   - Data atau bukti spesifik (nama pedoman, nomor, tahun, fitur yang ada/tidak ada)
-   - Deskripsi gap antara kondisi aktual dan yang seharusnya]
-
-   Kriteria:
-   [Standar/peraturan yang menjadi acuan penilaian. Contoh:
-   - ISO 31000:2018 Klausul [X]: [kutipan/parafrase singkat]
-   - Pedoman Menkominfo [nomor/tahun] Pasal [X]: [isi normatif]
-   - Three Lines Model (IIA, 2020): [prinsip yang relevan]]
-
-   Akibat:
-   [Dampak konkret jika kondisi tidak diperbaiki:
-   - Dampak pada governance/pengambilan keputusan
-   - Dampak pada pencapaian tujuan organisasi
-   - Risiko operasional yang muncul]
-
-   [Ulangi untuk setiap catatan...]
-
-G. Rekomendasi
-   [Berdasarkan kondisi-kondisi tersebut, Inspektorat II merekomendasikan agar:]
-   1. [Rekomendasi 1 — sesuai catatan 1, dimulai dengan kata kerja aktif]
-   2. [Rekomendasi 2 — sesuai catatan 2]
-   3. [dst...]
-   [Setiap rekomendasi harus: spesifik, terukur, dan ditujukan ke pihak yang tepat]
-
-H. Apresiasi
-   [Ucapan terima kasih kepada unit/pejabat yang membantu evaluasi]
-```
-
-## Panduan Konten per Area Evaluasi
-
-### Contoh KKA: Kerangka Kerja MR (Pedoman tidak di-update)
-```
-Judul: "Belum Dilakukannya Pengkinian Pedoman Manajemen Risiko (MR)"
-
-Kondisi:
-Pedoman pelaksanaan manajemen risiko yang saat ini digunakan adalah [nama
-pedoman, nomor, tahun]. Pedoman tersebut belum mengalami pengkinian sejak
-ditetapkan pada [tanggal]. Terdapat ruang perbaikan pada:
-a. Belum terdapat penjabaran selera risiko (risk appetite statement)
-b. Belum terdapat definisi peran: risk authority, risk oversight, risk champion,
-   risk owner, dan risk officer
-c. Belum dilakukannya peninjauan atas kategori risiko
-d. Belum termuatnya program internalisasi dan pengukuran budaya risiko
-e. Belum terdapat penjelasan peningkatan berkelanjutan beserta peraturan turunannya
-
-Kriteria:
-ISO 31000:2018 Klausul 5 (Kerangka Kerja) mensyaratkan organisasi untuk
-menetapkan kebijakan manajemen risiko yang memuat komitmen, peran, dan tanggung
-jawab yang jelas. Klausul 5.4.3 mensyaratkan penetapan selera risiko sebagai
-dasar pengambilan keputusan.
-
-Akibat:
-Ketidakpastian dalam batas pengambilan risiko organisasi karena tidak adanya
-acuan selera risiko yang jelas. Peran-peran strategis yang tidak terdefinisi
-berdampak pada lemahnya akuntabilitas dan terjadinya tumpang tindih tanggung
-jawab dalam pelaksanaan manajemen risiko.
-```
-
-### Contoh KKA: Pembagian Peran / Three Lines Model
-```
-Judul: "Belum Optimalnya Pembagian Peran dan Struktur Manajemen Risiko"
-
-Kondisi:
-Struktur pelaksanaan manajemen risiko saat ini belum sepenuhnya mengadopsi
-Three Lines Model secara optimal. Belum ada penjelasan mengenai pembagian
-peran dan tanggung jawab yang tegas antara First Line (unit operasional),
-Second Line (fungsi MR dan kepatuhan), serta Third Line (audit internal).
-Belum terdapat penetapan personil (PIC) yang secara spesifik berkewajiban
-untuk melakukan analisis dan evaluasi risiko.
-
-Kriteria:
-Three Lines Model (IIA, 2020) mensyaratkan pemisahan peran yang jelas antara
-unit yang memiliki dan mengelola risiko (lini pertama), fungsi yang mengawasi
-dan memfasilitasi MR (lini kedua), dan fungsi yang memberikan assurance
-independen (lini ketiga). ISO 31000:2018 Klausul 5.4 mensyaratkan penetapan
-peran dan tanggung jawab yang eksplisit.
-
-Akibat:
-Ketidakjelasan pembagian tugas di tingkat teknis mengakibatkan penentuan serta
-pelaksanaan opsi mitigasi risiko menjadi tidak terukur, yang berpotensi
-menimbulkan tumpang tindih kewenangan atau pengabaian risiko dalam proses
-pengambilan keputusan organisasi.
-```
-
-### Contoh KKA: Kompetensi SDM MR
-```
-Judul: "Belum Tersedianya Standar dan Rencana Pengembangan Kompetensi MR"
-
-Kondisi:
-Saat ini organisasi belum memiliki standar kompetensi formal bagi personel yang
-menjalankan fungsi manajemen risiko maupun seluruh pegawai. Area of Improvement
-SPIP [instansi] Tahun [YYYY] masih mencatat perlunya rencana peningkatan
-kompetensi MR yang mencakup seluruh pegawai. Dalam pelaksanaannya, risk owner
-ditemukan belum sepenuhnya mampu membedakan antara peristiwa risiko dengan
-penyebab risiko.
-
-Kriteria:
-ISO 31000:2018 Klausul 5.4.4 mensyaratkan organisasi memastikan sumber daya
-yang memadai dialokasikan untuk MR, termasuk kompetensi SDM. Pedoman [nomor]
-[tahun] [instansi] Pasal/Bagian [X] mensyaratkan [ketentuan kompetensi yang ada].
-
-Akibat:
-Kesenjangan kompetensi berdampak langsung pada kualitas identifikasi risiko.
-Penetapan opsi perlakuan/mitigasi risiko menjadi kurang tepat sasaran, yang
-pada akhirnya melemahkan ketahanan organisasi dalam menghadapi ketidakpastian.
-```
-
-### Contoh KKA: Sistem Informasi MR
-```
-Judul: "Belum Optimalnya Sistem Informasi Manajemen Risiko"
-
-Kondisi:
-Sistem Informasi Manajemen Risiko yang tersedia saat ini masih memerlukan
-pengembangan fitur. Sistem belum dilengkapi fitur early warning system yang
-mampu mengidentifikasi potensi risiko secara real-time, dan belum memfasilitasi
-mekanisme pelaporan pengelolaan risiko secara otomatis dan periodik kepada
-Komite Manajemen Risiko.
-
-Kriteria:
-ISO 31000:2018 Klausul 6.6 (Perekaman dan Pelaporan) mensyaratkan bahwa
-informasi risiko dikomunikasikan secara tepat waktu dan memadai kepada
-pengambil keputusan. Praktik tata kelola MR modern mensyaratkan sistem
-monitoring berbasis data real-time untuk mendukung early warning.
-
-Akibat:
-Ketiadaan fungsi-fungsi ini menghambat kecepatan eskalasi risiko serta
-mengurangi efisiensi pengawasan pimpinan dalam memantau profil risiko
-organisasi secara menyeluruh.
-```
-
-### Contoh KKA: Integrasi Sistem
-```
-Judul: "Belum Terintegrasinya Sistem Manajemen Risiko dengan Aplikasi Lainnya"
-
-Kondisi:
-Sistem MR saat ini masih bersifat parsial dan belum terintegrasi dengan
-aplikasi kementerian lainnya (aplikasi kinerja, aplikasi pengawasan, dll.).
-Belum tersedia mekanisme pelaporan pengelolaan risiko yang terstruktur dan
-otomatis bagi pimpinan.
-
-Kriteria:
-ISO 31000:2018 Klausul 5.4 mensyaratkan integrasi MR ke dalam seluruh proses
-organisasi, termasuk perencanaan, pengambilan keputusan, dan pelaporan kinerja.
-Prinsip tata kelola yang baik mensyaratkan informasi risiko tersedia bagi
-pengambil keputusan strategis secara terintegrasi.
-
-Akibat:
-MR belum dapat berfungsi optimal sebagai instrumen pendukung pengambilan
-keputusan strategis. Kebijakan organisasi berisiko diambil tanpa pertimbangan
-profil risiko yang akurat.
-```
-
-### Contoh KKA: Identifikasi Insiden dan QA
-```
-Judul: "Belum Tersedianya Prosedur Identifikasi Insiden dan Mekanisme
-Penjaminan Kualitas"
-
-Kondisi:
-Organisasi belum memiliki mekanisme formal untuk mengidentifikasi dan mencatat
-insiden yang telah terjadi maupun kejadian hampir terjadi (near-miss). Belum
-tersedia mekanisme Quality Assurance yang memadai untuk menjamin konsistensi
-penerapan MR di seluruh unit kerja. Belum terdapat parameter pengukuran yang
-jelas untuk menunjukkan tren efektivitas perlakuan risiko.
-
-Kriteria:
-ISO 31000:2018 Klausul 6.6 mensyaratkan perekaman kejadian risiko secara
-sistematis. Praktik MR yang baik mensyaratkan mekanisme pembelajaran dari
-insiden (lesson learned) dan quality assurance atas proses MR. COSO ERM
-mensyaratkan adanya mekanisme monitoring berkelanjutan termasuk pencatatan
-kejadian dan near-miss.
-
-Akibat:
-Manajemen risiko menjadi kurang responsif dan cenderung bersifat reaktif
-karena gagal mendeteksi sinyal peringatan dini. Ketiadaan data tren efektivitas
-mitigasi menyebabkan tidak ada bukti yang akurat apakah kualitas pengelolaan
-risiko meningkat atau menurun.
-```
-
-## Panduan Bahasa
-
-### Terminologi MR (gunakan konsisten):
-- **risk appetite** = selera risiko
-- **risk authority** = otoritas risiko (pembuat keputusan MR tertinggi)
-- **risk owner** = pemilik risiko (bertanggung jawab atas perlakuan risiko)
-- **risk champion** = promotor/agen MR di unit kerja
-- **risk officer** = petugas MR operasional
-- **Three Lines Model** = model tiga lini (pertahanan)
-- **near-miss / kejadian hampir terjadi** = insiden yang hampir terjadi
-- **quality assurance** = penjaminan kualitas
-
-### Kalimat Akibat yang Efektif:
-- "Kondisi tersebut mengakibatkan [dampak spesifik]"
-- "Akibatnya, [konsekuensi konkret pada operasional/tujuan]"
-- "...yang pada akhirnya dapat [dampak jangka panjang]"
-
-### Rekomendasi yang Baik:
-- Mulai dengan kata kerja aktif: "Melakukan revisi...", "Mengimplementasikan...", "Menyusun...", "Mengembangkan..."
-- Spesifik: sebutkan dokumen/pedoman yang perlu diperbarui, standar yang harus diadopsi
-- Terukur: jika memungkinkan, sertakan tenggat waktu atau target
-
-## Batasan
-- Tidak memberikan penilaian angka/skor maturity level kecuali ada instrumen resmi BPKP yang digunakan
-- Catatan yang dibuat berdasarkan dokumen — jika tidak ada dokumen tertentu, catat sebagai "tidak tersedia"
-- Tidak melakukan audit penuh atas setiap register risiko — evaluasi dilakukan secara uji petik
-- Untuk perbaikan pedoman internal, rekomendasikan konsultasi dengan BPKP atau konsultan MR jika kompleks
+- Tidak memberi keyakinan memadai atas kebenaran setiap data risiko — ini evaluasi, bukan audit
+- Untuk perbaikan pedoman internal yang kompleks, rekomendasikan konsultasi dengan BPKP/konsultan MR

@@ -4,7 +4,7 @@ Konteks: sistem = **ENGINE** (skills + agen + tools + digest/render); **orkestra
 
 Prioritas: **P0** salah-output/doktrin · **P1** portabilitas engine (pivot) · **P2** hardening konsistensi/reference · **P3** simplifikasi/dead-code · **P4** struktural.
 
-> **Progres:** ✅ **P0 SELESAI** (21 Jun, commit `20ac200`) — doktrin Sebab/Akibat KKSAR konsisten lintas skill. ✅ **P3 #15 dead-code SELESAI** — `read_anomalies`/`build_draft_temuan_from_anomalies`/`read_draft_temuan` dicabut dari tool + `prefill_temuan.py` dihapus + prompt agen dibersihkan; `cross_check.py` (v6) dibiarkan (reproducibility, tak diekspos). **Sisa P3:** #16 ramping SKILL gemuk (spip/mr), #17 single-source matriks. Catatan: FE/BE v9 **tetap dipakai sebagai harness uji-coba**.
+> **Progres:** ✅ **P0 SELESAI** (21 Jun, commit `20ac200`) — doktrin Sebab/Akibat KKSAR konsisten lintas skill. ✅ **P3 #15 dead-code SELESAI** — `read_anomalies`/`build_draft_temuan_from_anomalies`/`read_draft_temuan` dicabut dari tool + `prefill_temuan.py` dihapus + prompt agen dibersihkan; `cross_check.py` (v6) dibiarkan (reproducibility, tak diekspos). ✅ **P3 #16 SELESAI** — evaluasi-spip 563→259 & evaluasi-manajemen-risiko 523→293 baris (mekanik/bobot/contoh dipindah ke references + pointer; contoh MR diperbaiki ke KKSAR ber-Sebab; ref baru `05-aoi-pattern-manajemen-risiko.md`). ✅ **P3 #17 SELESAI** — shared-pbj/kinerja PANDUAN diberi banner "sumber kebenaran = panduan-format-umum" (cegah drift). **P3 TUNTAS.** Catatan: FE/BE v9 **tetap dipakai sebagai harness uji-coba**. Berikutnya: **P1** (portabilitas engine) & **P2** (hardening reference/terminologi).
 
 ---
 
