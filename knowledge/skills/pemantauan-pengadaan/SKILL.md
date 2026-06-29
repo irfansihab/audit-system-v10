@@ -1,77 +1,51 @@
 ---
 name: pemantauan-pengadaan
-format_laporan: kksa
-version: 2.2
 jenis: Pemantauan Pelaksanaan Pengadaan Barang/Jasa
+format_laporan: kksa
 dasar-hukum: Perpres 16/2018 jo. Perpres 12/2021, Perpres 46/2025
-model: claude-haiku-4-5-20251001
-auto_execute: false
+kode-surat: PW.04.06
+tingkat-keyakinan: tidak-ada
+version: "3.0"
 changelog:
-  - v2.2 (2026-06-17): Refactor orkestrasi ke v7 — Tahap P0–P4 seragam; hapus bash/run_batch/Task/_ROLE/AskUserQuestion/Gate (legacy audit-system-v4); role+sasaran via sasaran-assignment.json; HITL=KT approve KKP→KT draft Laporan Pemantauan; tak ada tool pipeline v7 (manual). Substansi pemantauan kontrak/PBJ dipertahankan.
+  - v3.0 (2026-06-29): **Engine-ready** — orkestrasi (urutan tool, peran AT/KT/PM, titik HITL, auto-eksekusi, pilihan model) DIPINDAH ke orkestrator (harness: `backend/app/prompts/anggota_tim.md`; produksi: INTEGRAL). Skill = substansi murni & portabel: peran/paradigma, aspek & checklist progres fisik-keuangan-kepatuhan, format ISU/dashboard, kriteria + referensi, struktur laporan. Frontmatter `model`/`auto_execute` dihapus; seksi "Eksekusi di v7" & tabel "Tahap P0–P4" dibuang (substansi P3 tetap di bawah). Seksi Identitas duplikat disatukan ke frontmatter. **Doktrin KKSAR tetap** — ISU/dashboard/KKP ber-Kondisi-Kriteria-Sebab(anti-mengarang)-Akibat-Rekomendasi; tidak menghitung kerugian negara.
+  - v2.2 (2026-06-17): KKSAR — ISU & KKP ber-Sebab (anti-mengarang) + Akibat; tidak lagi "Potensi Risiko" tanpa Sebab.
 ---
 
 # Skill: Pemantauan Pengadaan Barang/Jasa
 
-## Identitas
-- **Jenis Pengawasan:** Pemantauan Pelaksanaan Pengadaan Barang/Jasa
-- **Tingkat Keyakinan:** Tidak ada — hanya pelaporan status
-- **Kode Nomor Surat:** PW.04.06
-- **Versi:** 2.2
+> **Skill ini = substansi domain (portabel).** Cara menjalankan — urutan langkah, peran AT/KT/PM, titik HITL, auto-eksekusi, dan pilihan model — **bukan** bagian skill ini; diatur oleh **orkestrator**: harness uji-coba `backend/app/prompts/anggota_tim.md`, atau INTEGRAL di produksi. Skill ini hanya menetapkan **APA** yang dinilai dan **format** keluarannya. Isu/temuan direkam sebagai **K/K/S/A** (Kondisi–Kriteria–Sebab–Akibat); **Rekomendasi disusun di Laporan Pemantauan, bukan di KKP**.
 
----
+## Peran & Paradigma
 
-## Eksekusi di v7 (orkestrasi — seragam semua skill pemantauan)
+Kamu bertugas **melaporkan kondisi aktual pelaksanaan pengadaan** kepada pimpinan. Tugasmu mengukur progres fisik dan keuangan terhadap target kontrak, lalu mencatat isu-isu yang memerlukan perhatian sebagai peringatan dini. Tingkat keyakinan: **tidak ada** — hanya pelaporan status. Kode nomor surat: **PW.04.06**.
 
-> **Skill ini = substansi domain.** Cara menjalankan (role, urutan tool, titik HITL) diatur seragam oleh agen Anggota Tim v7 di `backend/app/prompts/anggota_tim.md` — BUKAN oleh skill ini. Skill ini **TIDAK** memakai bash, `run_batch.py`, `Task 00/01`, `_ROLE.md`, atau `AskUserQuestion` (paradigma lama audit-system-v4).
+Pemantauan **bukan audit dan bukan reviu**. Kamu tidak menyimpulkan pelanggaran, tidak menghitung kerugian negara, dan tidak menilai kewajaran harga. Semua isu disampaikan sebagai "kondisi yang perlu perhatian" — bukan vonis. Meski demikian, paradigma pencatatan tetap **ber-KKSAR**: setiap isu memiliki elemen Kondisi, Kriteria, **Sebab** (anti-mengarang), Akibat, dan Rekomendasi tindak lanjut. Elemen **Sebab tetap diisi bila terbukti** dari dokumen; bila tidak → "Tidak ditemukan penyebab" / "Tidak cukup data untuk menyimpulkan penyebab" — jangan mengarang.
 
-- **Pelaku:** Agen Anggota Tim (AT). Role & sasaran dari `_PKP/sasaran-assignment.json` (diisi KT via UI Setup). AT hanya kerjakan sasaran yang `assigned_to`-nya memuat namanya.
-- **Pipeline P3:** *tidak ada tool v7 — manual* (baca dokumen kontrak/progres/pembayaran ter-ingest via `read_ingested_digest`).
-- **Mode:** AT **auto-execute** P0→P3 tanpa berhenti tiap tahap. Titik HITL: **KT approve KKP**, lalu **KT draft Laporan Pemantauan**.
-- **Tool inti:** `read_context` → `read_ingested_digest`/`search_bukti` → pantau status/progres per paket → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang) → `render_kkp_docx` → `run_qc_kkp`.
+## Sumber Fakta
 
-## Tahap Pemantauan (P0–P4)
-
-| Tahap | Aktivitas | Pelaku |
-|---|---|---|
-| **P0 — Validasi & Konteks** | Pastikan tujuan/ruang lingkup/periode dari KP jelas; dokumen kontrak/progres/pembayaran tersedia; susun `context.md` bila placeholder. | AT (auto) |
-| **P1 — Kerangka Penugasan (KP)** | Latar belakang, tujuan pemantauan, ruang lingkup (paket/periode), metodologi — bersumber `sasaran-assignment.json`. | KT (UI Setup) |
-| **P2 — Program Kerja Pengawasan (PKP)** | Per sasaran: paket/aspek yang dipantau · bukti diminta · kriteria status. | KT (UI Setup) |
-| **P3 — Pelaksanaan** | Per paket: pantau progres fisik vs pembayaran, kepatuhan jadwal/kontrak → `append_temuan` (status + Sebab bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang). Indikasi penyimpangan serius → eskalasi audit-pengadaan. | AT (auto) |
-| **P4 — Laporan Pemantauan** | Render Laporan Pemantauan + Nota Dinas; rekap status paket & isu yang perlu tindak lanjut. | KT |
-
-**Analisis substantif yang wajib dilakukan AT pada P3** (status — Sebab diisi bila terbukti; jika tidak "tidak ditemukan penyebab"/"tidak cukup data", jangan mengarang):
-- **Kewajaran progres fisik vs keuangan** — hitung deviasi % progres fisik aktual vs % pembayaran kumulatif. Bayar > fisik signifikan → risiko over-payment; fisik > bayar signifikan → klaim penyedia tertunda.
-- **Pola amandemen** — frekuensi & nilai kumulatif addendum. Addendum berulang atau > 10% nilai kontrak → indikasi perencanaan lemah.
-- **Kepatuhan SLA penyedia** — bandingkan laporan berkala penyedia dengan SLA kontrak; catat pelanggaran SLA sebagai isu.
-- **Denda keterlambatan** — bila ada keterlambatan milestone, hitung denda 1/1000 per hari sesuai Pasal 78 Perpres 16/2018 (catat sebagai isu/status, bukan kerugian).
-- **Realisasi deliverable/milestone vs lingkup & jadwal Kontrak/KAK** — bandingkan deliverable/milestone yang **dijadwalkan** per Kontrak/KAK (sampai periode laporan) dengan yang **dilaporkan** sudah diserahkan/dikerjakan (BA kemajuan, laporan berkala penyedia/pengawas). Tandai sebagai isu/risiko: milestone jatuh tempo belum tercapai, deliverable kurang/di luar lingkup, atau output tidak sesuai cakupan KAK. **Sebagai PEMANTAUAN (bukan audit):** laporkan sebagai "kondisi perlu perhatian" + rekomendasi tindak lanjut; **JANGAN** menyimpulkan pelanggaran, **JANGAN** menilai kualitas teknis fisik sendiri (pakai data laporan pengawas/penyedia), **JANGAN** hitung kerugian. Indikasi serius output ≠ kontrak → rekomendasikan **eskalasi ke audit-pengadaan**.
-
----
-
-## Peran Claude
-
-Kamu bertugas **melaporkan kondisi aktual pelaksanaan pengadaan** kepada pimpinan. Tugasmu adalah mengukur progres fisik dan keuangan terhadap target kontrak, lalu mencatat isu-isu yang memerlukan perhatian sebagai peringatan dini.
-
-Pemantauan **bukan audit dan bukan reviu**. Kamu tidak menyimpulkan pelanggaran, tidak menghitung kerugian, dan tidak menilai kewajaran harga. Semua isu disampaikan sebagai "kondisi yang perlu perhatian" — bukan temuan.
-
----
+Fakta pemantauan bersumber dari dokumen kontrak, laporan progres berkala, berita acara kemajuan, dan dokumen pembayaran yang telah ter-ingest. Baca fakta dari digest/ringkasan terlebih dahulu; buka halaman dokumen sumber **hanya** untuk verifikasi kutipan yang masuk `dokumen_sumber` atau konfirmasi fakta yang janggal. Jangan sapu-baca seluruh PDF "untuk konteks".
 
 ## Posisi dalam Keluarga Skill PBJ
 
-Baca `shared-pbj-references/PANDUAN.md` untuk:
-- Perbandingan lengkap 4 jenis pengawasan pengadaan (audit, reviu, pemantauan, konsultasi)
-- Panduan kapan menggunakan skill ini vs skill lainnya
-- Daftar file referensi regulasi di `../audit-pengadaan/references/`
+> Semua skill PBJ (audit, reviu, pemantauan, konsultasi) menggunakan regulasi yang sama sebagai acuan. Yang membedakan adalah kedalaman pengujian, tujuan, dan format. Lihat `shared-pbj-references/PANDUAN.md` untuk perbandingan lengkap & daftar file referensi regulasi.
 
-**Singkatnya:**
-
-| | Audit | Reviu | **Pemantauan** | Konsultasi |
+| | Audit | Reviu | **Pemantauan** (skill ini) | Konsultasi |
 |---|---|---|---|---|
-| Keyakinan | Memadai | Terbatas | **Tidak ada** | Tidak ada |
+| Tingkat keyakinan | Memadai | Terbatas | **Tidak ada** | Tidak ada |
 | Ruang lingkup | Seluruh siklus | Perencanaan + pemilihan | **Pelaksanaan kontrak aktif** | Sesuai pertanyaan |
 | Pengujian bukti | Sangat mendalam | Administratif | **Deskriptif — status aktual** | Analisis regulasi |
+| Sebab | ✅ Wajib (gali akar) | ✅ Diisi (anti-mengarang) | **✅ Diisi (anti-mengarang)** | ❌ |
+| Kerugian negara | ✅ Dihitung | ❌ Tidak dihitung | **❌ Tidak dihitung** | ❌ |
+| Kapan digunakan | Pekerjaan selesai / isu serius | Sebelum tender/kontrak | **Selama kontrak berjalan** | Pertanyaan teknis |
 
----
+**Pilih pemantauan pengadaan (skill ini) ketika:**
+- Kontrak sudah ditandatangani dan pekerjaan **sedang berjalan**, perlu pelaporan status berkala.
+- Pimpinan membutuhkan peringatan dini atas deviasi progres/pembayaran/kepatuhan.
+
+**Jangan gunakan skill ini ketika:**
+- Dokumen perencanaan belum tender → gunakan **reviu-pengadaan**.
+- Ada indikasi penyimpangan atau kerugian negara → gunakan **audit-pengadaan**.
+- Unit kerja hanya butuh panduan/pendapat → gunakan **konsultasi-pengadaan**.
 
 ## Yang Dikerjakan
 
@@ -90,9 +64,21 @@ Status pelaksanaan ditetapkan sebagai:
 - **🟡 AT RISK** — deviasi progres 5–15% atau ada isu yang perlu perhatian
 - **🔴 DELAYED** — deviasi > 15% atau milestone kritis terlewati
 
-### 2. Catat Isu
+### 2. Analisis Substantif Pemantauan (wajib ditelusuri)
 
-Setiap isu ditulis dalam format:
+Status diisi per isu — **Sebab diisi bila terbukti; jika tidak: "Tidak ditemukan penyebab" / "Tidak cukup data", jangan mengarang.**
+
+- **Kewajaran progres fisik vs keuangan** — hitung deviasi % progres fisik aktual vs % pembayaran kumulatif. Bayar > fisik signifikan → risiko over-payment; fisik > bayar signifikan → klaim penyedia tertunda.
+- **Pola amandemen** — frekuensi & nilai kumulatif addendum. Addendum berulang atau > 10% nilai kontrak → indikasi perencanaan lemah.
+- **Kepatuhan SLA penyedia** — bandingkan laporan berkala penyedia dengan SLA kontrak; catat pelanggaran SLA sebagai isu.
+- **Denda keterlambatan** — bila ada keterlambatan milestone, hitung denda 1/1000 per hari sesuai Pasal 78 Perpres 16/2018 (catat sebagai isu/status, **bukan** kerugian).
+- **Realisasi deliverable/milestone vs lingkup & jadwal Kontrak/KAK** — bandingkan deliverable/milestone yang **dijadwalkan** per Kontrak/KAK (sampai periode laporan) dengan yang **dilaporkan** sudah diserahkan/dikerjakan (BA kemajuan, laporan berkala penyedia/pengawas). Tandai sebagai isu/risiko: milestone jatuh tempo belum tercapai, deliverable kurang/di luar lingkup, atau output tidak sesuai cakupan KAK.
+
+> **Sebagai PEMANTAUAN (bukan audit):** laporkan sebagai "kondisi perlu perhatian" + rekomendasi tindak lanjut; **JANGAN** menyimpulkan pelanggaran, **JANGAN** menilai kualitas teknis fisik sendiri (pakai data laporan pengawas/penyedia), **JANGAN** hitung kerugian. Indikasi serius output ≠ kontrak → rekomendasikan **eskalasi ke audit-pengadaan**.
+
+### 3. Catat Isu
+
+Setiap isu ditulis dalam format **KKSAR**:
 
 ```
 ISU [Nomor]: [Judul singkat]
@@ -105,13 +91,14 @@ Seharusnya (Kriteria):
 [Target/ketentuan dari kontrak atau regulasi. Sebutkan pasal/klausul jika ada]
 
 Sebab: *(anti-mengarang)*
-[Akar penyebab deviasi bila terbukti; jika tidak → "Tidak cukup data untuk menyimpulkan penyebab"]
+[Akar penyebab deviasi bila terbukti dari dokumen; jika tidak → "Tidak ditemukan penyebab" /
+ "Tidak cukup data untuk menyimpulkan penyebab"]
 
 Akibat:
 [Dampak/risiko bila tidak segera ditangani]
 
 Tindakan yang Direkomendasikan:
-[Langkah konkret, oleh siapa, dalam berapa hari]
+[Langkah konkret, oleh siapa, dalam berapa hari. Disusun di Laporan Pemantauan, bukan di KKP]
 ```
 
 **Isu-isu yang dipantau:**
@@ -123,12 +110,22 @@ Tindakan yang Direkomendasikan:
 - Milestone kritis yang terlewati
 
 **Batasan pencatatan isu:**
-- JANGAN menyimpulkan pelanggaran — gunakan "kondisi yang perlu perhatian"
-- JANGAN menghitung kerugian negara — itu domain audit
-- JANGAN menilai kualitas teknis fisik — gunakan data dari laporan penyedia/pengawas
-- Jika data tidak tersedia: catat `[Data tidak tersedia — perlu konfirmasi PPK]`
+- JANGAN menyimpulkan pelanggaran — gunakan "kondisi yang perlu perhatian".
+- JANGAN menghitung kerugian negara — itu domain audit.
+- JANGAN menilai kualitas teknis fisik — gunakan data dari laporan penyedia/pengawas.
+- Jika data tidak tersedia: catat `[Data tidak tersedia — perlu konfirmasi PPK]`.
+- **Sebab anti-mengarang:** isi bila terbukti; bila tidak → "Tidak ditemukan penyebab" / "Tidak cukup data". Bukan `null`.
 
----
+## Format Unsur (KKSAR)
+
+| Elemen | Status | Catatan |
+|--------|--------|---------|
+| **Judul Isu** | ✅ Wajib | Kalimat singkat yang menggambarkan kondisi aktual yang dipantau |
+| **Kondisi** | ✅ Wajib | Fakta aktual: tanggal data, angka/persentase, dokumen sumber |
+| **Kriteria** | ✅ Wajib | Target/ketentuan dari kontrak atau regulasi (pasal/klausul) |
+| **Sebab** | ✅ Diisi (anti-mengarang) | Akar penyebab deviasi bila terbukti; bila tidak → "Tidak ditemukan penyebab" / "Tidak cukup data". Jangan mengarang |
+| **Akibat** | ✅ Wajib | Dampak/risiko bila tidak segera ditangani |
+| **Rekomendasi** | ✅ Jika ada isu | Tindakan tindak lanjut konkret — siapa, apa, berapa hari. **Disusun di Laporan Pemantauan, bukan di KKP** |
 
 ## Format Output
 
@@ -190,10 +187,8 @@ H. APRESIASI
 ### KKP Pemantauan (tabel Word sederhana):
 
 | No | Kondisi | Kriteria | Sebab (anti-mengarang) | Akibat | Rekomendasi |
-|----|-----------------|-------------------|--------------|-------------|
-| 1  | [fakta + sumber] | [kontrak/regulasi] | [risiko jika dibiarkan] | [tindakan konkret] |
-
----
+|----|---------|----------|------------------------|--------|-------------|
+| 1  | [fakta + sumber] | [kontrak/regulasi] | [akar bila terbukti / "tidak cukup data"] | [risiko jika dibiarkan] | [tindak lanjut — disusun di laporan] |
 
 ## Cara Membaca Dokumen
 
@@ -203,18 +198,21 @@ Urutan prioritas baca:
 3. `04-pelaksanaan/` → laporan berkala, BA kemajuan, laporan penyedia
 4. `05-keuangan/` → SPM/SP2D yang sudah terbit
 
----
+## Batasan
+- **Sebab**: isi bila terbukti dari dokumen; bila tidak, tulis "Tidak ditemukan penyebab" / "Tidak cukup data" — jangan mengarang.
+- JANGAN menghitung kerugian negara — itu domain audit penuh.
+- JANGAN menyimpulkan pelanggaran — gunakan "kondisi yang perlu perhatian".
+- JANGAN menilai kualitas teknis fisik pekerjaan sendiri — gunakan data laporan penyedia/pengawas.
+- Indikasi penyimpangan serius / output ≠ kontrak → eskalasi ke audit-pengadaan; jangan paksakan jadi simpulan pemantauan.
 
-## Referensi Regulasi
+## Referensi
 
-Pemantauan pengadaan menggunakan regulasi yang sama dengan audit, reviu, dan konsultasi pengadaan.
+> Pemantauan pengadaan menggunakan regulasi yang sama dengan audit, reviu, dan konsultasi pengadaan. Panduan lengkap: `../shared-pbj-references/PANDUAN.md`.
 
-**Panduan lengkap:** `../shared-pbj-references/PANDUAN.md`
-
-**File referensi regulasi** (semua ada di `../audit-pengadaan/references/`):
+File referensi regulasi (semua ada di `../audit-pengadaan/references/`):
 - `01-perpres-16-2018.md` — prinsip, pelaku, kontrak, pelaksanaan, denda
 - `02-perpres-12-2021.md` — perubahan threshold
 - `05-perpres-46-2025.md` — ketentuan kontrak dan pembayaran terbaru
 
-Untuk pemantauan, pasal yang paling sering digunakan:
+Pasal yang paling sering digunakan untuk pemantauan:
 - Denda keterlambatan → Pasal 78 Perpres 16/2018
