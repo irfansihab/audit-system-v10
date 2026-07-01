@@ -1,0 +1,44 @@
+{
+  "case_id": "evaluasi-manajemen-risiko-draft-01",
+  "skill": "evaluasi-manajemen-risiko",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Evaluasi Manajemen Risiko (keyakinan terbatas) atas penerapan MR di unit auditan Komdigi, mengacu Pedoman Menkomdigi 6/2017 (kriteria primer) + ISO 31000:2018 (pendukung). Expected issue diturunkan dari kerangka penilaian maturitas MR/TKPMR + pola AoI (references/05) + pattern wiki EMR-39..43. Catatan direkam KKSA (Sebab anti-mengarang); Rekomendasi disusun di LHE, bukan di KKP.",
+  "_catatan_validasi": "DRAFT — dari kerangka MR/TKPMR + pola AoI/wiki; WAJIB ditinjau auditor senior; fixture belum dibuat. Belum ada temuan.json — jalankan agen Anggota Tim dulu; harness akan menampilkan 'jalankan agen dulu' sampai temuan terisi. Sebab bersifat anti-mengarang (KKSA): wajar bila 'Tidak cukup data' karena lingkup evaluasi terbatas.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Pemantauan risiko triwulanan belum dilaksanakan/diinput secara konsisten — Formulir 4 hanya tersedia sebagian dari 4 triwulan (April, Juli, Oktober, Januari) sehingga tren risiko tak terpantau.",
+      "kriteria_acuan": "Pedoman Menkomdigi 6/2017 Bab III.A.5.b (pemantauan berkala triwulanan); ISO 31000:2018 Klausul 6.6 (perekaman & pelaporan).",
+      "materialitas": "tinggi",
+      "pattern_ref": "EMR-39 (Pemantauan Risiko Triwulanan Belum Diinput, MR-PEMANTAUAN, HIGH)"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Piagam Manajemen Risiko belum ditandatangani/diunggah — komitmen pimpinan atas kebijakan MR belum diformalisasi sehingga peran KMR/UPR tidak berkekuatan formal.",
+      "kriteria_acuan": "Pedoman Menkomdigi 6/2017 Bab II.B (struktur & komitmen MR); Three Lines Model (IIA, 2020); ISO 31000:2018 Klausul 5 (kerangka kerja).",
+      "materialitas": "tinggi",
+      "pattern_ref": "EMR-40 (Piagam Risiko Belum Ditandatangani/Diunggah, MR-KOMITMEN, HIGH)"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Rencana penanganan risiko (Formulir 3) belum diisi untuk risiko level sedang–sangat tinggi, termasuk risiko strategis; rencana aksi hanya berupa pengendalian rutin tanpa 5 elemen lengkap.",
+      "kriteria_acuan": "Pedoman Menkomdigi 6/2017 Bab III.A.4 & Bab II.E (penanganan risiko; selera risiko sedang ke atas wajib ditangani).",
+      "materialitas": "tinggi",
+      "pattern_ref": "EMR-41 (Rencana Penanganan Risiko Belum Diisi — Risiko Strategis, MR-PENANGANAN, HIGH)"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Pedoman/kerangka kerja MR usang — belum dikinikan mengikuti SOTK terbaru (risk appetite statement, peran & kategori risiko belum ditinjau) sehingga acuan penerapan MR tidak selaras organisasi.",
+      "kriteria_acuan": "Pedoman Menkomdigi 6/2017 (kemutakhiran pedoman) vs SOTK 2025; ISO 31000:2018 Klausul 5 & 5.4.3 (kebijakan MR, penetapan selera risiko).",
+      "materialitas": "tinggi",
+      "pattern_ref": "EMR-42 (Pedoman MR Usang / Belum Disesuaikan SOTK, MR-PEDOMAN, HIGH); AoI Pola A"
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Kematangan MR rendah pada tata kelola — gap komitmen top-down: Pemilik Risiko tertinggi/UPR belum lengkap ditetapkan dan pembagian Three Lines Model belum tegas, menurunkan posisi TKPMR pada parameter kepemimpinan.",
+      "kriteria_acuan": "Pedoman Menkomdigi 6/2017 Bab II.B & Bab IV (struktur MR; TKPMR — Risk Naive s/d Risk Enable); Three Lines Model (IIA, 2020).",
+      "materialitas": "tinggi",
+      "pattern_ref": "EMR-43 (Gap Komitmen Top-Down, MR-TATAKELOLA, CRITICAL); AoI Pola B"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "case_id": "konsultansi-umum-draft-01",
+  "skill": "konsultansi-umum",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Unit kerja meminta pendapat APIP (via ND permintaan tertulis) atas rancangan SOP pengadaan langsung: (1) apakah paket Rp180 juta boleh dipecah menjadi dua paket masing-masing di bawah ambang agar memakai Pengadaan Langsung; (2) siapa pejabat yang berwenang menetapkan HPS dalam rancangan SOP; (3) apakah Inspektorat dapat sekaligus menandatangani persetujuan operasional atas rancangan SOP tersebut.",
+  "_catatan_validasi": "DRAFT — konsultansi = pendapat/Memo, BUKAN temuan; harness recall-vs-temuan tidak berlaku → perlu mode eval 'ketepatan pendapat'. WAJIB ditinjau auditor senior. Konsultansi TANPA Sebab/KKSA/keyakinan, tidak mengikat; output = Memo Konsultansi (Pertanyaan→Dasar Hukum→Analisis→Pendapat). pattern_ref hanya rujukan norma, BUKAN klaim temuan.",
+  "expected_pendapat": [
+    {
+      "id": "P1",
+      "poin": "Kami berpendapat pemecahan satu paket Rp180 juta menjadi dua paket agar masuk ambang Pengadaan Langsung tidak dapat disarankan, karena berpotensi menjadi pemecahan paket untuk menghindari tender; SOP sebaiknya menegaskan larangan pemecahan paket dan menautkan pemilihan metode pada nilai HPS paket utuh.",
+      "dasar_hukum": "Perpres 16/2018 jo. 12/2021 tentang PBJP — batas nilai metode pemilihan & larangan pemecahan paket untuk menghindari tender/seleksi.",
+      "pattern_ref": "KS-03 (kepatuhan-prosedur) — rujukan norma prosedural, bukan temuan"
+    },
+    {
+      "id": "P2",
+      "poin": "Kami menyarankan rancangan SOP secara eksplisit menetapkan PPK sebagai penetap HPS berdasarkan hasil survei/keahlian, dan memisahkan fungsi penyusun, penetap, dan pemeriksa agar tidak terjadi rangkap peran yang tidak berwenang.",
+      "dasar_hukum": "Perpres 16/2018 jo. 12/2021 — kewenangan PPK atas HPS; asas pemisahan fungsi dalam PBJP.",
+      "pattern_ref": null
+    },
+    {
+      "id": "P3",
+      "poin": "Kami berpendapat Inspektorat tidak dapat menandatangani persetujuan operasional atas rancangan SOP; peran APIP dalam konsultansi bersifat advisory/masukan, tidak mengikat, dan tidak menggantikan kewenangan pejabat berwenang menetapkan SOP. Pendapat ini agar didokumentasikan untuk mencegah konflik kepentingan pada pengawasan berikutnya.",
+      "dasar_hukum": "PP 60/2008 (peran consulting APIP) & Kode Etik APIP — independensi APIP; larangan menjadi pengambil keputusan operasional.",
+      "pattern_ref": null
+    },
+    {
+      "id": "P4",
+      "poin": "Kami menyampaikan bahwa pendapat ini diberikan berdasarkan informasi dalam ND permintaan dan rancangan SOP yang disampaikan; ruang lingkup terbatas pada tiga pertanyaan tersebut dan TIDAK mencakup penilaian keyakinan atas kepatuhan pengadaan yang telah berjalan. Apabila terdapat indikasi penyimpangan di luar pertanyaan, hal itu dieskalasikan terpisah, bukan bagian memo ini.",
+      "dasar_hukum": "Doktrin konsultansi APIP (SKILL.md konsultansi-umum) — pendapat tidak mengikat, berbatas ruang lingkup, tanpa keyakinan; eskalasi indikasi penyimpangan secara terpisah.",
+      "pattern_ref": null
+    }
+  ]
+}

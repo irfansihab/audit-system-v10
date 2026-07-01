@@ -1,0 +1,44 @@
+{
+  "case_id": "evaluasi-sakip-draft-01",
+  "skill": "evaluasi-sakip",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Evaluasi Akuntabilitas Kinerja (AKIP/SAKIP) suatu unit kerja Kemkomdigi terhadap 5 komponen PermenPAN-RB 88/2021 — penjaminan kualitas atas LKE self-assessment auditee. Rezim LKE: keluaran = predikat/skor per kriteria + Area of Improvement (AoI), TANPA unsur Sebab.",
+  "_catatan_validasi": "DRAFT — dari 5 komponen SAKIP (PermenPAN-RB 88/2021) + AoI/pola wiki (temuan-patterns/evaluasi-sakip: ESK-30..ESK-34); rezim LKE (temuan = AoI/gap komponen TANPA unsur Sebab — bukan KKSA); WAJIB ditinjau auditor senior; fixture (LKE + bukti dukung) belum dibuat. Nilai/predikat bersifat ilustratif, bukan hasil agen.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Komponen Perencanaan Kinerja: sebagian indikator/sasaran belum SMART & berorientasi proses (mengukur aktivitas, mis. '% sosialisasi', bukan hasil/outcome); satuan target tidak tepat dan tidak relevan dengan sasaran strategis yang diembannya.",
+      "kriteria_acuan": "PermenPAN-RB 88/2021 (komponen Perencanaan Kinerja, bobot 30) jo. Perpres 29/2014 — sasaran berorientasi hasil; indikator SMART & selaras sasaran strategis.",
+      "materialitas": "tinggi",
+      "pattern_ref": "ESK-32"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Komponen Perencanaan Kinerja: penjenjangan (cascading) kinerja belum lengkap sampai Eselon II/pegawai; keselarasan pohon kinerja belum terukur (hanya kelengkapan dokumen tanpa cek substansi), sehingga sasaran unit bawah tidak selaras dengan sasaran strategis atas.",
+      "kriteria_acuan": "PermenPAN-RB 88/2021 — kinerja dijabarkan berjenjang dari Kementerian s.d. pegawai dengan keselarasan pohon kinerja.",
+      "materialitas": "sedang",
+      "pattern_ref": "ESK-33"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Komponen Pengukuran Kinerja bernilai terendah dibanding komponen lain; pengukuran masih administratif, data kinerja belum andal, dan penilaian bulanan tidak selaras dengan kumulatif tahunan.",
+      "kriteria_acuan": "PermenPAN-RB 88/2021 (komponen Pengukuran Kinerja, bobot 30) — pengukuran berbasis data andal, selaras antar-periode.",
+      "materialitas": "tinggi",
+      "pattern_ref": "ESK-31"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Komponen Pengukuran Kinerja (dimensi Pemanfaatan): hasil pengukuran tersedia namun belum dipakai sebagai decision tool — belum jadi dasar reward/punishment, perubahan strategi/alokasi, maupun pengembangan kompetensi; reward/punishment masih sebatas regulasi belum implementasi nyata.",
+      "kriteria_acuan": "PermenPAN-RB 88/2021 — hasil evaluasi & pengukuran wajib dimanfaatkan untuk perbaikan kinerja (strategi, reward/punishment, kompetensi).",
+      "materialitas": "sedang",
+      "pattern_ref": "ESK-34"
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Hasil akhir: predikat AKIP stagnan pada predikat yang sama beberapa tahun berturut-turut (nilai naik tipis, predikat tetap); belum ada roadmap + strategi peningkatan menuju predikat lebih tinggi, dan rekomendasi LHE tahun sebelumnya belum ditindaklanjuti (selisih optimism bias PM auditee > penilaian APIP).",
+      "kriteria_acuan": "PermenPAN-RB 88/2021 — evaluasi AKIP menghasilkan nilai + predikat; instansi diharapkan meningkatkan kualitas akuntabilitas kinerja berkelanjutan menuju predikat lebih tinggi.",
+      "materialitas": "tinggi",
+      "pattern_ref": "ESK-30"
+    }
+  ]
+}

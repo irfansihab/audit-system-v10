@@ -1,0 +1,44 @@
+{
+  "case_id": "pemantauan-tindak-lanjut-draft-01",
+  "skill": "pemantauan-tindak-lanjut",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Pemantauan Tindak Lanjut Hasil Pengawasan (TLHP) Inspektorat II — pelacakan status TL rekomendasi BPK/APIP (matriks status TL + aging), berbasis pola historis Simwas IR2 TA 2025–2026 (outstanding eksternal Rp200,89M; asimetri Wasdig 17,07% vs EkDig 83,33%; JAR Rp171,59M scope gap; outstanding Wasdig ~Rp91,9M belum disetor).",
+  "_catatan_validasi": "DRAFT — inti skill = PELACAKAN STATUS TL rekomendasi (bukan temuan KKSA baru); expected = penilaian status TL/aging yang seharusnya (Tuntas/Dalam Proses/Belum/Tidak Dapat Ditindaklanjuti + Daftar Kritis >365 hari). WAJIB ditinjau auditor senior; fixture (daftar rekomendasi + bukti TL) belum dibuat, nilai/persentase di bawah diturunkan dari pattern PTL-48/49/50/52 sebagai ilustrasi, bukan data agen. CATATAN HARNESS: recall dinilai atas STATUS-TL per rekomendasi + item aging kritis, BUKAN temuan K/K/S/A — runner golden yang mengukur temuan.json KKSA mungkin perlu adaptasi (menilai matriks status TL / Daftar Rekomendasi Kritis alih-alih tabel temuan).",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Rekomendasi struktural BPK (cluster TKPPSE/ISP/MoU APJII/PDP) berstatus 'Belum Ditindaklanjuti' dengan umur >365 hari (di-TL ≥7× tanpa closure) — WAJIB masuk Daftar Rekomendasi Kritis (merah) dan disorot di ringkasan eksekutif pimpinan.",
+      "kriteria_acuan": "PP 60/2008 Pasal 50 & Permenpan 5/2008; UU 15/2004 Pasal 20 (TL selambatnya 60 hari) + Pedoman Pemantauan TLHP.",
+      "materialitas": "tinggi",
+      "pattern_ref": "PTL-48"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Rekomendasi penyetoran ke kas negara (outstanding finansial mis. kolokasi/Metro-E/penarikan kas ~Rp91,9M) berstatus 'Belum Ditindaklanjuti' — lewat batas waktu TL tanpa bukti setor SSBP/SSPB; masuk Daftar Kritis bila umur >365 hari.",
+      "kriteria_acuan": "UU 15/2004 + ketentuan tindak lanjut rekomendasi — penyetoran kerugian/kelebihan negara wajib dibuktikan dengan SSBP/SSPB dalam batas waktu.",
+      "materialitas": "tinggi",
+      "pattern_ref": "PTL-52"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Rekomendasi verifikasi outstanding JAR (BPK minta verifikasi total Rp171,59M) berstatus 'Dalam Proses' — bukti TL parsial ada namun scope gap (3 site Rp3,15M belum diverifikasi, Laporan Hasil Verifikasi belum selesai); belum boleh diklasifikasi Tuntas.",
+      "kriteria_acuan": "Mandat BPK + SAIPI Standar 2300 — verifikasi APIP wajib mencakup seluruh ruang lingkup yang diminta BPK (cakupan tidak boleh kurang dari mandat).",
+      "materialitas": "tinggi",
+      "pattern_ref": "PTL-50"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Asimetri rate penyelesaian TL antar-Ditjen (Wasdig 17,07% [7/41] vs EkDig 83,33% [15/18]) — status TL agregat per PIC harus ditampilkan dengan konteks: rate rendah Wasdig didominasi rekomendasi struktural (34/35 BPK TKPPSE), jangan dinilai semata dari rate.",
+      "kriteria_acuan": "Pedoman Pemantauan TLHP — penyelesaian TL diukur sebagai rate (Sesuai/total); perbedaan ekstrem wajib dianalisis akar penyebab (kompleksitas rekomendasi).",
+      "materialitas": "sedang",
+      "pattern_ref": "PTL-49"
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Rekomendasi atas unit/program yang telah dibubarkan/berubah SOTK berstatus 'Tidak Dapat Ditindaklanjuti' HANYA bila ada justifikasi kuat (SK penghapusan/penetapan, ownership definitif); tanpa dasar sah, tetap diklasifikasi 'Belum' — bukan otomatis ditutup.",
+      "kriteria_acuan": "Perpres/Pedoman TLHP + SOTK — 'Tidak Dapat Ditindaklanjuti' memerlukan justifikasi kuat & SK; ownership rekomendasi pasca-likuidasi harus ditetapkan ke unit penerus.",
+      "materialitas": "sedang",
+      "pattern_ref": "PTL-51"
+    }
+  ]
+}

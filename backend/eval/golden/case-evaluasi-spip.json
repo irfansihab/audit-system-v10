@@ -1,0 +1,37 @@
+{
+  "case_id": "evaluasi-spip-draft-01",
+  "skill": "evaluasi-spip",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Penjaminan Kualitas (PK) APIP atas Penilaian Mandiri maturitas SPIP Terintegrasi Kemkomdigi — validasi Nilai PM per sub-unsur LKE (kolom PK kosong), menghasilkan Nilai PK + AoI. Objek: PM maturitas SPIP; keyakinan: penjaminan; format: LKE (bukan KKSA).",
+  "_catatan_validasi": "DRAFT — dari parameter SPIP + AoI/pola wiki; rezim LKE (AoI TANPA Sebab); WAJIB ditinjau auditor senior; fixture belum dibuat.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Optimism bias — Nilai PM lebih tinggi dari Nilai PK; skor maturitas direvisi turun (mis. 'Terkelola' 4,2 → 'Terdefinisi' 3,8) karena bukti dukung tidak memadai untuk skor yang diklaim; gap tervalidasi pada komponen SPIP/MRI/IEPK.",
+      "kriteria_acuan": "PP 60/2008 tentang SPIP + Perka BPKP 5/2021 (Penilaian Maturitas SPIP Terintegrasi) — penilaian berbasis bukti; PM harus dapat dipertanggungjawabkan dan dikonfirmasi PK. Tingkat Maturitas Tabel II.4.",
+      "materialitas": "tinggi",
+      "pattern_ref": "ESP-35"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Gap sub-unsur Penilaian Risiko (Unsur II, 2.1–2.2) — register risiko strategis belum ada/lengkap dan RTP tingkat strategis belum dikomunikasikan; penilaian risiko belum terstruktur → Nilai PK ≤ 3 (AoI wajib), skor komponen MRI turun saat PK.",
+      "kriteria_acuan": "PP 60/2008 + Perka BPKP 5/2021 (area MRI) — SPIP mensyaratkan identifikasi & penanganan risiko strategis terdokumentasi (register risiko + RTP) dan dikomunikasikan.",
+      "materialitas": "tinggi",
+      "pattern_ref": "ESP-36"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Gap sistem/dokumentasi SPIP — aplikasi SPIP bermasalah dan sebagian Kertas Kerja (mis. KK Lead II) tidak terisi / PM 0% pada beberapa unit; bukti pengendalian tidak terdokumentasi menahan Nilai PK sub-unsur Kegiatan Pengendalian & Pemantauan.",
+      "kriteria_acuan": "Perka BPKP 5/2021 — penyelenggaraan SPIP didokumentasikan dalam kertas kerja lengkap; sistem informasi pendukung harus berfungsi memadai.",
+      "materialitas": "sedang",
+      "pattern_ref": "ESP-37"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Gap Lingkungan Pengendalian/kapabilitas (Unsur I) — kompetensi SDM penyelenggara SPIP/MR belum merata, standar kompetensi belum ditetapkan, penyelenggaraan bergantung pada individu kunci; lingkungan pengendalian lemah → Nilai PK sub-unsur terkait ≤ 3 (AoI wajib).",
+      "kriteria_acuan": "Perka BPKP 5/2021 (area kapabilitas) — penyelenggaraan SPIP memerlukan SDM kompeten dengan standar kompetensi yang ditetapkan dan pelatihan memadai.",
+      "materialitas": "sedang",
+      "pattern_ref": "ESP-38"
+    }
+  ]
+}

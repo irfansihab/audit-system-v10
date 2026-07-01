@@ -34,8 +34,9 @@ Tujuan: kualitas output tiap skill **terukur** & **ter-gate regresi**. Basis rub
 4. Skor jadi **baseline**; run berikut yang turun signifikan = regresi.
 
 ## Cakupan & rencana
-- **Golden case: 3/16** (audit-pengadaan, reviu-pengadaan, reviu-rka-kl). **Gap: 13 skill.**
+- **Golden case: 16/16** — 3 tervalidasi-awal (audit/reviu-pengadaan, reviu-rka-kl) + **13 DRAFT** (Fase 1.6, diturunkan dari checklist SKILL + pola `knowledge/wiki/temuan-patterns/<skill>/`; tiap expected ber-`pattern_ref`). **Semua 13 DRAFT WAJIB divalidasi auditor senior** sebelum jadi baseline.
 - **Terukur judge: 2/16** (reviu-pengadaan, audit-pengadaan) — dua doktrin tervalidasi live: reviu (Sebab anti-mengarang) & audit (Sebab WAJIB/RCA + kerugian negara).
+- **Catatan format golden:** skill ber-temuan (audit/reviu/evaluasi/pemantauan) pakai `expected_key_issues`; **evaluasi ber-LKE** (sakip/spip/rb) → expected = AoI/gap tanpa Sebab; **konsultasi** (×2) pakai `expected_pendapat` — **harness recall-vs-temuan tak berlaku**, perlu mode eval "ketepatan pendapat"; **pemantauan-tindak-lanjut** dinilai atas status-TL/aging, runner mungkin perlu adaptasi.
 - Rencana perluasan (opt-in, berbiaya API + butuh fixture/dok input per skill):
   1. Draft golden stub 13 skill (dari checklist tiap SKILL) → validasi auditor.
   2. Baseline live per keluarga (fixture digest sintetis ber-cacat, pola pilot) → judge → isi registri.

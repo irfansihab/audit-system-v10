@@ -1,0 +1,37 @@
+{
+  "case_id": "evaluasi-umum-draft-01",
+  "skill": "evaluasi-umum",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Evaluasi umum (non-LKE, criteria-driven) atas efektivitas sebuah program/kebijakan internal Inspektorat II — keyakinan terbatas, penilaian per dimensi/indikator terhadap rubrik, temuan K/K/S/A dengan Sebab anti-mengarang.",
+  "_catatan_validasi": "DRAFT — dari checklist SKILL (knowledge/skills/evaluasi-umum/SKILL.md) + pola wiki temuan-patterns/evaluasi-umum (EV-01/02/03, semua starter/MEDIUM); WAJIB ditinjau auditor senior; fixture belum dibuat. Sebab bersifat anti-mengarang: bila tak terbukti dari bukti wajib 'Tidak ditemukan penyebab'/'Tidak cukup data' (lingkup evaluasi terbatas → sering 'tidak cukup data').",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Sasaran/kriteria evaluasi ditulis generik (mis. 'menilai efektivitas program') dan tidak didekomposisi menjadi dimensi → indikator konkret dengan bobot/rubrik, sehingga predikat ditarik tanpa menelusuri tiap indikator.",
+      "kriteria_acuan": "SKILL evaluasi-umum — Dekomposisi kriteria generik WAJIB sebelum menilai (Dimensi/Aspek → Sub-aspek → Indikator, tiap indikator ber-bobot/rubrik/sumber data); Standar Audit AAIPI.",
+      "materialitas": "temuan signifikan (dimensi utama)",
+      "pattern_ref": null
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Dokumen pendukung penugasan evaluasi tidak lengkap untuk membentuk keyakinan memadai (kriteria/regulasi tidak dilampirkan, bukti pendukung temuan/foto/surat/transkrip tidak ada, dokumen objek tidak lengkap).",
+      "kriteria_acuan": "Standar Audit AAIPI / Permenpan RB 19/2009 — pendokumentasian wajib semua tahap; SOP Inspektorat II Komdigi pendokumentasian bukti & kertas kerja.",
+      "materialitas": "temuan signifikan (menghambat penelusuran keyakinan QC SAIPI)",
+      "pattern_ref": "EV-01 (temuan-patterns/evaluasi-umum/ev-01-01-kelengkapan-dokumen.md)"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Inkonsistensi data antar dokumen objek (nilai anggaran/tanggal/nama pihak/rujukan pasal berbeda di dokumen yang seharusnya saling rujuk), sehingga kesimpulan evaluasi berdasar dasar yang tidak dapat di-trace ke sumber kebenaran.",
+      "kriteria_acuan": "Prinsip keterhubungan data (data integrity) antar dokumen objek; Permenpan RB Akuntabilitas Kinerja — keselarasan dokumen kinerja; konsistensi vertikal sasaran → KPI → bukti.",
+      "materialitas": "catatan minor s.d. signifikan (tergantung apakah menyentuh dimensi utama)",
+      "pattern_ref": "EV-02 (temuan-patterns/evaluasi-umum/ev-02-02-konsistensi-data.md)"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Pelaksanaan oleh auditi tidak sepenuhnya mengikuti prosedur baku/SOP (tahapan mandatory dilewati, urutan salah, dilakukan pihak tak berwenang, atau tanpa dokumentasi memadai) sehingga sistem/program dinilai belum berjalan sebagaimana mestinya.",
+      "kriteria_acuan": "SOP unit kerja terkait + regulasi prosedural spesifik objek (mis. Perpres 16/2018, PMK 107/2024); Standar Audit AAIPI — keterhubungan tahapan dengan prosedur baku.",
+      "materialitas": "temuan signifikan (indikasi sistem tidak berjalan)",
+      "pattern_ref": "EV-03 (temuan-patterns/evaluasi-umum/ev-03-03-kepatuhan-prosedur.md)"
+    }
+  ]
+}

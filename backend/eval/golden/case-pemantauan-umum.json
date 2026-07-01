@@ -1,0 +1,37 @@
+{
+  "case_id": "pemantauan-umum-draft-01",
+  "skill": "pemantauan-umum",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Pemantauan umum status pelaksanaan rencana aksi/program terhadap target & milestone (early warning, tanpa keyakinan). Expected = deviasi status warna ber-KKSA (Sebab anti-mengarang + Akibat), tanpa perhitungan kerugian negara.",
+  "_catatan_validasi": "DRAFT — dari checklist status (Aturan Status 🟢/🟡/🔴 + KKSA Sebab+Akibat di SKILL.md) dan pola wiki temuan-patterns/pemantauan-umum (PM-01/02/03, masih starter). WAJIB ditinjau auditor senior; fixture belum dibuat. Expected berupa deviasi status, BUKAN temuan audit: tanpa akar masalah mendalam, tanpa kerugian negara.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Progres fisik satu kegiatan di bawah target periode (mis. realisasi 55% vs target 90% pada cut-off) → status 🔴 MERAH; deviasi jadwal > 10% periode.",
+      "kriteria_acuan": "Matriks rencana aksi / jadwal milestone & target kinerja per periode yang ditetapkan; Aturan Status default SKILL.md (🔴 bila % capaian < 70% atau slip jadwal > 10%).",
+      "materialitas": "tinggi",
+      "pattern_ref": "PM-03 (kepatuhan-prosedur; starter)"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Realisasi pembayaran/serapan melampaui progres fisik (bayar > fisik, mis. serapan 80% sedangkan fisik 60%) → status 🟡/🔴 dengan Akibat risiko pembayaran mendahului prestasi. Sebab diisi anti-mengarang ('Tidak cukup data' bila tak terbukti).",
+      "kriteria_acuan": "Prinsip pembayaran sesuai prestasi/progres pekerjaan pada dokumen kontrak/rencana penarikan; target progres per periode.",
+      "materialitas": "tinggi",
+      "pattern_ref": "PM-02 (konsistensi-data; starter)"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Milestone tenggat terlewati tanpa realisasi (slip jadwal), blocker belum tertangani pada cut-off → status 🔴 MERAH; Akibat: target periode berikutnya berisiko tidak tercapai.",
+      "kriteria_acuan": "Jadwal milestone/tenggat instruksi pimpinan dengan tanggal batas; Aturan Status (🔴 bila ada blocker belum tertangani).",
+      "materialitas": "sedang",
+      "pattern_ref": "PM-03 (kepatuhan-prosedur; starter)"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Data realisasi/bukti progres tidak lengkap sehingga status item tak dapat dipastikan (% capaian tak terverifikasi) → tidak boleh menetapkan status tanpa bukti; Sebab ditulis eksplisit 'Tidak cukup data' (anti-mengarang).",
+      "kriteria_acuan": "Standar pendokumentasian bukti pemantauan (SOP Pengawasan APIP/SAIPI); larangan menetapkan status tanpa bukti pendukung (SKILL.md 'Yang TIDAK Boleh Dilakukan').",
+      "materialitas": "sedang",
+      "pattern_ref": "PM-01 (kelengkapan-dokumen; starter)"
+    }
+  ]
+}

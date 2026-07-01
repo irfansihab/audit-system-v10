@@ -1,0 +1,44 @@
+{
+  "case_id": "pemantauan-pengadaan-draft-01",
+  "skill": "pemantauan-pengadaan",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Pemantauan Pelaksanaan Pengadaan Barang/Jasa Inspektorat II — pelaporan status kontrak aktif (progres fisik/keuangan/kepatuhan) sebagai peringatan dini. Tingkat keyakinan: tidak ada; isu ber-KKSAR (Sebab anti-mengarang + Akibat); tidak menghitung kerugian negara, tidak memvonis pelanggaran.",
+  "_catatan_validasi": "DRAFT — dari checklist SKILL.md (Ukur Progres + Analisis Substantif Pemantauan) & pola wiki temuan-patterns/pemantauan-pengadaan (PMP-53..56); WAJIB ditinjau auditor senior; fixture belum dibuat. Angka contoh bersifat sintetis untuk mengilustrasikan deviasi progres — bukan dari temuan.json agen. Jalankan agen Anggota Tim untuk mengisi temuan aktual sebelum harness dipakai.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Deviasi progres fisik vs jadwal kontrak signifikan (mis. progres fisik aktual 40% sedangkan target jadwal kontrak 70% per tanggal laporan) — status pelaksanaan 🔴 DELAYED; dicatat sebagai kondisi perlu perhatian, bukan vonis.",
+      "kriteria_acuan": "Jadwal pelaksanaan dalam Kontrak/KAK (target progres per periode); Perpres 16/2018 jo. 12/2021 tentang PBJP — pelaksanaan kontrak sesuai jangka waktu.",
+      "materialitas": "tinggi",
+      "pattern_ref": "PMP-56 (turunan milestone) / doktrin SKILL.md §Ukur Progres & §Analisis Substantif — deviasi >15% = DELAYED"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Deviasi pembayaran vs progres fisik: pembayaran kumulatif (SPM/SP2D) melampaui progres fisik aktual secara signifikan (indikasi over-payment) — atau sebaliknya fisik > bayar (klaim penyedia tertunda). Dilaporkan sebagai risiko, tidak dihitung sebagai kerugian.",
+      "kriteria_acuan": "Klausul pembayaran dalam Kontrak (pembayaran mengikuti progres/termin); Perpres 46/2025 tentang ketentuan pembayaran; prinsip pembayaran atas prestasi kerja.",
+      "materialitas": "tinggi",
+      "pattern_ref": "doktrin SKILL.md §Analisis Substantif Pemantauan — kewajaran progres fisik vs keuangan"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Keterlambatan milestone kritis terlewati sehingga muncul potensi denda keterlambatan (1/1000 per hari); denda belum dihitung/diterapkan PPK. Dicatat sebagai isu status yang perlu ditindaklanjuti PPK — bukan perhitungan kerugian oleh pemantau.",
+      "kriteria_acuan": "Pasal 78 Perpres 16/2018 — denda keterlambatan 1/1000 per hari dari nilai kontrak/bagian kontrak; klausul denda dalam Kontrak.",
+      "materialitas": "sedang",
+      "pattern_ref": "doktrin SKILL.md §Analisis Substantif Pemantauan — denda keterlambatan (status, bukan kerugian)"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Addendum/amandemen kontrak berulang atau bernilai besar (kumulatif > 10% nilai kontrak) — indikasi perencanaan lemah. Dilaporkan sebagai pola yang perlu perhatian pimpinan.",
+      "kriteria_acuan": "Ketentuan perubahan kontrak Perpres 16/2018 jo. 12/2021 (batas & syarat addendum); klausul addendum dalam Kontrak.",
+      "materialitas": "sedang",
+      "pattern_ref": "doktrin SKILL.md §Analisis Substantif Pemantauan — pola amandemen; sinergi PMP-55 (perencanaan belum matang)"
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Realisasi deliverable/milestone vs lingkup & jadwal KAK: milestone yang dijadwalkan sampai periode laporan belum tercapai atau deliverable kurang/di luar lingkup; laporan berkala penyedia belum lengkap/terlambat (kepatuhan SLA penyedia). Ditandai sebagai risiko; jika output serius menyimpang → rekomendasikan eskalasi ke audit-pengadaan.",
+      "kriteria_acuan": "Lingkup & jadwal deliverable dalam Kontrak/KAK; kewajiban laporan berkala penyedia; Perpres 16/2018 Pasal 18 (perencanaan yang dapat dieksekusi).",
+      "materialitas": "sedang",
+      "pattern_ref": "PMP-53 (jawaban/laporan belum lengkap menghambat target) & PMP-56 (kajian/milestone belum diturunkan); doktrin SKILL.md §Analisis Substantif — realisasi deliverable/milestone & kepatuhan SLA"
+    }
+  ]
+}

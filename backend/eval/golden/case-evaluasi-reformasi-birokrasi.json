@@ -1,0 +1,37 @@
+{
+  "case_id": "evaluasi-reformasi-birokrasi-draft-01",
+  "skill": "evaluasi-reformasi-birokrasi",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Evaluasi Internal Reformasi Birokrasi (On-Going) atas pelaksanaan Rencana Aksi RB satker Komdigi — rezim LKE 4 dimensi (Ketepatan Pelaksanaan / Ketercapaian Output / Kualitas Pelaksanaan / Kesesuaian Waktu), menghasilkan Area of Improvement (AoI) per dimensi tanpa unsur Sebab.",
+  "_catatan_validasi": "DRAFT — dari 4 dimensi RB + AoI/pola wiki (ERB-44/45/46/47); rezim LKE (AoI TANPA Sebab); WAJIB ditinjau auditor senior; fixture belum dibuat.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Ketercapaian Output — Rencana Aksi RB dilaporkan 100% sesuai tetapi hanya level input-output; outcome/dampak RB (General & Tematik) tidak diukur, analisis/narasi dampak belum disusun.",
+      "kriteria_acuan": "Permenpan-RB 3/2023 (Road Map RB 2020-2024) — implementasi RB diukur dari capaian RB General & Tematik yang berorientasi dampak/outcome, bukan sekadar realisasi aksi. Dimensi Ketercapaian Output (LKE).",
+      "materialitas": "tinggi",
+      "pattern_ref": "ERB-44"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Kesesuaian Waktu — timeline pelaksanaan renaksi tidak sesuai jadwal yang ditetapkan dan justifikasi perubahan rencana aksi belum didokumentasikan.",
+      "kriteria_acuan": "Permenpan-RB tentang evaluasi RB (LHEI) + Road Map RB — renaksi mengikuti timeline yang ditetapkan; perubahan wajib dijustifikasi. Dimensi Kesesuaian Waktu (LKE).",
+      "materialitas": "sedang",
+      "pattern_ref": "ERB-45"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Kualitas Pelaksanaan — data dukung capaian RB berupa matriks/checklist, bukan Laporan Hasil formal; kertas kerja penilaian mandiri SPIP Eselon I belum lengkap.",
+      "kriteria_acuan": "Permenpan-RB (evaluasi RB) + SAIPI Standar 2300 — capaian RB harus didukung bukti memadai berupa laporan hasil formal, bukan sekadar matriks. Dimensi Kualitas Pelaksanaan (LKE).",
+      "materialitas": "sedang",
+      "pattern_ref": "ERB-46"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Ketepatan Pelaksanaan — pembangunan Zona Integritas menuju WBK/WBBM stagnan lintas tahun (persentase unit ber-ZI flat); komitmen pimpinan/TPI belum efektif sehingga aksi tidak mengarah ke maksud kegiatan.",
+      "kriteria_acuan": "Permenpan-RB 90/2021 tentang Pembangunan ZI menuju WBK/WBBM — instansi diharapkan menambah unit ber-predikat secara progresif. Dimensi Ketepatan Pelaksanaan (LKE).",
+      "materialitas": "tinggi",
+      "pattern_ref": "ERB-47"
+    }
+  ]
+}

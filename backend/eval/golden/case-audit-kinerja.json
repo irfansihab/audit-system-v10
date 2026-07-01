@@ -1,0 +1,51 @@
+{
+  "case_id": "audit-kinerja-draft-01",
+  "skill": "audit-kinerja",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Audit Kinerja atas efektivitas & efisiensi program pengendalian konten negatif / layanan digital (mis. TKPPSE/CSE + layanan klasifikasi baru) pada satker Komdigi TA berjalan. Lingkup 2E: apakah sistem pengendalian efektif mencapai tujuan (pemblokiran/penanganan konten) dan apakah sumber daya (anggaran OM, SDM, aset) digunakan efisien tanpa duplikasi. Fokus rantai input–proses–output–outcome dengan penelusuran akar sebab lintas 8 aspek.",
+  "_catatan_validasi": "DRAFT — expected_key_issues diturunkan dari checklist SKILL (8-aspek, framework KKSAR, doktrin 2E + Sebab wajib/RCA) dan pola wiki temuan-patterns/audit-kinerja (AK-17 s.d. AK-22). Catatan lingkup: pola wiki masih menyebut 'uji 3E' pada kriteria_baku (pra-hardening), sedangkan SKILL v3.3 sudah 2E (ekonomis ditunda → eskalasi audit-pengadaan); framing issue di sini mengikuti doktrin 2E SKILL. WAJIB ditinjau auditor senior; fixture belum dibuat; jalankan agen Anggota Tim untuk mengisi temuan.json sebelum harness dapat mengeval.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Sistem/teknologi pengendalian efektivitasnya jauh di bawah target/benchmark (mis. 22,44% vs 79–81%) karena dapat di-bypass protokol modern (HTTPS/DoH/DoT/QUIC/VPN) dan teknologi inti sudah End-of-Life; aset/belanja modal terkait berisiko idle. Sebab (RCA): desain pengendalian usang + tidak ada roadmap redesain ber-milestone. Indikasi pemborosan/aset idle bernilai material.",
+      "kriteria_acuan": "PP 8/2006 + SAIPI Standar 2200/2300 — audit kinerja menguji efektivitas (tujuan pengendalian tercapai memadai vs benchmark); dimensi Efektivitas (aspek 4 Sistem-Proses-Teknologi & aspek 6 Pelaksanaan-Output).",
+      "materialitas": "tinggi",
+      "pattern_ref": "AK-17"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Dua/lebih sistem atau unit menjalankan fungsi beririsan (mis. CNS/TKPPSE vs CSE vs RTBH/TrustNG/RPZ) sehingga anggaran OM terduplikasi tanpa penambahan nilai; tidak ada system inventory terpusat maupun kajian cost-effectiveness pembanding. Sebab (RCA): ketiadaan tata kelola inventarisasi sistem + keputusan penganggaran tidak berbasis komparasi efektivitas-biaya. Indikasi inefisiensi anggaran material.",
+      "kriteria_acuan": "PP 8/2006 prinsip efisiensi + SAIPI Standar 2300 — output dicapai dengan input minimal tanpa duplikasi sumber daya; dimensi Efisiensi (aspek 5 Anggaran-Aset & aspek 2 Tata Kelola).",
+      "materialitas": "tinggi",
+      "pattern_ref": "AK-19"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Volume besar hasil deteksi/crawling (mis. jutaan item) tidak ditindaklanjuti tuntas: verifikasi/validasi/serah-terima/closure tidak berjalan end-to-end, keyword management lemah, verifikator tidak independen, tidak ada audit trail status per item, dan tidak ada SLA penyelesaian. Sebab (RCA): proses bisnis hilir tidak dirancang tuntas + tidak ada KPI closure yang mengikat. Dampak: tujuan deteksi tidak berdampak, backlog tak terukur.",
+      "kriteria_acuan": "SAIPI Standar 2300 + SOP penanganan konten + UU 1/2024 ITE — proses bisnis harus tertelusur end-to-end dan diselesaikan secara akuntabel; dimensi Efektivitas (aspek 4 Sistem-Proses & aspek 6 Output).",
+      "materialitas": "tinggi",
+      "pattern_ref": "AK-18"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Layanan digital baru (mis. layanan klasifikasi/rating) diluncurkan dengan kelemahan tata kelola hulu (inkonsistensi klasifikasi antar-penilai, mekanisme keberatan/Rating Change tidak transparan) dan kelemahan keamanan hilir (eksposur/kebocoran data pengguna/pengembang), tanpa bukti UAT publik atau pen-test pra-go-live. Sebab (RCA): go-live dipaksakan tanpa prasyarat tata kelola & keamanan terpenuhi.",
+      "kriteria_acuan": "UU 27/2022 tentang Pelindungan Data Pribadi + prinsip tata kelola SPBE + SAIPI Standar 2200 — layanan elektronik memenuhi standar tata kelola, akurasi, dan keamanan data; dimensi Efektivitas (aspek 2 Tata Kelola & aspek 6 Output).",
+      "materialitas": "sedang",
+      "pattern_ref": "AK-20"
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Capaian kinerja/output dilaporkan tinggi di LKj namun sumber data tidak dapat ditelusuri (source of truth tidak ada): sumber 'olahan internal' tanpa referensi, tanpa lampiran/sitasi/sistem sumber, dan angka berbeda antar dokumen; tidak ada analisis efisiensi SDM/biaya. Sebab (RCA): tidak ada mekanisme pengendalian mutu data kinerja + definisi operasional IKU lemah. Risiko klaim capaian palsu / window dressing.",
+      "kriteria_acuan": "SAIPI Standar 2300 — bukti audit harus cukup, kompeten, dan relevan; capaian didukung source of truth terverifikasi; dimensi Efektivitas-validitas simpulan (aspek 8 Data Kinerja & Pelaporan).",
+      "materialitas": "sedang",
+      "pattern_ref": "AK-21"
+    },
+    {
+      "id": "Q6",
+      "ringkas": "Formula tarif/indikator (mis. BHP/IPFR) atau indikator program belum mencerminkan nilai ekonomi/outcome sebenarnya: variabel formula tidak relevan dengan kondisi industri terkini, peraturan turunan insentif/optimalisasi belum ada, indikator mengukur proses/realisasi bukan outcome. Sebab (RCA): desain indikator/formula tidak dikaji ulang berbasis nilai ekonomi + pembagian tanggung jawab antar-unit belum jelas pasca-SOTK.",
+      "kriteria_acuan": "PP 8/2006 + pedoman penyusunan formula tarif/PNBP — desain tarif/indikator mencerminkan nilai ekonomi & mendorong outcome; dimensi Efektivitas-desain (aspek 1 Kebijakan & Desain Program).",
+      "materialitas": "rendah",
+      "pattern_ref": "AK-22"
+    }
+  ]
+}

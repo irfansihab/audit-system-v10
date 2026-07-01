@@ -1,0 +1,39 @@
+{
+  "case_id": "konsultasi-pengadaan-draft-01",
+  "skill": "konsultasi-pengadaan",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Pendampingan pra-pengadaan atas permintaan unit kerja (DJED.6). Pertanyaan advisory: 'Bolehkah paket pengadaan perangkat lunak senilai Rp2,4 miliar dilakukan lewat Penunjukan Langsung / e-purchasing katalog langsung tanpa kompetisi, sementara pemaketan dan spesifikasi teknis belum final?' — output diharapkan berupa Memo/Pendapat advisory (Pertanyaan → Dasar Hukum → Analisis → Pendapat), TANPA temuan/KKSA/Sebab, tidak mengikat PPK/PA/KPA.",
+  "_catatan_validasi": "DRAFT — konsultasi = pendapat/Memo, BUKAN temuan. Harness recall-vs-temuan TIDAK berlaku di sini: skill konsultasi-pengadaan (SKILL.md v3.2) secara doktrin TANPA Sebab, TANPA KKP formal, tidak mengikat; keluarannya log kegiatan pendampingan / pendapat advisory. Karena itu case ini memakai field 'expected_pendapat' (BUKAN 'expected_key_issues'), dan harness perlu MODE EVAL BARU: 'ketepatan pendapat' (menilai apakah pendapat advisory benar secara substansi & dasar hukum, konstruktif, dan tetap non-mengikat) — bukan recall-terhadap-temuan. Menjalankan case ini di harness recall-vs-temuan akan menghasilkan skor menyesatkan. Fixture belum dibuat (folder synthetic). WAJIB ditinjau auditor senior.",
+  "expected_pendapat": [
+    {
+      "id": "P1",
+      "poin": "Penunjukan Langsung TIDAK tepat sebagai jalur utama untuk nilai Rp2,4 miliar: PL hanya untuk kondisi/kriteria khusus yang terbatas. Untuk nilai signifikan dengan >1 penyedia tersedia, sarankan metode kompetitif; bila via e-Katalog, gunakan mini-kompetisi untuk memastikan kewajaran harga (disampaikan sebagai masukan advisory, bukan temuan).",
+      "dasar_hukum": "Perpres 16/2018 jo. Perpres 12/2021 (metode pemilihan & batas Penunjukan Langsung); Kepka LKPP 93/2025 (E-Purchasing katalog via mini-kompetisi untuk nilai/risiko tertentu)",
+      "pattern_ref": "KSP-57"
+    },
+    {
+      "id": "P2",
+      "poin": "Pemaketan dan spesifikasi teknis harus difinalisasi lebih dulu SEBELUM HPS dikunci dan metode pemilihan ditetapkan. Menetapkan metode/HPS di atas spesifikasi yang masih umum/ambigu berisiko HPS tidak akurat dan revisi di tengah proses; sebaiknya finalisasi pemaketan & spesifikasi dulu.",
+      "dasar_hukum": "Perpres 16/2018 Pasal 18 (perencanaan/pemaketan) + Pasal 26 (HPS berbasis spesifikasi teknis yang jelas)",
+      "pattern_ref": "KSP-58"
+    },
+    {
+      "id": "P3",
+      "poin": "Sampaikan dasar 'mengapa' regulasi (kewajaran harga, akuntabilitas, audit trail) dengan bahasa konstruktif; gunakan 'sebaiknya/disarankan' untuk hal non-imperatif dan 'wajib/harus' hanya untuk ketentuan imperatif. Tegaskan pendapat bersifat advisory, tidak mengikat, dan tidak menggantikan keputusan PPK/PA/KPA.",
+      "dasar_hukum": "Doktrin konsultasi (SKILL.md — advisory/preventif, tidak mengikat, tanpa keyakinan); SAIPI 2010 (sifat penugasan consulting)",
+      "pattern_ref": ""
+    },
+    {
+      "id": "P4",
+      "poin": "Dokumentasikan keterlibatan advisory Inspektorat dan batasan tanggung jawabnya; mitigasi self-review threat agar tidak menghambat independensi bila kelak paket yang sama diaudit/direviu. Keterlibatan pra-pengadaan adalah good practice yang perlu dicatat, bukan temuan negatif.",
+      "dasar_hukum": "SAIPI Standar 2010 (consulting) + Renstra Itjen 3.2.1 (pengawasan terintegrasi sejak perencanaan); SAIPI 1100 (independensi)",
+      "pattern_ref": "KSP-59"
+    },
+    {
+      "id": "P5",
+      "poin": "Bila dari pendampingan muncul indikasi pelanggaran yang SUDAH terjadi atau nilai material sangat besar/kompleks, jangan diselesaikan sebagai pendampingan: sarankan eskalasi ke audit-pengadaan dan/atau konsultasi ke LKPP. Konsultasi tidak menyimpulkan pelanggaran dan tidak menghitung kerugian negara.",
+      "dasar_hukum": "SKILL.md konsultasi-pengadaan (Batasan) — eskalasi ke audit-pengadaan bila indikasi pelanggaran; rujuk LKPP untuk isu kompleks/material",
+      "pattern_ref": ""
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "case_id": "reviu-umum-draft-01",
+  "skill": "reviu-umum",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Reviu Umum (criteria-driven) atas rancangan dokumen prosedural unit kerja Komdigi sebelum ditandatangani. ASUMSI KRITERIA YANG DIUNGGAH AUDITOR: (1) juklak/juknis/SOP internal unit kerja yang mengatur kelengkapan & format dokumen, (2) format baku/template dokumen yang dipersyaratkan (kolom & substansi minimal). Sasaran generik penugasan: 'memastikan kesesuaian dokumen dengan kriteria yang diunggah' — didekomposisi jadi checklist per-elemen (kelengkapan, konsistensi, kepatuhan prosedur). Reviu = keyakinan terbatas, tidak menghitung kerugian negara.",
+  "_catatan_validasi": "DRAFT — dari checklist SKILL + pola wiki (reviu-umum criteria-driven: kriteria diunggah auditor). Expected issue diturunkan dari paradigma dekomposisi sasaran generik SKILL.md + pattern starter RV-01/RV-02/RV-03; BUKAN dari output agen. Fixture belum dibuat (belum ada folder/digest/temuan.json); harness akan menampilkan 'jalankan agen dulu' sampai temuan terisi. Karena criteria-driven, expected issue bergantung pada kriteria aktual yang diunggah — asumsi kriteria dicantumkan di 'deskripsi'. WAJIB ditinjau auditor senior; kriteria acuan riil harus diverifikasi terhadap dokumen yang benar-benar diunggah.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Dekomposisi sasaran generik: sasaran 'kesesuaian dokumen dengan kriteria' tidak boleh dinilai global — harus diuraikan jadi checklist per-elemen dari kriteria yang diunggah dan dinilai satu per satu (kelengkapan kolom, format tabel, substansi minimal). Kesimpulan 'sesuai' tanpa menelusuri tiap elemen = cacat metodologi reviu.",
+      "kriteria_acuan": "SKILL reviu-umum — 'Dekomposisi sasaran generik (WAJIB)'; kriteria/format baku yang diunggah auditor (juklak/juknis/SOP + template dokumen).",
+      "materialitas": "tinggi",
+      "pattern_ref": "(paradigma SKILL — tidak ada pattern spesifik)"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Kelengkapan dokumen pendukung belum memadai — dokumen kriteria/lampiran wajib (mis. dasar regulasi, template, bukti pendukung) belum dilampirkan pada berkas objek reviu sebagaimana disyaratkan format baku yang diunggah.",
+      "kriteria_acuan": "SOP/juknis kelengkapan dokumen yang diunggah + standar pendokumentasian per jenis pengawasan.",
+      "materialitas": "sedang",
+      "pattern_ref": "RV-01 (KELENGKAPAN-DOKUMEN, starter)"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Inkonsistensi data antar dokumen — angka/tanggal/nama pihak/rujukan pasal berbeda di dokumen yang seharusnya saling rujuk (mis. nilai di header vs isi, atau antar-lampiran). Dicatat per aspek, Sebab anti-mengarang (kemungkinan 'tidak cukup data' karena lingkup reviu terbatas).",
+      "kriteria_acuan": "Prinsip keterhubungan/integritas data antar dokumen objek + kriteria konsistensi yang diunggah.",
+      "materialitas": "sedang",
+      "pattern_ref": "RV-02 (KONSISTENSI-DATA, starter)"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Kepatuhan terhadap prosedur baku belum sepenuhnya diikuti — tahapan mandatory dalam SOP yang diunggah dilewati / urutan tidak sesuai / dilakukan tanpa dokumentasi memadai. Reviu berhenti pada kepatuhan administratif; bila terindikasi penyimpangan substantif → STOP & eskalasi ke audit-umum (jangan dipaksakan jadi catatan reviu).",
+      "kriteria_acuan": "SOP/regulasi prosedural yang diunggah auditor (spesifik konteks penugasan) + Standar Reviu APIP.",
+      "materialitas": "sedang",
+      "pattern_ref": "RV-03 (KEPATUHAN-PROSEDUR, starter)"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "case_id": "audit-umum-draft-01",
+  "skill": "audit-umum",
+  "folder": "(draft-synthetic — fixture belum dibuat)",
+  "deskripsi": "Audit Umum (criteria-driven, keyakinan memadai) atas kepatuhan/kewajaran objek terhadap kriteria yang diunggah auditor. Expected issue diturunkan dari checklist SKILL.md (dekomposisi sasaran generik, matriks kriteria, uji per-elemen, Sebab WAJIB/RCA, kerugian negara bila ada) dan pola wiki temuan-patterns/audit-umum (AU-01..AU-03).",
+  "_catatan_validasi": "DRAFT — dari checklist SKILL + pola wiki temuan-patterns/audit-umum; WAJIB ditinjau auditor senior; fixture belum dibuat.",
+  "expected_key_issues": [
+    {
+      "id": "Q1",
+      "ringkas": "Dokumen pendukung/kriteria tidak lengkap di folder penugasan (kriteria/regulasi atau bukti temuan tidak dilampirkan), sehingga keyakinan memadai tidak dapat dibentuk dan lingkup audit terbatas.",
+      "kriteria_acuan": "Standar Audit AAIPI + Permenpan RB 19/2009 — pendokumentasian wajib semua tahap; SOP Inspektorat II Komdigi (matriks kriteria yang diunggah auditor).",
+      "materialitas": "tinggi",
+      "pattern_ref": "AU-01"
+    },
+    {
+      "id": "Q2",
+      "ringkas": "Inkonsistensi data antar dokumen objek (nilai anggaran, tanggal, nama pihak, atau referensi pasal berbeda di dokumen yang saling merujuk, mis. SPM vs BAST), sehingga temuan tidak dapat di-trace ke sumber kebenaran.",
+      "kriteria_acuan": "Prinsip integritas data (keterhubungan antar dokumen); keselarasan dokumen perencanaan vs pelaksanaan sesuai regulasi yang diunggah dalam matriks kriteria.",
+      "materialitas": "sedang",
+      "pattern_ref": "AU-02"
+    },
+    {
+      "id": "Q3",
+      "ringkas": "Prosedur baku (SOP/regulasi prosedural) tidak sepenuhnya diikuti auditi — tahapan mandatory dilewati, urutan salah, dilakukan pihak tak berwenang, atau tanpa dokumentasi memadai.",
+      "kriteria_acuan": "SOP unit kerja terkait + regulasi prosedural yang berlaku (mis. Perpres 16/2018 untuk pengadaan, PMK 107/2024 untuk RKA-K/L) sesuai matriks kriteria; Standar Audit AAIPI.",
+      "materialitas": "tinggi",
+      "pattern_ref": "AU-03"
+    },
+    {
+      "id": "Q4",
+      "ringkas": "Objek tidak memenuhi kriteria pada satu/lebih elemen hasil dekomposisi sasaran generik — sasaran 'kesesuaian dokumen dengan kriteria' tidak diuji per-elemen sehingga ketidaksesuaian per kriteria tidak terungkap (uji global, bukan per-elemen).",
+      "kriteria_acuan": "SKILL audit-umum — 'Dekomposisi Sasaran Generik (WAJIB)': uraikan sasaran jadi checklist per-kriteria dari input/kriteria, uji per-elemen (satu temuan per elemen tidak sesuai); matriks kriteria internal yang diunggah auditor.",
+      "materialitas": "sedang",
+      "pattern_ref": null
+    },
+    {
+      "id": "Q5",
+      "ringkas": "Ketidaksesuaian material dengan indikasi kerugian/potensi kerugian negara yang dapat dihitung, namun Sebab (akar masalah via RCA) tidak digali dan/atau nilai kerugian tidak dikuantifikasi — melanggar doktrin audit (Sebab WAJIB, hitung kerugian negara bila ada).",
+      "kriteria_acuan": "SKILL audit-umum — Format Unsur Temuan K/K/S/A: Sebab WAJIB (RCA, anti-mengarang: 'Tidak cukup data' bila tak terbukti) + hitung kerugian negara bila ada; ambang materialitas (>Rp 500 jt wajib konfirmasi auditor; >Rp 1 M flag MERAH).",
+      "materialitas": "tinggi",
+      "pattern_ref": null
+    }
+  ]
+}
