@@ -4,6 +4,8 @@
 
 **Prinsip kerja tiap fase:** harness tetap hijau · perubahan markdown/skill tanpa restart · yang menyentuh output → uji (eval harness + judge / E2E live) · commit + push per unit · doktrin (KKSAR/LKE) tak diubah tanpa alasan eksplisit.
 
+> **Status keseluruhan (1 Jul 2026):** **Fase 1 pada dasarnya TUNTAS** (1.1–1.5 selesai; 1.6 kerangka + 16/16 golden + 2/16 terukur live + fix presisi kriteria SBM). **Fase 0 / 2 / 3 / 4 belum mulai.** Dua doktrin tervalidasi live: reviu (Sebab anti-mengarang, skor 0.825) & audit (Sebab WAJIB/RCA + kerugian negara, 0.796). Commit hardening: `dd451ed`, `356ee70`, `52e4ad0`, `88a94c9`, `8c97ad5`, `5e0f534`.
+
 ---
 
 ## Fase 0 — Tuntaskan pondasi engine (sisa P1) · *enabler*
@@ -15,14 +17,14 @@ Menutup lapis portabilitas agar hardening berpijak pada engine yang benar-benar 
 ## Fase 1 — Hardening skill (fokus #1)
 Mutu & ketahanan output tiap skill.
 
-> **Progres (1 Jul 2026):** ✅ **1.1** buang 3 pointer referensi mati · ✅ **1.2** CCSAA→KKSAR + 3E→2E (audit-kinerja/pengadaan) · ✅ **1.3** reviu-rka-kl sudah bersih · ✅ **1.4** `model:` 0 di semua skill, tak ada drift versi · ✅ **1.5** QC SAIPI 2320 cek Sebab jenis-aware (spec + enforcement `qc_saipi.py`) · 🟢 **1.6** kerangka baseline + gate 2-tingkat + registri (`docs/QUALITY-BASELINE-v10.md`); **golden 16/16** (13 DRAFT dari wiki+checklist, perlu validasi auditor); **terukur judge 2/16 live** (reviu-pengadaan 0.825, audit-pengadaan 0.796 — dua doktrin). Sisa: validasi 13 golden + baseline live sisanya (opt-in). Sinyal hardening: presisi kutipan pasal audit (kriteria 0.50).
-- **1.1 Reference rusak/legacy (P2)** — `reviu-umum`/`graduasi` rujuk `audit-system-v4` → `panduan-format-umum`; `audit-kinerja` 7/8 reference TODO/absen → ground-kan (RCA/2E); `kepatuhan-saipi` (`qc_saipi.py`/`wiki/raw/*.pdf`); `konsultasi-pengadaan`/`reviu-pengadaan` README hilang.
-- **1.2 Terminologi baku (P2)** — `CCSAA`→**KKSAR** (audit-kinerja/pengadaan/umum); `3E`→**2E** (audit-kinerja, lingkup ekonomis ditunda).
-- **1.3 reviu-rka-kl rule→checklist tuntas (P2)** — buang jejak "40 rules"/`cross_check`/benchmark; checklist murni.
-- **1.4 Versi/frontmatter konsisten (P2)** — satukan versi lintas file; `model:` sudah dicabut saat engine-ready — pastikan bersih.
-- **1.5 kepatuhan-saipi (P2)** — cek unsur **Sebab** (SAIPI 2320) untuk jenis ber-KKSA + kodefikasi.
-- **1.6 Uji kualitas terukur** — perluas eval harness ke semua skill (golden case + rubrik + judge); tetapkan **baseline** precision/recall/narasi per skill; jadikan gate regresi.
-- **DoD:** 0 reference rusak; terminologi seragam; baseline kualitas terekam & lulus ambang.
+- ✅ **1.1 Reference rusak/legacy** — 3 pointer opsional mati (`references/02-*` yang tak pernah ada, konten sudah inline) dibuang; jejak `audit-system-v4` tersisa hanya di meta-skill `graduasi` (P4).
+- ✅ **1.2 Terminologi baku** — `CCSAA`→**KKSAR** (audit-kinerja/pengadaan); `3E`→**2E** (audit-kinerja, ekonomis di luar lingkup → eskalasi audit-pengadaan).
+- ✅ **1.3 reviu-rka-kl rule→checklist** — sudah bersih pasca engine-ready (satu-satunya "rule" = pernyataan benar "tidak ada rule deterministik").
+- ✅ **1.4 Versi/frontmatter konsisten** — `model:` **0 di seluruh skill** (dibuang dari 2 meta-skill terakhir); tak ada drift versi body.
+- ✅ **1.5 kepatuhan-saipi Sebab** — QC SAIPI 2320 kini **jenis-aware**: spec SKILL + **enforcement `qc_saipi.py:check_LAK_005`** (dulu stale: hanya audit) → audit KRITIS · reviu/evaluasi-nonLKE/pemantauan PERINGATAN · LKE/konsultasi NOT_APPLICABLE.
+- 🟢 **1.6 Uji kualitas terukur** — kerangka baseline + gate 2-tingkat + registri (`docs/QUALITY-BASELINE-v10.md`); **golden 16/16** (13 DRAFT dari checklist+`wiki/temuan-patterns`, ber-`pattern_ref`; perlu **validasi auditor**); **terukur judge 2/16 live** (reviu 0.825, audit 0.796); **1.6c** presisi kriteria SBM (Perpres 26 + PMK SBM TA) — tindak lanjut sinyal `kriteria=0.50`.
+  - *Sisa (opt-in):* validasi 13 golden · baseline live keluarga lain · terus perbaiki presisi kutipan pasal audit.
+- **DoD:** 0 reference rusak ✅ · terminologi seragam ✅ · baseline kualitas terekam (2/16 live, 16/16 golden) 🟢.
 
 ## Fase 2 — Penyelarasan workflow dengan Pedoman Pengawasan (fokus #2) · *ciri khas v10*
 Selaraskan alur kerja engine ke Pedoman/Juknis Pengawasan — **SK ikut sistem**, bukan sebaliknya.
