@@ -38,7 +38,7 @@ Tiap butir nyatakan **terpenuhi / perlu penyempurnaan / tidak terpenuhi**; yang 
 **Perencanaan**
 - [ ] HPS didukung dokumen pembentuk harga & **multi-source ≥2 RFI valid** (Perpres 16/2018 Ps. 26(5))?
 - [ ] HPS punya breakdown komponen (bukan 1 line item total)?
-- [ ] Dasar hukum HPS (SBM/Pedoman) = Tahun Anggaran pelaksanaan?
+- [ ] Dasar hukum HPS (SBM/Pedoman) = Tahun Anggaran pelaksanaan? (SBM = PMK Standar Biaya Masukan TA berkenaan, mis. PMK 32/PMK.02/2025 utk 2026)
 - [ ] Periode KAK = HPS?
 - [ ] Komponen ruang lingkup KAK (migrasi/instalasi/pelatihan/pemeliharaan/garansi/dll) teralokasi di HPS?
 - [ ] KAK mencantumkan parameter teknis kunci (spesifikasi/SLA/kapasitas) secara tegas & **konsisten** (tak ada >1 nilai SLA berbeda)?
@@ -75,7 +75,7 @@ Checklist struktural hanya menangkap inkonsistensi sederhana. Analisis di bawah 
 |---|------------------|--------|
 | 1. | **Verifikasi fakta digest ke sumber** | Digest = hasil parser otomatis (bisa salah, mis. "Periode KAK = 45 Tahun" parser glitch nomor pasal). Sebelum menjadikan catatan, konfirmasi fakta kunci dari digest ke dokumen sumber. Jangan jadikan catatan dari fakta yang belum terverifikasi. |
 | 2. | **Analisis kewajaran HPS vs RFI Vendor** | Baca semua RFI di 00-input/. Validasi: vendor memberikan harga atau hanya refusal participation? Bila HPS hanya berbasis 1 RFI valid (misal RFI lain tidak bersedia) → temuan KRITIS multi-source HPS (Perpres 16/2018 Pasal 26 ayat 5: HPS dibuat dari minimal 2 sumber harga independen). |
-| 3. | **Konsistensi dasar hukum HPS dengan Tahun Anggaran** | Baca header HPS bagian DASAR PERHITUNGAN. Cek apakah SBM dirujuk = SBM TA pelaksanaan? Cek Pedoman Pelaksanaan Anggaran = TA pelaksanaan? Bila SBM/Pedoman rujukan ≠ TA DIPA → temuan PERINGATAN. |
+| 3. | **Konsistensi dasar hukum HPS dengan Tahun Anggaran** | Baca header HPS bagian DASAR PERHITUNGAN. Cek apakah SBM dirujuk = SBM TA pelaksanaan? Cek Pedoman Pelaksanaan Anggaran = TA pelaksanaan? **Kriteria (kutip presisi):** SBM wajib TA berkenaan — PMK Standar Biaya Masukan tahun anggaran pelaksanaan (mis. **PMK No. 32/PMK.02/2025** utk SBM TA 2026); metodologi HPS = **Perpres 16/2018 Pasal 26**. Bila SBM/Pedoman rujukan ≠ TA DIPA → temuan PERINGATAN. |
 | 4. | **Konsistensi spek KAK ↔ komponen HPS** | Setiap kebutuhan teknis di KAK harus traceable ke line item HPS detail. Setiap line item HPS harus traceable ke kebutuhan KAK. Bila ada komponen HPS tanpa pembentuk harga atau tanpa basis di KAK → temuan PERINGATAN. |
 | 5. | **Analisis kewajaran metode pemilihan** | Cek nilai HPS vs ambang batas metode pemilihan (Tender, Tender Cepat, Penunjukan Langsung, dst per Perpres 16/2018 Pasal 41). Bila metode tidak sesuai nilai → temuan PERINGATAN. |
 | 6. | **Catat setiap temuan substantif** | Setiap temuan baru dicatat dengan status "DRAFT", struktur **K/K/S/A**, `sasaran_id` sesuai sasaran yang ditugaskan, `assigned_to` = nama AT, + `dokumen_sumber`, `langkah_kerja_terkait`, `pattern_id` (ketertelusuran). **Rekomendasi TIDAK di KKP — disusun KT di LHR.** |
