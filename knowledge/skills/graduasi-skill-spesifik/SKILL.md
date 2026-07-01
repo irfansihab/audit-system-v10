@@ -5,7 +5,6 @@ jenis: Meta-skill — Auto-generate skill spesifik dari penugasan
 fungsi: Pengembangan Sistem (bukan pengawasan)
 output: Draft skill folder di `audit-system-v4/skills/_draft/[nama-skill]/`
 trigger: Manual command auditor
-model: claude-sonnet-4-6
 ---
 
 # Skill: Graduasi Skill Spesifik (Meta-Skill)

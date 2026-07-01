@@ -271,14 +271,23 @@ def check_LAK_005(rule, ctx) -> dict:
     if not t:
         return _result(rule, "NOT_APPLICABLE", "OK", "temuan.json belum ada")
     jp = t.get("penugasan", {}).get("jenis_pengawasan", "")
-    if jp not in ("audit-pengadaan", "audit-kinerja"):
-        return _result(rule, "NOT_APPLICABLE", "OK", f"jenis_pengawasan={jp}, tidak butuh sebab")
-    bad = [x["id_temuan"] for x in t.get("temuan", []) if not x.get("sebab")]
+    # Doktrin 17 Jun 2026: Sebab diisi semua jenis ber-KKSA (anti-mengarang),
+    # KECUALI evaluasi ber-LKE (SAKIP/SPIP/RB) & konsultasi (rezim tanpa Sebab).
+    _LKE = ("evaluasi-sakip", "evaluasi-spip", "evaluasi-reformasi-birokrasi")
+    if jp in _LKE or jp.startswith("konsulta"):
+        return _result(rule, "NOT_APPLICABLE", "OK",
+                       f"jenis_pengawasan={jp}: rezim LKE/konsultasi — tanpa unsur Sebab")
+    bad = [x["id_temuan"] for x in t.get("temuan", []) if not (x.get("sebab") or "").strip()]
     if bad:
-        return _result(rule, "GAP", rule["default_severity"],
-                       f"{len(bad)} temuan audit tanpa sebab: {bad}",
-                       "Audit (keyakinan memadai) wajib sebab — analisis akar masalah")
-    return _result(rule, "OK", "OK", "Semua temuan audit memiliki sebab")
+        if jp.startswith("audit"):
+            return _result(rule, "GAP", rule["default_severity"],
+                           f"{len(bad)} temuan audit tanpa sebab: {bad}",
+                           "Audit (keyakinan memadai) wajib sebab — analisis akar masalah (RCA)")
+        return _result(rule, "GAP", "PERINGATAN",
+                       f"{len(bad)} temuan ber-KKSA tanpa sebab: {bad}",
+                       "KKSA ber-Sebab anti-mengarang — isi sebab; bila tak terbukti tulis "
+                       "'tidak cukup data' / 'tidak ditemukan penyebab' (jangan dikosongkan)")
+    return _result(rule, "OK", "OK", "Semua temuan ber-Sebab sesuai jenisnya")
 
 
 def check_LAK_006(rule, ctx) -> dict:

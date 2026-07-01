@@ -4,7 +4,6 @@ format_laporan: kksa
 version: 1.1
 jenis: Kepatuhan Standar Audit Intern Pemerintah Indonesia (SAIPI) — META-SKILL QA
 dasar-hukum: Peraturan Menteri PANRB & PER-01/AAIPI/DPN/2021 (SAIPI)
-model: claude-sonnet-4-6
 output: Laporan Quality Assurance + Audit Trail
 is_meta_skill: true
 auto_run_after: ["render_kkp_docx", "render_report", "render_lhp"]
@@ -83,7 +82,7 @@ Jika ada gap **KRITIS** (mis. temuan tanpa dokumen sumber, KP/PKP tidak ada, LHP
 
 ### 2300 Pelaksanaan
 - **2310** Cek: setiap temuan di `temuan.json` punya `dokumen_sumber[]` non-empty & file di-referensi exist di `00-input/`? (KRITIS)
-- **2320** Cek: setiap temuan punya kondisi (≥ 30 char), kriteria (≥ 10 char), akibat (≥ 10 char)? (KRITIS — sudah enforce schema, double-check)
+- **2320** Cek unsur temuan: kondisi (≥ 30 char), kriteria (≥ 10 char), akibat (≥ 10 char). **Untuk jenis ber-KKSA (audit / reviu / evaluasi non-LKE / pemantauan): `sebab` WAJIB terisi** (anti-mengarang — boleh "tidak cukup data" / "tidak ditemukan penyebab", tetapi TIDAK boleh kosong). Untuk evaluasi ber-LKE (SAKIP/SPIP/RB) & konsultasi: Sebab tidak diwajibkan. (KRITIS)
 - **2330** Cek: `temuan.json` valid terhadap schema & `KKP-*.docx` exist? (KRITIS)
 - **2340** Cek: ada event `GATE_PASSED` task=03 dengan actor role_kode=KT? (PERINGATAN kalau belum) — bukti supervisi.
 
