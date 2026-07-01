@@ -7,6 +7,7 @@ kode-surat: PW.04.04
 tingkat-keyakinan: memadai
 version: "3.1"
 changelog:
+  - v3.2 (2026-07-01): Hardening v10 — terminologi baku **CCSAA→KKSAR** di body (Sebab WAJIB & hitung kerugian negara tetap).
   - v3.1 (2026-06-29): **Engine-ready** — orkestrasi (urutan tool, peran AT/KT/PM, titik HITL, auto-eksekusi, pilihan model) DIPINDAH ke orkestrator (harness uji `backend/app/prompts/anggota_tim.md`; produksi INTEGRAL). Skill = substansi murni & portabel. Frontmatter `model`/`auto_execute`/`auto_execute_command` dihapus; seksi "Eksekusi di v7" + tabel "Tahap A0–A4" (kolom Pelaku) dibuang; nama tool v9 di-bahasakan tool-agnostik; seksi Identitas duplikat dihapus; versi disatukan. Doktrin DIPERTAHANKAN utuh — audit = Sebab WAJIB (gali akar masalah/RCA), hitung kerugian negara bila ada, terminologi CCSAA tidak diubah.
   - v3.0 (2026-06-18): MODE FULL-AI (digest-only) — penilaian seluruh siklus via Checklist Pemeriksaan (judgment), bukan rule deterministik.
   - v2.4 (2026-06-18): Pipeline berlaku seluruh jenis pengadaan; deteksi komponen ruang lingkup KAK tak teralokasi di HPS; guard ambang nilai jaminan & SLA.
@@ -25,7 +26,7 @@ Fokus utama audit pengadaan:
 - **Kewajaran harga** — apakah harga yang dibayar wajar, tidak melebihi HPS/nilai pasar?
 - **Legalitas kontrak** — apakah kontrak sah, penyedia memenuhi kualifikasi, tidak ada konflik kepentingan?
 - **Kepatuhan prosedur menyeluruh** — dari perencanaan hingga pembayaran.
-- **Analisis CCSAA** — setiap temuan di KKP wajib memuat Kondisi, Kriteria, **Sebab**, Akibat (Rekomendasi disusun di laporan/LHA, bukan di KKP).
+- **Analisis KKSAR** — setiap temuan di KKP wajib memuat Kondisi, Kriteria, **Sebab**, Akibat (Rekomendasi disusun di laporan/LHA, bukan di KKP).
 
 Paradigma audit adalah **pengujian bukti yang sangat mendalam** dengan verifikasi ke dokumen sumber. Berbeda dengan reviu, audit **wajib menggali akar masalah (Sebab/RCA)** untuk setiap temuan dan **menghitung perkiraan kerugian negara** bila terbukti relevan.
 
@@ -143,7 +144,7 @@ Tugas substantif di bawah adalah **inti penilaian audit (judgment)** dan **WAJIB
 - Temuan > Rp 1 miliar: flag sebagai "MATERIAL - PRIORITAS TINGGI"
 - Temuan < Rp 10 juta: catat sebagai catatan administratif
 
-## Format Unsur Temuan (CCSAA)
+## Format Unsur Temuan (KKSAR)
 
 > **KKP vs LHA — unsur Rekomendasi.** Di **KKP** diisi **Kondisi · Kriteria · Sebab · Akibat** (+ kode & `dokumen_sumber`). **Rekomendasi TIDAK ditulis di KKP** — disusun di **LHA**. Template lengkap di bawah (memuat Rekomendasi) adalah bentuk pada **Laporan**.
 
@@ -187,7 +188,7 @@ Bab 1: Pendahuluan (dasar penugasan, tujuan, ruang lingkup)
 Bab 2: Gambaran Umum Obyek Audit
 Bab 3: Metodologi Audit
 Bab 4: Hasil Audit (ringkasan temuan per area)
-Bab 5: Temuan dan Rekomendasi (detail CCSAA)
+Bab 5: Temuan dan Rekomendasi (detail KKSAR)
 Bab 6: Kesimpulan
 Lampiran: Daftar Dokumen, Matriks Temuan
 

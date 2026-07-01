@@ -166,7 +166,6 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi:
 ## Referensi Wajib Dibaca
 - `references/01-panduan-ekstraksi-kriteria.md`
 - `panduan-format-umum/PANDUAN.md`
-- (jika tersedia) `references/02-aturan-status-warna.md`
 
 ## Batasan
 - **Tingkat keyakinan: tidak ada** — pemantauan melaporkan status, bukan memberi assurance memadai/terbatas.

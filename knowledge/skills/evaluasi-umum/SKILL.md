@@ -187,7 +187,6 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi:
 ## Referensi
 - `references/01-panduan-ekstraksi-kriteria.md`
 - `panduan-format-umum/PANDUAN.md` — matriks elemen (Kondisi/Kriteria/Sebab/Akibat/Rekomendasi, Sebab anti-mengarang, untuk evaluasi)
-- (jika tersedia) `references/02-rubrik-skoring.md`
 
 ## Batasan
 - **Sebab**: isi bila terbukti dari bukti; bila tidak, tulis "Tidak ditemukan penyebab" / "Tidak cukup data" — jangan mengarang. Lingkup evaluasi terbatas, sehingga wajar bila banyak temuan ber-Sebab "tidak cukup data".

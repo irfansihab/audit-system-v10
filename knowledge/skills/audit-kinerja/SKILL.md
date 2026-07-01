@@ -8,6 +8,7 @@ tingkat-keyakinan: memadai
 dimensi: 2E (efektivitas, efisiensi)
 version: "3.2"
 changelog:
+  - v3.3 (2026-07-01): Hardening v10 — terminologi baku **CCSAA→KKSAR** & lingkup **3E→2E** (ekonomis ditunda) di body; substansi/doktrin tetap.
   - v3.2 (2026-06-29): Engine-ready — orkestrasi (urutan tool, peran AT/KT/PT, titik HITL, auto-eksekusi, pilihan model) DIPINDAH ke orkestrator (harness: backend/app/prompts/anggota_tim.md; produksi: INTEGRAL). Frontmatter model/auto_execute dihapus; seksi "Eksekusi di v7", tabel "Tahap A0–A4", "Hemat Token", dan blok "Identitas" duplikat dibuang (substansinya tetap di bawah). Bahasa tool dibuat tool-agnostik. Substansi 8-aspek, Survey Pendahuluan, why-tree, format unsur, materialitas, struktur LHA tetap utuh.
   - v3.0 (2026-06-14): Kerangka Pemeriksaan Multi-Aspek (8 aspek × 3 lapis) menggantikan "Dimensi Audit (2)"; aspek diturunkan dari sasaran KP + langkah kerja PKP; penelusuran Sebab antaraspek (why-tree); lingkup 2E.
   - v2.2: Survey pendahuluan + research online + aturan anti-halusinasi.
@@ -137,7 +138,7 @@ Dalam audit kinerja, **sasaran dan ruang lingkup TIDAK boleh disalin verbatim da
 1. Memahami **desain program**: logika intervensi (input–proses–output–outcome), stakeholder, anggaran
 2. Mengidentifikasi **area berisiko kinerja** — indikasi awal ketidakcapaian target, pemborosan, atau hambatan
 3. Menajamkan **sasaran audit** agar terukur dan fokus pada risiko signifikan (bukan sekadar "meneliti pelaksanaan program")
-4. Menetapkan **ruang lingkup** yang realistis: periode audit, unit/lokasi yang diperiksa, aspek 3E yang diuji, dan batasan
+4. Menetapkan **ruang lingkup** yang realistis: periode audit, unit/lokasi yang diperiksa, aspek 2E yang diuji, dan batasan
 5. Menyusun **hipotesis audit awal** yang akan diuji di KKP
 
 ### Input Survey Pendahuluan
@@ -169,7 +170,7 @@ Dokumen yang dikumpulkan dan dibaca auditor:
 4. **Analytical review awal** — bandingkan target vs realisasi (PK vs LKj vs data B12), % serapan vs % capaian fisik, dan **bandingkan juga dengan benchmark K/L lain atau best practice** yang ditemukan di Langkah 2
 5. **Identifikasi area fokus** — pilih 2–4 area dengan risiko tertinggi untuk menjadi sasaran audit
 6. **Rumuskan sasaran audit** yang SMART — spesifik per area fokus, bukan generik
-7. **Tetapkan ruang lingkup** — periode, unit, aspek 3E yang diuji, lokasi sampel, batasan audit
+7. **Tetapkan ruang lingkup** — periode, unit, aspek 2E yang diuji, lokasi sampel, batasan audit
 8. **Susun hipotesis audit awal** — dugaan temuan yang akan diuji (sekaligus dasar langkah kerja PKP)
 
 ### Research Online — Benchmarking & Best Practice
@@ -275,7 +276,7 @@ C. Unit Pelaksana       : [Unit]
 7. RUANG LINGKUP TERUKUR
    - Periode diaudit         : [tanggal]
    - Unit/lokasi sampel      : [daftar]
-   - Aspek 3E yang diuji     : [Efektivitas / Efisiensi / keduanya]
+   - Aspek 2E yang diuji     : [Efektivitas / Efisiensi / keduanya]
    - Batasan audit           : [eksplisit]
 
 8. HIPOTESIS AUDIT AWAL
@@ -393,9 +394,9 @@ Tidak semua gap menjadi temuan. Saring dengan materialitas sebelum mengangkat te
 
 ---
 
-## Framework Elemen Temuan (CCSAA)
+## Framework Elemen Temuan (KKSAR)
 
-Setiap temuan audit kinerja punya 5 elemen (CCSAA). **Pembagian KKP vs LHA:** di **KKP** diisi **Kondisi · Kriteria · Sebab · Akibat** (+ kode temuan & dokumen sumber). **Unsur Rekomendasi TIDAK ditulis di KKP** — disusun saat menyusun **LHA**. Template di bawah (memuat Rekomendasi) adalah bentuk lengkap pada **Laporan**:
+Setiap temuan audit kinerja punya 5 elemen (KKSAR). **Pembagian KKP vs LHA:** di **KKP** diisi **Kondisi · Kriteria · Sebab · Akibat** (+ kode temuan & dokumen sumber). **Unsur Rekomendasi TIDAK ditulis di KKP** — disusun saat menyusun **LHA**. Template di bawah (memuat Rekomendasi) adalah bentuk lengkap pada **Laporan**:
 
 ```
 **TEMUAN [NOMOR]: [JUDUL SINGKAT SPESIFIK — masalah kinerja yang ditemukan]**
@@ -465,7 +466,7 @@ Bab 3: METODOLOGI AUDIT KINERJA
 
 Bab 4: TEMUAN DAN ANALISIS (dilaporkan per dimensi 2E; tiap temuan ditandai aspeknya)
        4.1 Efektivitas Pencapaian Target
-           [Temuan CCSAA per isu efektivitas — sebut aspek terkait (mis. Kebijakan & Desain, Pelaksanaan & Output, Outcome, Data Kinerja)]
+           [Temuan KKSAR per isu efektivitas — sebut aspek terkait (mis. Kebijakan & Desain, Pelaksanaan & Output, Outcome, Data Kinerja)]
        4.2 Efisiensi Penggunaan Sumber Daya
            [Temuan per isu efisiensi — sebut aspek terkait (mis. Anggaran & Aset, Sistem-Proses-Teknologi, SDM)]
 

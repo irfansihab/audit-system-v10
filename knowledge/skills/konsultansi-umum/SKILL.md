@@ -114,7 +114,6 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi **Memo** mengikuti alur **P
 ## Referensi Wajib Dibaca
 - `references/01-panduan-ekstraksi-kriteria.md`
 - `panduan-format-umum/PANDUAN.md` — bagian "Konsultasi" dan bahasa keyakinan
-- (jika tersedia) `references/02-bahasa-konsultansi.md`
 
 ## Posisi dalam Keluarga Skill
 
