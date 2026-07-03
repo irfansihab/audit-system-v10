@@ -162,6 +162,7 @@ export default function DetailPenugasanPage() {
               role={session.role_aktif}
               skill={penugasan.skill}
             />
+            <SurveiPendahuluanButton penugasanId={id} skill={penugasan.skill} />
           </div>
         )}
 
@@ -303,6 +304,40 @@ export default function DetailPenugasanPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+// Tombol render Laporan Survei Pendahuluan (.docx) — khusus skill audit.
+// Route backend: POST /penugasan/{id}/survey-pendahuluan (merge v8.8 Fase 2).
+function SurveiPendahuluanButton({ penugasanId, skill }: { penugasanId: number; skill: string }) {
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  if (!skill?.startsWith('audit-')) return null;
+  const onClick = async () => {
+    setBusy(true);
+    try {
+      const r = await api.renderSurveyPendahuluan(penugasanId);
+      setDone(r.name);
+      toast.success(`Laporan Survei Pendahuluan dibuat: ${r.name} (lihat tab Berkas)`);
+    } catch (e) {
+      toast.error(`Survei pendahuluan gagal: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="integral-card p-4 bg-violet-50/40 border-violet-100">
+      <div className="font-semibold text-sm text-primary-dark mb-1">Laporan Survei Pendahuluan</div>
+      <p className="text-xs text-gray-600 mb-3">
+        Rangkum orientasi objek + profil risiko + hipotesis area pengujian jadi .docx (dari context.md yang
+        sudah digenerate). Hasil bisa diunduh di tab Berkas (<code className="bg-violet-100 px-1 rounded">_SURVEY</code>).
+      </p>
+      <button onClick={onClick} disabled={busy}
+        className="px-3 py-1.5 rounded-lg text-sm font-medium bg-primary text-white disabled:opacity-60">
+        {busy ? 'Membuat…' : done ? '↻ Perbarui Survei Pendahuluan' : '📝 Generate Laporan Survei Pendahuluan'}
+      </button>
+      {done && <span className="ml-3 text-xs text-green-700">✓ {done}</span>}
+    </div>
   );
 }
 

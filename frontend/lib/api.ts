@@ -146,6 +146,13 @@ export const api = {
   /** Daftar skill pengawasan terdaftar (folder-driven) untuk dropdown. */
   getSkills: () => request<SkillInfo[]>('/skills'),
 
+  /** Render Laporan Survei Pendahuluan (.docx) — HANYA skill audit (Fase 2 merge v8.8). */
+  renderSurveyPendahuluan: (penugasanId: number) =>
+    request<{ ok: boolean; path: string; name: string }>(
+      `/penugasan/${penugasanId}/survey-pendahuluan`,
+      { method: 'POST' },
+    ),
+
   /** Ringkasan beranda (1 panggilan, di-cache backend ~30s) — widget dashboard. */
   getDashboardSummary: () => request<any>('/dashboard/summary'),
 
