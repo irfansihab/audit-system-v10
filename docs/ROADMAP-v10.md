@@ -28,6 +28,8 @@ Mutu & ketahanan output tiap skill.
 
 ## Fase 2 — Penyelarasan workflow dengan Pedoman Pengawasan (fokus #2) · *ciri khas v10*
 Selaraskan alur kerja engine ke Pedoman/Juknis Pengawasan — **SK ikut sistem**, bukan sebaliknya.
+
+> **✅ SELESAI (3 Jul 2026, `docs/PENYELARASAN-PEDOMAN-v10.md`).** Material pedoman diwarisi dari v9 (`USULAN-REVISI-SK.md`: 36 SDP + 13 errata + matriks proporsionalitas) + Pedoman asli di vault. Re-validasi konformansi engine v10 (pasca hardening + merge v8.8 + P1): **engine SELARAS** — errata sisi-engine (#1 shell, #2 KKSAR, #4 audit-leak, #5 assurance per-jenis, #6 survei audit-only) **semua terpenuhi**; merge v8.8 malah memperkuat (laporan faithful per-jenis). Semua artefak SDP produksi ADA (P.05 survei kini terimplementasi, PL.08 KKP+gate LKE, M.01-03 kendali mutu, K.01 Daftar Temuan, Tahapan 8 TU). Errata sisa = ranah **draft SK** (birokrasi), bukan engine. **0 perubahan kode** — engine sudah selaras.
 - **2.1 Petakan gap** — bandingkan tahapan/artefak engine (KP→PKP→KKP→LHP→Daftar Temuan) vs Pedoman Pengawasan. *Butuh dokumen pedoman dari auditor.*
 - **2.2 Selaraskan tahapan produksi** — sampai **laporan disetujui** (garis finis); adopsi hanya elemen pedoman yang **menambah nilai**, buang yang administratif-murni (→ ranah TU/INTEGRAL).
 - **2.3 Selaraskan format artefak & penomoran** dengan pedoman (kode surat, struktur KKP/LHP, Daftar Temuan & Rekomendasi).
