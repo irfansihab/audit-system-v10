@@ -1404,15 +1404,57 @@ _KOMPONEN_KEYWORDS = {
 }
 
 
+def _adapt_penilaian_lke(raw: dict) -> dict:
+    """Adaptasi skema write_penilaian_lke (komponen: list[{nama, nilai_pm, nilai_apip,
+    predikat}], total_pm/total_apip/predikat_akhir) → skema render (komponen: {key:
+    {nilai, predikat}}, total: {nilai, predikat, interpretasi}). Bila komponen sudah
+    dict (legacy), kembalikan apa adanya. Nilai APIP diprioritaskan (laporan penjaminan)."""
+    if not isinstance(raw, dict):
+        return {}
+    komp = raw.get("komponen")
+    if not isinstance(komp, list):
+        return raw  # sudah keyed / kosong
+    name_key = []
+    for keyset in (_KOMPONEN_KEYS, _KOMPONEN_KEYS_SPIP):
+        for key, nama, _ in keyset:
+            name_key.append((key, str(nama).lower()))
+    keyed = {}
+    for c in komp:
+        if not isinstance(c, dict):
+            continue
+        nm = str(c.get("nama", "")).lower()
+        nilai = c.get("nilai_apip")
+        if nilai is None:
+            nilai = c.get("nilai_pm", c.get("nilai"))
+        pred = c.get("predikat", "")
+        for key, nama_l in name_key:
+            if nama_l and (nama_l in nm or nm in nama_l):
+                keyed[key] = {"nilai": nilai, "predikat": pred}
+                break
+    out = dict(raw)
+    out["komponen"] = keyed
+    out.setdefault("total", {
+        "nilai": raw.get("total_apip", raw.get("total_pm")),
+        "predikat": raw.get("predikat_akhir", ""),
+        "interpretasi": raw.get("interpretasi", ""),
+    })
+    return out
+
+
 def _read_penilaian_lke(pen_dir: Path) -> dict:
-    """Coba baca _KKP/penilaian_lke.json. Return {} jika tidak ada."""
-    path = pen_dir / "_KKP" / "penilaian_lke.json"
-    if path.exists():
-        try:
-            import json as _json
-            return _json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            pass
+    """Baca rekap penilaian LKE. write_penilaian_lke menulis
+    _KKP/penilaian-lke-<skill>.json; fallback penilaian_lke.json (legacy).
+    Hasil di-adaptasi ke skema render via _adapt_penilaian_lke."""
+    import json as _json
+    kkp = pen_dir / "_KKP"
+    for path in sorted(kkp.glob("penilaian-lke-*.json")) + [kkp / "penilaian_lke.json"]:
+        if path.exists():
+            try:
+                data = _json.loads(path.read_text(encoding="utf-8"))
+                if isinstance(data, dict):
+                    return _adapt_penilaian_lke(data)
+            except Exception:
+                continue
     return {}
 
 
@@ -3097,6 +3139,23 @@ def main() -> int:
         doc, "{{TEMBUSAN_LIST}}", build_tembusan_blocks(args.tembusan))
     if args.survei:
         insert_survei_paragraph(doc, args.survei)
+
+    # ── Cleanup: isi placeholder header umum yg belum terisi dari blok penugasan;
+    #    kosongkan {{LINK_SURVEI}} bila survei tidak diberikan (hindari literal di LHP).
+    _pen = kkp.get("penugasan", {}) if isinstance(kkp, dict) else {}
+    _obj = _pen.get("obyek") or ctx.get("obyek") or (args.auditi or "")
+    replace_in_doc(doc, {
+        "TAHUN_ANGGARAN": _pen.get("tahun_anggaran") or ctx.get("tahun_anggaran") or "",
+        "OBJEK_AUDIT": _obj,
+        "OBJEK_EVALUASI": _obj,
+        "NAMA_AUDITI": (args.auditi or _obj),
+    })
+    if not args.survei:
+        replace_in_doc(doc, {"LINK_SURVEI": ""})
+    # Jaring pengaman: kosongkan section-placeholder opsional yg tak terisi builder
+    # per-jenis (hindari literal {{...}} di LHP; konten bisa disempurnakan auditor/agen).
+    for _leftover in ("RINGKASAN_EKSEKUTIF", "H_APRESIASI", "E_GAMBARAN_UMUM"):
+        replace_in_doc(doc, {_leftover: ""})
 
     doc.save(out_path)
     print(f"OK: {out_path}")
