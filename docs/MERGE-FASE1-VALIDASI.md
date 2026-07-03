@@ -2,6 +2,8 @@
 
 Uji deterministik (CLI `render_lhp.py`, tanpa API) atas 16 skeleton dengan fixture minimal per skill (`temuan.json` ber-`jenis_pengawasan` + rekomendasi + context + sasaran ber-`deskripsi`).
 
+> **UPDATE (gap diperbaiki, commit `a84f31d`):** 16/16 render **bersih — 0 placeholder tersisa**. Skor LKE (SAKIP) kini **termuat** (filename `penilaian-lke-<skill>.json` + adapter skema list→keyed). Placeholder header diisi dari blok penugasan; section opsional dikosongkan (tak ada literal `{{...}}`). Detail di bawah = kondisi sebelum perbaikan.
+
 ## Hasil: 16/16 skill render TANPA CRASH ✓
 
 | Keluarga | Skill | Render | Catatan |
