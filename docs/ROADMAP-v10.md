@@ -37,6 +37,8 @@ Selaraskan alur kerja engine ke Pedoman/Juknis Pengawasan — **SK ikut sistem**
 - **DoD:** matriks gap engine↔pedoman + tahapan/artefak selaras, tanpa mengorbankan mesin produksi.
 
 ## Fase 3 — Simplifikasi fitur (fokus #3)
+
+> **Progres (3 Jul 2026):** ✅ **3.1+3.2** konsolidasi render LHR — buang tool `render_lhr_pbj` redundan (jalur reviu-pengadaan legacy via cross_check rule) → `render_report` jadi jalur tunggal semua skill KKSA (diverifikasi deterministik reviu+audit); `cross_check` tak lagi dirujuk app/ (deprecated, file v6 dibiarkan); fix hard-key `tanggal_exit_meeting`→`.get()`. Scan dead-tool: **0 dead** (46 tool, semua terpakai — `read_survey_pendahuluan` via kt_extra). 🟡 **3.3 P4 meta-skill → INTEGRAL** & **3.4 ramping audit-kinerja (545)** DITUNDA (struktural/substansi-berat, risiko > nilai; kepatuhan-saipi/graduasi sudah tersegregasi via `_HIDDEN_FROM_PICKER`/`_EXCLUDE_DIRS`).
 - **3.1 Dead-code lanjutan** — `cross_check.py` (v6) tandai deprecated & pastikan tak diekspos; sisir tool/route tak terpakai.
 - **3.2 Konsolidasi tool/format** — rapikan render/lhr/kkp tooling; format laporan jenis-aware satu sumber.
 - **3.3 P4 meta-skill → INTEGRAL** — `kepatuhan-saipi` (QC SAIPI) & `graduasi-skill-spesifik` (pengembangan) keluar dari `knowledge/skills/` jadi tooling/reference portabel.
