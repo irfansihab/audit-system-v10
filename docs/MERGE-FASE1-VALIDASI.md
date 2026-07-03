@@ -30,3 +30,13 @@ Semua routing render_lhp mengunci `temuan.json.penugasan.jenis_pengawasan`. Flow
 - **Aman di-merge ke main** untuk render KKSA (reviu/audit/pemantauan/evaluasi-non-LKE/memo/pendampingan): render bersih + konten faithful.
 - **Sebelum atau sesudah merge**, polish: (a) placeholder tersisa (cek pengisian di `render_report` nyata + alias), (b) **perbaiki jalur skor LKE** (filename + skema) agar tabel nilai SAKIP/SPIP termuat.
 - Uji akhir ideal: 1 E2E live nyata (agen KT → render_report) per profil sebelum merge final.
+
+---
+
+## E2E LIVE (gerbang final, 3 Jul 2026) — LULUS ✅
+Agen **Ketua Tim** (Sonnet) atas penugasan audit-pengadaan nyata (4 temuan) menjalankan alur penuh:
+read_context → read_temuan_json → check_completeness → write_rekomendasi_json → **render_report** →
+run_qc_lhp. Output **`LHA-DIISI-AUDITOR.docx`** (via render_lhp 3108 + skeleton baru): **0 placeholder
+`{{...}}` tersisa**, konten faithful (kelebihan bayar/kerugian negara/metode PL/Rekomendasi/SIMPULAN
+semua termuat). `[DIISI AUDITOR]` (ST/NIP/TTE) = field administratif manual, bukan gap render.
+Membuktikan subsistem render laporan v8.8 (Fase 1) berfungsi end-to-end via jalur agen nyata.
