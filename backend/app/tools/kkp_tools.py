@@ -385,6 +385,27 @@ async def get_kodefikasi_temuan(_args: dict) -> dict:
     return {"content": [{"type": "text", "text": text}]}
 
 
+def _read_hitl_overlay(folder: Path):
+    """P1c: baca overlay HITL portabel dari `_KKP/hitl-overlay.json`.
+    Skema: {"rejected_ids": ["<id_temuan>"...], "edits": {"<id_temuan>": {"<field>": <val>}}}.
+    Disuplai ORKESTRATOR (INTEGRAL) atau dimaterialisasi backend harness dari DB.
+    Return (rejected:set[str], edits:dict[str,dict]) bila file ada & valid; None bila
+    tak ada → caller fallback ke DB (kompat harness lama)."""
+    path = folder / "_KKP" / "hitl-overlay.json"
+    if not path.is_file():
+        return None
+    try:
+        d = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(d, dict):
+        return None
+    rejected = {str(x) for x in (d.get("rejected_ids") or [])}
+    raw_edits = d.get("edits") or {}
+    edits = {str(k): v for k, v in raw_edits.items() if isinstance(v, dict)}
+    return rejected, edits
+
+
 async def _filter_temuan_by_review(folder: Path) -> tuple[Path | None, dict | None]:
     """Terapkan overlay edit manual (HITL) ke `_KKP/temuan.json` sebelum render.
     Return (backup_path, stats).
@@ -400,83 +421,68 @@ async def _filter_temuan_by_review(folder: Path) -> tuple[Path | None, dict | No
     dan `temuan.json` ditulis ulang dengan subset. Caller WAJIB panggil
     `_restore_temuan_from_backup` setelah render selesai (sukses/gagal).
     """
-    from app.database import SessionLocal
-    from app.models import Penugasan, TemuanReview
-
     temuan_path = folder / "_KKP" / "temuan.json"
     if not temuan_path.is_file():
         return None, None
 
-    # Resolve penugasan_id dari folder_path
-    folder_abs = str(folder.resolve())
+    # P1c: overlay HITL dari FILE dulu (portabel: INTEGRAL/harness suplai
+    # `_KKP/hitl-overlay.json`), fallback ke DB (Penugasan+TemuanReview) bila tak ada.
+    rejected: set[str] = set()
+    edits_by_id: dict[str, dict] = {}
     penugasan_id: int | None = None
-    try:
-        async with SessionLocal() as db:
-            row = (await db.execute(
-                select(Penugasan.id).where(Penugasan.folder_path == folder_abs)
-            )).first()
-            if row is None:
-                # Fallback: cari yang ber-suffix nama folder (kode)
-                kode = folder.name
+    overlay = _read_hitl_overlay(folder)
+    if overlay is not None:
+        rejected, edits_by_id = overlay
+    else:
+        from app.database import SessionLocal
+        from app.models import Penugasan, TemuanReview
+        folder_abs = str(folder.resolve())
+        try:
+            async with SessionLocal() as db:
                 row = (await db.execute(
-                    select(Penugasan.id).where(Penugasan.kode == kode)
+                    select(Penugasan.id).where(Penugasan.folder_path == folder_abs)
                 )).first()
-            if row is None:
-                return None, None
-            penugasan_id = row[0]
+                if row is None:
+                    row = (await db.execute(
+                        select(Penugasan.id).where(Penugasan.kode == folder.name)
+                    )).first()
+                if row is None:
+                    return None, None
+                penugasan_id = row[0]
+                full_reviews = (await db.execute(
+                    select(TemuanReview).where(TemuanReview.penugasan_id == penugasan_id)
+                )).scalars().all()
+        except Exception:  # noqa: BLE001 — best-effort filter
+            return None, None
+        if not full_reviews:
+            return None, None
+        rejected = {r.temuan_id for r in full_reviews if r.status == "REJECTED"}
+        edits_by_id = {r.temuan_id: r.edited_fields for r in full_reviews if r.edited_fields}
 
-            reviews = (await db.execute(
-                select(TemuanReview.temuan_id, TemuanReview.status)
-                .where(TemuanReview.penugasan_id == penugasan_id)
-            )).all()
-    except Exception:  # noqa: BLE001 — best-effort filter
+    # Tak ada overlay sama sekali → bypass (render semua apa adanya).
+    if not rejected and not edits_by_id:
         return None, None
 
-    if not reviews:
-        return None, None  # belum ada workflow review → bypass
-
-    # Re-query untuk dapatkan edited_fields (TemuanReview row utuh).
-    try:
-        async with SessionLocal() as db2:
-            full_reviews = (await db2.execute(
-                select(TemuanReview).where(TemuanReview.penugasan_id == penugasan_id)
-            )).scalars().all()
-    except Exception:  # noqa: BLE001
-        full_reviews = []
-
-    review_by_id: dict[str, TemuanReview] = {r.temuan_id: r for r in full_reviews}
-
-    # Model HITL baru (17 Jun 2026): TIDAK ada approve/tolak per-temuan. Semua temuan
-    # di temuan.json masuk render, dengan overlay edit manual diterapkan. Hanya temuan
-    # ber-status REJECTED (data lama) yang di-exclude (backward compat).
-    rejected = {tid for tid, status in reviews if status == "REJECTED"}
-
-    # Load + filter
+    # Load + terapkan overlay (exclude REJECTED + edited_fields).
     try:
         data = json.loads(temuan_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return None, None
-
     full = data.get("temuan", [])
     if not isinstance(full, list):
         return None, None
-
-    # Sertakan semua kecuali REJECTED; terapkan overlay edited_fields.
     n_edits_applied = 0
     filtered: list[dict] = []
-    for t in full:
-        tid = t.get("id_temuan")
+    for t_item in full:
+        tid = t_item.get("id_temuan")
         if tid in rejected:
             continue
-        rev = review_by_id.get(tid)
-        edits = rev.edited_fields if rev and rev.edited_fields else None
+        edits = edits_by_id.get(tid)
         if edits:
-            # Shallow overlay — hanya field yg di-edit yg ditimpa
-            t_overlay = {**t, **edits}
-            filtered.append(t_overlay)
+            filtered.append({**t_item, **edits})
             n_edits_applied += 1
         else:
-            filtered.append(t)
+            filtered.append(t_item)
     stats = {
         "n_total": len(full),
         "n_included": len(filtered),
