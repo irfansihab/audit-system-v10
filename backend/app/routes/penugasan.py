@@ -1591,3 +1591,120 @@ async def create_lhp_review(
         "daftar_temuan_path": daftar_temuan_path,
         **_lhp_review_dict(review, user.nama_lengkap),
     }
+
+
+# ─── Survei Pendahuluan (port dari v8.8 SIMWAS) ───────────────────────────
+def _newest_doc_mtime(folder: Path) -> float:
+    """mtime dokumen sumber + digest terbaru (penanda 'ada file baru').
+
+    Cek folder input dokumen + `_INGESTED/` (hasil ingest). Return 0.0 bila kosong.
+    """
+    newest = 0.0
+    scan_dirs = ["00-input", "00-survey", "01-peraturan-internal", "02-kontrak",
+                 "03-perencanaan", "04-pelaksanaan", "05-keuangan", "_INGESTED"]
+    for sub in scan_dirs:
+        d = folder / sub
+        if not d.is_dir():
+            continue
+        for f in d.rglob("*"):
+            if f.is_file() and not f.name.startswith("."):
+                try:
+                    newest = max(newest, f.stat().st_mtime)
+                except OSError:
+                    pass
+    return newest
+
+
+@router.get("/{penugasan_id}/context-survey-status")
+async def get_context_survey_status(
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Status konteks & survei untuk tombol 3-state di UI.
+
+    - is_audit       : skill termasuk skill audit (punya survei pendahuluan)?
+    - context_exists : context.md sudah ada?
+    - survey_exists  : _SURVEY/Survei-Pendahuluan.docx sudah ada?
+    - stale          : ada dokumen yang LEBIH BARU dari output (perlu generate ulang)?
+    """
+    from app.survey_pendahuluan import is_audit_skill
+
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    folder = Path(p.folder_path)
+    is_audit = is_audit_skill(p.skill)
+    ctx_path = folder / "context.md"
+    survey_path = folder / "_SURVEY" / "Survei-Pendahuluan.docx"
+    context_exists = ctx_path.exists()
+    survey_exists = survey_path.exists()
+
+    newest_doc = _newest_doc_mtime(folder)
+    # Output mtime terkecil yang relevan: bila salah satu belum ada → 0 (pasti stale).
+    out_mtimes = []
+    if context_exists:
+        out_mtimes.append(ctx_path.stat().st_mtime)
+    if is_audit:
+        out_mtimes.append(survey_path.stat().st_mtime if survey_exists else 0.0)
+    oldest_output = min(out_mtimes) if out_mtimes else 0.0
+
+    if is_audit:
+        generated = context_exists and survey_exists
+    else:
+        generated = context_exists
+    stale = generated and newest_doc > oldest_output
+
+    return {
+        "is_audit": is_audit,
+        "context_exists": context_exists,
+        "survey_exists": survey_exists,
+        "generated": generated,
+        "stale": stale,
+    }
+
+
+@router.post("/{penugasan_id}/survey-pendahuluan")
+async def render_survey_pendahuluan_route(
+    penugasan_id: int,
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Render Laporan Survei Pendahuluan (.docx). HANYA skill audit.
+
+    Dipanggil frontend SETELAH context.md selesai digenerate agen, agar isi
+    survei (Gambaran Umum dll) ikut yang terbaru.
+    """
+    from app.survey_pendahuluan import is_audit_skill, render_survey_pendahuluan
+
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    if not is_audit_skill(p.skill):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            f"Survei pendahuluan hanya untuk skill audit (skill saat ini: {p.skill}).",
+        )
+    folder = Path(p.folder_path)
+    if not (folder / "context.md").exists():
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "context.md belum ada — generate konteks dulu sebelum survei pendahuluan.",
+        )
+    out_path = render_survey_pendahuluan(folder, skill=p.skill, obyek=p.obyek)
+    return {
+        "ok": True,
+        "path": str(out_path.relative_to(folder)),
+        "name": out_path.name,
+    }
+
+
+# ============================================================
+# Kartu Penugasan (KP) — diisi PT (tahapan 1), dokumen administratif.
+# Beda dgn context.md (konteks kerja AI yang di-generate AT). Disimpan sbg
+# _KP/kartu-penugasan.md. Diisi dari template wiki (kind=kp) lalu di-edit.
+# ============================================================
+
+_KP_REL = "_KP/kartu-penugasan.md"
+_KP_FIELDS_REL = "_KP/kp-fields.json"
+
+
+class KpPayload(BaseModel):
+    content: str = Field(..., description="Isi Kartu Penugasan (markdown ter-render)")
+    # Nilai field form terstruktur — format INTEGRAL (hasil bedah form live

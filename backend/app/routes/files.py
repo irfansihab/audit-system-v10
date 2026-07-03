@@ -26,6 +26,7 @@ router = APIRouter(prefix="/penugasan", tags=["files"])
 
 # Kategorisasi subfolder untuk grouping di UI
 CATEGORIES = {
+    "_SURVEY": "Survei Pendahuluan",
     "_KKP": "Kertas Kerja Pengawasan (KKP)",
     "_LHP": "Laporan Hasil Reviu (LHR)",
     "_QA-SAIPI": "QC SAIPI",
