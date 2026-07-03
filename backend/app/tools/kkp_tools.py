@@ -520,6 +520,35 @@ def _restore_temuan_from_backup(folder: Path, backup: Path | None) -> None:
         backup.unlink(missing_ok=True)
 
 
+# Skill evaluasi ber-LKE Excel: output LKE-terisi WAJIB (deliverable utama).
+_LKE_EXCEL_SKILLS = {"evaluasi-spip", "evaluasi-sakip"}
+
+
+def _skill_from_assignment(folder: Path) -> str | None:
+    """Skill penugasan untuk gate LKE — robust multi-sumber (v10):
+    1) _PKP/sasaran-assignment.json['skill'] (bila ada), 2) temuan.json
+    penugasan.jenis_pengawasan, 3) parse nama folder."""
+    try:
+        d = json.loads((folder / "_PKP" / "sasaran-assignment.json").read_text(encoding="utf-8"))
+        s = d.get("skill") if isinstance(d, dict) else None
+        if isinstance(s, str) and s.strip():
+            return s.strip().lower()
+    except (OSError, json.JSONDecodeError):
+        pass
+    try:
+        d = json.loads((folder / "_KKP" / "temuan.json").read_text(encoding="utf-8"))
+        s = (d.get("penugasan") or {}).get("jenis_pengawasan") if isinstance(d, dict) else None
+        if isinstance(s, str) and s.strip():
+            return s.strip().lower()
+    except (OSError, json.JSONDecodeError):
+        pass
+    name = folder.name.lower().replace("-", "")
+    for s in _LKE_EXCEL_SKILLS:
+        if s.replace("-", "") in name:
+            return s
+    return None
+
+
 @tool(
     "render_kkp_docx",
     "Render KKP-{nama-anggota}.docx menggunakan scripts/render_kkp.py V6. "
@@ -530,6 +559,19 @@ def _restore_temuan_from_backup(folder: Path, backup: Path | None) -> None:
 )
 async def render_kkp_docx(args: dict) -> dict:
     folder = Path(args["penugasan_folder"])
+    # GATE LKE (port v8.8 SIMWAS): untuk SPIP/SAKIP, LKE Excel WAJIB sudah dibuat
+    # via fill_lke sebelum render KKP — cegah KKP/laporan selesai tanpa deliverable LKE.
+    _lke_skill = _skill_from_assignment(folder)
+    if _lke_skill in _LKE_EXCEL_SKILLS:
+        _lke_xlsx = folder / "_KKP" / f"LKE-terisi-{_lke_skill}.xlsx"
+        if not _lke_xlsx.is_file():
+            return {"content": [{"type": "text", "text": (
+                f"FAILED|LKE Excel WAJIB untuk {_lke_skill} tapi belum dibuat "
+                f"(_KKP/LKE-terisi-{_lke_skill}.xlsx tidak ada). Jalankan `fill_lke` "
+                f"(isi kolom APIP per unsur/kriteria) LEBIH DULU, baru `render_kkp_docx`. "
+                f"Output LKE Excel = deliverable wajib evaluasi ber-LKE; `write_penilaian_lke` "
+                f"(JSON rekap) TIDAK menggantikannya."
+            )}], "is_error": True}
     backup, stats = await _filter_temuan_by_review(folder)
     filter_note = ""
     if stats is not None:
