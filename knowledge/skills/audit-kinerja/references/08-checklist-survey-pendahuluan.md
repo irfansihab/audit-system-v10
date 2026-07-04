@@ -1,6 +1,6 @@
 # 08 — Checklist Survey Pendahuluan Audit Kinerja
 
-Checklist ini menjadi panduan Task 02b (Survey Pendahuluan) untuk skill `audit-kinerja`. Output survey pendahuluan adalah **Memo SP** yang kemudian jadi basis KP + PKP.
+Checklist ini menjadi panduan **Survei Pendahuluan** untuk skill `audit-kinerja`. Output survei pendahuluan adalah **Memo SP** yang kemudian jadi basis KP + PKP.
 
 Merujuk AAIPI 3100 — Perencanaan dan Pelaksanaan Survey Pendahuluan.
 
@@ -15,13 +15,14 @@ Merujuk AAIPI 3100 — Perencanaan dan Pelaksanaan Survey Pendahuluan.
 - [ ] Outcome yang diharapkan (bagaimana diukur?)
 - [ ] Stakeholder: penerima manfaat, mitra pelaksana, regulator
 
-## B. Pemetaan Risiko 3E
+## B. Pemetaan Risiko 2E
 
 | Dimensi | Pertanyaan Kunci | Risiko Tipikal |
 |---------|------------------|----------------|
-| **Ekonomis** | Apakah input (SDM, barang, modal) diperoleh dengan biaya wajar? | HPS kemahalan, spesifikasi berlebihan, biaya overhead tidak proporsional |
 | **Efisien** | Apakah rasio input:output optimal? | Produksi rendah per rupiah, proses berulang tidak otomatis, idle asset |
 | **Efektif** | Apakah output mencapai outcome? | IK outcome tidak ada, target tidak SMART, manfaat tidak sampai target beneficiaries |
+
+> **Ekonomisitas (kewajaran harga input: HPS kemahalan, spesifikasi berlebihan) di luar lingkup audit kinerja (2E).** Bila terindikasi selama survei → catat sebagai area untuk **eskalasi `audit-pengadaan`**, bukan dimensi audit kinerja.
 
 ## C. Penajaman Sasaran (dari ST ke Memo SP)
 
@@ -62,7 +63,7 @@ Hipotesis H-01:
   Dugaan kondisi : [...]
   Dugaan kriteria: [regulasi/standar yang dilanggar]
   Metode uji     : [dokumen + wawancara + observasi yang akan dipakai]
-  Dimensi 3E     : Ekonomis / Efisien / Efektif
+  Dimensi 2E     : Efisien / Efektif   (ekonomisitas → eskalasi audit-pengadaan)
 ```
 
 Hipotesis yang tidak terbukti di KKP TIDAK jadi temuan. Hipotesis terbukti → ditulis sebagai temuan di KKP dengan 4/5 kolom KKSA.
@@ -81,12 +82,12 @@ Request list masuk ke LP (Nota Dinas Permintaan Dokumen) yang ditandatangani KT/
 
 ## H. Output Memo SP
 
-Struktur Memo SP yang disusun di Task 02b:
+Struktur Memo SP yang disusun pada Survei Pendahuluan:
 
 ```
 1. Pendahuluan (dasar, tujuan, periode)
 2. Gambaran Obyek Program
-3. Pemetaan Risiko 3E
+3. Pemetaan Risiko 2E
 4. IK Manajemen vs IK Auditor
 5. Penajaman Sasaran (dari ST)
 6. Sasaran Hasil Penajaman (yang dipakai di KKP)

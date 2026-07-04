@@ -18,7 +18,7 @@ Keempat jenis pengawasan kinerja berpijak pada regulasi yang sama. Yang membedak
 | 4 | **PP 8/2006** | Pelaporan Keuangan dan Kinerja Instansi Pemerintah |
 | 5 | **PP 60/2008** | SPIP — dasar kewenangan dan independensi APIP |
 | 6 | **PMK 62/PMK.02/2023** | Perencanaan Anggaran (RKA/KL, SBM, SBK, output) |
-| 7 | **PermenPAN-RB 5/2008** | Standar Audit APIP (audit kinerja — 3E) |
+| 7 | **PermenPAN-RB 5/2008** | Standar Audit APIP (audit kinerja; standar mencakup 3E — lingkup skill `audit-kinerja` = **2E**, ekonomisitas → eskalasi `audit-pengadaan`) |
 
 ---
 
@@ -30,11 +30,11 @@ Keempat jenis pengawasan kinerja berpijak pada regulasi yang sama. Yang membedak
 
 | Aspek | Audit Kinerja | Evaluasi SAKIP | Reviu LKj | Reviu RKA/KL |
 |-------|:-------------:|:--------------:|:---------:|:------------:|
-| **Tujuan** | Keyakinan memadai atas efektivitas, efisiensi, dan ekonomisitas program | Menilai implementasi SAKIP secara komprehensif (5 komponen) | Keyakinan terbatas atas akurasi dan keandalan penyajian LKj | Keyakinan terbatas atas kesesuaian dan kualitas perencanaan anggaran |
+| **Tujuan** | Keyakinan memadai atas efektivitas dan efisiensi program (**2E**; ekonomisitas/kewajaran harga di luar lingkup → eskalasi `audit-pengadaan`) | Menilai implementasi SAKIP secara komprehensif (5 komponen) | Keyakinan terbatas atas akurasi dan keandalan penyajian LKj | Keyakinan terbatas atas kesesuaian dan kualitas perencanaan anggaran |
 | **Tingkat Keyakinan** | **Memadai** | Terbatas (evaluatif) | Terbatas | Terbatas |
 | **Waktu Pelaksanaan** | Setelah periode/program berjalan, atau pada isu strategis | Setelah tahun anggaran (ex-post) atau triwulanan (on-going) | Sebelum LKj diserahkan ke KemenPAN-RB (Februari) | Sebelum RKA/KL diajukan ke DPR (Oktober–November) |
 | **Objek yang Diperiksa** | Program prioritas tertentu — keluaran, hasil, dampak | Seluruh sistem SAKIP (5 komponen, nilai 0–100) | Dokumen LKj yang sudah disusun | Dokumen RKA/KL yang sedang disusun |
-| **Ruang Lingkup** | Efektivitas (apakah target tercapai), Efisiensi (biaya per output), Ekonomis (kewajaran sumber daya) | Perencanaan kinerja, Pengukuran, Pelaporan, Evaluasi internal, Capaian kinerja | Format, Mekanisme penyusunan, Substansi (23 kriteria) | Keselarasan program, kualitas output/outcome, kewajaran biaya |
+| **Ruang Lingkup** | Efektivitas (apakah target tercapai), Efisiensi (biaya per output) — **2E**; ekonomisitas di luar lingkup (→ `audit-pengadaan`) | Perencanaan kinerja, Pengukuran, Pelaporan, Evaluasi internal, Capaian kinerja | Format, Mekanisme penyusunan, Substansi (23 kriteria) | Keselarasan program, kualitas output/outcome, kewajaran biaya |
 | **Elemen Temuan** | Kondisi + Kriteria + **Sebab** + Akibat + Rekomendasi | Kondisi + Kriteria + Akibat + Rekomendasi | Tabel 3 aspek (Format/Mekanisme/Substansi) + Catatan | Catatan per aspek + Rekomendasi |
 | **Sebab** | ✅ Wajib (root cause) | ❌ Tidak (rezim LKE) | ✅ Diisi (anti-mengarang) | ✅ Diisi (anti-mengarang) |
 
