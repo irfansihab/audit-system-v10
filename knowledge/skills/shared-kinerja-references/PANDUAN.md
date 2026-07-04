@@ -18,7 +18,7 @@ Keempat jenis pengawasan kinerja berpijak pada regulasi yang sama. Yang membedak
 | 4 | **PP 8/2006** | Pelaporan Keuangan dan Kinerja Instansi Pemerintah |
 | 5 | **PP 60/2008** | SPIP — dasar kewenangan dan independensi APIP |
 | 6 | **PMK 62/PMK.02/2023** | Perencanaan Anggaran (RKA/KL, SBM, SBK, output) |
-| 7 | **PermenPAN-RB 5/2008** | Standar Audit APIP (audit kinerja — 3E) |
+| 7 | **PermenPAN-RB 5/2008** | Standar Audit APIP (audit kinerja; standar mencakup 3E — lingkup skill `audit-kinerja` = **2E**, ekonomisitas → eskalasi `audit-pengadaan`) |
 
 ---
 

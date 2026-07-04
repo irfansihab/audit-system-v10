@@ -2,24 +2,22 @@
 
 Folder ini memuat rujukan kriteria audit kinerja. Setiap file diberi nomor urut agar mudah dirujuk dari SKILL.md dan checklist.
 
-## Checklist file yang WAJIB ada
+> **Lingkup audit kinerja = 2E** (efektivitas + efisiensi). Ekonomisitas/kewajaran harga **di luar lingkup** → eskalasi `audit-pengadaan`.
+
+## Status file referensi
+
+Substansi kriteria (standar audit intern, kerangka 2E, teknik sampling, akar masalah/RCA) sudah **inline di `SKILL.md`** + `shared-kinerja-references/PANDUAN.md` (daftar regulasi/standar). File di bawah ini adalah **materialisasi opsional** — dipecah ke berkas terpisah hanya bila perlu dirujuk berulang; bukan prasyarat menjalankan skill.
 
 | # | File | Isi | Status |
 |---|------|-----|--------|
-| 01 | `01-aaipi-standar-audit-intern.md` | Standar AAIPI 3000-5000, khusus 3100 Survey Pendahuluan, 3200 Program Audit, 3300 Eksekusi, 3400 Komunikasi Hasil | ⬜ TODO |
-| 02 | `02-permenpan-standar-audit-kinerja.md` | Permenpan RB 5/2008 + pembaruan — tahapan, kertas kerja, pelaporan | ⬜ TODO |
-| 03 | `03-kerangka-3e-ekonomi-efisiensi-efektivitas.md` | Definisi operasional 3E, indikator, contoh temuan per dimensi | ⬜ TODO |
-| 04 | `04-teknik-sampling-audit-kinerja.md` | Sampling judgement, statistical, walk-through; ukuran sampel minimum per populasi | ⬜ TODO |
-| 05 | `05-akar-masalah-fishbone-5why.md` | Teknik analisis akar masalah untuk temuan 3E | ⬜ TODO |
-| 06 | `06-benchmark-sources.md` | Daftar sumber benchmark online yang valid: OECD, WB, INTOSAI, BPK/BPKP, akademis — beserta catatan keandalan | ⬜ TODO |
-| 07 | `07-regulasi-pembina-sektor-tik.md` | Regulasi Menteri Kominfo/Kemkomdigi yang sering jadi kriteria (UU ITE, PP PDP, Peraturan Menteri terbaru) | ⬜ TODO |
-| 08 | `08-checklist-survey-pendahuluan.md` | Checklist penajaman sasaran, mapping risiko, hipotesis awal | ⬜ TODO |
-
-## Prioritas pengisian
-
-**Minggu 1**: 01, 03, 08 (minimal untuk memulai audit kinerja)
-**Minggu 2**: 02, 04, 05 (metodologi)
-**Minggu 3**: 06, 07 (konteks sektoral)
+| 08 | `08-checklist-survey-pendahuluan.md` | Checklist penajaman sasaran, pemetaan risiko 2E, hipotesis awal | ✅ ADA |
+| 01 | `01-aaipi-standar-audit-intern.md` | Standar AAIPI 3000-5000 (3100 Survei Pendahuluan, 3200 Program, 3300 Eksekusi, 3400 Komunikasi) | ⬜ opsional (inline di SKILL) |
+| 02 | `02-permenpan-standar-audit-kinerja.md` | Permenpan RB 5/2008 + pembaruan — tahapan, kertas kerja, pelaporan | ⬜ opsional (inline di SKILL) |
+| 03 | `03-kerangka-2e-efisiensi-efektivitas.md` | Definisi operasional 2E, indikator, contoh temuan per dimensi | ⬜ opsional (inline di SKILL §Dimensi) |
+| 04 | `04-teknik-sampling-audit-kinerja.md` | Sampling judgement, statistical, walk-through; ukuran sampel minimum per populasi | ⬜ opsional |
+| 05 | `05-akar-masalah-fishbone-5why.md` | Teknik analisis akar masalah (RCA) untuk temuan 2E | ⬜ opsional (inline di SKILL §Sebab) |
+| 06 | `06-benchmark-sources.md` | Sumber benchmark online valid: OECD, WB, BPK/BPKP, akademis — beserta catatan keandalan | ⬜ opsional |
+| 07 | `07-regulasi-pembina-sektor-tik.md` | Regulasi Menteri Komdigi yang sering jadi kriteria (UU ITE, PP PDP, Peraturan Menteri terbaru) | ⬜ opsional (konteks sektoral) |
 
 ## Catatan
 

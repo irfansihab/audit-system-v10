@@ -29,7 +29,7 @@ Reviu memberikan keyakinan **terbatas** (limited assurance), berbeda dengan keya
 |--------------|----------------------|
 | Temuan | Catatan / hasil reviu |
 | Penyimpangan | Hal yang belum sesuai kriteria |
-| Kondisi (CCSAA) | Kondisi (per aspek) |
+| Kondisi (KKSAR) | Kondisi (per aspek) |
 | Sebab | — (tidak ada) |
 | Akibat | Catatan / dampak (jika ada) |
 | Rekomendasi tindak lanjut | Saran perbaikan |
