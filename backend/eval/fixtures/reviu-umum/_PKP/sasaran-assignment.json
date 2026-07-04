@@ -1,0 +1,18 @@
+{
+  "skill": "reviu-umum",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memastikan kesesuaian rancangan SOP Pengelolaan Layanan PDN dengan kriteria yang diunggah (juknis format/tata naskah + template baku) sebelum ditetapkan.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Uraikan sasaran generik menjadi checklist per-elemen dari kriteria (kelengkapan lampiran, kolom tabel, tahapan penyusunan, konsistensi penomoran/jumlah langkah).",
+        "Nilai kesesuaian tiap elemen: terpenuhi / terpenuhi dengan catatan / tidak terpenuhi.",
+        "Catat ketidaksesuaian sebagai catatan reviu (K/K/S/A, Sebab anti-mengarang)."
+      ]
+    }
+  ]
+}

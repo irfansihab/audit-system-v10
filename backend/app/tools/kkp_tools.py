@@ -805,6 +805,26 @@ def _summarize_digest_raw(name: str, data: dict) -> dict:
             out["sla"] = kak["sla_value"]
         return out
 
+    # Digest generik (digest_generic — dipakai skill criteria-driven: *-umum,
+    # audit-kinerja, evaluasi-*, pemantauan-*, konsultansi): tak punya komponen/
+    # identitas_ro/dokumen, tapi punya ringkasan_teks + kata_kunci + regulasi.
+    # Surface teks-nya agar read_ingested_digest berguna tanpa buka PDF (hemat token).
+    if data.get("ringkasan_teks") is not None or data.get("kata_kunci") is not None:
+        out["jenis"] = data.get("jenis") or "GENERIK"
+        rk = str(data.get("ringkasan_teks") or "")
+        if rk:
+            out["ringkasan_teks"] = rk[:1800]
+        if data.get("halaman_total"):
+            out["halaman_total"] = data["halaman_total"]
+        for k in ("kata_kunci", "regulasi_terdeteksi", "tanggal_terdeteksi",
+                  "nilai_rupiah_terdeteksi"):
+            v = data.get(k)
+            if isinstance(v, list) and v:
+                out[k] = v[:20]
+            elif v:
+                out[k] = v
+        return out
+
     # Fallback: pengadaan top-level (struktur lama).
     out["jenis"] = "PENGADAAN"
     for k in ("obyek", "nilai_hps", "metode_pemilihan", "jangka_waktu", "sla"):

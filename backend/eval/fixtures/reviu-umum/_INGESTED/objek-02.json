@@ -1,0 +1,21 @@
+{
+  "file": "00-input/objek-02-draft-sk-penetapan.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 363,
+  "ringkasan_teks": "DRAF SURAT KEPUTUSAN PENETAPAN SOP PDN. Menetapkan \"Standar Operasional Prosedur\nPengelolaan Layanan PDN yang terdiri dari 10 (sepuluh) langkah\" — berlaku sejak 1 Februari 2026.\nSK merujuk SOP dengan nomor \"SOP-05/PDN/2026\". (Catatan pembanding: cover rancangan SOP\ntertulis SOP-03/PDN/2026 dan menyebut 12 langkah, sedangkan tabelnya memuat 9 langkah.)",
+  "kata_kunci": [
+    "SK penetapan",
+    "SOP-05/PDN/2026",
+    "10 langkah"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-02-01"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}
