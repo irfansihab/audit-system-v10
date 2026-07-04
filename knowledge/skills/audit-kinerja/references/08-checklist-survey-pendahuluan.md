@@ -1,6 +1,6 @@
 # 08 — Checklist Survey Pendahuluan Audit Kinerja
 
-Checklist ini menjadi panduan Task 02b (Survey Pendahuluan) untuk skill `audit-kinerja`. Output survey pendahuluan adalah **Memo SP** yang kemudian jadi basis KP + PKP.
+Checklist ini menjadi panduan **Survei Pendahuluan** untuk skill `audit-kinerja`. Output survei pendahuluan adalah **Memo SP** yang kemudian jadi basis KP + PKP.
 
 Merujuk AAIPI 3100 — Perencanaan dan Pelaksanaan Survey Pendahuluan.
 
@@ -82,7 +82,7 @@ Request list masuk ke LP (Nota Dinas Permintaan Dokumen) yang ditandatangani KT/
 
 ## H. Output Memo SP
 
-Struktur Memo SP yang disusun di Task 02b:
+Struktur Memo SP yang disusun pada Survei Pendahuluan:
 
 ```
 1. Pendahuluan (dasar, tujuan, periode)

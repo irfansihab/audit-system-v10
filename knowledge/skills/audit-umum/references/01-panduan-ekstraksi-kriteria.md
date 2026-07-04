@@ -93,9 +93,9 @@ FOR setiap file di input/kriteria/:
 OUTPUT: _KKP/matriks-kriteria.xlsx + _KKP/kriteria.json
 ```
 
-## Konfirmasi ke Auditor (WAJIB Gate 1)
+## Ringkasan Ekstraksi Kriteria
 
-Setelah ekstraksi otomatis, **WAJIB** tampilkan ringkasan ke auditor sebelum lanjut:
+Setelah ekstraksi, susun ringkasan kriteria berikut (kapan & bagaimana dikonfirmasi ke auditor diatur **orkestrator**, bukan skill):
 
 ```
 Ringkasan Kriteria yang Diekstrak:
@@ -103,11 +103,10 @@ Ringkasan Kriteria yang Diekstrak:
 - Total entri kriteria: M (mengikat: x, indikatif: y, definisi: z)
 - Distribusi level: L2=…, L3=…, L4=…, L5=…
 - Aspek terdeteksi: [perencanaan: a, pelaksanaan: b, …]
-- File yang tidak dapat di-parse otomatis: [daftar — minta auditor verifikasi manual]
-
-Apakah matriks kriteria ini lengkap dan tepat?
-[YA — lanjut ke Gate 2] / [TIDAK — tambahkan/koreksi]
+- File yang tidak dapat di-parse otomatis: [daftar — perlu verifikasi manual auditor]
 ```
+
+Kelengkapan/ketepatan matriks kriteria dikonfirmasi ke auditor sesuai alur orkestrator sebelum dipakai untuk pengujian.
 
 ## Aturan Pemilihan Kriteria untuk Pengujian
 

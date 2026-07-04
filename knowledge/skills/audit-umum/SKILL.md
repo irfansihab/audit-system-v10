@@ -85,7 +85,7 @@ Aspek pengujian **diturunkan dari matriks kriteria** (kriteria yang diunggah aud
 - **Bukti memadai** — setiap kondisi disertai `[Nama File hal. X par. Y]` + tanggal + nilai (jika ada). Ikuti `references/02-checklist-bukti-audit.md` untuk kelengkapan & kualitas bukti.
 - **Uji objek vs kriteria** — bandingkan fakta objek dengan kriteria; nyatakan terpenuhi / tidak terpenuhi / tidak cukup data.
 - **Konsistensi internal & lintas dokumen** — bandingkan angka/nilai/tanggal yang sama antar bagian/dokumen.
-- Jika kriteria tidak ditemukan untuk suatu kondisi → catat "kriteria tidak teridentifikasi, mohon arahan auditor".
+- Jika kriteria acuan tidak tersedia untuk dibandingkan → JANGAN nyatakan sebagai deviasi/temuan terkonfirmasi; catat "kriteria tidak teridentifikasi, mohon arahan auditor".
 - Jika dokumen objek tidak tersedia → catat sebagai keterbatasan dalam Bab Metodologi LHA.
 
 ## Format Unsur Temuan (KKSAR)
@@ -163,7 +163,7 @@ Ikuti `panduan-format-umum/PANDUAN.md` (Nota Dinas + format surat dinas). Strukt
 
 - Bahasa Indonesia formal, kalimat aktif, spesifik
 - Setiap fakta wajib disertai sumber: `[Nama File hal. X par. Y]`
-- Hindari "diduga" — gunakan fakta atau "berpotensi"
+- Hindari "diduga"/"perlu diverifikasi" sebagai dasar Kondisi — Kondisi harus fakta terkonfirmasi dari bukti; bila belum terkonfirmasi, jadikan catatan/langkah verifikasi, bukan temuan. ("berpotensi" hanya untuk menyatakan Akibat/risiko, bukan untuk menghedge fakta)
 - Nilai rupiah: `Rp 245.000.000,00 (dua ratus empat puluh lima juta rupiah)`
 - **Jangan menyimpulkan niat jahat** — fokus pada ketidaksesuaian prosedur
 - **Sebab WAJIB** (akar masalah via RCA) — pembeda audit; bila tak terbukti, tulis "Tidak cukup data", jangan mengarang

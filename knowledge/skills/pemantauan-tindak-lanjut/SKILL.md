@@ -92,12 +92,7 @@ Struktur **Laporan Hasil Pemantauan TLHP** (ikuti panduan-format-umum untuk kop/
 
 ## Referensi
 
-| # | File | Isi |
-|---|------|-----|
-| 01 | `01-pp-60-2008-spip.md` | Pasal kewajiban TLHP (Pasal 50) |
-| 02 | `02-keputusan-bpk-tlhp.md` | Mekanisme koordinasi Kemkomdigi–BPK |
-| 03 | `03-template-matrix-aging.xlsx` | Template Excel aging analysis |
-| 04 | `04-panduan-klasifikasi-status.md` | Kriteria detail kapan rek dianggap Tuntas/Proses/Belum |
+Kriteria kewajiban tindak lanjut hasil pengawasan: **PP 60/2008 Pasal 50** (kewajiban pimpinan instansi menindaklanjuti rekomendasi APIP) dan **PermenPAN-RB 5/2008** (Standar Audit APIP — pemantauan tindak lanjut); lihat frontmatter `dasar-hukum`. Klasifikasi status TL (Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak Dapat Ditindaklanjuti) dan aging mengikuti definisi pada bagian pemantauan di atas. Format kop/Nota Dinas & struktur laporan mengikuti `../panduan-format-umum/PANDUAN.md`; matriks status TL lengkap dihasilkan sebagai lampiran Excel.
 
 ## Batasan
 

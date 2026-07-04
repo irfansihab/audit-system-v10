@@ -6,7 +6,7 @@ dasar-hukum: PP 60/2008, Perpres 29/2014, Standar Audit Intern Pemerintah Indone
 kode-surat: PW.04.04
 tingkat-keyakinan: memadai
 dimensi: 2E (efektivitas, efisiensi)
-version: "3.2"
+version: "3.3"
 changelog:
   - v3.3 (2026-07-01): Hardening v10 — terminologi baku **CCSAA→KKSAR** & lingkup **3E→2E** (ekonomis ditunda) di body; substansi/doktrin tetap.
   - v3.2 (2026-06-29): Engine-ready — orkestrasi (urutan tool, peran AT/KT/PT, titik HITL, auto-eksekusi, pilihan model) DIPINDAH ke orkestrator (harness: backend/app/prompts/anggota_tim.md; produksi: INTEGRAL). Frontmatter model/auto_execute dihapus; seksi "Eksekusi di v7", tabel "Tahap A0–A4", "Hemat Token", dan blok "Identitas" duplikat dibuang (substansinya tetap di bawah). Bahasa tool dibuat tool-agnostik. Substansi 8-aspek, Survey Pendahuluan, why-tree, format unsur, materialitas, struktur LHA tetap utuh.

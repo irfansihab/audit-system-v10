@@ -26,5 +26,5 @@ Substansi kriteria (standar audit intern, kerangka 2E, teknik sampling, akar mas
   2. Pasal/butir yang relevan (verbatim jika penting)
   3. Bagaimana dipakai sebagai kriteria di KKP audit-kinerja
   4. Link ke dokumen asli (jika dari web)
-- Untuk regulasi dinamis (mis. benchmark online), tulis **tanggal akses** dan URL — reviewer Task 03/04 akan memvalidasi.
+- Untuk regulasi dinamis (mis. benchmark online), tulis **tanggal akses** dan URL — divalidasi saat reviu KKP/LHP.
 - Research online WAJIB disitir dengan URL + tanggal akses. Research hanya konteks pembanding — BUKAN kriteria utama. Kriteria utama selalu regulasi/perintah.

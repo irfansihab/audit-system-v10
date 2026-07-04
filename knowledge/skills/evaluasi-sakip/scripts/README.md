@@ -13,7 +13,7 @@ Folder ini memuat 4 script pendukung untuk skill `evaluasi-sakip`. **BUKAN pipel
 
 ## Status Pemakaian (per 6 Mei 2026)
 
-- **`extract_lke.py` & `fill_lke_apip.py`** → **legacy / dipakai jika auditee masih kirim LKE format `.xls`**. Per Mei 2026, alur produksi pakai LKE `.xlsx` Komdigi 2025 (lihat `digest_lke.py` di pipeline utama).
+- **`extract_lke.py` & `fill_lke_apip.py`** → **legacy / dipakai jika auditee masih kirim LKE format `.xls`**. Per Mei 2026, alur produksi memakai LKE `.xlsx` Komdigi 2025 yang diproses lewat tool pengisian LKE (`fill_lke`) pada alur agen — bukan pipeline batch.
 - **`read_local_bukti.py`** → **aktif** dipakai di alur v5.0 untuk augment JSON LKE dengan teks bukti dukung lokal sebelum analisis Claude.
 - **`download_bukti.py`** → **kondisional** — dipakai bila bukti dukung disimpan di portal evsakip (download massal sebelum read_local_bukti).
 
@@ -29,9 +29,9 @@ pip install xlrd==1.2.0 --break-system-packages
 
 ## Panduan Migrasi LKE `.xls` → `.xlsx`
 
-Kalau auditee masih kirim LKE dalam format Excel 97-2003 (`.xls`):
+Alur agen (engine) memproses LKE dalam format `.xlsx`. Kalau auditee masih kirim LKE dalam format Excel 97-2003 (`.xls`):
 
-1. **Opsi cepat (rekomendasi):** Buka di Excel → Save As → `Excel Workbook (*.xlsx)` → langsung pakai `digest_lke.py` di pipeline utama.
-2. **Opsi otomatis:** Pakai `extract_lke.py` untuk parse `.xls` → JSON, lalu lanjutkan dengan `cross_check.py` + `render_lhe.py` di pipeline utama.
+1. **Opsi cepat (disarankan):** Buka di Excel → Save As → `Excel Workbook (*.xlsx)` → LKE `.xlsx` siap dipakai pada alur agen (pengisian & validasi LKE via tool `fill_lke`).
+2. **Opsi skrip:** Pakai `extract_lke.py` untuk parse `.xls` legacy → JSON terstruktur sebagai bahan augmentasi (lihat `read_local_bukti.py`).
 
-Pipeline utama (run_batch.py) **hanya mendukung .xlsx**. Untuk full auto-execute pakai opsi 1.
+Catatan: skill ini **agen-driven** (tanpa pipeline batch/auto-execute) — orkestrasi urutan langkah diatur orkestrator, bukan skrip di folder ini.

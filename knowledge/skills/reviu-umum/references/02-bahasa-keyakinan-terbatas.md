@@ -30,7 +30,7 @@ Reviu memberikan keyakinan **terbatas** (limited assurance), berbeda dengan keya
 | Temuan | Catatan / hasil reviu |
 | Penyimpangan | Hal yang belum sesuai kriteria |
 | Kondisi (KKSAR) | Kondisi (per aspek) |
-| Sebab | — (tidak ada) |
+| Sebab | Sebab (anti-mengarang) — diisi bila terbukti dari bukti; bila tidak: "Tidak ditemukan penyebab" / "Tidak cukup data" |
 | Akibat | Catatan / dampak (jika ada) |
 | Rekomendasi tindak lanjut | Saran perbaikan |
 | Berpotensi merugikan negara Rp X | (tidak digunakan dalam reviu) |

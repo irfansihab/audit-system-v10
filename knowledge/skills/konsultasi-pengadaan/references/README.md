@@ -1,6 +1,6 @@
 # References — Konsultasi Pengadaan
 
-Folder ini memuat rujukan untuk skill `konsultasi-pengadaan`. Karena output-nya bukan KKSA lengkap melainkan **Dasar Hukum → Analisis → Rekomendasi** per pertanyaan, referensi yang di sini adalah *lookup table* regulasi PBJ aktif.
+Folder ini memuat rujukan untuk skill `konsultasi-pengadaan`. Karena output-nya bukan KKSA lengkap melainkan **pendapat advisory** dengan alur **Pertanyaan → Dasar Hukum → Analisis → Pendapat** per pertanyaan (tanpa Sebab/temuan, tidak mengikat), referensi yang di sini adalah *lookup table* regulasi PBJ aktif.
 
 ## Checklist file yang WAJIB ada
 
@@ -14,15 +14,15 @@ Folder ini memuat rujukan untuk skill `konsultasi-pengadaan`. Karena output-nya 
 
 ## Format Output Konsultasi
 
-Skill ini menghasilkan dokumen konsultasi singkat (bukan KKP) dengan kolom:
+Skill ini menghasilkan **pendapat advisory** (bukan KKP, tanpa Sebab/temuan) dengan alur:
 
-| No | Pertanyaan | Analisis | Dasar Hukum | Rekomendasi |
-|----|-----------|----------|-------------|-------------|
+| No | Pertanyaan | Dasar Hukum | Analisis | Pendapat |
+|----|-----------|-------------|----------|----------|
 
-**Rekomendasi WAJIB**:
-1. Bertumpu pada dasar hukum spesifik (pasal/ayat) — TIDAK hanya "sebaiknya"
-2. Operasional: siapa melakukan apa, dengan dokumen apa, deadline kapan
-3. Tidak memihak vendor — netral pada kepentingan negara
+**Pendapat advisory**:
+1. Bertumpu pada dasar hukum spesifik (pasal/ayat) — bukan sekadar "sebaiknya"
+2. Operasional: siapa melakukan apa, dengan dokumen apa, kapan
+3. Netral pada kepentingan negara; **keputusan akhir tetap pada PPK/KPA/PA** — pendapat tidak mengikat
 
 ## Bahasa Keyakinan
 
