@@ -1,0 +1,22 @@
+{
+  "file": "00-input/objek-01-rancangan-sop-pdn.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 652,
+  "ringkasan_teks": "RANCANGAN SOP PENGELOLAAN LAYANAN PUSAT DATA NASIONAL (PDN) — Nomor cover: SOP-03/PDN/2026.\nBagian Pendahuluan (hal. 1) menyatakan: \"Prosedur ini terdiri dari 12 (dua belas) langkah\".\nNamun Tabel Prosedur (hal. 2) hanya memuat 9 baris aktivitas (langkah 1 s.d. 9).\nTabel Prosedur berkolom: No | Aktivitas | Pelaksana. TIDAK ada kolom \"Mutu Baku\"\n(Kelengkapan/Waktu/Output) sebagaimana disyaratkan template.\nDokumen TIDAK menyertakan Lampiran Bagan Alir maupun Formulir Kendali.\nRiwayat penyusunan (hal. 3): \"Draf disusun tim teknis, langsung diajukan untuk penetapan\".\nTidak ada catatan/berita acara reviu Biro Hukum maupun uji coba terbatas.",
+  "kata_kunci": [
+    "SOP-03/PDN/2026",
+    "12 langkah",
+    "tabel prosedur",
+    "PDN"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-01-20"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

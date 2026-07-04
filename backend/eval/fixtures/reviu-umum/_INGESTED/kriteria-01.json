@@ -1,0 +1,25 @@
+{
+  "file": "00-input/kriteria-01-juknis-format-sop.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 787,
+  "ringkasan_teks": "JUKNIS PENYUSUNAN & TATA NASKAH SOP UNIT KERJA (kriteria yang diunggah auditor).\nButir 3.1 — Setiap SOP WAJIB memuat lampiran: (a) Bagan Alir (flowchart) proses, dan\n(b) Formulir Kendali/checklist pelaksanaan. SOP tanpa kedua lampiran dinyatakan BELUM LENGKAP.\nButir 3.2 — Tabel prosedur WAJIB memuat kolom: No; Aktivitas; Pelaksana; dan \"Mutu Baku\"\n(Kelengkapan/persyaratan, Waktu, Output). Kolom Mutu Baku tidak boleh dihilangkan.\nButir 4.1 — Tahapan penyusunan yang WAJIB dilalui dan didokumentasikan berurutan:\n(1) penyusunan draf, (2) REVIU HUKUM oleh Biro Hukum, (3) UJI COBA terbatas, (4) penetapan.\nButir 4.2 — Nomor dan tanggal SOP pada cover harus KONSISTEN dengan SK penetapan dan\nseluruh dokumen rujukan. Jumlah langkah yang disebut pada bagian mana pun harus sama.",
+  "kata_kunci": [
+    "SOP",
+    "juknis",
+    "tata naskah",
+    "mutu baku",
+    "reviu hukum",
+    "lampiran"
+  ],
+  "regulasi_terdeteksi": [
+    "PermenPANRB 35/2012",
+    "Perki Tata Naskah Dinas"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}
