@@ -138,11 +138,21 @@ kata, yang penting inti masalah & kriterianya sama). Jangan longgar: kecocokan d
 
 
 def judge_recall(expected_issues: list[dict], temuan_list: list[dict]) -> list[dict]:
+    # Payload ramping: hanya id + ringkas yang diperlukan untuk pencocokan
+    # (materialitas/kriteria_acuan/pattern_ref tak relevan & membebani prompt).
+    exp = [{"id": e.get("id"), "ringkas": e.get("ringkas")} for e in expected_issues]
     produced = [{"index": i, "judul": t.get("judul_temuan"), "kondisi": (t.get("kondisi") or "")[:400]}
                 for i, t in enumerate(temuan_list)]
-    user = ("EXPECTED_KEY_ISSUES:\n" + json.dumps(expected_issues, ensure_ascii=False, indent=2)
+    user = ("EXPECTED_KEY_ISSUES:\n" + json.dumps(exp, ensure_ascii=False, indent=2)
             + "\n\nTEMUAN_DIPRODUKSI:\n" + json.dumps(produced, ensure_ascii=False, indent=2)
-            + "\n\nCocokkan tiap expected issue. Kembalikan via tool.")
-    out = _call_tool(_RECALL_SYSTEM, user, "rekam_recall", _RECALL_SCHEMA,
-                     max_tokens=400 + 160 * len(expected_issues))
-    return out.get("matches", [])
+            + "\n\nCocokkan tiap expected issue. Kembalikan SATU objek match per expected issue via tool.")
+    # Judge Opus sesekali mengembalikan matches KOSONG (flaky tool-call) → skor recall
+    # jadi 0.0 palsu. Retry hingga 2x bila kosong padahal ada expected & temuan.
+    matches: list[dict] = []
+    for _ in range(3):
+        out = _call_tool(_RECALL_SYSTEM, user, "rekam_recall", _RECALL_SCHEMA,
+                         max_tokens=500 + 180 * len(exp))
+        matches = out.get("matches", [])
+        if matches or not (exp and produced):
+            break
+    return matches

@@ -1,0 +1,25 @@
+{
+  "file": "00-input/kriteria-01-permenkominfo-6-2017-mr.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 609,
+  "ringkasan_teks": "KRITERIA: Peraturan Menkominfo No. 6 Tahun 2017 tentang Manajemen Risiko di Lingkungan Kementerian\n(primer) + ISO 31000:2018 (pendukung). Ketentuan: (a) Piagam Manajemen Risiko WAJIB ditetapkan &\nditandatangani pimpinan sebagai komitmen kebijakan MR; (b) Struktur MR: Pemilik Risiko (UPR) & KMR\nditetapkan lengkap sesuai Three Lines Model; (c) Formulir 3 Rencana Penanganan Risiko WAJIB diisi untuk\nrisiko level sedang s.d. sangat tinggi; (d) Formulir 4 Pemantauan Risiko dilakukan & diinput SETIAP\nTRIWULAN (4x setahun); (e) Pedoman/kerangka MR dimutakhirkan mengikuti SOTK & risk appetite terbaru.",
+  "kata_kunci": [
+    "manajemen risiko",
+    "Piagam MR",
+    "UPR",
+    "Three Lines",
+    "Formulir 3",
+    "Formulir 4"
+  ],
+  "regulasi_terdeteksi": [
+    "Permenkominfo 6/2017",
+    "ISO 31000:2018"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

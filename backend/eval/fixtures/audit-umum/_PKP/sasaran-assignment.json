@@ -1,0 +1,18 @@
+{
+  "skill": "audit-umum",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menguji kepatuhan dan kewajaran pembayaran honorarium kegiatan terhadap kriteria yang diunggah (SOP pembayaran + SBM TA 2026), termasuk kelengkapan bukti dan kebenaran perhitungan.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Uraikan sasaran jadi checklist elemen: tarif vs SBM, kelengkapan bukti, verifikasi berjenjang, konsistensi SPP-SPM.",
+        "Uji tiap elemen; hitung kelebihan bayar bila tarif > SBM; gali Sebab akar (RCA) atas kelemahan kontrol.",
+        "Rekam temuan K/K/S/A dengan Sebab WAJIB (akar masalah) dan nilai indikasi kerugian negara."
+      ]
+    }
+  ]
+}

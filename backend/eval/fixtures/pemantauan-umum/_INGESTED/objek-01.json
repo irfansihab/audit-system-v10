@@ -1,0 +1,23 @@
+{
+  "file": "00-input/objek-01-laporan-progres.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 494,
+  "ringkasan_teks": "LAPORAN PROGRES PELAKSANAAN per cut-off 30 Juni 2026 (Triwulan II). Kegiatan-1: realisasi fisik 55%\nterhadap target 90% (deviasi 35% > 10% → indikasi MERAH); serapan anggaran 80% sedangkan progres\nfisik hanya 60% (bayar > fisik). Kegiatan-2: milestone \"Uji Coba Sistem\" tenggat 30 Juni 2026 BELUM\nterealisasi (slip), blocker integrasi data belum tertangani. Kegiatan-3: laporan tidak menyertakan\ndata realisasi fisik maupun bukti progres (persentase capaian tidak dapat diverifikasi).",
+  "kata_kunci": [
+    "progres fisik 55%",
+    "serapan 80%",
+    "milestone",
+    "uji coba sistem",
+    "blocker"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-06-30"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

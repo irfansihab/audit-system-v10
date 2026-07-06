@@ -1,0 +1,17 @@
+{
+  "skill": "pemantauan-umum",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memantau status pelaksanaan rencana aksi program terhadap target & milestone per cut-off Triwulan II 2026 dan menetapkan status (early warning) berbasis bukti.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Bandingkan realisasi vs target per kegiatan; tetapkan status warna sesuai ambang; catat deviasi K/K/S/A (Sebab anti-mengarang, Akibat/risiko).",
+        "Bila data realisasi tidak lengkap → JANGAN tetapkan status pasti; nyatakan 'tidak dapat dipastikan / data tidak cukup'. Tanpa perhitungan kerugian negara."
+      ]
+    }
+  ]
+}

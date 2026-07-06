@@ -1,0 +1,22 @@
+{
+  "file": "00-input/objek-01-laporan-program.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 612,
+  "ringkasan_teks": "LAPORAN PELAKSANAAN PROGRAM PENINGKATAN LITERASI DIGITAL (hal.1-6). Ringkasan capaian menyatakan\n\"program berjalan efektif\" TANPA menguraikan capaian per dimensi/indikator rubrik (tidak ada skor\nRelevansi/Efektivitas/Keberlanjutan). Target outcome \"meningkatnya literasi digital\" tidak dinyatakan\nangka target (tidak SMART). Data penerima manfaat: bagian Ringkasan menyebut 12.000 peserta, namun\nLampiran Daftar Peserta merekap 9.500 peserta (INKONSISTEN). Dokumen monitoring/evaluasi triwulanan\n(disyaratkan SOP butir 4) TIDAK dilampirkan. Bukti pendukung capaian outcome (survei pra/pasca) tidak ada.",
+  "kata_kunci": [
+    "literasi digital",
+    "12.000 peserta",
+    "9.500 peserta",
+    "efektif"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-01-15"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}
