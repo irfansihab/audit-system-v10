@@ -435,12 +435,425 @@ rencana penanganan risiko tinggi, dan konsistensi pemantauan risiko triwulanan.
                   inputs=inputs, digests=digests)
 
 
+# ---------------------------------------------------------------------------
+# Helper ringkas untuk skenario criteria-driven 2-dokumen (kriteria + objek).
+# ---------------------------------------------------------------------------
+def _simple(skill: str, *, jenis: str, keyakinan: str, tujuan: str, ruang: str,
+            kriteria_text: str, kriteria_reg: list[str], objek_text: str,
+            sasaran_desc: str, langkah: list[str], objek_kata=None, objek_nilai=None,
+            objek_tgl=None, doktrin_sebab: str = "anti-mengarang") -> Path:
+    at = "Sarah Auditor"
+    kd = _digest(f"00-input/kriteria-01-{skill}.pdf", "kriteria", kriteria_text,
+                 kata_kunci=[skill, "kriteria"], regulasi=kriteria_reg)
+    od = _digest(f"00-input/objek-01-{skill}.pdf", "objek", objek_text,
+                 kata_kunci=objek_kata or [], nilai=objek_nilai or [], tanggal=objek_tgl or [])
+    sasaran = [{
+        "sasaran_id": "S-01", "deskripsi": sasaran_desc, "assigned_to": [at],
+        "status": "DISETUJUI_KT", "langkah_kerja": langkah,
+    }]
+    context = f"""
+# Konteks Penugasan — {jenis}
+
+Identitas: {tujuan}
+Jenis Pengawasan: {jenis} ({keyakinan})
+Auditi: Unit Auditan, Kementerian Komunikasi dan Digital
+Periode: TA 2025
+Tahun Anggaran: 2025
+
+Tujuan: {tujuan}
+Ruang Lingkup: {ruang}
+Doktrin Sebab: {doktrin_sebab}.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: {tujuan} berbasis kriteria yang diunggah; penilaian per elemen terhadap bukti.
+"""
+    inputs = {
+        f"kriteria-01-{skill}.pdf": f"[stub] kriteria {skill} — lihat _INGESTED/kriteria-01.json",
+        f"objek-01-{skill}.pdf": f"[stub] objek {skill} — lihat _INGESTED/objek-01.json",
+    }
+    return _write(skill, at_name=at, sasaran=sasaran, context_md=context, inputs=inputs,
+                  digests=[("kriteria-01", kd), ("objek-01", od)])
+
+
+# audit-kinerja (AUDIT, 2E, Sebab WAJIB/RCA, keyakinan memadai)
+def scenario_audit_kinerja() -> Path:
+    return _simple(
+        "audit-kinerja", jenis="Audit Kinerja", keyakinan="keyakinan memadai; lingkup 2E",
+        tujuan="Audit Kinerja Efektivitas & Efisiensi Program Pengawasan Konten Digital",
+        ruang="Program pengawasan konten (sistem crawling/klasifikasi, tata kelola, anggaran O&M) TA 2025.",
+        doktrin_sebab="Sebab WAJIB (root cause/RCA); lingkup 2E (ekonomisitas → audit-pengadaan)",
+        kriteria_reg=["Perpres 29/2014", "PP 60/2008", "Renstra Komdigi", "PermenPANRB 5/2008"],
+        kriteria_text="""
+KRITERIA AUDIT KINERJA: Renstra & Perjanjian Kinerja menetapkan target efektivitas sistem pengawasan
+konten minimal 80% konten bermuatan negatif tertangani; setiap sistem/aplikasi WAJIB punya sumber data
+tunggal (source of truth) yang dapat ditelusuri; anggaran O&M tidak boleh membiayai fungsi yang beririsan
+(hindari duplikasi); hasil deteksi/crawling WAJIB ditindaklanjuti tuntas (verifikasi → takedown → closure).
+Efektivitas = capaian outcome vs target; Efisiensi = biaya per output & bebas duplikasi.
+        """,
+        objek_text="""
+LAPORAN KINERJA & DATA PROGRAM PENGAWASAN KONTEN TA 2025. (1) Efektivitas sistem klasifikasi konten
+hanya 22,4% terhadap target 80% — sistem dapat di-bypass VPN, kontrol lemah. (2) Terdapat DUA sistem
+(Sistem-A crawling & Sistem-B klasifikasi) menjalankan fungsi deteksi BERIRISAN; anggaran O&M keduanya
+dibayar penuh (indikasi duplikasi/inefisiensi). (3) Hasil crawling 3,2 juta item terdeteksi, namun hanya
+0,4 juta yang diverifikasi & ditindaklanjuti tuntas; 2,8 juta item menggantung tanpa closure. (4) LKj
+melaporkan capaian "output tercapai 98%" namun sumber data capaian tidak dapat ditelusuri (tidak ada
+source of truth; rekap manual berbeda antar unit). Riwayat: tidak ada integrasi sistem & tidak ada SOP closure.
+        """,
+        objek_kata=["efektivitas 22,4%", "target 80%", "duplikasi O&M", "3,2 juta item", "source of truth"],
+        objek_tgl=["2025-12-31"],
+        sasaran_desc="Menilai efektivitas & efisiensi (2E) program pengawasan konten terhadap target "
+                     "kinerja; gali akar masalah (RCA) atas gap efektivitas, duplikasi sistem, tindak lanjut "
+                     "deteksi yang tak tuntas, dan ketertelusuran data capaian.",
+        langkah=[
+            "Uji capaian tiap aspek 2E vs target/benchmark; identifikasi gap efektivitas & inefisiensi (duplikasi).",
+            "Untuk tiap gap, gali Sebab sampai akar (why-tree/RCA) — WAJIB; nyatakan Akibat pada outcome.",
+            "Rekam temuan K/K/S/A dengan Sebab akar; keyakinan memadai.",
+        ],
+    )
+
+
+# pemantauan-tindak-lanjut (non-assurance, matriks status TL)
+def scenario_pemantauan_tl() -> Path:
+    return _simple(
+        "pemantauan-tindak-lanjut", jenis="Pemantauan Tindak Lanjut", keyakinan="non-assurance",
+        tujuan="Pemantauan Status Tindak Lanjut Rekomendasi Hasil Pengawasan (BPK/APIP)",
+        ruang="Register rekomendasi BPK/APIP dan bukti tindak lanjut per PIC/Ditjen s.d. cut-off.",
+        doktrin_sebab="Sebab anti-mengarang; status TL berbasis bukti",
+        kriteria_reg=["PP 60/2008 Pasal 50", "PermenPANRB 5/2008"],
+        kriteria_text="""
+KRITERIA PEMANTAUAN TL: status TL diklasifikasi Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak
+Dapat Ditindaklanjuti (TDD). Rekomendasi finansial (penyetoran ke kas negara) hanya Tuntas bila ada bukti
+setor. Rekomendasi 'Belum Ditindaklanjuti' dengan umur > 365 hari = kritis. Status TDD hanya sah bila ada
+dasar formal (mis. unit dibubarkan/SOTK berubah dengan SK). Rekomendasi WAJIB ditindaklanjuti (PP 60/2008 Ps.50).
+        """,
+        objek_text="""
+REGISTER TINDAK LANJUT REKOMENDASI per cut-off 30 Juni 2026. (1) 4 rekomendasi struktural BPK (cluster
+tata kelola) berstatus 'Belum Ditindaklanjuti', umur 410–520 hari (> 365 hari). (2) Rekomendasi penyetoran
+ke kas negara Rp 91,9 miliar (kolokasi/Metro-E) berstatus 'Belum Ditindaklanjuti' — belum ada bukti setor.
+(3) Rekomendasi verifikasi outstanding Rp 171,59 miliar berstatus 'Dalam Proses' — bukti TL baru parsial.
+(4) Rate penyelesaian TL timpang antar-Ditjen: Ditjen-W 17,07% (7 dari 41) vs Ditjen-E 83,33% (15 dari 18).
+(5) 2 rekomendasi atas unit yang telah berubah SOTK ditandai 'TDD' NAMUN tanpa melampirkan SK dasar formal.
+        """,
+        objek_kata=["Belum Ditindaklanjuti", "Rp 91,9 miliar", "Rp 171,59 miliar", "17,07%", "TDD"],
+        objek_nilai=["Rp 91.900.000.000", "Rp 171.590.000.000"], objek_tgl=["2026-06-30"],
+        sasaran_desc="Memantau status tindak lanjut rekomendasi hasil pengawasan (BPK/APIP) per cut-off "
+                     "dan menandai deviasi (belum TL, TDD tanpa dasar, asimetri penyelesaian) berbasis bukti.",
+        langkah=[
+            "Klasifikasi status TL tiap rekomendasi (Tuntas/Proses/Belum/TDD) berbasis bukti; hitung umur (aging).",
+            "Tandai deviasi: belum TL > 365 hari, finansial belum setor, TDD tanpa SK, asimetri rate. Sebab anti-mengarang.",
+        ],
+    )
+
+
+# pemantauan-pengadaan (non-assurance, status pelaksanaan kontrak)
+def scenario_pemantauan_pengadaan() -> Path:
+    return _simple(
+        "pemantauan-pengadaan", jenis="Pemantauan Pengadaan", keyakinan="non-assurance",
+        tujuan="Pemantauan Pelaksanaan Kontrak Pengadaan (progres fisik, pembayaran, milestone)",
+        ruang="Laporan progres kontrak, SPM/SP2D, jadwal & KAK per cut-off.",
+        doktrin_sebab="Sebab anti-mengarang; status berbasis bukti",
+        kriteria_reg=["Perpres 16/2018 jo. 12/2021 Pasal 78 (denda 1/1000)", "Perpres 46/2025"],
+        kriteria_text="""
+KRITERIA PEMANTAUAN PENGADAAN: progres fisik dibandingkan jadwal kontrak; pembayaran kumulatif TIDAK boleh
+melampaui progres fisik; keterlambatan milestone dikenai denda 1/1000 per hari (Perpres 16/2018 jo 12/2021
+Pasal 78); addendum kumulatif > 10% nilai kontrak = indikasi perencanaan lemah; deliverable/milestone
+dinilai terhadap lingkup & jadwal KAK.
+        """,
+        objek_text="""
+LAPORAN PROGRES KONTRAK per cut-off 30 Juni 2026 (nilai kontrak Rp 12.000.000.000). (1) Progres fisik
+aktual 40% sedangkan target jadwal kontrak 70% (deviasi 30%). (2) Pembayaran kumulatif (SPM/SP2D) 55%
+melampaui progres fisik 40% (bayar > fisik, risiko kelebihan bayar). (3) Milestone kritis 'Instalasi &
+Uji Fungsi' tenggat 15 Juni 2026 TERLEWAT 15 hari — potensi denda 1/1000/hari belum dihitung/dikenakan.
+(4) Terdapat 3 addendum kontrak kumulatif senilai 14% dari nilai kontrak (> 10%). (5) Dua deliverable yang
+dijadwalkan selesai s.d. periode laporan belum tercapai.
+        """,
+        objek_kata=["progres fisik 40%", "pembayaran 55%", "milestone terlewat", "addendum 14%", "denda"],
+        objek_nilai=["Rp 12.000.000.000"], objek_tgl=["2026-06-30", "2026-06-15"],
+        sasaran_desc="Memantau pelaksanaan kontrak pengadaan terhadap jadwal, pembayaran, dan milestone KAK "
+                     "per cut-off; menandai deviasi (fisik<jadwal, bayar>fisik, denda, addendum berlebih) berbasis bukti.",
+        langkah=[
+            "Bandingkan progres fisik vs jadwal, pembayaran vs fisik, milestone vs KAK; hitung indikasi denda 1/1000.",
+            "Tandai deviasi K/K/S/A (Sebab anti-mengarang, Akibat/risiko). Non-assurance; tanpa hitung kerugian negara.",
+        ],
+    )
+
+
+# evaluasi-spip (LKE, AoI tanpa Sebab, keyakinan penjaminan)
+def scenario_evaluasi_spip() -> Path:
+    return _simple(
+        "evaluasi-spip", jenis="Evaluasi SPIP (Penjaminan Kualitas)", keyakinan="penjaminan (validasi PM)",
+        tujuan="Penjaminan Kualitas Maturitas SPIP Unit (validasi penilaian mandiri)",
+        ruang="LKE SPIP (nilai PM), Kertas Kerja, register risiko & RTP, bukti dukung per unsur.",
+        doktrin_sebab="TANPA unsur Sebab (rezim LKE); gunakan Area of Improvement (AoI)",
+        kriteria_reg=["PP 60/2008", "Peraturan BPKP 5/2021 (Pedoman Penilaian Maturitas SPIP)"],
+        kriteria_text="""
+KRITERIA SPIP (PK): penilaian mandiri (PM) unit divalidasi APIP (PK). Nilai PK yang LEBIH RENDAH dari PM
+menandakan optimism bias → skor direvisi turun. Unsur II Penilaian Risiko (2.1 identifikasi, 2.2 analisis)
+menuntut register risiko strategis & RTP tingkat strategis LENGKAP. Bukti/Kertas Kerja per sub-unsur WAJIB
+terisi; aplikasi SPIP berfungsi. Unsur I Lingkungan Pengendalian menuntut kompetensi SDM penyelenggara SPIP
+sesuai standar. Keluaran = skor maturitas + Area of Improvement (BUKAN temuan ber-Sebab).
+        """,
+        objek_text="""
+LKE SPIP & KERTAS KERJA UNIT TA 2025. (1) Nilai PM unsur agregat 'Terkelola' (4,2) sedangkan bukti PK
+hanya mendukung 'Terdefinisi' (3,1) — optimism bias, skor perlu direvisi TURUN. (2) Unsur II Penilaian
+Risiko: register risiko strategis BELUM lengkap dan RTP tingkat strategis belum disusun (sub-unsur 2.1–2.2
+gap). (3) Aplikasi SPIP bermasalah; sebagian Kertas Kerja (KK Lead II) tidak terisi (PM 0% tanpa bukti).
+(4) Unsur I Lingkungan Pengendalian: kompetensi SDM penyelenggara SPIP/MR belum merata, standar kompetensi
+belum dipenuhi. Tidak menghitung kerugian negara.
+        """,
+        objek_kata=["PM 4,2", "PK 3,1", "optimism bias", "register risiko", "Kertas Kerja"],
+        sasaran_desc="Menjamin kualitas (validasi) penilaian mandiri maturitas SPIP unit terhadap Pedoman "
+                     "BPKP 5/2021; identifikasi gap per unsur/sub-unsur sebagai Area of Improvement.",
+        langkah=[
+            "Validasi skor PM vs bukti (PK) per unsur/sub-unsur; turunkan skor bila optimism bias.",
+            "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk unsur/sub-unsur spesifik.",
+        ],
+    )
+
+
+# evaluasi-sakip (LKE, AoI tanpa Sebab)
+def scenario_evaluasi_sakip() -> Path:
+    return _simple(
+        "evaluasi-sakip", jenis="Evaluasi SAKIP/AKIP", keyakinan="terbatas (evaluatif); rezim LKE",
+        tujuan="Evaluasi Implementasi SAKIP Unit (5 komponen)",
+        ruang="Dokumen SAKIP: Renstra/PK/IKU, pengukuran kinerja, LKj, evaluasi internal.",
+        doktrin_sebab="TANPA unsur Sebab (rezim LKE); gunakan Area of Improvement (AoI)",
+        kriteria_reg=["PermenPANRB 88/2021 (Evaluasi AKIP)"],
+        kriteria_text="""
+KRITERIA SAKIP (PermenPANRB 88/2021): 5 komponen berbobot — Perencanaan Kinerja, Pengukuran, Pelaporan,
+Evaluasi Internal, Capaian. Indikator/sasaran WAJIB SMART & berorientasi hasil (bukan proses/aktivitas);
+penjenjangan (cascading) kinerja lengkap s.d. Eselon II/pegawai; hasil pengukuran DIPAKAI sebagai decision
+tool (dimensi pemanfaatan). Keluaran = nilai/predikat AKIP + Area of Improvement (TANPA Sebab).
+        """,
+        objek_text="""
+DOKUMEN SAKIP UNIT TA 2025. (1) Perencanaan Kinerja: sebagian IKU tidak SMART & berorientasi PROSES
+(mis. '% kegiatan terlaksana'), bukan outcome. (2) Cascading kinerja belum lengkap sampai Eselon II/pegawai;
+pohon kinerja terputus di level eselon I. (3) Komponen Pengukuran Kinerja bernilai TERENDAH; pengukuran
+masih administratif, data kinerja belum andal. (4) Hasil pengukuran tersedia namun BELUM dipakai sebagai
+decision tool (dimensi pemanfaatan lemah). (5) Predikat AKIP STAGNAN 'BB' tiga tahun berturut-turut
+(nilai naik tipis 70,1→70,4→70,8; predikat tetap).
+        """,
+        objek_kata=["IKU tidak SMART", "cascading", "pengukuran terendah", "predikat BB stagnan"],
+        sasaran_desc="Mengevaluasi implementasi SAKIP unit terhadap PermenPANRB 88/2021 (5 komponen); "
+                     "identifikasi gap per komponen sebagai Area of Improvement.",
+        langkah=[
+            "Nilai tiap komponen SAKIP vs kriteria (SMART, cascading, pemanfaatan pengukuran, tren predikat).",
+            "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk komponen spesifik.",
+        ],
+    )
+
+
+# evaluasi-reformasi-birokrasi (LKE 4-dimensi, AoI tanpa Sebab)
+def scenario_evaluasi_rb() -> Path:
+    return _simple(
+        "evaluasi-reformasi-birokrasi", jenis="Evaluasi Reformasi Birokrasi", keyakinan="terbatas; rezim LKE",
+        tujuan="Evaluasi Pelaksanaan Reformasi Birokrasi Unit",
+        ruang="Rencana Aksi RB, data dukung capaian, dokumen Zona Integritas (ZI/WBK/WBBM).",
+        doktrin_sebab="TANPA unsur Sebab (rezim LKE); gunakan Area of Improvement (AoI)",
+        kriteria_reg=["KepmenPANRB 182/2024 (Juknis Evaluasi RB)", "PermenPANRB 9/2023"],
+        kriteria_text="""
+KRITERIA RB (KepmenPANRB 182/2024): dinilai 4 dimensi/lensa — Ketercapaian Output, Kesesuaian Waktu,
+Kualitas Pelaksanaan, Ketepatan Pelaksanaan. Capaian RB dinilai sampai OUTCOME/dampak (bukan hanya
+input-output); renaksi harus SESUAI JADWAL (justifikasi bila berubah); data dukung berupa LAPORAN HASIL
+formal (bukan sekadar matriks/checklist); pembangunan Zona Integritas (WBK/WBBM) menunjukkan progres.
+Keluaran = nilai RB + Area of Improvement (TANPA Sebab).
+        """,
+        objek_text="""
+DOKUMEN PELAKSANAAN RB UNIT TA 2025. (1) Ketercapaian Output: Rencana Aksi RB dilaporkan 100% 'sesuai',
+namun hanya level input-output; outcome/dampak (mis. indeks pelayanan, GEnerating impact) TIDAK diukur.
+(2) Kesesuaian Waktu: timeline beberapa renaksi tidak sesuai jadwal; perubahan rencana aksi tanpa
+justifikasi terdokumentasi. (3) Kualitas Pelaksanaan: data dukung capaian berupa matriks/checklist, BUKAN
+Laporan Hasil formal; kertas kerja penilaian tidak lengkap. (4) Ketepatan Pelaksanaan: pembangunan Zona
+Integritas menuju WBK/WBBM STAGNAN lintas tahun (persentase unit ber-ZI flat 12% tiga tahun).
+        """,
+        objek_kata=["100% output", "outcome tidak diukur", "matriks bukan laporan", "ZI stagnan 12%"],
+        sasaran_desc="Mengevaluasi pelaksanaan Reformasi Birokrasi unit terhadap KepmenPANRB 182/2024 "
+                     "(4 dimensi); identifikasi gap sebagai Area of Improvement.",
+        langkah=[
+            "Nilai tiap dimensi RB (output vs outcome, ketepatan waktu, kualitas bukti, progres ZI).",
+            "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk dimensi/indikator spesifik.",
+        ],
+    )
+
+
+# ---------------------------------------------------------------------------
+# Skenario: reviu-rka-kl (PBJ/RKA digest-only — stage _KKP/tor-*.json + rab-*.json;
+# agen baca via read_digest, BUKAN read_ingested_digest). Cacat: P1 blok substansi TOR
+# tak lengkap, P2 indikator tanpa target terukur, P3 RAB paket bulat tanpa rincian,
+# P4 belanja modal besar tanpa spesifikasi teknis & metode pengadaan.
+# ---------------------------------------------------------------------------
+def scenario_reviu_rka_kl() -> Path:
+    at = "Sarah Auditor"
+    root = FIX_DIR / "reviu-rka-kl"
+    if root.exists():
+        import shutil
+        shutil.rmtree(root)
+    (root / "_KKP").mkdir(parents=True)
+    (root / "_PKP").mkdir()
+    (root / "00-input").mkdir()
+    tor = {
+        "nama_ro": "RO Pembangunan Sistem Pemantauan Ruang Digital",
+        "identitas_ro": {
+            "kementerian": "Kementerian Komunikasi dan Digital",
+            "unit_eselon_i": "Direktorat Jenderal Pengawasan Ruang Digital",
+            "program_nama": "Program Pengawasan Ruang Digital",
+            "kegiatan_nama": "Pengembangan Sistem Pengawasan Konten",
+            "ro": "01", "volume": 1, "satuan": "Sistem",
+        },
+        "latar_belakang": "Kebutuhan sistem pemantauan konten bermuatan negatif yang terintegrasi.",
+        "tujuan": "Membangun sistem pemantauan ruang digital untuk mendukung pengawasan konten.",
+        # P2 — indikator tanpa target angka/parameter keberhasilan terukur:
+        "output_indikator": "Indikator: tersedianya sistem pemantauan ruang digital. "
+                            "(Tidak dinyatakan target angka capaian maupun parameter keberhasilan terukur.)",
+        # P1 — blok substansi WAJIB TIDAK lengkap: metode pelaksanaan, jadwal/kurun waktu,
+        # dan spesifikasi teknis SENGAJA tidak ada (hanya latar/tujuan/output yang ada).
+        # P4 — belanja modal besar tanpa spesifikasi teknis & metode pengadaan:
+        "komponen_belanja": "Termasuk belanja modal perangkat server & storage senilai Rp 5.200.000.000 "
+                            "NAMUN tanpa spesifikasi teknis rinci dan tanpa metode pengadaan yang ditetapkan.",
+        "dasar_hukum": [{"jenis_regulasi": "Perpres", "nomor": "29", "tahun": "2014"}],
+        "biaya": {"total": 8500000000, "sumber_dana": "Rupiah Murni"},
+        "_catatan_kelengkapan": "Blok yang ADA: latar_belakang, tujuan, output_indikator, komponen_belanja, "
+                                "biaya, dasar_hukum. Blok WAJIB yang TIDAK ADA: metode pelaksanaan, "
+                                "jadwal/kurun waktu, spesifikasi teknis komponen belanja modal.",
+    }
+    rab = {
+        "nama_ro": "RO Pembangunan Sistem Pemantauan Ruang Digital",
+        "total": 8500000000, "nilai_total": 8500000000, "komponen_count": 1,
+        # P3 — RAB hanya paket bulat tanpa rincian harga satuan/volume:
+        "komponen": [{
+            "nama": "Paket Pembangunan Sistem Pemantauan (lumpsum)",
+            "nilai": 8500000000, "volume": 1, "satuan": "paket",
+            "rincian": "Tidak ada rincian harga satuan/volume per item — hanya paket bulat.",
+        }],
+    }
+    (root / "_KKP" / "tor-01.json").write_text(json.dumps(tor, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "_KKP" / "rab-01.json").write_text(json.dumps(rab, ensure_ascii=False, indent=2), encoding="utf-8")
+    sasaran = [{
+        "sasaran_id": "S-01",
+        "deskripsi": "Mereviu kualitas & kesesuaian TOR/RAB RO Pembangunan Sistem Pemantauan Ruang Digital "
+                     "terhadap Kriteria IR2 (PMK 107/2024 Pasal 61): kelengkapan blok substansi, indikator "
+                     "terukur, kewajaran/rincian biaya, dan konsistensi TOR↔RAB.",
+        "assigned_to": [at], "status": "DISETUJUI_KT",
+        "langkah_kerja": [
+            "read_digest (index) lalu read_digest(ro=01); telusuri tiap butir Checklist Kualitas RKA/TOR (Pasal 61).",
+            "Catat ketidaksesuaian sebagai temuan K/K/S/A (Sebab anti-mengarang; keyakinan terbatas; Rekomendasi di LHR).",
+        ],
+    }]
+    context = """
+# Konteks Penugasan — Reviu RKA-K/L
+
+Identitas: Reviu RKA-K/L RO Pembangunan Sistem Pemantauan Ruang Digital
+Jenis Pengawasan: Reviu (keyakinan terbatas)
+Auditi: Direktorat Jenderal Pengawasan Ruang Digital, Kementerian Komunikasi dan Digital
+Periode: TA 2026 (reviu perencanaan)
+Tahun Anggaran: 2026
+
+Tujuan: Menelaah kualitas & kesesuaian TOR/RAB terhadap Kriteria IR2 PMK 107/2024 Pasal 61.
+Ruang Lingkup: 1 RO (TOR + RAB) senilai Rp 8,5 miliar; digest tersedia di _KKP (tor-01.json, rab-01.json).
+Doktrin Sebab: anti-mengarang. Reviu tidak menghitung kerugian negara.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: Reviu perencanaan anggaran atas satu RO pembangunan sistem; menilai kelengkapan substansi
+TOR, keterukuran indikator, rincian/kewajaran RAB, dan konsistensi TOR↔RAB.
+"""
+    (root / "_PKP" / "sasaran-assignment.json").write_text(
+        json.dumps({"skill": "reviu-rka-kl", "sasaran": sasaran}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "context.md").write_text(context.strip() + "\n", encoding="utf-8")
+    (root / "00-input" / ".gitkeep").write_text("", encoding="utf-8")
+    return root
+
+
+# ---------------------------------------------------------------------------
+# Skenario konsultansi (advisory — output PENDAPAT, bukan temuan). Dinilai
+# judge_pendapat vs golden expected_pendapat (coverage + ketepatan + advisory_wajar).
+# ---------------------------------------------------------------------------
+def _konsultansi(skill: str, *, jenis: str, tujuan: str, pertanyaan: str,
+                 material_text: str, material_reg: list[str], objek_kata=None) -> Path:
+    at = "Sarah Auditor"
+    md = _digest(f"00-input/permintaan-{skill}.pdf", "permintaan", material_text,
+                 kata_kunci=objek_kata or [], regulasi=material_reg)
+    sasaran = [{
+        "sasaran_id": "S-01",
+        "deskripsi": f"Menyusun PENDAPAT advisory (tidak mengikat) atas permintaan konsultansi: {pertanyaan}",
+        "assigned_to": [at], "status": "DISETUJUI_KT",
+        "langkah_kerja": [
+            "Susun pendapat per pertanyaan dengan alur Pertanyaan → Dasar Hukum (pasal/ayat spesifik) → Analisis → Pendapat.",
+            "Jaga sifat advisory: tidak mengikat, tidak memvonis pelanggaran, keputusan tetap pada pejabat berwenang; eskalasi bila ada indikasi pelanggaran material.",
+        ],
+    }]
+    context = f"""
+# Konteks Penugasan — {jenis}
+
+Identitas: {tujuan}
+Jenis Pengawasan: Konsultansi (advisory, non-assurance)
+Auditi: Unit Kerja Peminta, Kementerian Komunikasi dan Digital
+Periode: TA 2026 (pra-pelaksanaan)
+Tahun Anggaran: 2026
+
+Tujuan: {tujuan}
+Pertanyaan konsultansi: {pertanyaan}
+Ruang Lingkup: terbatas pada pertanyaan yang diajukan; TANPA Sebab/temuan; keputusan akhir pada pejabat berwenang.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: Pendampingan/konsultansi pra-pelaksanaan; keluaran berupa pendapat advisory tidak mengikat.
+"""
+    inputs = {f"permintaan-{skill}.pdf": f"[stub] permintaan konsultansi {skill} — lihat _INGESTED/permintaan-{skill}.json"}
+    return _write(skill, at_name=at, sasaran=sasaran, context_md=context, inputs=inputs,
+                  digests=[(f"permintaan-{skill}", md)])
+
+
+def scenario_konsultansi_umum() -> Path:
+    return _konsultansi(
+        "konsultansi-umum", jenis="Konsultansi Umum",
+        tujuan="Pendapat APIP atas rancangan SOP Pengadaan Langsung unit kerja",
+        pertanyaan="(1) Bolehkah paket Rp180 juta dipecah menjadi dua paket masing-masing di bawah ambang "
+                   "agar masuk jalur Pengadaan Langsung? (2) Siapa yang berwenang menetapkan HPS dalam SOP? "
+                   "(3) Dapatkah Inspektorat menandatangani persetujuan operasional atas rancangan SOP ini?",
+        material_reg=["Perpres 16/2018 jo. 12/2021", "Perlem LKPP 12/2021"],
+        material_text="""
+NOTA DINAS PERMINTAAN PENDAPAT + RANCANGAN SOP PENGADAAN LANGSUNG. Unit kerja menanyakan: (1) rencana
+memecah satu paket kebutuhan Rp180.000.000 menjadi 2 paket @ Rp90 juta agar keduanya masuk ambang
+Pengadaan Langsung (< Rp200 juta) — apakah boleh? (2) rancangan SOP belum menyebut siapa penetap HPS
+(ada usulan fungsi penyusun=penetap=pemeriksa dirangkap satu orang); (3) unit meminta Inspektorat ikut
+menandatangani lembar persetujuan operasional SOP. Konteks: kebutuhan tunggal, spesifikasi sama, waktu bersamaan.
+        """,
+        objek_kata=["pemecahan paket", "Rp180 juta", "Pengadaan Langsung", "HPS", "persetujuan"],
+    )
+
+
+def scenario_konsultasi_pengadaan() -> Path:
+    return _konsultansi(
+        "konsultasi-pengadaan", jenis="Konsultasi Pengadaan",
+        tujuan="Pendampingan pra-pengadaan perangkat lunak unit kerja",
+        pertanyaan="Bolehkah paket pengadaan perangkat lunak senilai Rp2,4 miliar dilakukan melalui "
+                   "Penunjukan Langsung / e-purchasing katalog, dan bagaimana urutan penetapan "
+                   "pemaketan/spesifikasi/HPS/metode pemilihannya?",
+        material_reg=["Perpres 16/2018 jo. 12/2021", "Perlem LKPP 12/2021", "Perlem LKPP 4/2024"],
+        material_text="""
+NOTA DINAS PENDAMPINGAN PRA-PENGADAAN (DJED.6). Unit berencana mengadakan perangkat lunak senilai
+Rp2.400.000.000 dan mengusulkan Penunjukan Langsung / e-purchasing katalog sebagai jalur utama. Spesifikasi
+teknis masih umum/ambigu (belum final); HPS belum disusun; terdapat >1 penyedia potensial di pasar/katalog.
+Unit menanyakan kelayakan metode, urutan penetapan pemaketan-spesifikasi-HPS-metode, serta batas peran APIP.
+        """,
+        objek_kata=["Penunjukan Langsung", "e-purchasing", "Rp2,4 miliar", "spesifikasi", "HPS"],
+    )
+
+
 SCENARIOS = {
+    "reviu-rka-kl": scenario_reviu_rka_kl,
+    "konsultansi-umum": scenario_konsultansi_umum,
+    "konsultasi-pengadaan": scenario_konsultasi_pengadaan,
     "reviu-umum": scenario_reviu_umum,
     "audit-umum": scenario_audit_umum,
     "evaluasi-umum": scenario_evaluasi_umum,
     "pemantauan-umum": scenario_pemantauan_umum,
     "evaluasi-manajemen-risiko": scenario_evaluasi_mr,
+    "audit-kinerja": scenario_audit_kinerja,
+    "pemantauan-tindak-lanjut": scenario_pemantauan_tl,
+    "pemantauan-pengadaan": scenario_pemantauan_pengadaan,
+    "evaluasi-spip": scenario_evaluasi_spip,
+    "evaluasi-sakip": scenario_evaluasi_sakip,
+    "evaluasi-reformasi-birokrasi": scenario_evaluasi_rb,
 }
 
 

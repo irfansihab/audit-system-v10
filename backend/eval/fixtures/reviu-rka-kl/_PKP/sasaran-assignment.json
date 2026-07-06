@@ -1,0 +1,17 @@
+{
+  "skill": "reviu-rka-kl",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mereviu kualitas & kesesuaian TOR/RAB RO Pembangunan Sistem Pemantauan Ruang Digital terhadap Kriteria IR2 (PMK 107/2024 Pasal 61): kelengkapan blok substansi, indikator terukur, kewajaran/rincian biaya, dan konsistensi TOR↔RAB.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "read_digest (index) lalu read_digest(ro=01); telusuri tiap butir Checklist Kualitas RKA/TOR (Pasal 61).",
+        "Catat ketidaksesuaian sebagai temuan K/K/S/A (Sebab anti-mengarang; keyakinan terbatas; Rekomendasi di LHR)."
+      ]
+    }
+  ]
+}

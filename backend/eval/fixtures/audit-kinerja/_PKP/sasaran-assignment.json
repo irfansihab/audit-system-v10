@@ -1,0 +1,18 @@
+{
+  "skill": "audit-kinerja",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menilai efektivitas & efisiensi (2E) program pengawasan konten terhadap target kinerja; gali akar masalah (RCA) atas gap efektivitas, duplikasi sistem, tindak lanjut deteksi yang tak tuntas, dan ketertelusuran data capaian.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Uji capaian tiap aspek 2E vs target/benchmark; identifikasi gap efektivitas & inefisiensi (duplikasi).",
+        "Untuk tiap gap, gali Sebab sampai akar (why-tree/RCA) — WAJIB; nyatakan Akibat pada outcome.",
+        "Rekam temuan K/K/S/A dengan Sebab akar; keyakinan memadai."
+      ]
+    }
+  ]
+}

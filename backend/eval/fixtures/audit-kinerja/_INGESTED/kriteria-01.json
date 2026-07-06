@@ -1,0 +1,23 @@
+{
+  "file": "00-input/kriteria-01-audit-kinerja.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 516,
+  "ringkasan_teks": "KRITERIA AUDIT KINERJA: Renstra & Perjanjian Kinerja menetapkan target efektivitas sistem pengawasan\nkonten minimal 80% konten bermuatan negatif tertangani; setiap sistem/aplikasi WAJIB punya sumber data\ntunggal (source of truth) yang dapat ditelusuri; anggaran O&M tidak boleh membiayai fungsi yang beririsan\n(hindari duplikasi); hasil deteksi/crawling WAJIB ditindaklanjuti tuntas (verifikasi → takedown → closure).\nEfektivitas = capaian outcome vs target; Efisiensi = biaya per output & bebas duplikasi.",
+  "kata_kunci": [
+    "audit-kinerja",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "Perpres 29/2014",
+    "PP 60/2008",
+    "Renstra Komdigi",
+    "PermenPANRB 5/2008"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "nama_ro": "RO Pembangunan Sistem Pemantauan Ruang Digital",
+  "identitas_ro": {
+    "kementerian": "Kementerian Komunikasi dan Digital",
+    "unit_eselon_i": "Direktorat Jenderal Pengawasan Ruang Digital",
+    "program_nama": "Program Pengawasan Ruang Digital",
+    "kegiatan_nama": "Pengembangan Sistem Pengawasan Konten",
+    "ro": "01",
+    "volume": 1,
+    "satuan": "Sistem"
+  },
+  "latar_belakang": "Kebutuhan sistem pemantauan konten bermuatan negatif yang terintegrasi.",
+  "tujuan": "Membangun sistem pemantauan ruang digital untuk mendukung pengawasan konten.",
+  "output_indikator": "Indikator: tersedianya sistem pemantauan ruang digital. (Tidak dinyatakan target angka capaian maupun parameter keberhasilan terukur.)",
+  "komponen_belanja": "Termasuk belanja modal perangkat server & storage senilai Rp 5.200.000.000 NAMUN tanpa spesifikasi teknis rinci dan tanpa metode pengadaan yang ditetapkan.",
+  "dasar_hukum": [
+    {
+      "jenis_regulasi": "Perpres",
+      "nomor": "29",
+      "tahun": "2014"
+    }
+  ],
+  "biaya": {
+    "total": 8500000000,
+    "sumber_dana": "Rupiah Murni"
+  },
+  "_catatan_kelengkapan": "Blok yang ADA: latar_belakang, tujuan, output_indikator, komponen_belanja, biaya, dasar_hukum. Blok WAJIB yang TIDAK ADA: metode pelaksanaan, jadwal/kurun waktu, spesifikasi teknis komponen belanja modal."
+}

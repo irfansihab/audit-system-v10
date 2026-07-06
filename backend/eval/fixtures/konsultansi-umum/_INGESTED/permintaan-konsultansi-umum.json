@@ -1,0 +1,24 @@
+{
+  "file": "00-input/permintaan-konsultansi-umum.pdf",
+  "jenis": "permintaan",
+  "halaman_total": 1,
+  "halaman_total_chars": 527,
+  "ringkasan_teks": "NOTA DINAS PERMINTAAN PENDAPAT + RANCANGAN SOP PENGADAAN LANGSUNG. Unit kerja menanyakan: (1) rencana\nmemecah satu paket kebutuhan Rp180.000.000 menjadi 2 paket @ Rp90 juta agar keduanya masuk ambang\nPengadaan Langsung (< Rp200 juta) — apakah boleh? (2) rancangan SOP belum menyebut siapa penetap HPS\n(ada usulan fungsi penyusun=penetap=pemeriksa dirangkap satu orang); (3) unit meminta Inspektorat ikut\nmenandatangani lembar persetujuan operasional SOP. Konteks: kebutuhan tunggal, spesifikasi sama, waktu bersamaan.",
+  "kata_kunci": [
+    "pemecahan paket",
+    "Rp180 juta",
+    "Pengadaan Langsung",
+    "HPS",
+    "persetujuan"
+  ],
+  "regulasi_terdeteksi": [
+    "Perpres 16/2018 jo. 12/2021",
+    "Perlem LKPP 12/2021"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

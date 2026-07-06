@@ -1,0 +1,23 @@
+{
+  "file": "00-input/objek-01-audit-kinerja.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 733,
+  "ringkasan_teks": "LAPORAN KINERJA & DATA PROGRAM PENGAWASAN KONTEN TA 2025. (1) Efektivitas sistem klasifikasi konten\nhanya 22,4% terhadap target 80% — sistem dapat di-bypass VPN, kontrol lemah. (2) Terdapat DUA sistem\n(Sistem-A crawling & Sistem-B klasifikasi) menjalankan fungsi deteksi BERIRISAN; anggaran O&M keduanya\ndibayar penuh (indikasi duplikasi/inefisiensi). (3) Hasil crawling 3,2 juta item terdeteksi, namun hanya\n0,4 juta yang diverifikasi & ditindaklanjuti tuntas; 2,8 juta item menggantung tanpa closure. (4) LKj\nmelaporkan capaian \"output tercapai 98%\" namun sumber data capaian tidak dapat ditelusuri (tidak ada\nsource of truth; rekap manual berbeda antar unit). Riwayat: tidak ada integrasi sistem & tidak ada SOP closure.",
+  "kata_kunci": [
+    "efektivitas 22,4%",
+    "target 80%",
+    "duplikasi O&M",
+    "3,2 juta item",
+    "source of truth"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2025-12-31"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

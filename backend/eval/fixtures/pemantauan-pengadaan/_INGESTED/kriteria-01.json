@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-pemantauan-pengadaan.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 364,
+  "ringkasan_teks": "KRITERIA PEMANTAUAN PENGADAAN: progres fisik dibandingkan jadwal kontrak; pembayaran kumulatif TIDAK boleh\nmelampaui progres fisik; keterlambatan milestone dikenai denda 1/1000 per hari (Perpres 16/2018 jo 12/2021\nPasal 78); addendum kumulatif > 10% nilai kontrak = indikasi perencanaan lemah; deliverable/milestone\ndinilai terhadap lingkup & jadwal KAK.",
+  "kata_kunci": [
+    "pemantauan-pengadaan",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "Perpres 16/2018 jo. 12/2021 Pasal 78 (denda 1/1000)",
+    "Perpres 46/2025"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

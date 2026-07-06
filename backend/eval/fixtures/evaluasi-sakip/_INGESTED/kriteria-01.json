@@ -1,0 +1,20 @@
+{
+  "file": "00-input/kriteria-01-evaluasi-sakip.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 421,
+  "ringkasan_teks": "KRITERIA SAKIP (PermenPANRB 88/2021): 5 komponen berbobot — Perencanaan Kinerja, Pengukuran, Pelaporan,\nEvaluasi Internal, Capaian. Indikator/sasaran WAJIB SMART & berorientasi hasil (bukan proses/aktivitas);\npenjenjangan (cascading) kinerja lengkap s.d. Eselon II/pegawai; hasil pengukuran DIPAKAI sebagai decision\ntool (dimensi pemanfaatan). Keluaran = nilai/predikat AKIP + Area of Improvement (TANPA Sebab).",
+  "kata_kunci": [
+    "evaluasi-sakip",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "PermenPANRB 88/2021 (Evaluasi AKIP)"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}
