@@ -1,0 +1,23 @@
+{
+  "file": "00-input/kriteria-01-rubrik-evaluasi-program.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 504,
+  "ringkasan_teks": "KRITERIA/RUBRIK EVALUASI EFEKTIVITAS PROGRAM (diunggah auditor). Program dinilai pada 3 DIMENSI berbobot:\n(A) Relevansi 30% — indikator: kesesuaian output dgn kebutuhan, target SMART; (B) Efektivitas 45% —\nindikator: capaian outcome vs target, jangkauan penerima manfaat; (C) Keberlanjutan 25% — indikator:\nkelembagaan, pembiayaan lanjutan. Tiap indikator diberi skor 1-4 terhadap bukti. SOP Program butir 4 —\nmonitoring & evaluasi triwulanan WAJIB didokumentasikan dan menjadi dasar perbaikan.",
+  "kata_kunci": [
+    "rubrik",
+    "dimensi",
+    "indikator",
+    "bobot",
+    "efektivitas program"
+  ],
+  "regulasi_terdeteksi": [
+    "Pedoman Evaluasi Program Internal Itjen II"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

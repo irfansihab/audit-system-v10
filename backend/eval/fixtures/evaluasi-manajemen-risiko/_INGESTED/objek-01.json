@@ -1,0 +1,25 @@
+{
+  "file": "00-input/objek-01-dokumen-mr-unit.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 799,
+  "ringkasan_teks": "DOKUMEN PENERAPAN MR UNIT AUDITAN TA 2025 (hal.1-8). Piagam Manajemen Risiko: tersedia draf namun BELUM\nDITANDATANGANI pimpinan (belum diformalisasi). Struktur MR: UPR tingkat unit ditetapkan, namun Pemilik\nRisiko tertinggi & sebagian KMR BELUM ditetapkan (pembagian Three Lines belum lengkap). Formulir 3\n(Rencana Penanganan Risiko): untuk 5 risiko level tinggi–sangat tinggi (termasuk 1 risiko strategis),\nkolom rencana aksi hanya diisi \"monitoring berkala\" tanpa rencana penanganan konkret; 3 dari 5 kosong.\nFormulir 4 (Pemantauan Risiko Triwulanan): hanya tersedia untuk Triwulan I (April) dan Triwulan III\n(Oktober) — TW II & TW IV tidak diinput (2 dari 4 triwulan). Pedoman MR unit masih mengacu SOTK lama\n(belum dikinikan pasca reorganisasi; risk appetite statement belum ditinjau).",
+  "kata_kunci": [
+    "Piagam MR",
+    "belum ditandatangani",
+    "Formulir 3",
+    "Formulir 4",
+    "Triwulan",
+    "SOTK lama"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2025-04-15",
+    "2025-10-20"
+  ],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

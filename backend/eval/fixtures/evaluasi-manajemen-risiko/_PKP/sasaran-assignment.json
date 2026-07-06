@@ -1,0 +1,17 @@
+{
+  "skill": "evaluasi-manajemen-risiko",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mengevaluasi penerapan Manajemen Risiko unit auditan terhadap Permenkominfo 6/2017 (primer) dan ISO 31000:2018, meliputi kebijakan/piagam, struktur (UPR/Three Lines), penilaian & penanganan risiko (Formulir 3), dan pemantauan triwulanan (Formulir 4).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Nilai kematangan/penerapan MR per area kriteria (kebijakan/piagam, struktur, penanganan, pemantauan, pemutakhiran).",
+        "Catat gap sebagai Area of Improvement / temuan K/K/S/A (Sebab anti-mengarang; keyakinan terbatas). Rujuk pasal/formulir kriteria yang spesifik."
+      ]
+    }
+  ]
+}

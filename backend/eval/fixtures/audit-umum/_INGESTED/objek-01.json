@@ -1,0 +1,27 @@
+{
+  "file": "00-input/objek-01-spp-spm-honor.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 716,
+  "ringkasan_teks": "BERKAS PEMBAYARAN HONORARIUM KEGIATAN SOSIALISASI (hal.1-4). SPP-LS Nomor 00123 tanggal 12 Mei 2026\nsenilai Rp 33.600.000. SPM Nomor 00201 tanggal 12 Mei 2026 senilai Rp 36.600.000 (SELISIH Rp 3.000.000\nantara SPP dan SPM tidak dijelaskan). Rincian: honorarium 3 narasumber x 4 jam x Rp 2.000.000/jam =\nRp 24.000.000 (tarif Rp 2.000.000/jam MELEBIHI batas SBM Rp 1.400.000/jam → kelebihan Rp 600.000/jam x\n4 jam x 3 = Rp 7.200.000). Moderator dibayar Rp 3.000.000 untuk 1 kegiatan (SBM Rp 1.000.000 →\nkelebihan Rp 2.000.000). Lembar verifikasi (hal.4): kolom \"verifikator\" dan \"PPSPM\" ditandatangani\nNAMA YANG SAMA (Sdr. A) — verifikasi berjenjang tidak berjalan. Daftar hadir narasumber TIDAK dilampirkan.",
+  "kata_kunci": [
+    "SPP 00123",
+    "SPM 00201",
+    "honorarium",
+    "Rp 2.000.000/jam",
+    "verifikator"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-05-12"
+  ],
+  "nilai_rupiah_terdeteksi": [
+    "Rp 33.600.000",
+    "Rp 36.600.000",
+    "Rp 24.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

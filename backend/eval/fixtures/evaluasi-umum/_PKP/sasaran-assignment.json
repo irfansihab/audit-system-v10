@@ -1,0 +1,17 @@
+{
+  "skill": "evaluasi-umum",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menilai efektivitas Program Peningkatan Literasi Digital terhadap rubrik evaluasi yang diunggah (dimensi Relevansi/Efektivitas/Keberlanjutan beserta indikator & bobot).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Dekomposisi sasaran generik 'menilai efektivitas' menjadi dimensi→indikator berbobot dari rubrik; nilai per indikator dengan bukti.",
+        "Catat ketidaksesuaian per dimensi (K/K/S/A, Sebab anti-mengarang; boleh 'tidak cukup data'). Keyakinan terbatas."
+      ]
+    }
+  ]
+}

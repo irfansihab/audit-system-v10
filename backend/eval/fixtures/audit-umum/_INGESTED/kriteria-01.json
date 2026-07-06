@@ -1,0 +1,23 @@
+{
+  "file": "00-input/kriteria-01-sop-sbm-pembayaran.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 574,
+  "ringkasan_teks": "KRITERIA YANG DIUNGGAH: (1) SOP Pembayaran Belanja Satker, (2) Standar Biaya Masukan (SBM) TA 2026.\nSOP butir 5 — Sebelum penerbitan SPM, WAJIB dilakukan verifikasi berjenjang: verifikator (staf) →\nPPK menguji kebenaran tagihan → PPSPM menerbitkan SPM. Verifikator dan PPSPM TIDAK boleh orang yang sama.\nSOP butir 6 — Setiap pembayaran honorarium narasumber WAJIB dilampiri: undangan, daftar hadir asli,\nmateri/bahan, dan bukti transfer. SBM TA 2026 — honorarium narasumber eselon II setara: batas tertinggi\nRp 1.400.000/jam/orang; moderator Rp 1.000.000/kegiatan.",
+  "kata_kunci": [
+    "SOP pembayaran",
+    "SBM 2026",
+    "verifikasi berjenjang",
+    "honorarium narasumber"
+  ],
+  "regulasi_terdeteksi": [
+    "PMK 83/PMK.02/2022 (SBM)",
+    "PP 45/2013"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}
