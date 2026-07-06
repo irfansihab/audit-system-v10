@@ -96,10 +96,12 @@ Aspek pengujian **diturunkan dari matriks kriteria** (kriteria yang diunggah aud
 |--------|--------|---------|
 | **Judul Temuan** | ✅ Wajib | Kalimat deskriptif menggambarkan kondisi (positif/negatif) |
 | **Kondisi** | ✅ Wajib | Fakta yang ditemukan — dokumen apa, bagian mana, isinya apa, nilai, tanggal |
-| **Kriteria** | ✅ Wajib | Pasal/ketentuan/SOP (ID matriks kriteria) yang menjadi tolok ukur |
+| **Kriteria** | ✅ Wajib | Kutip **PRESISI** dari matriks: nama regulasi/dokumen + **nomor + tahun + pasal/ayat/butir** (mis. "PMK No. 83/PMK.02/2022 tentang SBM, tarif honorarium narasumber"), BUKAN "prinsip umum". Bila kondisi tak diatur kriteria spesifik mana pun → JANGAN paksakan pasal generik (lihat "Presisi Kriteria" di bawah) |
 | **Sebab** | ✅ **WAJIB (RCA)** | **Akar penyebab** via root cause analysis — bukan gejala. Bila tidak terbukti → "Tidak ditemukan penyebab"/"Tidak cukup data" (anti-mengarang). Pembeda audit dari reviu |
 | **Akibat** | ✅ Wajib | Konsekuensi/risiko; sertakan **nilai kerugian negara bila ada** |
 | **Rekomendasi** | ✅ Jika ada catatan | Tindakan perbaikan menyentuh akar masalah — siapa, apa, kapan. **Disusun di LHA, bukan di KKP** |
+
+> **Presisi & anti-mengarang KRITERIA (keyakinan memadai menuntut kriteria yang dapat diverifikasi).** Unsur Kriteria adalah tolok ukur FORMAL — sebut sumber persis dari matriks: **regulasi + nomor + tahun + pasal/ayat/butir**, atau **SOP + nomor butir**, dengan kutipan normatifnya. **DILARANG:** (a) menyebut regulasi tanpa nomor/pasal (mis. "sesuai SBM" tanpa nomor PMK & butir tarif); (b) mengangkat "prinsip umum / asas kepatutan / kelaziman" sebagai kriteria formal; (c) **memaksakan pasal atau butir SOP yang tidak langsung mengatur kondisi** (mis. mengutip "SOP butir verifikasi" untuk menilai selisih SPP–SPM yang tak diatur butir itu). Bila suatu kondisi **tidak diatur kriteria spesifik mana pun** → itu **BUKAN deviasi terkonfirmasi**; catat sebagai **indikasi kelemahan pengendalian** yang **perlu ditetapkan dasar kriterianya** (mohon arahan auditor) atau eskalasi — jangan dipaksakan jadi temuan ber-pasal-generik.
 
 ### Format Catatan / Temuan (per aspek)
 
@@ -109,7 +111,8 @@ Aspek pengujian **diturunkan dari matriks kriteria** (kriteria yang diunggah aud
 Kondisi    : [Fakta kronologis: nama dokumen + bagian/halaman + tanggal + nilai.
               Tunjukkan deviasi di akhir, setelah fakta dibangun.]
 
-Kriteria   : [Pasal/ketentuan/SOP acuan (ID matriks kriteria). Teks normatif tepat dari kriteria yang diunggah.]
+Kriteria   : [Kutip PRESISI: nama regulasi/dokumen + nomor + tahun + pasal/ayat/butir (atau SOP + butir)
+              dari matriks kriteria, beserta teks normatif tepat. BUKAN "prinsip umum/kepatutan".]
 
 Sebab      : [AKAR penyebab via RCA (5 Whys/fishbone), tiap lapisan didukung bukti.
               Bila tidak terbukti → "Tidak ditemukan penyebab" / "Tidak cukup data". Jangan mengarang.]

@@ -155,7 +155,7 @@ Tugas substantif di bawah adalah **inti penilaian audit (judgment)** dan **WAJIB
 [Fakta yang ditemukan. Wajib sebutkan: nama dokumen + nomor halaman/pasal + tanggal + nilai Rp jika ada]
 
 **Kriteria:**
-[Pasal dan ayat peraturan yang dilanggar + kutipan teks normatif langsung dari references/]
+[Kutip **PRESISI**: nama peraturan + **nomor + tahun + pasal/ayat** yang dilanggar + kutipan teks normatif langsung dari references/ (mis. "Perpres 16/2018 Pasal 26"; "PMK No. 32/PMK.02/2025 tentang SBM TA 2026"). **DILARANG** menyebut peraturan tanpa nomor/pasal atau mengangkat "prinsip umum". Bila kondisi tak diatur pasal spesifik → jangan paksakan; catat sebagai indikasi yang perlu ditetapkan dasarnya, bukan deviasi terkonfirmasi.]
 
 **Sebab:**
 [Analisis akar masalah (RCA): kelemahan SPI, kelalaian, ketidakpahaman regulasi, atau kombinasi]
