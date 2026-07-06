@@ -161,15 +161,17 @@ def scenario_audit_umum() -> Path:
     kriteria = _digest(
         "00-input/kriteria-01-sop-sbm-pembayaran.pdf", "kriteria",
         """
-KRITERIA YANG DIUNGGAH: (1) SOP Pembayaran Belanja Satker, (2) Standar Biaya Masukan (SBM) TA 2026.
-SOP butir 5 — Sebelum penerbitan SPM, WAJIB dilakukan verifikasi berjenjang: verifikator (staf) →
+KRITERIA YANG DIUNGGAH: (1) SOP Pembayaran Belanja Satker Nomor 05/SOP/2025, (2) Standar Biaya Masukan
+(SBM) TA 2026 = PMK No. 32/PMK.02/2025 tentang Standar Biaya Masukan.
+SOP Nomor 05/SOP/2025 butir 5 — Sebelum penerbitan SPM WAJIB verifikasi berjenjang: verifikator (staf) →
 PPK menguji kebenaran tagihan → PPSPM menerbitkan SPM. Verifikator dan PPSPM TIDAK boleh orang yang sama.
-SOP butir 6 — Setiap pembayaran honorarium narasumber WAJIB dilampiri: undangan, daftar hadir asli,
-materi/bahan, dan bukti transfer. SBM TA 2026 — honorarium narasumber eselon II setara: batas tertinggi
+SOP butir 6 — Pembayaran honorarium narasumber WAJIB dilampiri: undangan, daftar hadir asli, materi, bukti transfer.
+SOP butir 7 — Nilai SPM WAJIB SAMA dengan nilai SPP hasil verifikasi; tidak boleh ada selisih tanpa dasar/revisi resmi.
+PMK No. 32/PMK.02/2025 (SBM), Lampiran butir honorarium narasumber/pembahas: batas tertinggi eselon II setara
 Rp 1.400.000/jam/orang; moderator Rp 1.000.000/kegiatan.
         """,
-        kata_kunci=["SOP pembayaran", "SBM 2026", "verifikasi berjenjang", "honorarium narasumber"],
-        regulasi=["PMK 83/PMK.02/2022 (SBM)", "PP 45/2013"],
+        kata_kunci=["SOP 05/SOP/2025", "PMK 83/PMK.02/2022", "verifikasi berjenjang", "honorarium narasumber", "SPM=SPP"],
+        regulasi=["PMK No. 32/PMK.02/2025", "PP 45/2013"],
     )
     objek1 = _digest(
         "00-input/objek-01-spp-spm-honor.pdf", "objek",

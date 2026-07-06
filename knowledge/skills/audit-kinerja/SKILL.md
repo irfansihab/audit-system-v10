@@ -407,9 +407,10 @@ Contoh: "Realisasi IKU 'Jumlah pengguna layanan digital' baru mencapai 45.000 da
 (45%) per 31 Desember 2025 berdasarkan laporan kinerja B12 Nomor xxx."]
 
 **Kriteria:**
-[Target yang seharusnya dicapai + dasar penetapannya.
-Contoh: "Berdasarkan PK Tahun 2025 yang ditandatangani [nama], target IKU... adalah 100.000 pengguna.
-Perpres 29/2014 mengamanatkan instansi mencapai target yang telah ditetapkan dalam PK."]
+[Target yang seharusnya dicapai + dasar penetapannya — kutip **PRESISI**: nama dokumen/regulasi + **nomor + tahun + pasal/klausul** yang mengatur langsung (mis. PK Tahun 2025 Nomor xxx butir target IKU; Renstra bab/tabel; SOP butir).
+Contoh: "Berdasarkan PK Tahun 2025 Nomor xxx yang ditandatangani [nama], target IKU... adalah 100.000 pengguna.
+Perpres 29/2014 Pasal ... mengamanatkan instansi mencapai target yang ditetapkan dalam PK."]
+> **Presisi & anti-mengarang KRITERIA.** Sebut sumber target/aturan secara **verifiable** (dokumen + nomor + tahun + pasal/butir dari proses bisnis/SOP/PK/Renstra yang diunggah). **DILARANG** mengangkat "prinsip umum/asas kepatutan" atau memaksakan pasal yang tak langsung mengatur sebagai kriteria. Bila suatu kondisi **tak memiliki kriteria/target formal** → jangan paksakan; catat sebagai **indikasi** yang perlu ditetapkan dasarnya (mohon arahan auditor), bukan deviasi terkonfirmasi.
 
 **Sebab:**
 [Analisis akar masalah — mengapa program tidak efektif/efisien.
