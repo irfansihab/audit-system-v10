@@ -1,0 +1,20 @@
+{
+  "file": "00-input/objek-01-evaluasi-reformasi-birokrasi.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 619,
+  "ringkasan_teks": "DOKUMEN PELAKSANAAN RB UNIT TA 2025. (1) Ketercapaian Output: Rencana Aksi RB dilaporkan 100% 'sesuai',\nnamun hanya level input-output; outcome/dampak (mis. indeks pelayanan, GEnerating impact) TIDAK diukur.\n(2) Kesesuaian Waktu: timeline beberapa renaksi tidak sesuai jadwal; perubahan rencana aksi tanpa\njustifikasi terdokumentasi. (3) Kualitas Pelaksanaan: data dukung capaian berupa matriks/checklist, BUKAN\nLaporan Hasil formal; kertas kerja penilaian tidak lengkap. (4) Ketepatan Pelaksanaan: pembangunan Zona\nIntegritas menuju WBK/WBBM STAGNAN lintas tahun (persentase unit ber-ZI flat 12% tiga tahun).",
+  "kata_kunci": [
+    "100% output",
+    "outcome tidak diukur",
+    "matriks bukan laporan",
+    "ZI stagnan 12%"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

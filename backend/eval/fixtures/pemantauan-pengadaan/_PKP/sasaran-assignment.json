@@ -1,0 +1,17 @@
+{
+  "skill": "pemantauan-pengadaan",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memantau pelaksanaan kontrak pengadaan terhadap jadwal, pembayaran, dan milestone KAK per cut-off; menandai deviasi (fisik<jadwal, bayar>fisik, denda, addendum berlebih) berbasis bukti.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Bandingkan progres fisik vs jadwal, pembayaran vs fisik, milestone vs KAK; hitung indikasi denda 1/1000.",
+        "Tandai deviasi K/K/S/A (Sebab anti-mengarang, Akibat/risiko). Non-assurance; tanpa hitung kerugian negara."
+      ]
+    }
+  ]
+}

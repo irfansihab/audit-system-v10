@@ -1,0 +1,17 @@
+{
+  "skill": "konsultasi-pengadaan",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menyusun PENDAPAT advisory (tidak mengikat) atas permintaan konsultansi: Bolehkah paket pengadaan perangkat lunak senilai Rp2,4 miliar dilakukan melalui Penunjukan Langsung / e-purchasing katalog, dan bagaimana urutan penetapan pemaketan/spesifikasi/HPS/metode pemilihannya?",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Susun pendapat per pertanyaan dengan alur Pertanyaan → Dasar Hukum (pasal/ayat spesifik) → Analisis → Pendapat.",
+        "Jaga sifat advisory: tidak mengikat, tidak memvonis pelanggaran, keputusan tetap pada pejabat berwenang; eskalasi bila ada indikasi pelanggaran material."
+      ]
+    }
+  ]
+}

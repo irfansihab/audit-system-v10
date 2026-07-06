@@ -1,0 +1,26 @@
+{
+  "file": "00-input/objek-01-pemantauan-tindak-lanjut.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 648,
+  "ringkasan_teks": "REGISTER TINDAK LANJUT REKOMENDASI per cut-off 30 Juni 2026. (1) 4 rekomendasi struktural BPK (cluster\ntata kelola) berstatus 'Belum Ditindaklanjuti', umur 410–520 hari (> 365 hari). (2) Rekomendasi penyetoran\nke kas negara Rp 91,9 miliar (kolokasi/Metro-E) berstatus 'Belum Ditindaklanjuti' — belum ada bukti setor.\n(3) Rekomendasi verifikasi outstanding Rp 171,59 miliar berstatus 'Dalam Proses' — bukti TL baru parsial.\n(4) Rate penyelesaian TL timpang antar-Ditjen: Ditjen-W 17,07% (7 dari 41) vs Ditjen-E 83,33% (15 dari 18).\n(5) 2 rekomendasi atas unit yang telah berubah SOTK ditandai 'TDD' NAMUN tanpa melampirkan SK dasar formal.",
+  "kata_kunci": [
+    "Belum Ditindaklanjuti",
+    "Rp 91,9 miliar",
+    "Rp 171,59 miliar",
+    "17,07%",
+    "TDD"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-06-30"
+  ],
+  "nilai_rupiah_terdeteksi": [
+    "Rp 91.900.000.000",
+    "Rp 171.590.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

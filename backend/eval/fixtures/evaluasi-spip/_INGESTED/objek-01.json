@@ -1,0 +1,21 @@
+{
+  "file": "00-input/objek-01-evaluasi-spip.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 583,
+  "ringkasan_teks": "LKE SPIP & KERTAS KERJA UNIT TA 2025. (1) Nilai PM unsur agregat 'Terkelola' (4,2) sedangkan bukti PK\nhanya mendukung 'Terdefinisi' (3,1) — optimism bias, skor perlu direvisi TURUN. (2) Unsur II Penilaian\nRisiko: register risiko strategis BELUM lengkap dan RTP tingkat strategis belum disusun (sub-unsur 2.1–2.2\ngap). (3) Aplikasi SPIP bermasalah; sebagian Kertas Kerja (KK Lead II) tidak terisi (PM 0% tanpa bukti).\n(4) Unsur I Lingkungan Pengendalian: kompetensi SDM penyelenggara SPIP/MR belum merata, standar kompetensi\nbelum dipenuhi. Tidak menghitung kerugian negara.",
+  "kata_kunci": [
+    "PM 4,2",
+    "PK 3,1",
+    "optimism bias",
+    "register risiko",
+    "Kertas Kerja"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-pemantauan-tindak-lanjut.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 437,
+  "ringkasan_teks": "KRITERIA PEMANTAUAN TL: status TL diklasifikasi Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak\nDapat Ditindaklanjuti (TDD). Rekomendasi finansial (penyetoran ke kas negara) hanya Tuntas bila ada bukti\nsetor. Rekomendasi 'Belum Ditindaklanjuti' dengan umur > 365 hari = kritis. Status TDD hanya sah bila ada\ndasar formal (mis. unit dibubarkan/SOTK berubah dengan SK). Rekomendasi WAJIB ditindaklanjuti (PP 60/2008 Ps.50).",
+  "kata_kunci": [
+    "pemantauan-tindak-lanjut",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "PP 60/2008 Pasal 50",
+    "PermenPANRB 5/2008"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

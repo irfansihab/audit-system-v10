@@ -156,3 +156,55 @@ def judge_recall(expected_issues: list[dict], temuan_list: list[dict]) -> list[d
         if matches or not (exp and produced):
             break
     return matches
+
+
+# ---------------------------------------------------------------------------
+# C. Ketepatan PENDAPAT (skill konsultansi — advisory, bukan temuan)
+# ---------------------------------------------------------------------------
+
+_PENDAPAT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "poin": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "expected_id": {"type": "string"},
+                    "tertangani": {"type": "boolean", "description": "pendapat mencakup substansi poin ini"},
+                    "tepat": {"type": "boolean", "description": "arah saran & dasar hukum benar, tidak menyesatkan"},
+                    "alasan": {"type": "string"},
+                },
+                "required": ["expected_id", "tertangani", "tepat", "alasan"],
+            },
+        },
+        "advisory_wajar": {"type": "boolean",
+                           "description": "pendapat bersifat advisory/tidak mengikat, tidak menyimpulkan pelanggaran, tidak mengarang kewajiban"},
+        "catatan": {"type": "string"},
+    },
+    "required": ["poin", "advisory_wajar"],
+}
+
+_PENDAPAT_SYSTEM = """Anda auditor senior APIP yang menilai mutu PENDAPAT KONSULTANSI (advisory pra-pelaksanaan).
+Konsultansi = memberi pendapat/saran (Pertanyaan → Dasar Hukum → Analisis → Pendapat), TIDAK menyimpulkan
+pelanggaran, TIDAK menghitung kerugian negara, TIDAK mengikat (keputusan tetap di pejabat berwenang).
+Anda diberi (1) daftar POIN pendapat yang SEHARUSNYA disampaikan (expected, hasil validasi auditor) dan
+(2) PENDAPAT yang diproduksi agen. Untuk tiap expected poin nilai: tertangani (substansi poin tercakup?) &
+tepat (arah saran + dasar hukum/pasal benar & tidak menyesatkan?). Jangan longgar: kecocokan dangkal/arah
+saran salah = tidak tertangani/tidak tepat. Nilai juga advisory_wajar: apakah pendapat menjaga sifat
+advisory (tidak mengikat, tidak memvonis pelanggaran, tidak mengarang kewajiban regulasi)."""
+
+
+def judge_pendapat(expected_pendapat: list[dict], pendapat_text: str) -> dict:
+    exp = [{"id": e.get("id"), "poin": e.get("poin"), "dasar_hukum": e.get("dasar_hukum")}
+           for e in expected_pendapat]
+    user = ("EXPECTED_POIN_PENDAPAT:\n" + json.dumps(exp, ensure_ascii=False, indent=2)
+            + "\n\nPENDAPAT_DIPRODUKSI:\n" + (pendapat_text or "(kosong)")[:6000]
+            + "\n\nNilai tiap poin + advisory_wajar via tool.")
+    out: dict = {"poin": [], "advisory_wajar": False}
+    for _ in range(3):
+        out = _call_tool(_PENDAPAT_SYSTEM, user, "rekam_pendapat", _PENDAPAT_SCHEMA,
+                         max_tokens=500 + 180 * len(exp))
+        if out.get("poin") or not exp:
+            break
+    return out

@@ -1,0 +1,26 @@
+{
+  "file": "00-input/objek-01-pemantauan-pengadaan.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 584,
+  "ringkasan_teks": "LAPORAN PROGRES KONTRAK per cut-off 30 Juni 2026 (nilai kontrak Rp 12.000.000.000). (1) Progres fisik\naktual 40% sedangkan target jadwal kontrak 70% (deviasi 30%). (2) Pembayaran kumulatif (SPM/SP2D) 55%\nmelampaui progres fisik 40% (bayar > fisik, risiko kelebihan bayar). (3) Milestone kritis 'Instalasi &\nUji Fungsi' tenggat 15 Juni 2026 TERLEWAT 15 hari — potensi denda 1/1000/hari belum dihitung/dikenakan.\n(4) Terdapat 3 addendum kontrak kumulatif senilai 14% dari nilai kontrak (> 10%). (5) Dua deliverable yang\ndijadwalkan selesai s.d. periode laporan belum tercapai.",
+  "kata_kunci": [
+    "progres fisik 40%",
+    "pembayaran 55%",
+    "milestone terlewat",
+    "addendum 14%",
+    "denda"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2026-06-30",
+    "2026-06-15"
+  ],
+  "nilai_rupiah_terdeteksi": [
+    "Rp 12.000.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

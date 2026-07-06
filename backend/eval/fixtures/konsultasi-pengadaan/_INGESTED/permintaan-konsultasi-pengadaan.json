@@ -1,0 +1,25 @@
+{
+  "file": "00-input/permintaan-konsultasi-pengadaan.pdf",
+  "jenis": "permintaan",
+  "halaman_total": 1,
+  "halaman_total_chars": 432,
+  "ringkasan_teks": "NOTA DINAS PENDAMPINGAN PRA-PENGADAAN (DJED.6). Unit berencana mengadakan perangkat lunak senilai\nRp2.400.000.000 dan mengusulkan Penunjukan Langsung / e-purchasing katalog sebagai jalur utama. Spesifikasi\nteknis masih umum/ambigu (belum final); HPS belum disusun; terdapat >1 penyedia potensial di pasar/katalog.\nUnit menanyakan kelayakan metode, urutan penetapan pemaketan-spesifikasi-HPS-metode, serta batas peran APIP.",
+  "kata_kunci": [
+    "Penunjukan Langsung",
+    "e-purchasing",
+    "Rp2,4 miliar",
+    "spesifikasi",
+    "HPS"
+  ],
+  "regulasi_terdeteksi": [
+    "Perpres 16/2018 jo. 12/2021",
+    "Perlem LKPP 12/2021",
+    "Perlem LKPP 4/2024"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

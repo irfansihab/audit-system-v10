@@ -1,0 +1,17 @@
+{
+  "skill": "pemantauan-tindak-lanjut",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memantau status tindak lanjut rekomendasi hasil pengawasan (BPK/APIP) per cut-off dan menandai deviasi (belum TL, TDD tanpa dasar, asimetri penyelesaian) berbasis bukti.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Klasifikasi status TL tiap rekomendasi (Tuntas/Proses/Belum/TDD) berbasis bukti; hitung umur (aging).",
+        "Tandai deviasi: belum TL > 365 hari, finansial belum setor, TDD tanpa SK, asimetri rate. Sebab anti-mengarang."
+      ]
+    }
+  ]
+}

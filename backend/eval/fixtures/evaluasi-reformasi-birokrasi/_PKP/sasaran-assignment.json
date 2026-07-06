@@ -1,0 +1,17 @@
+{
+  "skill": "evaluasi-reformasi-birokrasi",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mengevaluasi pelaksanaan Reformasi Birokrasi unit terhadap KepmenPANRB 182/2024 (4 dimensi); identifikasi gap sebagai Area of Improvement.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Nilai tiap dimensi RB (output vs outcome, ketepatan waktu, kualitas bukti, progres ZI).",
+        "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk dimensi/indikator spesifik."
+      ]
+    }
+  ]
+}

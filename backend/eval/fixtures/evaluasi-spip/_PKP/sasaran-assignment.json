@@ -1,0 +1,17 @@
+{
+  "skill": "evaluasi-spip",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menjamin kualitas (validasi) penilaian mandiri maturitas SPIP unit terhadap Pedoman BPKP 5/2021; identifikasi gap per unsur/sub-unsur sebagai Area of Improvement.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Validasi skor PM vs bukti (PK) per unsur/sub-unsur; turunkan skor bila optimism bias.",
+        "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk unsur/sub-unsur spesifik."
+      ]
+    }
+  ]
+}

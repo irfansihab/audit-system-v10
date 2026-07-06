@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-evaluasi-spip.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 526,
+  "ringkasan_teks": "KRITERIA SPIP (PK): penilaian mandiri (PM) unit divalidasi APIP (PK). Nilai PK yang LEBIH RENDAH dari PM\nmenandakan optimism bias → skor direvisi turun. Unsur II Penilaian Risiko (2.1 identifikasi, 2.2 analisis)\nmenuntut register risiko strategis & RTP tingkat strategis LENGKAP. Bukti/Kertas Kerja per sub-unsur WAJIB\nterisi; aplikasi SPIP berfungsi. Unsur I Lingkungan Pengendalian menuntut kompetensi SDM penyelenggara SPIP\nsesuai standar. Keluaran = skor maturitas + Area of Improvement (BUKAN temuan ber-Sebab).",
+  "kata_kunci": [
+    "evaluasi-spip",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "PP 60/2008",
+    "Peraturan BPKP 5/2021 (Pedoman Penilaian Maturitas SPIP)"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

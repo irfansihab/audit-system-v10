@@ -1,0 +1,17 @@
+{
+  "skill": "konsultansi-umum",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menyusun PENDAPAT advisory (tidak mengikat) atas permintaan konsultansi: (1) Bolehkah paket Rp180 juta dipecah menjadi dua paket masing-masing di bawah ambang agar masuk jalur Pengadaan Langsung? (2) Siapa yang berwenang menetapkan HPS dalam SOP? (3) Dapatkah Inspektorat menandatangani persetujuan operasional atas rancangan SOP ini?",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Susun pendapat per pertanyaan dengan alur Pertanyaan → Dasar Hukum (pasal/ayat spesifik) → Analisis → Pendapat.",
+        "Jaga sifat advisory: tidak mengikat, tidak memvonis pelanggaran, keputusan tetap pada pejabat berwenang; eskalasi bila ada indikasi pelanggaran material."
+      ]
+    }
+  ]
+}

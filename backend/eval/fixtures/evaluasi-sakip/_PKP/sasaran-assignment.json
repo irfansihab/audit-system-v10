@@ -1,0 +1,17 @@
+{
+  "skill": "evaluasi-sakip",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mengevaluasi implementasi SAKIP unit terhadap PermenPANRB 88/2021 (5 komponen); identifikasi gap per komponen sebagai Area of Improvement.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Nilai tiap komponen SAKIP vs kriteria (SMART, cascading, pemanfaatan pengukuran, tren predikat).",
+        "Catat gap sebagai Area of Improvement (Kondisi-Kriteria-Akibat, TANPA Sebab); rujuk komponen spesifik."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "file": "00-input/objek-01-evaluasi-sakip.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 578,
+  "ringkasan_teks": "DOKUMEN SAKIP UNIT TA 2025. (1) Perencanaan Kinerja: sebagian IKU tidak SMART & berorientasi PROSES\n(mis. '% kegiatan terlaksana'), bukan outcome. (2) Cascading kinerja belum lengkap sampai Eselon II/pegawai;\npohon kinerja terputus di level eselon I. (3) Komponen Pengukuran Kinerja bernilai TERENDAH; pengukuran\nmasih administratif, data kinerja belum andal. (4) Hasil pengukuran tersedia namun BELUM dipakai sebagai\ndecision tool (dimensi pemanfaatan lemah). (5) Predikat AKIP STAGNAN 'BB' tiga tahun berturut-turut\n(nilai naik tipis 70,1→70,4→70,8; predikat tetap).",
+  "kata_kunci": [
+    "IKU tidak SMART",
+    "cascading",
+    "pengukuran terendah",
+    "predikat BB stagnan"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

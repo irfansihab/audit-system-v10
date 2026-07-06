@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-evaluasi-reformasi-birokrasi.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 472,
+  "ringkasan_teks": "KRITERIA RB (KepmenPANRB 182/2024): dinilai 4 dimensi/lensa — Ketercapaian Output, Kesesuaian Waktu,\nKualitas Pelaksanaan, Ketepatan Pelaksanaan. Capaian RB dinilai sampai OUTCOME/dampak (bukan hanya\ninput-output); renaksi harus SESUAI JADWAL (justifikasi bila berubah); data dukung berupa LAPORAN HASIL\nformal (bukan sekadar matriks/checklist); pembangunan Zona Integritas (WBK/WBBM) menunjukkan progres.\nKeluaran = nilai RB + Area of Improvement (TANPA Sebab).",
+  "kata_kunci": [
+    "evaluasi-reformasi-birokrasi",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "KepmenPANRB 182/2024 (Juknis Evaluasi RB)",
+    "PermenPANRB 9/2023"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

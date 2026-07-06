@@ -26,10 +26,24 @@ Tujuan: kualitas output tiap skill **terukur** & **ter-gate regresi**. Basis rub
 | evaluasi-umum | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.8, 4 temuan) |
 | pemantauan-umum | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **0.969** | ✅ terukur (1.8, 4 temuan) |
 | evaluasi-manajemen-risiko | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.8, 5 temuan) |
-| reviu-rka-kl | ×2 | — | — | — | — | — | — | golden ada, belum di-judge (butuh digest TOR/RAB) |
-| *(8 skill lain)* | — | — | — | — | — | — | — | LKE/konsultansi/PBJ-lain — perlu fixture/jalur skor |
+| audit-kinerja | draft-01 | **1.00** | 1.00 | 0.50‡ | 1.00 | 0.67 | **0.883** | ✅ terukur (1.9, 4 temuan, 8-aspek RCA) |
+| pemantauan-tindak-lanjut | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.9, 5 temuan, matriks status TL) |
+| pemantauan-pengadaan | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.9, 4 temuan) |
+| evaluasi-spip | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.9, 4 AoI, LKE tanpa-Sebab) |
+| evaluasi-sakip | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.9, 5 AoI) |
+| evaluasi-reformasi-birokrasi | draft-01 | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | **1.00** | ✅ terukur (1.9, 4 AoI) |
+| reviu-rka-kl | pdn-031010 | **1.00** | 1.00 | — | 0.94 | 1.00 | **0.984** | ✅ terukur (1.9, 4 temuan, digest TOR/RAB) |
 
-**8/16 terukur live** (per 6 Jul, harness `eval/live_measure.py`). Semua run: metode `build_fixtures.py` (digest sintetis ber-cacat). ⚠ **Skor tinggi (banyak 1.00) sebagian ARTEFAK fixture sintetis "bersih"** — cacat ditanam unambiguous di digest → mudah ditangkap; dokumen nyata lebih berisik. Golden + fixture **WAJIB divalidasi auditor** sebelum jadi baseline resmi.
+**Konsultansi — jalur skor PENDAPAT** (`judge_pendapat`: coverage poin + ketepatan + advisory_wajar; bukan recall-temuan):
+
+| Skill | Golden | coverage | ketepatan | advisory_wajar | skor | Status |
+|---|---|---|---|---|---|---|
+| konsultansi-umum | draft-01 | 1.00 | 1.00 | ✅ | **1.00** | ✅ terukur (1.9, 4 poin) |
+| konsultasi-pengadaan | draft-01 | 0.40 | 0.40 | ✅ | **0.40**◊ | ✅ terukur (1.9, 5 poin) |
+
+**16/16 terukur live** (per 6 Jul, harness `eval/live_measure.py`). Semua run: `build_fixtures.py` (digest/TOR-RAB sintetis ber-cacat; konsultansi = skenario pertanyaan advisory). ⚠ **Skor tinggi (banyak 1.00) sebagian ARTEFAK fixture sintetis "bersih"** — cacat ditanam unambiguous di digest → mudah ditangkap; dokumen nyata lebih berisik. Golden + fixture **WAJIB divalidasi auditor** sebelum jadi baseline resmi.
+
+◊ konsultasi-pengadaan coverage 0.40 = **sinyal nyata (bukan artefak)**: agen menjawab pertanyaan utama (PL tak tepat utk Rp2,4M) dgn benar & advisory, tapi MELEWATKAN 3 poin advisory-governance (urutan pemaketan→spesifikasi→HPS→metode; mitigasi self-review threat + dokumentasi keterlibatan APIP; eskalasi ke audit-pengadaan bila ada indikasi pelanggaran). **Target hardening: kelengkapan poin advisory-governance skill konsultasi-pengadaan.**
 
 \* recall 0.5 & grounded pilot reviu = **artefak harness sintetis** (digest tanpa PDF primer; 1 dari 2 expected issue tak diberi data). Sinyal murni skill: precision/unsur/kriteria/narasi = 1.00.
 ‡ audit-umum `kriteria`=0.50: 3 temuan RAGU krn kutipan kriteria kurang presisi (SBM/SOP dikutip generik, bukan pasal spesifik) + 1 grounding lemah (temuan "ketiadaan dokumen" sulit dibuktikan langsung). **Menegaskan sinyal hardening yang sama dgn audit-pengadaan: presisi kutipan pasal/kriteria skill AUDIT.**
@@ -44,7 +58,7 @@ Tujuan: kualitas output tiap skill **terukur** & **ter-gate regresi**. Basis rub
 
 ## Cakupan & rencana
 - **Golden case: 16/16** — 3 tervalidasi-awal (audit/reviu-pengadaan, reviu-rka-kl) + **13 DRAFT** (Fase 1.6, diturunkan dari checklist SKILL + pola `knowledge/wiki/temuan-patterns/<skill>/`; tiap expected ber-`pattern_ref`). **Semua 13 DRAFT WAJIB divalidasi auditor senior** sebelum jadi baseline.
-- **Terukur judge: 8/16** (reviu/audit-pengadaan + reviu/audit/evaluasi/pemantauan-umum + evaluasi-manajemen-risiko) — semua doktrin ber-temuan tervalidasi live: reviu & evaluasi-nonLKE & pemantauan (Sebab anti-mengarang), audit (Sebab WAJIB/RCA + kerugian negara). **Sisa 8:** 3 LKE (spip/rb/sakip — perlu jalur skor AoI/LKE-xlsx), 2 konsultansi (perlu mode "ketepatan pendapat"), reviu-rka-kl + 2 PBJ-lain (perlu fixture digest TOR/RAB/pengadaan). Tambah fixture ber-temuan = 1 skenario di `eval/fixtures/build_fixtures.py` (mekanis).
+- **Terukur judge: 16/16** (6 Jul, sesi harness). Semua doktrin tervalidasi live: audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), **LKE** (spip/sakip/rb — AoI tanpa-Sebab via temuan.json; runner tanpa-render sehingga gate LKE-xlsx tak menghalangi identifikasi AoI), **konsultansi** (jalur `judge_pendapat`), **reviu-rka-kl** (digest TOR/RAB staged di `_KKP`). **Sinyal hardening lintas-skill:** presisi kutipan pasal `kriteria` LEMAH di SEMUA skill AUDIT (audit-pengadaan 0.50, audit-umum 0.50, audit-kinerja RAGU×4) → **prioritas hardening berikut: presisi sitasi pasal/kriteria skill audit.** konsultasi-pengadaan coverage 0.40 → kelengkapan poin advisory-governance.
 - **Catatan format golden:** skill ber-temuan (audit/reviu/evaluasi/pemantauan) pakai `expected_key_issues`; **evaluasi ber-LKE** (sakip/spip/rb) → expected = AoI/gap tanpa Sebab; **konsultasi** (×2) pakai `expected_pendapat` — **harness recall-vs-temuan tak berlaku**, perlu mode eval "ketepatan pendapat"; **pemantauan-tindak-lanjut** dinilai atas status-TL/aging, runner mungkin perlu adaptasi.
 - Rencana perluasan (opt-in, berbiaya API + butuh fixture/dok input per skill):
   1. Draft golden stub 13 skill (dari checklist tiap SKILL) → validasi auditor.
