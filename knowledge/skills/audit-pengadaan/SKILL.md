@@ -121,7 +121,7 @@ Tugas substantif di bawah adalah **inti penilaian audit (judgment)** dan **WAJIB
 ## Cara Membaca Dokumen
 
 ### Prioritas Baca (urutan):
-1. `00-surat-tugas/` → scope, periode, obyek audit
+1. **Konteks penugasan (dari INTEGRAL)** → Nomor ST, scope, periode, obyek audit — **ST TIDAK di-upload**; metadata penugasan (Nomor ST, sasaran, lingkup) disuplai orkestrator via konteks/`sasaran-assignment.json`.
 2. `01-peraturan-internal/` → SOP, Perkada, SOP ULP (kriteria tambahan)
 3. `03-perencanaan/` → TOR/KAK, RAB, RKA, DPA (audit perencanaan)
 4. `02-kontrak/` → kontrak, addendum, SPPBJ, BAHP (audit pemilihan + kontrak)
