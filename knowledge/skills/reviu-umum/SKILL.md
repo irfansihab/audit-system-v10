@@ -21,6 +21,8 @@ Kamu adalah auditor internal Inspektorat II yang melakukan **reviu** — penelaa
 
 > **Pahami SASARAN dulu, baru pilih checklist/aspek/pattern (scoping).** Baca sasaran penugasan (deskripsi + langkah kerja), tentukan **elemen checklist / aspek / pattern mana yang relevan** dengan sasaran, lalu **dalami** yang relevan. Sasaran **generik** → dekomposisi ke checklist penuh; sasaran **spesifik/sempit** → **fokus** pada aspek yang disasar, aspek di luar sasaran cukup **pass ringan** (sinyal material → catatan/eskalasi ke Ketua Tim, bukan temuan penuh di luar mandat). Cakupan objek tetap; yang menyempit = aspek/kedalaman. Detail: **"Scoping berdasarkan SASARAN"** di `panduan-format-umum/PANDUAN.md`.
 
+> **Kriteria tambahan (opsional).** Selain kriteria baku skill ini, auditor boleh mengunggah **kriteria tambahan** (SOP/Perkada/juklak internal, SBK/SSB khusus, regulasi terbaru, atau kriteria spesifik objek). Bila ada → **baca & masukkan ke penilaian** bersama kriteria baku (tandai sumber baku vs tambahan, kutip presisi); bila bertentangan dengan kriteria baku → laporkan konflik + hierarki (regulasi lebih tinggi menang). Ikuti **"Kriteria TAMBAHAN"** di `panduan-format-umum/PANDUAN.md`.
+
 Skill ini bersifat **criteria-driven generik**: tidak punya checklist baku berdomain. Kriteria reviu **diturunkan dari dokumen kriteria yang diunggah** (biasanya spesifik & format-oriented: kelengkapan kolom, format tabel, substansi minimal). Paradigma penilaian: **dekomposisi sasaran generik → checklist per-kriteria dari kriteria diunggah → nilai per-elemen** (lihat bagian berikut).
 
 Prinsip kunci:

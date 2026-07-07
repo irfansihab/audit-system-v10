@@ -124,6 +124,8 @@ Berlaku untuk **Kegiatan/Keluaran baru** dan **Angka Dasar yang berubah**:
 > - **Sasaran generik** (mis. *"memastikan kesesuaian RKA dengan kaidah penganggaran"*) → dekomposisi ke **checklist penuh** (keenam elemen di atas) untuk tiap RO.
 > - **Sasaran spesifik/sempit** (mis. penugasan yang hanya fokus **keselarasan RO-IRO ↔ kegiatan/program & isu↔intervensi**, atau hanya **kesesuaian RAB vs SBM/data dukung**) → **petakan sasaran ke elemen/aspek yang relevan lalu DALAMI itu** (mis. keselarasan → elemen #2 kerangka logis, #3 KPI/IRO, cascading, relevansi isu-intervensi; SBM → elemen #5 kewajaran biaya + Analisis Substantif #2). Aspek/elemen **di luar sasaran** cukup **pass ringan**: bila muncul **sinyal material** di sana → **catat sebagai catatan/eskalasi ke Ketua Tim** (jangan diabaikan; jangan pula dijadikan temuan penuh di luar mandat sasaran). Temuan tetap di-tag `sasaran_id` sesuai sasaran yang ditugaskan.
 
+> **Kriteria tambahan (opsional).** Selain kriteria baku skill ini, auditor boleh mengunggah **kriteria tambahan** (SOP/Perkada/juklak internal, SBK/SSB khusus, regulasi terbaru, atau kriteria spesifik objek). Bila ada → **baca & masukkan ke penilaian** bersama kriteria baku (tandai sumber baku vs tambahan, kutip presisi); bila bertentangan dengan kriteria baku → laporkan konflik + hierarki (regulasi lebih tinggi menang). Ikuti **"Kriteria TAMBAHAN"** di `panduan-format-umum/PANDUAN.md`.
+
 ## Analisis Substantif Wajib (value-add di luar checklist struktural)
 
 Checklist struktural hanya menangkap inkonsistensi sederhana. Analisis di bawah adalah value-add AI — **wajib** ditelusuri (bukan opsional).
