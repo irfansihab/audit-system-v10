@@ -198,8 +198,11 @@ advisory (tidak mengikat, tidak memvonis pelanggaran, tidak mengarang kewajiban 
 def judge_pendapat(expected_pendapat: list[dict], pendapat_text: str) -> dict:
     exp = [{"id": e.get("id"), "poin": e.get("poin"), "dasar_hukum": e.get("dasar_hukum")}
            for e in expected_pendapat]
+    # Pendapat advisory bisa panjang (memo 5+ pertanyaan → puluhan ribu char).
+    # Cap tinggi agar poin di bagian akhir tak "terpotong" (bug: cap 6K dulu memangkas
+    # jawaban → poin dinilai 'tidak tertangani' padahal ADA). Opus input muat besar.
     user = ("EXPECTED_POIN_PENDAPAT:\n" + json.dumps(exp, ensure_ascii=False, indent=2)
-            + "\n\nPENDAPAT_DIPRODUKSI:\n" + (pendapat_text or "(kosong)")[:6000]
+            + "\n\nPENDAPAT_DIPRODUKSI:\n" + (pendapat_text or "(kosong)")[:40000]
             + "\n\nNilai tiap poin + advisory_wajar via tool.")
     out: dict = {"poin": [], "advisory_wajar": False}
     for _ in range(3):
