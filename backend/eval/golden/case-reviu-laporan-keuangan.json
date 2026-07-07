@@ -1,0 +1,13 @@
+{
+  "case_id": "reviu-laporan-keuangan-draft-01",
+  "skill": "reviu-laporan-keuangan",
+  "folder": "(fixture reviu-laporan-keuangan)",
+  "deskripsi": "Reviu LK Satker TA 2025 (keyakinan terbatas) vs SAP + rekonsiliasi, sebelum penyampaian.",
+  "_catatan_validasi": "DRAFT skill baru. UJI PRESISI: LRA realisasi Rp88M dalam pagu Rp90M = WAJAR, TIDAK boleh jadi temuan. WAJIB divalidasi auditor senior; nomor PMK/PSAP dikonfirmasi.",
+  "expected_key_issues": [
+    {"id": "LK1", "ringkas": "Neraca menyajikan pos Persediaan bersaldo MINUS (Rp -150 juta) — saldo tidak normal, tidak sesuai penyajian akrual SAP.", "kriteria_acuan": "PP 71/2010 SAP (PSAP 01 penyajian LK; PSAP 05 persediaan).", "materialitas": "tinggi"},
+    {"id": "LK2", "ringkas": "Rekonsiliasi SAKTI/SAIBA vs SPAN terdapat selisih Rp 2,3 miliar yang belum dijelaskan di kertas kerja — keandalan angka belum terverifikasi.", "kriteria_acuan": "PMK Sistem Akuntansi (SAKTI) + PMK Standar Reviu LK (rekonsiliasi wajib nihil selisih).", "materialitas": "tinggi"},
+    {"id": "LK3", "ringkas": "Nilai Aset Tetap di SIMAK-BMN (Rp 45 M) berbeda dari Neraca (Rp 48 M) — selisih Rp 3 miliar; rekonsiliasi BMN belum tuntas.", "kriteria_acuan": "PMK Penyusunan LK K/L (rekonsiliasi BMN SIMAK ↔ Neraca).", "materialitas": "tinggi"},
+    {"id": "LK4", "ringkas": "Pernyataan Telah Direviu belum ditandatangani — proses reviu berjenjang belum tuntas sebelum penyampaian LK.", "kriteria_acuan": "PMK Standar Reviu LK K/L (255/2015 jo. 8/2019).", "materialitas": "sedang"}
+  ]
+}

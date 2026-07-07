@@ -1,0 +1,26 @@
+{
+  "file": "00-input/objek-01-reviu-laporan-keuangan.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 659,
+  "ringkasan_teks": "LAPORAN KEUANGAN SATKER TA 2025 (unaudited) + KERTAS KERJA.\nNeraca: Kas Rp 1.200.000.000; **Persediaan bersaldo MINUS Rp -150.000.000** (saldo tidak normal); Aset Tetap Rp 48.000.000.000.\nLRA: realisasi belanja Rp 88.000.000.000 dari pagu DIPA Rp 90.000.000.000 (dalam pagu — wajar).\nRekonsiliasi SAKTI vs SPAN: terdapat **SELISIH Rp 2.300.000.000 yang BELUM dijelaskan** di kertas kerja.\nRekonsiliasi BMN: nilai Aset Tetap di **SIMAK-BMN Rp 45.000.000.000** vs **Neraca Rp 48.000.000.000** (selisih Rp 3.000.000.000).\nCaLK: kebijakan akuntansi diungkap; rincian pos material tersedia.\nProses: **Pernyataan Telah Direviu BELUM ditandatangani** APIP.",
+  "kata_kunci": [
+    "Persediaan minus",
+    "selisih SAKTI SPAN",
+    "SIMAK-BMN",
+    "Pernyataan Telah Direviu"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2025-12-31"
+  ],
+  "nilai_rupiah_terdeteksi": [
+    "Rp -150.000.000",
+    "Rp 2.300.000.000",
+    "Rp 3.000.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

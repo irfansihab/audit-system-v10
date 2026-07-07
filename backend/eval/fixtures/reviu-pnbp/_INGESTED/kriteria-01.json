@@ -1,0 +1,22 @@
+{
+  "file": "00-input/kriteria-01-reviu-pnbp.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 201,
+  "ringkasan_teks": "Kriteria baku dibundel di skill: UU 9/2018 PNBP, PP Jenis & Tarif PNBP Komdigi (BHP frekuensi/IPFR), PMK penatausahaan/penyetoran/piutang PNBP. Reviu ketepatan tarif, hitung, tagih, setor, guna, lapor.",
+  "kata_kunci": [
+    "reviu-pnbp",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "UU 9/2018 (PNBP)",
+    "PP Tarif PNBP Komdigi",
+    "PMK Penatausahaan PNBP"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

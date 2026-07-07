@@ -39,6 +39,22 @@ Objek reviu: **data & dokumen PNBP** — target & realisasi PNBP, SK/penetapan t
 | 5 | **Penggunaan PNBP** (bila diizinkan) | Sesuai izin penggunaan & proporsi/pagu | UU 9/2018 + KMK/PMK izin penggunaan PNBP |
 | 6 | **Penatausahaan & pelaporan** | Pencatatan, rekonsiliasi, pelaporan PNBP akurat & lengkap | PMK penatausahaan/pelaporan PNBP |
 
+### Checklist Reviu PNBP (per aspek — wajib ditelusuri; nilai per elemen: Sesuai / Sesuai dgn catatan / Tidak sesuai)
+
+**Aspek 1 — Jenis & tarif:** jenis PNBP yang dipungut **sesuai ketetapan**; **tarif = PP tarif berlaku** (Komdigi: BHP frekuensi, IPFR, sertifikasi/izin). Tarif/jenis di luar ketetapan atau memakai **PP tarif tahun lama** → catatan.
+
+**Aspek 2 — Penetapan/penghitungan terutang:** akurasi penghitungan PNBP terutang **per wajib bayar** (dasar pengenaan, formula BHP/IPFR benar); tidak ada **kurang hitung/kurang pungut**.
+
+**Aspek 3 — Penagihan & piutang:** penagihan **tepat waktu**; piutang PNBP **tercatat**, **umur (aging)** dianalisis, **penyisihan** wajar; tunggakan lama tanpa upaya tagih → catatan.
+
+**Aspek 4 — Penyetoran ke Kas Negara:** setor **tepat waktu & tepat jumlah** (SSBP via **SIMPONI**); **tidak ada PNBP mengendap** di bendahara/rekening di luar kas negara; kesesuaian tanggal pungut vs setor.
+
+**Aspek 5 — Penggunaan PNBP** (bila objek ber-izin guna): penggunaan **sesuai izin (KMK/PMK)** & **proporsi/pagu**; tidak dipakai di luar peruntukan.
+
+**Aspek 6 — Penatausahaan & pelaporan:** pencatatan & **rekonsiliasi PNBP** (unit ↔ SIMPONI ↔ LK) akurat; realisasi PNBP di LRA/LO konsisten.
+
+> Tiap elemen **tidak sesuai** → catatan **K/K/S/A** (Kondisi = fakta PNBP: nilai/wajib bayar/tanggal + dokumen; Kriteria kutip **presisi** UU 9/2018/PP tarif/PMK + pasal; Sebab anti-mengarang; Akibat = risiko kurang pungut/terlambat setor/salah guna — **tanpa** menghitung kerugian negara; **indikasi kurang bayar material → eskalasi audit**). Elemen sesuai → "telah memenuhi". PP tarif Komdigi tak dapat dipastikan versinya → catatan/"tidak cukup data", bukan deviasi terkonfirmasi.
+
 ## Format Unsur Temuan (KKSAR)
 
 Catatan reviu **K/K/S/A** — **Kondisi** (fakta PNBP: nilai/wajib bayar/tanggal + dokumen), **Kriteria** (UU 9/2018/PP tarif/PMK + pasal, kutip **presisi**), **Sebab** (anti-mengarang), **Akibat** (risiko PNBP kurang pungut/terlambat setor/salah guna — **tanpa perhitungan kerugian negara**; indikasi kurang bayar signifikan → eskalasi audit). **Rekomendasi di LHR.** Doktrin: `panduan-format-umum/PANDUAN.md`.

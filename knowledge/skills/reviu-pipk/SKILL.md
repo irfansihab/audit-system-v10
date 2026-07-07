@@ -39,6 +39,22 @@ Objek reviu: **dokumen penerapan & penilaian PIPK** entitas — penetapan lingku
 | 5 | **Simpulan efektivitas & rencana perbaikan** | Simpulan konsisten dengan hasil pengujian; kelemahan → rencana aksi (AoI) | PMK Pedoman PIPK |
 | 6 | **Keandalan dokumentasi PIPK** | Kertas kerja lengkap, tertelusur, ter-review berjenjang | PMK Pedoman PIPK |
 
+### Checklist Reviu PIPK (per aspek — wajib ditelusuri; nilai kecukupan DESAIN + efektivitas OPERASI: Memadai / Memadai dgn catatan / Tidak memadai)
+
+**Aspek 1 — Lingkup & identifikasi risiko:** akun/proses **signifikan** teridentifikasi; **asersi** (keberadaan/keterjadian, kelengkapan, hak & kewajiban, penilaian/alokasi, penyajian) dipetakan; **Risk-Control Matrix (RCM)** ada & risiko salah saji terhubung ke pengendalian kunci.
+
+**Aspek 2 — Pengendalian tingkat entitas:** 5 unsur SPIP (PP 60/2008) di level entitas terdokumentasi & berjalan — lingkungan pengendalian, penilaian risiko, kegiatan pengendalian, informasi & komunikasi, pemantauan.
+
+**Aspek 3 — Pengendalian tingkat proses/transaksi:** kontrol kunci per siklus (**pendapatan/PNBP, belanja, aset & persediaan, kas**) memadai & dijalankan — **otorisasi, rekonsiliasi, pemisahan fungsi (SoD), pembatasan akses**; tidak ada rangkap fungsi tak terkendali.
+
+**Aspek 4 — Pengujian pengendalian (ToC) & CSA:** metode & **ukuran sampel** memadai; ToC menguji efektivitas operasi (bukan sekadar keberadaan dokumen); simpulan didukung bukti pengujian.
+
+**Aspek 5 — Simpulan efektivitas & rencana perbaikan:** simpulan efektivitas PIPK **konsisten** dengan hasil pengujian (tidak overstated); **defisiensi** (defisiensi/ signifikan/ material weakness) diklasifikasi; kelemahan → **rencana aksi perbaikan (AoI)** dgn PIC & target.
+
+**Aspek 6 — Keandalan dokumentasi:** kertas kerja lengkap, tertelusur ke bukti, ter-review berjenjang.
+
+> Tiap elemen **tidak memadai** → catatan **K/K/S/A** (Kondisi = kelemahan desain/operasi pengendalian; Kriteria kutip **presisi** PMK PIPK/PP 60/2008 + pasal; Sebab anti-mengarang; Akibat = **risiko salah saji/keandalan pelaporan**, tanpa kerugian negara). Elemen memadai → nyatakan "telah memenuhi". Kriteria (versi PMK PIPK) tak dapat dipastikan → catatan, bukan deviasi terkonfirmasi.
+
 ## Format Unsur Temuan (KKSAR)
 
 Catatan reviu **K/K/S/A** — **Kondisi** (kelemahan pengendalian: proses/kontrol + dokumen), **Kriteria** (PMK PIPK/PP 60/2008 + pasal, kutip **presisi**), **Sebab** (anti-mengarang), **Akibat** (risiko salah saji/keandalan pelaporan; **tanpa kerugian negara**). **Rekomendasi di LHR.** Doktrin: `panduan-format-umum/PANDUAN.md`.
