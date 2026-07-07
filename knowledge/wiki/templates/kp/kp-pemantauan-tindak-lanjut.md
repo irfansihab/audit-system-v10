@@ -18,7 +18,7 @@ field_optional:
   - catatan_pt
 sumber_wiki:
   - "pattern: PTL-49 dari temuan-patterns/pemantauan-tindak-lanjut/"
-  - "PP 60/2008 Pasal 50, Permenpan 5/2008, UU 15/2004 Pasal 20"
+  - "PP 60/2008 Pasal 50, SAIPI (AAIPI 2021), UU 15/2004 Pasal 20"
   - "konteks: pola-temuan-berulang"
 ---
 
@@ -32,7 +32,7 @@ sumber_wiki:
 
 ## Dasar Hukum & Referensi Regulasi
 
-PP 60/2008 Pasal 50, Permenpan 5/2008, UU 15/2004 Pasal 20.
+PP 60/2008 Pasal 50, SAIPI (AAIPI 2021), UU 15/2004 Pasal 20.
 
 {{#referensi_regulasi}}
 Tambahan referensi yang dirujuk auditor: {{referensi_regulasi}}
@@ -75,7 +75,7 @@ Sasaran baku untuk skill `pemantauan-tindak-lanjut` (impor → daftar Sasaran KP
 ## Sumber Wiki Terkait
 
 - Pattern: [[PTL-48]], [[PTL-49]], [[PTL-50]], [[PTL-51]], [[PTL-52]] (dari temuan-patterns/pemantauan-tindak-lanjut/)
-- Regulasi: [[regulasi-kunci]] (PP 60/2008 Pasal 50, Permenpan 5/2008, UU 15/2004 Pasal 20)
+- Regulasi: [[regulasi-kunci]] (PP 60/2008 Pasal 50, SAIPI (AAIPI 2021), UU 15/2004 Pasal 20)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/pemantauan-tindak-lanjut/SKILL.md`
 

@@ -2,7 +2,7 @@
 name: pemantauan-tindak-lanjut
 jenis: Pemantauan Tindak Lanjut Hasil Pengawasan (TLHP)
 format_laporan: kksa
-dasar-hukum: PP 60/2008 Pasal 50, Permenpan 5/2008
+dasar-hukum: PP 60/2008 Pasal 50, Standar Audit Intern Pemerintah Indonesia (SAIPI/AAIPI 2021)
 kode-surat: PW.04.06
 tingkat-keyakinan: tidak-ada
 version: "0.3"
@@ -74,7 +74,7 @@ Bila kondisi pemantauan perlu ditarik menjadi catatan formal (mis. pola TL macet
 |--------|---------|
 | **Judul** | Kalimat deskriptif kondisi pemantauan (mis. "Sebagian rekomendasi BPK belum ditindaklanjuti melewati batas waktu") |
 | **Kondisi** | Fakta status TL — runtutan: asal LHP, nomor rekomendasi, deadline, bukti yang ada/tidak ada, umur; lalu tunjukkan deviasinya |
-| **Kriteria** | Kewajiban TLHP — PP 60/2008 Pasal 50, Permenpan 5/2008, atau ketentuan TLHP terkait |
+| **Kriteria** | Kewajiban TLHP — PP 60/2008 Pasal 50, Standar Audit Intern Pemerintah Indonesia (SAIPI/AAIPI 2021), atau ketentuan TLHP terkait |
 | **Sebab** | Diisi **bila terbukti** dari bukti (mis. penyebab keterlambatan TL). Bila tidak ditemukan / bukti tidak cukup → tulis EKSPLISIT "Tidak ditemukan penyebab" / "Tidak cukup data". **Jangan mengarang.** |
 | **Akibat** | Risiko bila TL tidak dipercepat (mis. temuan berulang, akuntabilitas menurun) |
 | **Rekomendasi** | Tindakan percepatan — **disusun di laporan, bukan di KKP** |
@@ -92,7 +92,7 @@ Struktur **Laporan Hasil Pemantauan TLHP** (ikuti panduan-format-umum untuk kop/
 
 ## Referensi
 
-Kriteria kewajiban tindak lanjut hasil pengawasan: **PP 60/2008 Pasal 50** (kewajiban pimpinan instansi menindaklanjuti rekomendasi APIP) dan **PermenPAN-RB 5/2008** (Standar Audit APIP — pemantauan tindak lanjut); lihat frontmatter `dasar-hukum`. Klasifikasi status TL (Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak Dapat Ditindaklanjuti) dan aging mengikuti definisi pada bagian pemantauan di atas. Format kop/Nota Dinas & struktur laporan mengikuti `../panduan-format-umum/PANDUAN.md`; matriks status TL lengkap dihasilkan sebagai lampiran Excel.
+Kriteria kewajiban tindak lanjut hasil pengawasan: **PP 60/2008 Pasal 50** (kewajiban pimpinan instansi menindaklanjuti rekomendasi APIP) dan **Standar Audit Intern Pemerintah Indonesia (SAIPI/AAIPI 2021)** — bagian pemantauan tindak lanjut hasil audit; lihat frontmatter `dasar-hukum`. Klasifikasi status TL (Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak Dapat Ditindaklanjuti) dan aging mengikuti definisi pada bagian pemantauan di atas. Format kop/Nota Dinas & struktur laporan mengikuti `../panduan-format-umum/PANDUAN.md`; matriks status TL lengkap dihasilkan sebagai lampiran Excel.
 
 ## Batasan
 

@@ -484,7 +484,7 @@ def scenario_audit_kinerja() -> Path:
         tujuan="Audit Kinerja Efektivitas & Efisiensi Program Pengawasan Konten Digital",
         ruang="Program pengawasan konten (sistem crawling/klasifikasi, tata kelola, anggaran O&M) TA 2025.",
         doktrin_sebab="Sebab WAJIB (root cause/RCA); lingkup 2E (ekonomisitas → audit-pengadaan)",
-        kriteria_reg=["Perpres 29/2014", "PP 60/2008", "Renstra Komdigi", "PermenPANRB 5/2008"],
+        kriteria_reg=["Perpres 29/2014", "PP 60/2008", "Renstra Komdigi", "SAIPI (AAIPI 2021)"],
         kriteria_text="""
 KRITERIA AUDIT KINERJA: Renstra & Perjanjian Kinerja menetapkan target efektivitas sistem pengawasan
 konten minimal 80% konten bermuatan negatif tertangani; setiap sistem/aplikasi WAJIB punya sumber data
@@ -521,7 +521,7 @@ def scenario_pemantauan_tl() -> Path:
         tujuan="Pemantauan Status Tindak Lanjut Rekomendasi Hasil Pengawasan (BPK/APIP)",
         ruang="Register rekomendasi BPK/APIP dan bukti tindak lanjut per PIC/Ditjen s.d. cut-off.",
         doktrin_sebab="Sebab anti-mengarang; status TL berbasis bukti",
-        kriteria_reg=["PP 60/2008 Pasal 50", "PermenPANRB 5/2008"],
+        kriteria_reg=["PP 60/2008 Pasal 50", "SAIPI (AAIPI 2021)"],
         kriteria_text="""
 KRITERIA PEMANTAUAN TL: status TL diklasifikasi Tuntas / Dalam Proses / Belum Ditindaklanjuti / Tidak
 Dapat Ditindaklanjuti (TDD). Rekomendasi finansial (penyetoran ke kas negara) hanya Tuntas bila ada bukti
