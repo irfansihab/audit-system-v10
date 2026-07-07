@@ -39,11 +39,11 @@ Tujuan: kualitas output tiap skill **terukur** & **ter-gate regresi**. Basis rub
 | Skill | Golden | coverage | ketepatan | advisory_wajar | skor | Status |
 |---|---|---|---|---|---|---|
 | konsultansi-umum | draft-01 | 1.00 | 1.00 | ✅ | **1.00** | ✅ terukur (1.9, 4 poin) |
-| konsultasi-pengadaan | draft-01 | 0.40 | 0.40 | ✅ | **0.40**◊ | ✅ terukur (1.9, 5 poin) |
+| konsultasi-pengadaan | draft-01 | 1.00 | 1.00 | ✅ | **1.00**◊ | ✅ terukur (1.11, 5 poin, re-skor pasca fix truncation) |
 
 **16/16 terukur live** (per 6 Jul, harness `eval/live_measure.py`). Semua run: `build_fixtures.py` (digest/TOR-RAB sintetis ber-cacat; konsultansi = skenario pertanyaan advisory). ⚠ **Skor tinggi (banyak 1.00) sebagian ARTEFAK fixture sintetis "bersih"** — cacat ditanam unambiguous di digest → mudah ditangkap; dokumen nyata lebih berisik. Golden + fixture **WAJIB divalidasi auditor** sebelum jadi baseline resmi.
 
-◊ konsultasi-pengadaan coverage 0.40 = **sinyal nyata (bukan artefak)**: agen menjawab pertanyaan utama (PL tak tepat utk Rp2,4M) dgn benar & advisory, tapi MELEWATKAN 3 poin advisory-governance (urutan pemaketan→spesifikasi→HPS→metode; mitigasi self-review threat + dokumentasi keterlibatan APIP; eskalasi ke audit-pengadaan bila ada indikasi pelanggaran). **Target hardening: kelengkapan poin advisory-governance skill konsultasi-pengadaan.**
+◊ konsultasi-pengadaan **KOREKSI (1.11)**: skor awal 0.40 ternyata **BUG HARNESS (truncation), BUKAN celah skill**. `judge_pendapat` memangkas pendapat ke 6.000 char, padahal pendapat agen **22.052 char** → poin di bagian akhir (P2 urutan pemaketan/spesifikasi/HPS, P4 self-review threat/batas peran APIP, P5 eskalasi audit) terpotong sebelum dinilai. **Re-skor dgn teks penuh (cap dinaikkan ke 40.000 char): coverage 1.00 · ketepatan 1.00 → SKOR 1.00** — kelima poin SEBENARNYA ada & tepat. Pelajaran: verifikasi root cause (baca teks penuh) sebelum menyimpulkan celah skill. Fix di `eval/judge.py`.
 
 ### Hardening 1.10 — presisi kutipan Kriteria skill AUDIT (tutup-loop, `5603469`)
 
@@ -62,7 +62,7 @@ Menindaklanjuti sinyal `kriteria` lemah di SEMUA skill audit. Fix (doktrin: anti
 
 ## Cakupan & rencana
 - **Golden case: 16/16** — 3 tervalidasi-awal (audit/reviu-pengadaan, reviu-rka-kl) + **13 DRAFT** (Fase 1.6, diturunkan dari checklist SKILL + pola `knowledge/wiki/temuan-patterns/<skill>/`; tiap expected ber-`pattern_ref`). **Semua 13 DRAFT WAJIB divalidasi auditor senior** sebelum jadi baseline.
-- **Terukur judge: 16/16** (6 Jul, sesi harness). Semua doktrin tervalidasi live: audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), **LKE** (spip/sakip/rb — AoI tanpa-Sebab via temuan.json; runner tanpa-render sehingga gate LKE-xlsx tak menghalangi identifikasi AoI), **konsultansi** (jalur `judge_pendapat`), **reviu-rka-kl** (digest TOR/RAB staged di `_KKP`). **Sinyal hardening lintas-skill:** presisi kutipan pasal `kriteria` LEMAH di SEMUA skill AUDIT (audit-pengadaan 0.50, audit-umum 0.50, audit-kinerja RAGU×4) → **prioritas hardening berikut: presisi sitasi pasal/kriteria skill audit.** konsultasi-pengadaan coverage 0.40 → kelengkapan poin advisory-governance.
+- **Terukur judge: 16/16** (6 Jul, sesi harness). Semua doktrin tervalidasi live: audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), **LKE** (spip/sakip/rb — AoI tanpa-Sebab via temuan.json; runner tanpa-render sehingga gate LKE-xlsx tak menghalangi identifikasi AoI), **konsultansi** (jalur `judge_pendapat`), **reviu-rka-kl** (digest TOR/RAB staged di `_KKP`). **Sinyal hardening lintas-skill:** presisi kutipan pasal `kriteria` LEMAH di SEMUA skill AUDIT (audit-pengadaan 0.50, audit-umum 0.50, audit-kinerja RAGU×4) → **prioritas hardening berikut: presisi sitasi pasal/kriteria skill audit.** ~~konsultasi-pengadaan coverage 0.40~~ → **DIKOREKSI ke 1.00** (bug truncation judge_pendapat, bukan celah skill — lihat ◊ di atas).
 - **Catatan format golden:** skill ber-temuan (audit/reviu/evaluasi/pemantauan) pakai `expected_key_issues`; **evaluasi ber-LKE** (sakip/spip/rb) → expected = AoI/gap tanpa Sebab; **konsultasi** (×2) pakai `expected_pendapat` — **harness recall-vs-temuan tak berlaku**, perlu mode eval "ketepatan pendapat"; **pemantauan-tindak-lanjut** dinilai atas status-TL/aging, runner mungkin perlu adaptasi.
 - Rencana perluasan (opt-in, berbiaya API + butuh fixture/dok input per skill):
   1. Draft golden stub 13 skill (dari checklist tiap SKILL) → validasi auditor.
