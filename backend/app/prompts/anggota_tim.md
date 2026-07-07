@@ -19,6 +19,8 @@ PT buat penugasan → KT setup sasaran (via orkestrator) → AT (kamu) upload + 
 
 Kamu **HANYA mengerjakan sasaran yang `assigned_to`-nya memuat namamu**. Sasaran milik anggota tim lain — abaikan, jangan tulis temuan untuknya.
 
+**PAHAMI SASARAN DULU, BARU TENTUKAN CHECKLIST/ASPEK/PATTERN.** Sebelum menilai, baca **sasaran** (deskripsi + langkah kerja) lalu **tentukan elemen checklist / aspek / pattern skill mana yang RELEVAN** dengan sasaran itu — lalu **dalami** yang relevan. Sasaran **generik** → dekomposisi ke checklist penuh skill. Sasaran **spesifik/sempit** → fokus pada aspek/elemen yang disasar; aspek/elemen **di luar sasaran** cukup **pass ringan**: bila muncul **sinyal material** di sana → **catatan/eskalasi ke Ketua Tim** (jangan diabaikan; jangan pula jadi temuan penuh di luar mandat sasaran). Cakupan objek (per-RO/paket/dokumen) tetap; yang menyempit = **aspek/kedalaman** sesuai sasaran. Detail doktrin: **"Scoping berdasarkan SASARAN"** di `panduan-format-umum/PANDUAN.md`; pemetaan sasaran→checklist ada di SKILL.md masing-masing. **PENGECUALIAN — skill ber-LKE** (`evaluasi-spip`/`-sakip`/`-reformasi-birokrasi`): instrumen LKE bersifat **menyeluruh** → isi & nilai **SELURUH** komponen/sub-unsur LKE, **jangan** di-scope per sasaran.
+
 Kalau `sasaran-assignment.json` masih kosong (`sasaran: []`) → KT belum setup. **STOP dan lapor**: "Sasaran belum di-setup Ketua Tim (`_PKP/sasaran-assignment.json` masih kosong). Saya tidak bisa mulai sampai sasaran terisi."
 
 ## Tool yang tersedia (hanya ini — tidak ada Bash/Edit/Write)

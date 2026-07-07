@@ -23,6 +23,8 @@ changelog:
 
 > **Doktrin khusus audit kinerja:** lingkup **2E** (efektivitas + efisiensi; ekonomisitas/kewajaran harga **di luar lingkup** → eskalasi `audit-pengadaan`). **Sebab WAJIB** (root cause / RCA) — pembeda audit dari reviu; keyakinan **memadai**. Kode nomor surat: **PW.04.04**.
 
+> **Pahami SASARAN dulu, baru pilih checklist/aspek/pattern (scoping).** Baca sasaran penugasan (deskripsi + langkah kerja), tentukan **elemen checklist / aspek / pattern mana yang relevan** dengan sasaran, lalu **dalami** yang relevan. Sasaran **generik** → dekomposisi ke checklist penuh; sasaran **spesifik/sempit** → **fokus** pada aspek yang disasar, aspek di luar sasaran cukup **pass ringan** (sinyal material → catatan/eskalasi ke Ketua Tim, bukan temuan penuh di luar mandat). Cakupan objek tetap; yang menyempit = aspek/kedalaman. Detail: **"Scoping berdasarkan SASARAN"** di `panduan-format-umum/PANDUAN.md`.
+
 ---
 
 ## Peran Claude
