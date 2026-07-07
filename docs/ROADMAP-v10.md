@@ -4,7 +4,7 @@
 
 **Prinsip kerja tiap fase:** harness tetap hijau · perubahan markdown/skill tanpa restart · yang menyentuh output → uji (eval harness + judge / E2E live) · commit + push per unit · doktrin (KKSAR/LKE) tak diubah tanpa alasan eksplisit.
 
-> **Status keseluruhan (7 Jul 2026):** **Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ (inti) · Fase 4 🟢 (16/16 terukur live).** Merge v8.8 ✅. **Baseline live 16/16 skill = semua doktrin tervalidasi** (audit RCA+kerugian, reviu/evaluasi-nonLKE/pemantauan Sebab anti-mengarang, LKE AoI, konsultansi pendapat, RKA/PBJ digest). **Hardening lanjutan (1.7–1.15)** + **doktrin lintas-skill baku** (sasaran-first scoping · kriteria tambahan · presisi Kriteria · SAIPI) + **fix** (ST=metadata INTEGRAL, istilah LKE, RB masuk rezim LKE). **Perluasan: 3 skill BARU reviu keuangan** (LK/PIPK/PNBP) — rumah+checklist+teruji live (lihat Fase 5). Metode bikin/uji skill sudah E2E terbukti (`build_fixtures.py`+`live_measure.py`).
+> **Status keseluruhan (7 Jul 2026):** **Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ (inti) · Fase 4 🟢 (16/16 terukur live).** Merge v8.8 ✅. **Baseline live 16/16 skill = semua doktrin tervalidasi** (audit RCA+kerugian, reviu/evaluasi-nonLKE/pemantauan Sebab anti-mengarang, LKE AoI, konsultansi pendapat, RKA/PBJ digest). **Hardening lanjutan (1.7–1.15)** + **doktrin lintas-skill baku** (sasaran-first scoping · kriteria tambahan · presisi Kriteria · SAIPI) + **fix** (ST=metadata INTEGRAL, istilah LKE, RB masuk rezim LKE). **Perluasan: 3 skill BARU reviu keuangan** (LK/PIPK/PNBP) — rumah+checklist+teruji live (lihat Fase 5). Metode bikin/uji skill sudah E2E terbukti (`build_fixtures.py`+`live_measure.py`). **Forward: Fase 6 (Integrasi Wiki) + Fase 7 (User Test / UAT auditor)** = jalur dari "terukur via judge" → "**tervalidasi manusia & siap produksi**".
 
 ---
 
@@ -62,7 +62,25 @@ Menambah cakupan jenis pengawasan. Metode baku (terbukti E2E): folder + `SKILL.m
 - **5.2 (opsional)** template LHP per-skill · golden divalidasi auditor · pola wiki `temuan-patterns/<skill>/`.
 - **DoD:** skill baru lolos baseline live + kriteria riil ter-bundel & tervalidasi auditor.
 
+## Fase 6 — Integrasi Wiki (knowledge base ↔ engine) · *baru*
+
+Perdalam pemanfaatan **wiki** (pola temuan, regulasi kunci, catatan objek) oleh skill/agen, & rapikan sinkronisasi vault↔git. Wiki sudah dipakai (agen `list_temuan_patterns`, `read_preload_context`); fase ini memperkuat & memperluas.
+- **6.1 Sinkronisasi wiki** — `knowledge/wiki` (di-git, ~84 pattern) ↔ `llm-wiki/wiki` (vault, ~217 catatan, gitignored) via alur `wiki_update`; pastikan pola & catatan terbaru masuk engine (dua arah, anti-drift).
+- **6.2 Pattern-driven quality** — `temuan-patterns/<skill>/` jadi (a) **hipotesis awal** agen (`list_temuan_patterns`) & (b) `pattern_ref` di golden case. Perluas cakupan pola per skill (termasuk **3 skill baru** reviu keuangan). Loop belajar: `submit_feedback` → usul pola baru (mis. AP-30/AP-31) masuk wiki setelah reviu.
+- **6.3 Preload konteks objek** — `read_preload_context` menyuplai **regulasi kunci + catatan objek** per penugasan; perkuat cakupan, kesegaran, & keterhubungan ke kriteria skill.
+- **6.4 Regulasi ↔ kriteria** — jadikan wiki regulasi-kunci sumber pemutakhiran nomor/pasal kriteria skill (mendukung doktrin *currency* — mis. konfirmasi PP tarif PNBP, PMK terbaru).
+- **DoD:** pola/regulasi/catatan wiki tersinkron & terpakai konsisten oleh 19 skill; golden ber-`pattern_ref`; loop feedback→wiki berjalan.
+
+## Fase 7 — User Test (UAT auditor) & go-live · *baru*
+
+Validasi **dunia nyata oleh auditor** — bukan hanya fixture sintetis + judge. Menjawab caveat berulang "golden/fixture perlu validasi auditor".
+- **7.1 Validasi golden + fixture** oleh auditor senior — sahkan `expected_key_issues`; koreksi diksi (mis. audit-umum Q4/Q5). Skor jadi **baseline resmi** setelah divalidasi manusia.
+- **7.2 UAT E2E per keluarga skill** dengan **berkas penugasan NYATA** (bukan sintetis) — auditor menilai kualitas temuan & laporan (KKP/LHP) end-to-end.
+- **7.3 Konfirmasi & bundel kriteria riil** — nomor PP/PMK (khusus 3 skill baru: PP tarif PNBP Komdigi, PMK SAKTI/BAS/Penyusunan LK, status PMK 14/2017 PIPK) → **hilangkan RAGU `kriteria`**.
+- **7.4 Uji integrasi INTEGRAL** — orkestrator nyata menyuplai kontrak file (`sasaran-assignment.json`, `hitl-overlay.json`) + alur/tombol UI; pastikan engine buta-DB berjalan mulus di produksi.
+- **DoD:** skill lolos UAT auditor; baseline **tervalidasi manusia**; siap produksi di INTEGRAL.
+
 ---
 
 ## Urutan disarankan
-**Fase 0 (0.1 dulu, 0.2 opsional-tunda) → Fase 1 → Fase 2 (saat dokumen pedoman siap) → Fase 3 → Fase 4.** Fase 2 dapat mulai kapan saja setelah dokumen Pedoman Pengawasan tersedia (paralel dengan Fase 1). Prioritas cepat-berdampak: **1.1 reference rusak** & **1.2 terminologi** (langsung menaikkan mutu output), lalu **1.6 baseline kualitas** sebagai gate.
+**Fase 0–3 ✅ · Fase 4 (16/16 live) 🟢 · Fase 5 (skill baru) berjalan.** Forward: **Fase 6 (Integrasi Wiki)** + **Fase 7 (User Test / UAT auditor)** — dua ini yang membawa v10 dari "terukur via judge" ke "**tervalidasi manusia & siap produksi**". Fase 6 & 7 dapat berjalan **paralel** (wiki memperkaya pola; UAT memvalidasi output). Prasyarat UAT yang menunggu Anda: (a) validasi golden/fixture auditor · (b) konfirmasi nomor kriteria (3 skill baru) · (c) berkas penugasan nyata untuk uji E2E.

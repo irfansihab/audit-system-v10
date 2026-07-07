@@ -76,7 +76,7 @@
 <section class="summary">
   <h2>Status keseluruhan</h2>
   <p><span class="badge b-done">FASE 0 · 1 · 2 · 3 (inti) — TUNTAS</span>&nbsp; <span class="badge b-run">FASE 4 — 16/16 skill terukur live</span> &nbsp; <span class="badge b-done">Merge v8.8 tuntas</span></p>
-  <p style="margin:8px 0 0"><b>Semua doktrin tervalidasi live</b> (16/16 skill, skor gabungan mayoritas 1,00): audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), LKE (AoI tanpa-Sebab), konsultansi (pendapat advisory), RKA/PBJ (digest). <b>Doktrin lintas-skill kini baku</b>: sasaran-first scoping · opsi kriteria tambahan · presisi kutipan Kriteria · Standar Audit = SAIPI/AAIPI 2021. <b>Perluasan:</b> 3 skill BARU reviu keuangan (LK · PIPK · PNBP) sudah teruji live (lihat Fase 5).</p>
+  <p style="margin:8px 0 0"><b>Semua doktrin tervalidasi live</b> (16/16 skill, skor gabungan mayoritas 1,00): audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), LKE (AoI tanpa-Sebab), konsultansi (pendapat advisory), RKA/PBJ (digest). <b>Doktrin lintas-skill kini baku</b>: sasaran-first scoping · opsi kriteria tambahan · presisi kutipan Kriteria · Standar Audit = SAIPI/AAIPI 2021. <b>Perluasan:</b> 3 skill BARU reviu keuangan (LK · PIPK · PNBP) sudah teruji live (lihat Fase 5). <b>Forward — Fase 6 (Integrasi Wiki)</b> &amp; <b>Fase 7 (User Test / UAT auditor)</b>: jalur dari "terukur via judge" → "tervalidasi manusia &amp; siap produksi".</p>
   <p style="margin:8px 0 0;font-size:12.5px;color:var(--muted)">⚠ Skor tinggi sebagian artefak fixture sintetis "bersih" — golden + fixture masih perlu validasi auditor senior sebelum jadi baseline resmi.</p>
 </section>
 
@@ -156,6 +156,32 @@
     <li><span class="st">⏳</span><b>5.1a Konfirmasi &amp; bundel kriteria RIIL</b> (menunggu auditor) — isikan <b>nomor + tahun + pasal</b> yang kini generik: PNBP (PP tarif Komdigi BHP frekuensi/IPFR · PMK Piutang · PMK Penyetoran + batas waktu), LK (PMK SAKTI/BAS/Kebijakan Akuntansi/Penyusunan LK), PIPK (status PMK 14/2017). UU &amp; PP besar (SAP, SPIP, PNBP UU 9/2018) sudah pasti. Setelah bernomor → RAGU <code>kriteria</code> hilang.</li>
   </ul>
   <div class="dod"><b>Selesai bila:</b> skill baru lolos baseline live + kriteria riil ter-bundel &amp; tervalidasi auditor.</div>
+</div>
+
+<!-- FASE 6 -->
+<div class="phase">
+  <div class="ph-head"><h3>Fase 6 — Integrasi Wiki (knowledge base ↔ engine)</h3><span class="tag">baru</span><span class="badge b-run">forward</span></div>
+  <p class="desc">Perdalam pemanfaatan wiki (pola temuan, regulasi kunci, catatan objek) oleh skill/agen &amp; rapikan sinkronisasi vault↔git. Wiki sudah dipakai (<code>list_temuan_patterns</code>, <code>read_preload_context</code>) — fase ini memperkuat &amp; memperluas.</p>
+  <ul class="items">
+    <li><span class="st">🟢</span><b>6.1 Sinkronisasi wiki</b> — <code>knowledge/wiki</code> (di-git, ~84 pattern) ↔ <code>llm-wiki/wiki</code> (vault, ~217 catatan, gitignored) via <code>wiki_update</code> (dua arah, anti-drift).</li>
+    <li><span class="st">🟢</span><b>6.2 Pattern-driven quality</b> — <code>temuan-patterns/&lt;skill&gt;/</code> jadi hipotesis awal agen + <code>pattern_ref</code> golden; perluas pola per skill (termasuk 3 skill baru). Loop belajar: <code>submit_feedback</code> → usul pola baru masuk wiki.</li>
+    <li><span class="st">🟢</span><b>6.3 Preload konteks objek</b> — <code>read_preload_context</code> menyuplai regulasi kunci + catatan objek per penugasan; perkuat cakupan &amp; kesegaran.</li>
+    <li><span class="st">🟢</span><b>6.4 Regulasi ↔ kriteria</b> — wiki regulasi-kunci jadi sumber pemutakhiran nomor/pasal kriteria skill (dukung doktrin <i>currency</i>: PP tarif PNBP, PMK terbaru).</li>
+  </ul>
+  <div class="dod"><b>Selesai bila:</b> pola/regulasi/catatan wiki tersinkron &amp; terpakai konsisten oleh 19 skill; golden ber-<code>pattern_ref</code>; loop feedback→wiki berjalan.</div>
+</div>
+
+<!-- FASE 7 -->
+<div class="phase">
+  <div class="ph-head"><h3>Fase 7 — User Test (UAT auditor) &amp; go-live</h3><span class="tag">baru</span><span class="badge b-run">forward · butuh input Anda</span></div>
+  <p class="desc">Validasi <b>dunia nyata oleh auditor</b> — bukan hanya fixture sintetis + judge. Menjawab caveat berulang "golden/fixture perlu validasi auditor".</p>
+  <ul class="items">
+    <li><span class="st">⏳</span><b>7.1 Validasi golden + fixture</b> oleh auditor senior — sahkan <code>expected_key_issues</code>; koreksi diksi. Skor jadi <b>baseline resmi</b> setelah divalidasi manusia.</li>
+    <li><span class="st">⏳</span><b>7.2 UAT E2E per keluarga skill</b> dengan <b>berkas penugasan NYATA</b> — auditor menilai kualitas temuan &amp; laporan (KKP/LHP) end-to-end.</li>
+    <li><span class="st">⏳</span><b>7.3 Konfirmasi &amp; bundel kriteria riil</b> — nomor PP/PMK (khusus 3 skill baru) → hilangkan RAGU <code>kriteria</code>.</li>
+    <li><span class="st">⏳</span><b>7.4 Uji integrasi INTEGRAL</b> — orkestrator nyata suplai kontrak file + alur/tombol UI; pastikan engine buta-DB mulus di produksi.</li>
+  </ul>
+  <div class="dod"><b>Selesai bila:</b> skill lolos UAT auditor; baseline <b>tervalidasi manusia</b>; siap produksi di INTEGRAL.</div>
 </div>
 
 <!-- BASELINE -->
