@@ -66,18 +66,18 @@
   <h1>Roadmap Audit AI v10</h1>
   <p>Hardening skill · Penyelarasan workflow dengan Pedoman Pengawasan · Simplifikasi fitur</p>
   <div class="meta">
-    <span class="chip">Fork dari v9 — engine-ready 16/16</span>
+    <span class="chip">Fork dari v9 — kini 19 skill</span>
     <span class="chip">Pivot: AI = ENGINE, orkestrator+UI = INTEGRAL</span>
     <span class="chip">FE/BE v10 = harness uji</span>
-    <span class="chip">Per 1 Juli 2026</span>
+    <span class="chip">Per 7 Juli 2026</span>
   </div>
 </header>
 
 <section class="summary">
   <h2>Status keseluruhan</h2>
-  <p><span class="badge b-done">FASE 1 — pada dasarnya TUNTAS</span>&nbsp; 1.1–1.5 selesai; 1.6 kerangka baseline + 16/16 golden case + 2/16 terukur live + fix presisi kriteria SBM.
-  <br><span class="badge b-todo">FASE 0 · 2 · 3 · 4 — belum mulai</span></p>
-  <p style="margin:8px 0 0">Dua doktrin sudah <b>tervalidasi live</b>: <b>reviu</b> (Sebab anti-mengarang, skor gabungan 0,825) &amp; <b>audit</b> (Sebab WAJIB / RCA + kerugian negara, 0,796). Prinsip tiap fase: harness tetap hijau · perubahan skill dibaca runtime tanpa restart · yang menyentuh output diuji (eval harness + judge / E2E live) · commit &amp; push per unit · doktrin KKSAR/LKE tak diubah tanpa alasan.</p>
+  <p><span class="badge b-done">FASE 0 · 1 · 2 · 3 (inti) — TUNTAS</span>&nbsp; <span class="badge b-run">FASE 4 — 16/16 skill terukur live</span> &nbsp; <span class="badge b-done">Merge v8.8 tuntas</span></p>
+  <p style="margin:8px 0 0"><b>Semua doktrin tervalidasi live</b> (16/16 skill, skor gabungan mayoritas 1,00): audit (Sebab WAJIB/RCA + kerugian negara), reviu/evaluasi-nonLKE/pemantauan (Sebab anti-mengarang), LKE (AoI tanpa-Sebab), konsultansi (pendapat advisory), RKA/PBJ (digest). <b>Doktrin lintas-skill kini baku</b>: sasaran-first scoping · opsi kriteria tambahan · presisi kutipan Kriteria · Standar Audit = SAIPI/AAIPI 2021. <b>Perluasan:</b> 3 skill BARU reviu keuangan (LK · PIPK · PNBP) sudah teruji live (lihat Fase 5).</p>
+  <p style="margin:8px 0 0;font-size:12.5px;color:var(--muted)">⚠ Skor tinggi sebagian artefak fixture sintetis "bersih" — golden + fixture masih perlu validasi auditor senior sebelum jadi baseline resmi.</p>
 </section>
 
 <div class="focus">
@@ -88,18 +88,18 @@
 
 <!-- FASE 0 -->
 <div class="phase">
-  <div class="ph-head"><h3>Fase 0 — Tuntaskan pondasi engine (sisa P1)</h3><span class="tag">enabler</span><span class="badge b-todo">belum mulai</span></div>
+  <div class="ph-head"><h3>Fase 0 — Tuntaskan pondasi engine (sisa P1)</h3><span class="tag">enabler</span><span class="badge b-done">tuntas</span></div>
   <p class="desc">Menutup lapis portabilitas agar hardening berpijak pada engine yang benar-benar buta-orkestrasi.</p>
   <ul class="items">
-    <li><span class="st">⬜</span><b>0.1 De-UI prompt agen</b> (<code>anggota_tim.md</code>/<code>ketua_tim.md</code>): ganti "tab Setup/via UI"/status <code>DISETUJUI_KT</code> → kontrak file/data. <small>Markdown, risiko rendah.</small></li>
-    <li><span class="st">⬜</span><b>0.2 Lepas <code>render_kkp_docx</code> &amp; <code>read_context</code> dari DB</b> → kontrak file <code>_KKP/hitl-overlay.json</code> + hook backend (hybrid: file → fallback DB) + uji live. <small>Satu-satunya sisa P1 yang menyentuh backend; bisa ditunda.</small></li>
+    <li><span class="st">✅</span><b>0.1 De-UI prompt agen</b> (<code>anggota_tim.md</code>/<code>ketua_tim.md</code>): "tab Setup/via UI" → kontrak file <code>_PKP/sasaran-assignment.json</code>.</li>
+    <li><span class="st">✅</span><b>0.2 Lepas <code>render_kkp_docx</code> &amp; <code>read_context</code> dari DB</b> → <code>_filter_temuan_by_review</code> file-first (overlay HITL <code>_KKP/hitl-overlay.json</code> → fallback DB). Engine kini buta-DB &amp; UI-agnostik.</li>
   </ul>
   <div class="dod"><b>Selesai bila:</b> tak ada skill/tool/prompt yang mengasumsikan UI/DB v9; harness E2E hijau.</div>
 </div>
 
 <!-- FASE 1 -->
 <div class="phase">
-  <div class="ph-head"><h3>Fase 1 — Hardening skill</h3><span class="tag">fokus #1</span><span class="badge b-done">pada dasarnya tuntas</span></div>
+  <div class="ph-head"><h3>Fase 1 — Hardening skill</h3><span class="tag">fokus #1</span><span class="badge b-done">tuntas</span></div>
   <p class="desc">Mutu &amp; ketahanan output tiap skill.</p>
   <ul class="items">
     <li><span class="st">✅</span><b>1.1 Reference rusak/legacy</b> — 3 pointer opsional mati dibuang (konten sudah inline); jejak <code>audit-system-v4</code> tersisa hanya di meta-skill <code>graduasi</code> (P4).</li>
@@ -107,63 +107,80 @@
     <li><span class="st">✅</span><b>1.3 reviu-rka-kl rule→checklist</b> — sudah bersih pasca engine-ready.</li>
     <li><span class="st">✅</span><b>1.4 Versi/frontmatter konsisten</b> — <code>model:</code> <b>0 di seluruh skill</b>; tak ada drift versi.</li>
     <li><span class="st">✅</span><b>1.5 QC SAIPI Sebab jenis-aware</b> — spec 2320 + <b>enforcement</b> <code>qc_saipi.py</code> (dulu stale, hanya audit) → audit KRITIS · reviu/evaluasi-nonLKE/pemantauan PERINGATAN · LKE/konsultasi NOT_APPLICABLE.</li>
-    <li><span class="st">🟢</span><b>1.6 Uji kualitas terukur</b> — kerangka baseline + gate 2-tingkat + registri; <b>golden 16/16</b> (13 DRAFT dari checklist + <code>wiki/temuan-patterns</code>, ber-<code>pattern_ref</code>; perlu validasi auditor); <b>terukur judge 2/16 live</b>; <b>1.6c</b> presisi kriteria SBM (Perpres 26 + PMK SBM TA berkenaan). <small>Sisa (opt-in): validasi 13 golden · baseline live keluarga lain · presisi kutipan pasal audit.</small></li>
+    <li><span class="st">✅</span><b>1.6 Uji kualitas terukur</b> — kerangka baseline + gate 2-tingkat + registri; <b>golden 16/16</b>; <b>harness LIVE</b> (<code>live_measure.py</code> + <code>build_fixtures.py</code>) + fix engine <code>read_ingested_digest</code> buta digest-generik.</li>
+    <li><span class="st">✅</span><b>1.7 Sweep 14 skill "pengawasan lain"</b> — audit read-only 4 keluarga: 2 KRITIS + 5 SEDANG + RINGAN diperbaiki (kontradiksi doktrin Sebab, dead-ref, drift 3E, residu orkestrasi).</li>
+    <li><span class="st">✅</span><b>1.8–1.9 Baseline live 16/16 TUNTAS</b> — semua doktrin ber-temuan + LKE (AoI) + konsultansi (jalur skor <code>judge_pendapat</code>) + reviu-rka-kl (digest). Mayoritas skor 1,00.</li>
+    <li><span class="st">✅</span><b>1.10–1.11 Presisi Kriteria audit + fix truncation</b> — anti-mengarang→Kriteria (audit-kinerja 4 RAGU→0); rule diangkat ke doktrin bersama (+grounding temuan-negatif); fix <code>judge_pendapat</code> truncation (konsultasi-pengadaan 0,40→1,00).</li>
+    <li><span class="st">✅</span><b>1.12–1.15 Doktrin lintas-skill &amp; fix</b> — Permenpan 5/2008 → <b>SAIPI/AAIPI 2021</b>; <b>sasaran-first scoping</b> + <b>opsi kriteria tambahan</b> ke semua skill non-LKE (LKE dikecualikan); <b>Surat Tugas = metadata INTEGRAL</b> (bukan upload); selisih istilah LKE diselaraskan (<code>_KKP/LKE-terisi-&lt;skill&gt;.xlsx</code>); <b>evaluasi-reformasi-birokrasi masuk rezim LKE</b> (gate) seperti SPIP/SAKIP.</li>
   </ul>
-  <div class="dod"><b>Selesai bila:</b> 0 reference rusak ✅ · terminologi seragam ✅ · baseline kualitas terekam 🟢 (2/16 live, 16/16 golden).</div>
+  <div class="dod"><b>Selesai bila:</b> 0 reference rusak ✅ · terminologi seragam ✅ · baseline kualitas terekam ✅ (<b>16/16 live</b>, 16/16 golden).</div>
 </div>
 
 <!-- FASE 2 -->
 <div class="phase">
-  <div class="ph-head"><h3>Fase 2 — Penyelarasan workflow dengan Pedoman Pengawasan</h3><span class="tag">ciri khas v10</span><span class="badge b-todo">butuh dokumen pedoman</span></div>
+  <div class="ph-head"><h3>Fase 2 — Penyelarasan workflow dengan Pedoman Pengawasan</h3><span class="tag">ciri khas v10</span><span class="badge b-done">tuntas</span></div>
   <p class="desc">Selaraskan alur kerja engine ke Pedoman/Juknis Pengawasan — <b>SK ikut sistem</b>, bukan sebaliknya.</p>
   <ul class="items">
-    <li><span class="st">⬜</span><b>2.1 Petakan gap</b> — tahapan/artefak engine (KP → PKP → KKP → LHP → Daftar Temuan) vs Pedoman Pengawasan. <small>Perlu dokumen pedoman dari auditor.</small></li>
-    <li><span class="st">⬜</span><b>2.2 Selaraskan tahapan produksi</b> — sampai <b>laporan disetujui</b> (garis finis); adopsi hanya elemen pedoman yang menambah nilai, buang administratif-murni (→ TU/INTEGRAL).</li>
-    <li><span class="st">⬜</span><b>2.3 Selaraskan format artefak &amp; penomoran</b> (kode surat, struktur KKP/LHP, Daftar Temuan &amp; Rekomendasi).</li>
-    <li><span class="st">⬜</span><b>2.4 Tegaskan batas produksi vs administrasi</b> (garis serah: ekspor LHP + Daftar Temuan; sisanya administrasi).</li>
+    <li><span class="st">✅</span><b>Engine SELARAS, 0 gap engine</b> (<code>docs/PENYELARASAN-PEDOMAN-v10.md</code>). Errata sisi-engine semua terpenuhi (shell konsisten, KKSAR baku, tanpa audit-leak lintas-jenis, assurance per-jenis, survei audit-only); merge v8.8 memperkuat (laporan faithful per-jenis).</li>
+    <li><span class="st">✅</span>Semua artefak SDP produksi ADA (survei pendahuluan, KKP + gate LKE, kendali mutu berjenjang, Daftar Temuan, Tahapan 8 TU). Errata sisa = ranah <b>draft SK</b> (birokrasi), bukan engine.</li>
   </ul>
-  <div class="dod"><b>Selesai bila:</b> matriks gap engine↔pedoman + tahapan/artefak selaras, tanpa mengorbankan mesin produksi.</div>
+  <div class="dod"><b>Selesai:</b> matriks gap engine↔pedoman selaras · <b>0 perubahan kode</b> (engine sudah selaras).</div>
 </div>
 
 <!-- FASE 3 -->
 <div class="phase">
-  <div class="ph-head"><h3>Fase 3 — Simplifikasi fitur</h3><span class="tag">fokus #3</span><span class="badge b-todo">belum mulai</span></div>
+  <div class="ph-head"><h3>Fase 3 — Simplifikasi fitur</h3><span class="tag">fokus #3</span><span class="badge b-done">inti tuntas</span></div>
   <ul class="items">
-    <li><span class="st">⬜</span><b>3.1 Dead-code lanjutan</b> — <code>cross_check.py</code> (v6) tandai deprecated &amp; pastikan tak diekspos; sisir tool/route tak terpakai.</li>
-    <li><span class="st">⬜</span><b>3.2 Konsolidasi tool/format</b> — rapikan render/lhr/kkp tooling; format laporan jenis-aware satu sumber.</li>
-    <li><span class="st">⬜</span><b>3.3 P4 meta-skill → INTEGRAL</b> — <code>kepatuhan-saipi</code> (QC) &amp; <code>graduasi-skill-spesifik</code> keluar dari <code>knowledge/skills/</code> jadi tooling/reference portabel.</li>
-    <li><span class="st">⬜</span><b>3.4 Ramping prompt &amp; skill sisa</b> — turunkan yang masih gemuk (mis. audit-kinerja) ke references.</li>
+    <li><span class="st">✅</span><b>3.1–3.2 Konsolidasi render</b> — buang tool <code>render_lhr_pbj</code> redundan → <code>render_report</code> jadi jalur tunggal semua skill KKSA; <code>cross_check</code> deprecated; scan dead-tool: <b>0 dead</b>.</li>
+    <li><span class="st">🟡</span><b>3.3 P4 meta-skill → INTEGRAL</b> &amp; <b>3.4 ramping audit-kinerja</b> — DITUNDA (struktural/substansi-berat, risiko &gt; nilai; sudah tersegregasi via <code>_HIDDEN_FROM_PICKER</code>/<code>_EXCLUDE_DIRS</code>).</li>
   </ul>
-  <div class="dod"><b>Selesai bila:</b> engine lebih ramping &amp; hemat token; tak ada meta-skill di jalur produksi substansi.</div>
+  <div class="dod"><b>Selesai (inti):</b> engine lebih ramping · jalur render tunggal · P4/ramping ditunda dgn alasan.</div>
 </div>
 
 <!-- FASE 4 -->
 <div class="phase">
-  <div class="ph-head"><h3>Fase 4 — Validasi menyeluruh</h3><span class="badge b-todo">belum mulai</span></div>
+  <div class="ph-head"><h3>Fase 4 — Validasi menyeluruh</h3><span class="badge b-run">16/16 terukur live</span></div>
   <ul class="items">
-    <li><span class="st">⬜</span>E2E live per keluarga skill (harness) + regression eval harness + rubrik divalidasi auditor.</li>
+    <li><span class="st">✅</span><b>16/16 skill terukur live</b> via harness (per keluarga) + <code>judge</code>; semua doktrin tervalidasi.</li>
+    <li><span class="st">🟢</span>Sisa: <b>validasi auditor</b> atas golden + fixture (sebelum jadi baseline resmi) · regression berkala.</li>
   </ul>
-  <div class="dod"><b>Selesai bila:</b> semua skill lulus baseline kualitas; harness E2E hijau end-to-end.</div>
+  <div class="dod"><b>Selesai bila:</b> golden + fixture divalidasi auditor; harness E2E hijau end-to-end.</div>
+</div>
+
+<!-- FASE 5 -->
+<div class="phase">
+  <div class="ph-head"><h3>Fase 5 — Perluasan skill (skill BARU)</h3><span class="tag">dimensi baru</span><span class="badge b-done">3 skill reviu keuangan teruji</span></div>
+  <p class="desc">Menambah cakupan jenis pengawasan. Metode baku (terbukti E2E): folder + <code>SKILL.md</code> (auto-discover, profil <code>kksa</code>, render via template generic) → checklist per-aspek → fixture + golden → <code>live_measure.py</code> → SKOR.</p>
+  <ul class="items">
+    <li><span class="st">✅</span><b>5.1 Rumah + isi 3 skill reviu keuangan</b> — <code>reviu-laporan-keuangan</code> · <code>reviu-pipk</code> · <code>reviu-pnbp</code> (engine-ready, checklist 6-aspek, keyakinan terbatas, KKSAR). <b>Teruji live semua SKOR 1,00</b> (recall 1,0; umpan presisi lolos). Total skill terdaftar → <b>19</b>.</li>
+    <li><span class="st">⏳</span><b>5.1a Konfirmasi &amp; bundel kriteria RIIL</b> (menunggu auditor) — isikan <b>nomor + tahun + pasal</b> yang kini generik: PNBP (PP tarif Komdigi BHP frekuensi/IPFR · PMK Piutang · PMK Penyetoran + batas waktu), LK (PMK SAKTI/BAS/Kebijakan Akuntansi/Penyusunan LK), PIPK (status PMK 14/2017). UU &amp; PP besar (SAP, SPIP, PNBP UU 9/2018) sudah pasti. Setelah bernomor → RAGU <code>kriteria</code> hilang.</li>
+  </ul>
+  <div class="dod"><b>Selesai bila:</b> skill baru lolos baseline live + kriteria riil ter-bundel &amp; tervalidasi auditor.</div>
 </div>
 
 <!-- BASELINE -->
 <section class="summary">
-  <h2>Baseline kualitas terukur (judge live)</h2>
+  <h2>Baseline kualitas terukur — 16/16 skill live + 3 skill baru</h2>
   <table>
-    <thead><tr><th>Skill</th><th>Doktrin</th><th>Precision</th><th>Recall</th><th>Narasi</th><th>Skor</th></tr></thead>
+    <thead><tr><th>Skill</th><th>Doktrin / jalur</th><th>Recall</th><th>Skor</th></tr></thead>
     <tbody>
-      <tr><td>reviu-pengadaan</td><td>Sebab anti-mengarang</td><td class="num">1,00</td><td class="num">0,50*</td><td class="num">1,00</td><td class="num"><b>0,825</b></td></tr>
-      <tr><td>audit-pengadaan</td><td>Sebab WAJIB / RCA + kerugian negara</td><td class="num">0,83</td><td class="num">0,67</td><td class="num">0,92</td><td class="num"><b>0,796</b></td></tr>
+      <tr><td>reviu-umum · evaluasi-umum · evaluasi-MR · pemantauan-TL · pemantauan-PBJ · evaluasi-spip/sakip/RB · konsultansi-umum</td><td>reviu/evaluasi/pemantauan/LKE/konsultansi</td><td class="num">1,00</td><td class="num"><b>1,00</b></td></tr>
+      <tr><td>reviu-rka-kl</td><td>reviu anggaran (digest TOR/RAB)</td><td class="num">1,00</td><td class="num"><b>0,984</b></td></tr>
+      <tr><td>pemantauan-umum</td><td>pemantauan status</td><td class="num">1,00</td><td class="num"><b>0,969</b></td></tr>
+      <tr><td>audit-kinerja · audit-umum</td><td>audit (Sebab WAJIB/RCA)</td><td class="num">0,6–0,7</td><td class="num"><b>0,84–0,88</b></td></tr>
+      <tr><td>reviu-pengadaan · audit-pengadaan</td><td>PBJ (digest)</td><td class="num">0,5–0,67*</td><td class="num"><b>0,80–0,83</b></td></tr>
+      <tr><td>konsultasi-pengadaan</td><td>konsultansi (judge_pendapat)</td><td class="num">1,00</td><td class="num"><b>1,00</b></td></tr>
+      <tr style="background:var(--indigo-soft)"><td><b>reviu-laporan-keuangan · reviu-pipk · reviu-pnbp</b> <span class="badge b-done" style="font-size:10px">BARU</span></td><td>reviu keuangan (LK/PIPK/PNBP)</td><td class="num">1,00</td><td class="num"><b>1,00</b></td></tr>
     </tbody>
   </table>
-  <p class="note">*recall &amp; grounded pilot = artefak harness sintetis (fixture tanpa PDF primer). Golden 16/16 (13 DRAFT) siap; 14/16 skill menanti pengukuran &amp; validasi auditor. Sinyal hardening berikut: <b>presisi kutipan pasal skill audit</b> (kriteria 0,50).</p>
+  <p class="note">*artefak fixture sintetis. Sinyal hardening berikut yang tersisa: <b>presisi kutipan pasal skill audit</b>. 3 skill baru: RAGU <code>kriteria</code> = nomor PMK/PP tarif masih placeholder (menunggu konfirmasi auditor). ⚠ Skor perlu <b>validasi auditor</b> atas golden + fixture sebelum jadi baseline resmi.</p>
 </section>
 
 <!-- URUTAN -->
 <section class="summary">
-  <h2>Urutan disarankan</h2>
-  <p><b>Fase 1</b> (✅) → <b>Fase 0</b> (0.1 aman, 0.2 opsional) → <b>Fase 2</b> (saat dokumen Pedoman siap; bisa paralel) → <b>Fase 3</b> → <b>Fase 4</b>.</p>
-  <p style="margin:8px 0 0">Yang butuh input Anda: <b>(a)</b> validasi 13 golden case DRAFT · <b>(b)</b> dokumen <b>Pedoman/Juknis Pengawasan</b> untuk membuka Fase 2 (pembeda utama v10). Yang bisa dilanjut tanpa input: Fase 0.1 (de-UI prompt) atau Fase 3 (simplifikasi).</p>
+  <h2>Yang menunggu input Anda</h2>
+  <p><b>(a)</b> <b>Konfirmasi nomor kriteria</b> 3 skill baru (PP tarif PNBP Komdigi, PMK SAKTI/BAS/Penyusunan LK, status PMK 14/2017 PIPK) → begitu dipastikan, dokumen di-bundel ke <code>references/</code> &amp; RAGU <code>kriteria</code> hilang. &nbsp; <b>(b)</b> <b>Validasi auditor</b> atas golden case + fixture agar skor jadi baseline resmi.</p>
+  <p style="margin:8px 0 0">Fase 0–3 tuntas; Fase 4 pada tahap validasi auditor; Fase 5 (skill baru) berjalan dgn metode E2E yang sudah terbukti. Pengembangan skill baru berikutnya bisa langsung memakai pola <code>build_fixtures.py</code> + <code>live_measure.py</code>.</p>
 </section>
 
 <footer>
