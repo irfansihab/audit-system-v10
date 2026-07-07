@@ -1,0 +1,27 @@
+{
+  "case_id": "reviu-pengadaan-p1-sirup",
+  "skill": "reviu-pengadaan",
+  "folder": "(fixture reviu-pengadaan-p1)",
+  "deskripsi": "Penugasan 1 (studi kasus hardening): sasaran hanya memastikan seluruh paket pengadaan terdaftar & diumumkan di SIRUP (rekonsiliasi populasi RKA/DIPA ↔ data SIRUP). Menguji Aspek A (RUP) yang baru di-host + scoping berbasis sasaran.",
+  "_catatan_validasi": "DRAFT studi-kasus hardening host-RUP + scoping. UJI PRESISI: agen TIDAK boleh menandai paket yang SUDAH terdaftar (Paket 1, 4) sebagai temuan; Paket 2 terdaftar (hanya beda nilai → catatan, bukan 'tidak terdaftar'). UJI SCOPING: fokus pendaftaran SIRUP, tidak menyapu mutu KAK/HPS. WAJIB divalidasi auditor senior.",
+  "expected_key_issues": [
+    {
+      "id": "R1",
+      "ringkas": "Paket 'Sewa Infrastruktur Cloud' (Rp 300 juta) tidak ditemukan terdaftar/diumumkan di SIRUP padahal ada dalam populasi RKA/DIPA — kewajiban pengumuman RUP melalui SIRUP tidak dipenuhi.",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 22 ayat (1)-(3) jo. Pasal 23 (RUP wajib disusun & diumumkan melalui SIRUP).",
+      "materialitas": "tinggi"
+    },
+    {
+      "id": "R2",
+      "ringkas": "Paket 'Jasa Konsultan Keamanan Siber' (Rp 600 juta) tidak ditemukan terdaftar/diumumkan di SIRUP padahal ada dalam populasi RKA/DIPA — kewajiban pengumuman RUP tidak dipenuhi.",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 22 jo. Pasal 23.",
+      "materialitas": "tinggi"
+    },
+    {
+      "id": "R3",
+      "ringkas": "Ketidaksesuaian data RUP ↔ RKA/DIPA: nilai Paket 'Jasa Pengembangan Aplikasi' di SIRUP Rp 800 juta sedangkan RKA/DIPA Rp 850 juta — perlu penyelarasan data RUP (catatan, bukan paket tak terdaftar).",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 22 (kesesuaian data RUP dengan rencana anggaran).",
+      "materialitas": "sedang"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "case_id": "reviu-pengadaan-p2-torhps",
+  "skill": "reviu-pengadaan",
+  "folder": "(fixture reviu-pengadaan-p2)",
+  "deskripsi": "Penugasan 2 (studi kasus hardening): sasaran memastikan TOR/KAK & HPS disusun sesuai ketentuan. Inti default reviu-pengadaan (Scope Perencanaan).",
+  "_catatan_validasi": "DRAFT studi-kasus. UJI SCOPING: fokus TOR/HPS, tidak menyapu RUP/pemilihan. WAJIB divalidasi auditor senior.",
+  "expected_key_issues": [
+    {
+      "id": "T1",
+      "ringkas": "HPS disusun hanya berbasis 1 sumber harga (RFI) valid — 2 penyedia lain menyatakan tidak bersedia — tidak memenuhi ketentuan minimal 2 sumber harga independen.",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 26 ayat (5) (HPS dari minimal 2 sumber/data yang dapat dipertanggungjawabkan).",
+      "materialitas": "tinggi"
+    },
+    {
+      "id": "T2",
+      "ringkas": "Justifikasi/KAK tidak lengkap — elemen 'rencana cara/metode pengadaan' tidak dinyatakan (hanya 4 dari 5 elemen justifikasi terpenuhi).",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 11 & 18; Perlem LKPP 12/2021 Bab III (kelengkapan 5 elemen justifikasi/persiapan).",
+      "materialitas": "sedang"
+    },
+    {
+      "id": "T3",
+      "ringkas": "Komponen 'migrasi data' tercantum dalam lingkup KAK tetapi tidak teralokasi/tidak ada line item-nya di HPS — komponen biaya HPS tidak lengkap terhadap kebutuhan KAK.",
+      "kriteria_acuan": "Perpres 16/2018 Pasal 26 (HPS mencakup seluruh komponen biaya sesuai KAK).",
+      "materialitas": "sedang"
+    }
+  ]
+}

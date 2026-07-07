@@ -1,0 +1,52 @@
+{
+  "dokumen": {
+    "kak": [
+      {
+        "filename": "KAK-aplikasi.pdf",
+        "classified_by": "nama",
+        "parsed": {
+          "nama_pekerjaan": "Pengembangan Aplikasi Layanan Digital",
+          "nilai_hps": 850000000,
+          "periode": "6 bulan",
+          "elemen_justifikasi": {
+            "kebutuhan": "ada",
+            "spesifikasi_teknis": "ada",
+            "metode_pengadaan": "TIDAK dinyatakan",
+            "waktu": "ada",
+            "output": "ada"
+          },
+          "sla_value": "99,5%",
+          "lingkup_komponen": [
+            "pengembangan",
+            "instalasi",
+            "migrasi data",
+            "pelatihan"
+          ],
+          "identifikasi_kebutuhan": "terukur",
+          "catatan": "Justifikasi tidak menyatakan METODE PENGADAAN (1 dari 5 elemen kurang)."
+        }
+      }
+    ],
+    "hps": [
+      {
+        "filename": "HPS-aplikasi.pdf",
+        "classified_by": "nama",
+        "parsed": {
+          "nama_pekerjaan": "Pengembangan Aplikasi Layanan Digital",
+          "nilai_hps": 850000000,
+          "jumlah_sumber_harga_valid": 1,
+          "sumber_harga": "Hanya 1 RFI valid; 2 penyedia lain menyatakan tidak bersedia (refusal).",
+          "breakdown_komponen": "ada per komponen",
+          "komponen_termasuk": [
+            "pengembangan",
+            "instalasi",
+            "pelatihan"
+          ],
+          "dasar_hukum_sbm": "PMK 32/PMK.02/2025 (SBM TA 2026)",
+          "catatan": "HPS hanya berbasis 1 RFI valid. Komponen 'migrasi data' ada di KAK tetapi TIDAK teralokasi di HPS."
+        }
+      }
+    ]
+  },
+  "missing_types": []
+}

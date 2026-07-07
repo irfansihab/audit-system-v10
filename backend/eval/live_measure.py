@@ -78,8 +78,10 @@ def _pendapat_prompt(skill: str, folder: str, at_name: str) -> str:
 def _at_prompt(skill: str, folder: str, at_name: str) -> str:
     """Prompt AT — fokus produksi temuan, hemat giliran, tanpa render docx."""
     if skill in _DIGEST_PIPELINE:
-        sumber = ("read_digest (SUMBER FAKTA UTAMA — digest RKA/PBJ SUDAH tersedia di _KKP; "
-                  "JANGAN jalankan run_batch_*; untuk RKA: read_digest index lalu read_digest(ro=<id>))")
+        sumber = ("read_digest (SUMBER FAKTA UTAMA bila ada digest KAK/HPS/RKA di _KKP; "
+                  "JANGAN jalankan run_batch_*; untuk RKA: read_digest index lalu read_digest(ro=<id>)). "
+                  "Bila materi disuplai sebagai dokumen (mis. data RUP/SIRUP & populasi pengadaan di _INGESTED) "
+                  "→ pakai read_ingested_digest")
     else:
         sumber = ("read_ingested_digest (SUMBER FAKTA UTAMA; JANGAN buka PDF, digest sudah memuat ringkasan)")
     return (

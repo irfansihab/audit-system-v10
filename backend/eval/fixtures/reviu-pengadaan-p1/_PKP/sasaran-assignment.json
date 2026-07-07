@@ -1,0 +1,18 @@
+{
+  "skill": "reviu-pengadaan",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memastikan seluruh paket pengadaan satker (populasi RKA/DIPA) TELAH TERDAFTAR & diumumkan di SIRUP (kelengkapan pendaftaran RUP).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Baca populasi paket (RKA/DIPA) & data SIRUP via read_ingested_digest; rekonsiliasi tiap paket.",
+        "Klasifikasi terdaftar/tidak; paket wajib-umumkan yang TIDAK terdaftar di SIRUP → temuan (Perpres 16/2018 Ps 22-23); ketidaksesuaian data RUP↔RKA → catatan.",
+        "Aspek mutu dokumen KAK/HPS di luar fokus sasaran → pass ringan."
+      ]
+    }
+  ]
+}
