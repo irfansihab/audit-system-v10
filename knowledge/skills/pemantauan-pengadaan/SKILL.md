@@ -195,7 +195,7 @@ H. APRESIASI
 ## Cara Membaca Dokumen
 
 Urutan prioritas baca:
-1. `00-surat-tugas/` → scope dan paket yang dipantau
+1. **Konteks penugasan (dari INTEGRAL)** → Nomor ST, scope dan paket yang dipantau — **ST TIDAK di-upload**; metadata penugasan disuplai orkestrator via konteks/`sasaran-assignment.json`.
 2. `02-kontrak/` → nilai, jadwal, klausul pembayaran dan addendum
 3. `04-pelaksanaan/` → laporan berkala, BA kemajuan, laporan penyedia
 4. `05-keuangan/` → SPM/SP2D yang sudah terbit

@@ -303,7 +303,7 @@ Untuk teks lengkap peraturan, gunakan referensi bersama di `../audit-pengadaan/r
 ## Cara Membaca Dokumen
 
 ### Prioritas Baca (urutan):
-1. `00-surat-tugas/` → scope, paket yang direviu
+1. **Konteks penugasan (dari INTEGRAL)** → Nomor ST, scope, paket yang direviu — **ST TIDAK di-upload**; metadata penugasan disuplai orkestrator via konteks/`sasaran-assignment.json`.
 2. `03-perencanaan/` → TOR/KAK, RAB, HPS, rancangan kontrak
 3. `02-kontrak/` → hanya bagian rancangan kontrak (sebelum penandatanganan)
 4. `01-peraturan-internal/` → SOP internal jika ada

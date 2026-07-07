@@ -50,10 +50,11 @@ Penugasan ini **criteria-driven**: auditor mengunggah **kriteria** (regulasi/SOP
 
 ```
 penugasan/[ID-PENUGASAN]/
-├── 00-surat-tugas/        # ST + ND permintaan (jika ada)
+├── (Nomor ST + sasaran/lingkup)  # ← dari KONTEKS penugasan (INTEGRAL) — ST TIDAK di-upload
 ├── input/
 │   ├── kriteria/          # ← Auditor unggah PDF/DOCX/XLSX/TXT regulasi/SOP/SK/Juklak
 │   ├── objek/             # ← Dokumen objek yang diaudit
+│   ├── permintaan/        # ← Opsional: ND permintaan (jika ada)
 │   └── data-pendukung/    # ← Opsional: data tambahan
 ├── _KKP/                  # Output (KKA + JSON KKP + audit trail)
 └── _LHP/                  # Output (LHA docx)
