@@ -46,6 +46,14 @@ def _golden_for_skill(skill: str) -> dict | None:
     return None
 
 
+def _golden_by_id(case_id: str) -> dict | None:
+    for p in sorted(GOLDEN_DIR.glob("*.json")):
+        c = json.loads(p.read_text())
+        if c.get("case_id") == case_id:
+            return c
+    return None
+
+
 # Skill digest-only PBJ/RKA: sumber fakta = read_digest (bukan read_ingested_digest);
 # digest sudah di-stage di _KKP → JANGAN jalankan run_batch_*.
 _DIGEST_PIPELINE = {"reviu-rka-kl", "reviu-pengadaan", "audit-pengadaan"}
@@ -162,6 +170,8 @@ def _score_pendapat(golden: dict, pendapat_text: str, folder: str, *, use_judge:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--skill", required=True, help="slug skill (mis. reviu-umum)")
+    ap.add_argument("--fixture", default=None, help="nama dir fixture (default = skill)")
+    ap.add_argument("--case", default=None, help="case_id golden (default = pertama yg cocok skill)")
     ap.add_argument("--at-name", default="Sarah Auditor", help="nama AT (harus = assigned_to di fixture)")
     ap.add_argument("--no-judge", action="store_true", help="skor deterministik saja (tanpa API judge)")
     ap.add_argument("--stage-only", action="store_true", help="stage fixture saja, tak jalankan agen")
@@ -174,17 +184,17 @@ def main() -> int:
     if getattr(settings, "claude_code_oauth_token", None):
         os.environ["CLAUDE_CODE_OAUTH_TOKEN"] = str(settings.claude_code_oauth_token)
 
-    fixture = FIXTURE_DIR / args.skill
+    fixture = FIXTURE_DIR / (args.fixture or args.skill)
     if not fixture.is_dir():
         print(f"Fixture tidak ada: {fixture}", file=sys.stderr)
         return 1
-    golden = _golden_for_skill(args.skill)
+    golden = _golden_by_id(args.case) if args.case else _golden_for_skill(args.skill)
     if not golden:
-        print(f"Golden case untuk skill '{args.skill}' tak ditemukan.", file=sys.stderr)
+        print(f"Golden case ('{args.case or args.skill}') tak ditemukan.", file=sys.stderr)
         return 1
 
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_folder = f"eval-{args.skill}-{ts}"
+    run_folder = f"eval-{args.fixture or args.skill}-{ts}"
     dest = settings.data_dir / "penugasan" / run_folder
     shutil.copytree(fixture, dest)
     print(f"Fixture di-stage → {dest}")

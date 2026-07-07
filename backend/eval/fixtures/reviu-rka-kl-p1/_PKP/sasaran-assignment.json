@@ -1,0 +1,18 @@
+{
+  "skill": "reviu-rka-kl",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menilai KESELARASAN RO & indikator RO (IRO) terhadap kegiatan & program, serta keselarasan isu dan intervensi kegiatan yang diusulkan dalam RO (relevansi/theory of change).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Telusuri kerangka logis program → kegiatan → RO; nilai keselarasan IRO terhadap IKK/indikator kegiatan.",
+        "Nilai apakah intervensi/komponen RO menjawab akar isu kegiatan; angkat ketidakselarasan sebagai catatan K/K/S/A.",
+        "Aspek biaya/SBM di luar fokus sasaran → pass ringan; bila ada sinyal material, catat sebagai eskalasi ke KT."
+      ]
+    }
+  ]
+}

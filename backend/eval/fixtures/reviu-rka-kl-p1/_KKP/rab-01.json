@@ -1,0 +1,52 @@
+{
+  "nama_ro": "RO Pengembangan Platform Literasi Digital",
+  "total": 1650000000,
+  "nilai_total": 1650000000,
+  "komponen_count": 4,
+  "komponen": [
+    {
+      "nama": "Honorarium narasumber sosialisasi",
+      "akun": "521213",
+      "volume": 40,
+      "satuan": "jam",
+      "harga_satuan": 2000000,
+      "nilai": 80000000,
+      "diatur_sbm": true,
+      "data_dukung": "n/a (satuan diatur SBM honorarium narasumber)",
+      "_catatan": "Rp 2.000.000/jam MELEBIHI batas SBM honorarium narasumber (Rp 1.400.000/jam)."
+    },
+    {
+      "nama": "Jasa pengembangan aplikasi platform (software house)",
+      "akun": "522191",
+      "volume": 1,
+      "satuan": "paket",
+      "harga_satuan": 850000000,
+      "nilai": 850000000,
+      "diatur_sbm": false,
+      "data_dukung": "ADA & WAJAR: survei/RFI 3 penyedia (Rp 820jt / 855jt / 880jt) + HPS berbasis keahlian; harga RAB Rp 850jt berada di kisaran wajar data dukung.",
+      "_catatan": "Di luar SBM, TAPI data dukung pembentuk harga lengkap & wajar → BUKAN deviasi (umpan presisi)."
+    },
+    {
+      "nama": "Sewa infrastruktur cloud khusus",
+      "akun": "522141",
+      "volume": 12,
+      "satuan": "bulan",
+      "harga_satuan": 25000000,
+      "nilai": 300000000,
+      "diatur_sbm": false,
+      "data_dukung": "TIDAK ADA — tidak dilampirkan survei/RFI, kontrak/PO pembanding, maupun HPS.",
+      "_catatan": "Di luar SBM & tanpa data dukung pembentuk harga → harga tak berdasar (perlu jadi catatan)."
+    },
+    {
+      "nama": "ATK & konsumsi rapat",
+      "akun": "521211",
+      "volume": 10,
+      "satuan": "paket",
+      "harga_satuan": 2000000,
+      "nilai": 20000000,
+      "diatur_sbm": true,
+      "data_dukung": "n/a",
+      "_catatan": "Dalam batas SBM → wajar."
+    }
+  ]
+}

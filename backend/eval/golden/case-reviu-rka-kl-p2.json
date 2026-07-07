@@ -1,0 +1,21 @@
+{
+  "case_id": "reviu-rka-kl-p2-sbm",
+  "skill": "reviu-rka-kl",
+  "folder": "(fixture reviu-rka-kl-p2)",
+  "deskripsi": "Penugasan 2 (studi kasus hardening SBM/data-dukung): sasaran fokus KESESUAIAN RAB terhadap SBM dan data dukung pembentuk harga untuk komponen yang tidak diatur SBM. RKA sama dengan penugasan 1, sasaran berbeda.",
+  "_catatan_validasi": "DRAFT studi-kasus hardening doktrin SBM/data-dukung. UJI PRESISI KRITIS: agen TIDAK BOLEH menjadikan komponen 'Jasa pengembangan aplikasi platform Rp 850jt' sebagai deviasi — komponen itu di LUAR SBM tetapi memiliki data dukung pembentuk harga yang sah & wajar (survei/RFI 3 penyedia + HPS), sehingga 'telah memenuhi'. Bila agen menandainya sebagai temuan → false positive (ngawur). WAJIB divalidasi auditor senior.",
+  "expected_key_issues": [
+    {
+      "id": "S1",
+      "ringkas": "Honorarium narasumber sosialisasi Rp 2.000.000/jam melampaui batas SBM honorarium narasumber (Rp 1.400.000/jam) — komponen yang diatur SBM namun harga satuan di atas batas → deviasi kewajaran biaya.",
+      "kriteria_acuan": "PMK 107/2024 Pasal 61(2)(a) jo. PMK SBM TA 2026 (PMK 32/PMK.02/2025) Lampiran, batas honorarium narasumber.",
+      "materialitas": "tinggi"
+    },
+    {
+      "id": "S2",
+      "ringkas": "Komponen 'Sewa infrastruktur cloud khusus' Rp 300 juta berada di luar SBM TANPA data dukung pembentuk harga (tidak dilampirkan survei/RFI, kontrak/PO pembanding, maupun HPS) — kewajaran harga tidak dapat dinilai / harga tidak berdasar → catatan (bukan deviasi terkonfirmasi, minta data dukung).",
+      "kriteria_acuan": "PMK 107/2024 Pasal 61 — kewajaran biaya; komponen di luar SBM wajib berdasar data dukung pembentuk harga.",
+      "materialitas": "sedang"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "nama_ro": "RO Pengembangan Platform Literasi Digital",
+  "identitas_ro": {
+    "kementerian": "Kementerian Komunikasi dan Digital",
+    "unit_eselon_i": "Direktorat Jenderal Ekosistem Digital",
+    "program_nama": "Program Ekosistem Digital",
+    "kegiatan_nama": "Peningkatan Literasi Digital Masyarakat",
+    "ro": "01",
+    "volume": 1,
+    "satuan": "Platform"
+  },
+  "isu_latar_belakang": "Isu kegiatan: rendahnya tingkat literasi digital MASYARAKAT (indeks 3,2 dari 5); akar masalah = minimnya akses edukasi/konten literasi & pendampingan untuk masyarakat.",
+  "sasaran_kegiatan": "Meningkatnya literasi digital masyarakat.",
+  "indikator_kegiatan_IKK": "Indeks Literasi Digital Masyarakat (baseline 3,2 → target 3,8).",
+  "indikator_RO_IRO": "Jumlah kegiatan sosialisasi platform yang terlaksana (target 40 kegiatan).",
+  "strategi_intervensi": "Komponen utama RO: pengadaan server, storage, dan lisensi perangkat lunak platform (infrastruktur TI); pengembangan aplikasi platform.",
+  "dasar_hukum": [
+    {
+      "jenis_regulasi": "PMK",
+      "nomor": "107",
+      "tahun": "2024"
+    }
+  ],
+  "biaya": {
+    "total": 1650000000,
+    "sumber_dana": "Rupiah Murni"
+  },
+  "_catatan": "IRO berupa hitung-aktivitas (jumlah sosialisasi) — bukan outcome; IKK berbasis outcome (indeks literasi). Intervensi utama = infrastruktur TI, sedangkan akar isu = akses edukasi/konten literasi masyarakat."
+}

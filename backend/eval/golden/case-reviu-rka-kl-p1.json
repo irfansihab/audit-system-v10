@@ -1,0 +1,21 @@
+{
+  "case_id": "reviu-rka-kl-p1-keselarasan",
+  "skill": "reviu-rka-kl",
+  "folder": "(fixture reviu-rka-kl-p1)",
+  "deskripsi": "Penugasan 1 (studi kasus hardening scoping): sasaran fokus KESELARASAN RO/IRO terhadap kegiatan & program + keselarasan isu dan intervensi kegiatan yang diusulkan dalam RO. RKA sama dengan penugasan 2, sasaran berbeda.",
+  "_catatan_validasi": "DRAFT studi-kasus hardening 'scoping berbasis sasaran'. Uji perilaku: agen memfokuskan reviu ke dimensi KESELARASAN (bukan menyapu SBM sebagai temuan primer). Cacat SBM di RKA diperlakukan light-touch/eskalasi, bukan temuan penuh di luar mandat sasaran. WAJIB divalidasi auditor senior.",
+  "expected_key_issues": [
+    {
+      "id": "K1",
+      "ringkas": "IRO 'jumlah kegiatan sosialisasi platform yang terlaksana' adalah indikator AKTIVITAS/output, tidak selaras dengan IKK kegiatan yang berbasis OUTCOME (Indeks Literasi Digital Masyarakat) — keselarasan indikator RO terhadap indikator kegiatan/program lemah.",
+      "kriteria_acuan": "PMK 107/2024 Pasal 61 Kriteria IR2 — kerangka logis berjenjang & keselarasan indikator (IRO selaras IKK).",
+      "materialitas": "tinggi"
+    },
+    {
+      "id": "K2",
+      "ringkas": "Intervensi/komponen utama RO (pengadaan server, storage, lisensi = infrastruktur TI) tidak menjawab akar isu kegiatan (rendahnya literasi digital MASYARAKAT yang membutuhkan akses edukasi/konten/pendampingan) — keselarasan isu terhadap intervensi (relevansi/theory of change) lemah.",
+      "kriteria_acuan": "PMK 107/2024 Pasal 61 — relevansi RO/intervensi terhadap sasaran & isu kegiatan.",
+      "materialitas": "tinggi"
+    }
+  ]
+}
