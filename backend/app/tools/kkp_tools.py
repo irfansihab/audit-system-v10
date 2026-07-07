@@ -527,7 +527,8 @@ def _restore_temuan_from_backup(folder: Path, backup: Path | None) -> None:
 
 
 # Skill evaluasi ber-LKE Excel: output LKE-terisi WAJIB (deliverable utama).
-_LKE_EXCEL_SKILLS = {"evaluasi-spip", "evaluasi-sakip"}
+# evaluasi-reformasi-birokrasi diperlakukan sama (LKE 4-dimensi via fill_lke).
+_LKE_EXCEL_SKILLS = {"evaluasi-spip", "evaluasi-sakip", "evaluasi-reformasi-birokrasi"}
 
 
 def _skill_from_assignment(folder: Path) -> str | None:

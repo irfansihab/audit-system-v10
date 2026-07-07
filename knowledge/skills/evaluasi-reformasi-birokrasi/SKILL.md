@@ -71,6 +71,7 @@ Untuk **setiap komponen Rencana Aksi**, nilai **4 dimensi** berikut sebagai APIP
 | **Kesesuaian Waktu** | Realisasi waktu sesuai target dalam Renaksi | Apakah kegiatan selesai tepat waktu? | Sesuai / Tidak Sesuai |
 
 **Pengisian LKE & skoring:**
+- Pengisian dilakukan lewat **tool `fill_lke(penugasan_folder, skill="evaluasi-reformasi-birokrasi", entries=[...])`** (LKE `.xlsx` yang diunggah auditee jadi sumber) → output **salinan kerja `_KKP/LKE-terisi-evaluasi-reformasi-birokrasi.xlsx`** (file asli tak diubah). Guard anti-rumus otomatis: sel formula & sheet agregator **ditolak** (dilaporkan di `refused`). Baca nilai LKE terkini via tool **`read_lke`**. `entries` = daftar `{sheet, coord, value, note?}`. **Deliverable ini WAJIB ada sebelum render KKP/LHE** (gate render menolak bila `_KKP/LKE-terisi-evaluasi-reformasi-birokrasi.xlsx` belum diisi).
 - Isi setiap sel dengan "Sesuai"/"Tidak Sesuai" untuk setiap komponen × 4 dimensi (kolom APIP), **tanpa mengubah rumus/sel agregator** dan **tanpa menimpa kolom penilaian mandiri (PM) auditee**.
 - Tambahkan catatan/keterangan untuk yang "Tidak Sesuai": apa yang tidak sesuai (berbasis dokumen).
 - Hitung rekapitulasi: jumlah "Sesuai" dan **persentase/indeks per dimensi**.
