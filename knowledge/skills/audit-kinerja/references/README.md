@@ -12,7 +12,7 @@ Substansi kriteria (standar audit intern, kerangka 2E, teknik sampling, akar mas
 |---|------|-----|--------|
 | 08 | `08-checklist-survey-pendahuluan.md` | Checklist penajaman sasaran, pemetaan risiko 2E, hipotesis awal | ✅ ADA |
 | 01 | `01-aaipi-standar-audit-intern.md` | Standar AAIPI 3000-5000 (3100 Survei Pendahuluan, 3200 Program, 3300 Eksekusi, 3400 Komunikasi) | ⬜ opsional (inline di SKILL) |
-| 02 | `02-permenpan-standar-audit-kinerja.md` | Permenpan RB 5/2008 + pembaruan — tahapan, kertas kerja, pelaporan | ⬜ opsional (inline di SKILL) |
+| 02 | `02-standar-audit-intern-saipi.md` | Standar Audit Intern Pemerintah Indonesia (SAIPI/AAIPI 2021) — tahapan, kertas kerja, pelaporan (Permenpan 5/2008 sbg pendahulu) | ⬜ opsional (inline di SKILL) |
 | 03 | `03-kerangka-2e-efisiensi-efektivitas.md` | Definisi operasional 2E, indikator, contoh temuan per dimensi | ⬜ opsional (inline di SKILL §Dimensi) |
 | 04 | `04-teknik-sampling-audit-kinerja.md` | Sampling judgement, statistical, walk-through; ukuran sampel minimum per populasi | ⬜ opsional |
 | 05 | `05-akar-masalah-fishbone-5why.md` | Teknik analisis akar masalah (RCA) untuk temuan 2E | ⬜ opsional (inline di SKILL §Sebab) |
