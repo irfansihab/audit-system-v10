@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-reviu-pipk.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 187,
+  "ringkasan_teks": "Kriteria baku dibundel di skill: PMK Pedoman PIPK (14/PMK.09/2017), PP 60/2008 SPIP (5 unsur). Nilai kecukupan desain + efektivitas operasi pengendalian atas keandalan pelaporan keuangan.",
+  "kata_kunci": [
+    "reviu-pipk",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "PMK 14/PMK.09/2017 (Pedoman PIPK)",
+    "PP 60/2008 (SPIP)"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

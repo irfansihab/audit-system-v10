@@ -1,0 +1,21 @@
+{
+  "file": "00-input/kriteria-01-reviu-laporan-keuangan.pdf",
+  "jenis": "kriteria",
+  "halaman_total": 1,
+  "halaman_total_chars": 180,
+  "ringkasan_teks": "Kriteria baku dibundel di skill: SAP (PP 71/2010, PSAP), PMK Standar Reviu LK K/L, Bagan Akun Standar. Reviu keandalan penyajian, pengungkapan, & rekonsiliasi (keyakinan terbatas).",
+  "kata_kunci": [
+    "reviu-laporan-keuangan",
+    "kriteria"
+  ],
+  "regulasi_terdeteksi": [
+    "PP 71/2010 (SAP)",
+    "PMK 8/PMK.09/2019 (Standar Reviu LK)"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

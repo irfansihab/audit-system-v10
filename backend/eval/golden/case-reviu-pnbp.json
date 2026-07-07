@@ -1,0 +1,12 @@
+{
+  "case_id": "reviu-pnbp-draft-01",
+  "skill": "reviu-pnbp",
+  "folder": "(fixture reviu-pnbp)",
+  "deskripsi": "Reviu pengelolaan PNBP Satker TA 2025 (BHP frekuensi/IPFR; keyakinan terbatas): tarif, hitung, tagih, setor, guna, lapor.",
+  "_catatan_validasi": "DRAFT skill baru. UJI PRESISI: penggunaan sebagian dana PNBP sesuai izin & pagu = WAJAR, TIDAK boleh jadi temuan. WAJIB divalidasi auditor; PP tarif PNBP Komdigi dikonfirmasi versi berlaku.",
+  "expected_key_issues": [
+    {"id": "PN1", "ringkas": "Penghitungan BHP frekuensi untuk 2 wajib bayar masih memakai PP tarif lama (2018) padahal telah ada PP tarif yang lebih baru berlaku — indikasi kurang pungut (dinyatakan sebagai indikasi, verifikasi/penetapan final ranah audit).", "kriteria_acuan": "UU 9/2018 PNBP + PP Jenis & Tarif PNBP Komdigi (tarif berlaku).", "materialitas": "tinggi"},
+    {"id": "PN2", "ringkas": "Piutang PNBP Rp 1,2 miliar berumur > 2 tahun tanpa upaya penagihan dan belum disisihkan — pengelolaan piutang PNBP tidak memadai.", "kriteria_acuan": "UU 9/2018 + PMK Piutang PNBP (penagihan & penyisihan).", "materialitas": "tinggi"},
+    {"id": "PN3", "ringkas": "PNBP dipungut Rp 800 juta (Maret) baru disetor ke kas negara 45 hari kemudian (mengendap di bendahara) — penyetoran tidak tepat waktu.", "kriteria_acuan": "UU 9/2018 + PMK Penatausahaan/Penyetoran PNBP (setor secepatnya ke kas negara).", "materialitas": "sedang"}
+  ]
+}

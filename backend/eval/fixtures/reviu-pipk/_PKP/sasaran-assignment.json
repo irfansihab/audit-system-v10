@@ -1,0 +1,17 @@
+{
+  "skill": "reviu-pipk",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mereviu kecukupan desain & efektivitas PIPK Satker atas keandalan pelaporan keuangan (lingkup/risiko, pengendalian entitas & transaksi, ToC, simpulan efektivitas).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Telusuri per aspek: lingkup/identifikasi risiko (akun signifikan & asersi), pengendalian entitas & transaksi (SoD), ToC, konsistensi simpulan efektivitas.",
+        "Catat kelemahan K/K/S/A (Kriteria PMK PIPK/PP 60/2008 presisi; Sebab anti-mengarang; Akibat risiko salah saji; tanpa kerugian negara)."
+      ]
+    }
+  ]
+}

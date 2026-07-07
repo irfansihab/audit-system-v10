@@ -39,6 +39,26 @@ Objek reviu: **komponen LK** (LRA, Neraca, LO, LPE, CaLK; LAK/LPSAL untuk BUN) b
 | 5 | **Kepatuhan proses penyusunan** | Jadwal, reviu berjenjang, Pernyataan Telah Direviu | PMK Standar Reviu LK K/L |
 | 6 | **Tindak lanjut temuan berdampak LK** | Koreksi atas temuan BPK/reviu terdahulu yang memengaruhi saldo/penyajian | LHP BPK + status TLHP |
 
+### Checklist Reviu LK (per aspek — wajib ditelusuri; nilai per elemen: Sesuai / Sesuai dgn catatan / Tidak sesuai)
+
+**Aspek 1 — Kesesuaian dengan SAP (PP 71/2010):**
+- **LRA** (PSAP 02): pendapatan-LRA/belanja/transfer/pembiayaan tersaji per klasifikasi (ekonomi/organisasi/fungsi), basis kas; **realisasi belanja ≤ pagu DIPA/APBN-P** — belanja melampaui pagu tanpa dasar = catatan.
+- **Neraca** (PSAP 01): aset/kewajiban/ekuitas basis akrual; klasifikasi lancar vs non-lancar tepat; **tidak ada saldo tidak normal** (mis. kas/persediaan minus, aset negatif).
+- **LO** (PSAP 12): pendapatan-LO/beban/surplus-defisit operasional tersaji akrual.
+- **LPE** (PSAP 01): ekuitas awal → koreksi/LO → ekuitas akhir konsisten & tertelusur.
+
+**Aspek 2 — CaLK:** kebijakan akuntansi diungkap; pos material dirinci; dasar penyusunan & kejadian penting setelah tanggal pelaporan diungkap; **angka CaLK = angka muka laporan** (tidak beda).
+
+**Aspek 3 — Rekonsiliasi:** **SAKTI/SAIBA ↔ SPAN nihil selisih**; internal (LRA↔LO↔LPE↔Neraca) konsisten; **BMN (SIMAK-BMN ↔ Neraca) sama**; kas (BKU/BP ↔ rekening koran/kas bendahara).
+
+**Aspek 4 — Akurasi & Bagan Akun Standar:** akun sesuai BAS; **tidak ada transaksi suspend / akun sementara tak terselesaikan**; nilai wajar (uji tren antar-periode untuk lonjakan janggal).
+
+**Aspek 5 — Kepatuhan proses:** LK disusun & disampaikan **tepat jadwal**; reviu berjenjang terdokumentasi; **Pernyataan Telah Direviu ditandatangani** sesuai PMK Standar Reviu LK.
+
+**Aspek 6 — TL temuan berdampak LK:** koreksi/penyesuaian atas temuan BPK/reviu terdahulu yang memengaruhi saldo/penyajian **telah dibukukan**; bila belum → catatan.
+
+> Tiap elemen **tidak sesuai** → catatan **K/K/S/A** (Kriteria kutip **presisi**: PSAP/PMK + pasal/nomor; Sebab anti-mengarang; Akibat pada keandalan/penyajian LK, **tanpa** kerugian negara). Elemen sesuai → nyatakan eksplisit "telah memenuhi". Bila kriteria acuan (versi PMK/Bultek) tak dapat dipastikan → catatan/"tidak cukup data", **bukan** deviasi terkonfirmasi.
+
 ## Format Unsur Temuan (KKSAR)
 
 Catatan reviu direkam **K/K/S/A** — **Kondisi** (fakta: pos/angka/dokumen + rujukan), **Kriteria** (SAP/PMK + pasal, kutip **presisi** — lihat `panduan-format-umum`), **Sebab** (anti-mengarang: diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data"), **Akibat** (dampak pada keandalan/penyajian LK; **tanpa perhitungan kerugian negara**). **Rekomendasi disusun di LHR, bukan di KKP.** Doktrin unsur & Sebab: `panduan-format-umum/PANDUAN.md`.

@@ -1,0 +1,25 @@
+{
+  "file": "00-input/objek-01-reviu-pnbp.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 651,
+  "ringkasan_teks": "DATA & DOKUMEN PNBP SATKER TA 2025 (BHP frekuensi & IPFR).\nTarif: penghitungan BHP frekuensi untuk 2 wajib bayar **masih memakai PP tarif LAMA (tahun 2018)** padahal telah ada PP tarif yang lebih baru berlaku → indikasi **kurang pungut**.\nPenetapan: penghitungan PNBP terutang wajib bayar lain telah sesuai formula.\nPiutang: **piutang PNBP Rp 1.200.000.000 berumur > 2 tahun tanpa upaya penagihan** dan belum disisihkan.\nPenyetoran: PNBP dipungut Rp 800.000.000 (Maret) baru **disetor ke kas negara 45 hari kemudian** (mengendap di bendahara; ketentuan setor secepatnya).\nPenggunaan: penggunaan sebagian dana PNBP sesuai izin & pagu (wajar).",
+  "kata_kunci": [
+    "PP tarif lama 2018",
+    "kurang pungut",
+    "piutang Rp1,2M >2 tahun",
+    "terlambat setor 45 hari"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [
+    "2025-03-15"
+  ],
+  "nilai_rupiah_terdeteksi": [
+    "Rp 1.200.000.000",
+    "Rp 800.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

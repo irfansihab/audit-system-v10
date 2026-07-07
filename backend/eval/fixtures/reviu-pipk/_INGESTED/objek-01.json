@@ -1,0 +1,20 @@
+{
+  "file": "00-input/objek-01-reviu-pipk.pdf",
+  "jenis": "objek",
+  "halaman_total": 1,
+  "halaman_total_chars": 696,
+  "ringkasan_teks": "DOKUMEN PENERAPAN & PENILAIAN PIPK SATKER TA 2025.\nLingkup PIPK: akun signifikan yang diidentifikasi = Belanja, Aset Tetap, Kas. **Akun 'Pendapatan PNBP' (material) TIDAK dimasukkan** ke lingkup/identifikasi risiko PIPK.\nPengendalian tingkat entitas: 5 unsur SPIP terdokumentasi memadai.\nSiklus Kas: **bendahara merangkap fungsi pencatatan DAN otorisasi pembayaran** (tidak ada pemisahan fungsi/SoD).\nPengujian pengendalian (ToC): dari 10 kontrol kunci diuji, **3 kontrol tidak berjalan** (rekonsiliasi bank tak dilakukan, approval berjenjang dilewati, akses aplikasi tak dibatasi).\nSimpulan entitas: **\"PIPK dinilai EFEKTIF\"** — padahal 3 kontrol kunci gagal ToC (simpulan overstated).",
+  "kata_kunci": [
+    "Pendapatan PNBP tak masuk lingkup",
+    "bendahara rangkap",
+    "3 kontrol gagal",
+    "simpulan efektif"
+  ],
+  "regulasi_terdeteksi": [],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

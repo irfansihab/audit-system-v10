@@ -1090,7 +1090,97 @@ Gambaran Umum: Reviu kualitas dokumen perencanaan (KAK & HPS) satu paket pengemb
     return root
 
 
+# ---------------------------------------------------------------------------
+# 3 skill reviu keuangan baru (generic digest; kriteria baku dibundel di skill).
+# ---------------------------------------------------------------------------
+def scenario_reviu_laporan_keuangan() -> Path:
+    return _simple(
+        "reviu-laporan-keuangan", jenis="Reviu Laporan Keuangan", keyakinan="keyakinan terbatas",
+        tujuan="Reviu Laporan Keuangan Satker TA 2025 sebelum penyampaian",
+        ruang="Komponen LK (LRA/Neraca/LO/LPE/CaLK) + kertas kerja rekonsiliasi.",
+        doktrin_sebab="Sebab anti-mengarang; tanpa kerugian negara",
+        kriteria_reg=["PP 71/2010 (SAP)", "PMK 8/PMK.09/2019 (Standar Reviu LK)"],
+        kriteria_text="Kriteria baku dibundel di skill: SAP (PP 71/2010, PSAP), PMK Standar Reviu LK K/L, "
+                      "Bagan Akun Standar. Reviu keandalan penyajian, pengungkapan, & rekonsiliasi (keyakinan terbatas).",
+        objek_text="""
+LAPORAN KEUANGAN SATKER TA 2025 (unaudited) + KERTAS KERJA.
+Neraca: Kas Rp 1.200.000.000; **Persediaan bersaldo MINUS Rp -150.000.000** (saldo tidak normal); Aset Tetap Rp 48.000.000.000.
+LRA: realisasi belanja Rp 88.000.000.000 dari pagu DIPA Rp 90.000.000.000 (dalam pagu — wajar).
+Rekonsiliasi SAKTI vs SPAN: terdapat **SELISIH Rp 2.300.000.000 yang BELUM dijelaskan** di kertas kerja.
+Rekonsiliasi BMN: nilai Aset Tetap di **SIMAK-BMN Rp 45.000.000.000** vs **Neraca Rp 48.000.000.000** (selisih Rp 3.000.000.000).
+CaLK: kebijakan akuntansi diungkap; rincian pos material tersedia.
+Proses: **Pernyataan Telah Direviu BELUM ditandatangani** APIP.
+        """,
+        objek_kata=["Persediaan minus", "selisih SAKTI SPAN", "SIMAK-BMN", "Pernyataan Telah Direviu"],
+        objek_nilai=["Rp -150.000.000", "Rp 2.300.000.000", "Rp 3.000.000.000"], objek_tgl=["2025-12-31"],
+        sasaran_desc="Menelaah keandalan penyajian Laporan Keuangan TA 2025 sesuai SAP dan kelengkapan "
+                     "rekonsiliasi sebelum penyampaian (keyakinan terbatas).",
+        langkah=[
+            "Telusuri per aspek: kesesuaian SAP (saldo normal), CaLK, rekonsiliasi (SAKTI↔SPAN, BMN), akurasi/BAS, proses (Pernyataan Telah Direviu).",
+            "Catat ketidaksesuaian K/K/S/A (Kriteria kutip presisi PSAP/PMK; Sebab anti-mengarang; tanpa kerugian negara).",
+        ],
+    )
+
+
+def scenario_reviu_pipk() -> Path:
+    return _simple(
+        "reviu-pipk", jenis="Reviu PIPK", keyakinan="keyakinan terbatas",
+        tujuan="Reviu Pengendalian Intern atas Pelaporan Keuangan (PIPK) Satker TA 2025",
+        ruang="Dokumen penerapan & penilaian PIPK (lingkup/risiko, RCM, ToC/CSA, simpulan efektivitas).",
+        doktrin_sebab="Sebab anti-mengarang; tanpa kerugian negara",
+        kriteria_reg=["PMK 14/PMK.09/2017 (Pedoman PIPK)", "PP 60/2008 (SPIP)"],
+        kriteria_text="Kriteria baku dibundel di skill: PMK Pedoman PIPK (14/PMK.09/2017), PP 60/2008 SPIP (5 unsur). "
+                      "Nilai kecukupan desain + efektivitas operasi pengendalian atas keandalan pelaporan keuangan.",
+        objek_text="""
+DOKUMEN PENERAPAN & PENILAIAN PIPK SATKER TA 2025.
+Lingkup PIPK: akun signifikan yang diidentifikasi = Belanja, Aset Tetap, Kas. **Akun 'Pendapatan PNBP' (material) TIDAK dimasukkan** ke lingkup/identifikasi risiko PIPK.
+Pengendalian tingkat entitas: 5 unsur SPIP terdokumentasi memadai.
+Siklus Kas: **bendahara merangkap fungsi pencatatan DAN otorisasi pembayaran** (tidak ada pemisahan fungsi/SoD).
+Pengujian pengendalian (ToC): dari 10 kontrol kunci diuji, **3 kontrol tidak berjalan** (rekonsiliasi bank tak dilakukan, approval berjenjang dilewati, akses aplikasi tak dibatasi).
+Simpulan entitas: **"PIPK dinilai EFEKTIF"** — padahal 3 kontrol kunci gagal ToC (simpulan overstated).
+        """,
+        objek_kata=["Pendapatan PNBP tak masuk lingkup", "bendahara rangkap", "3 kontrol gagal", "simpulan efektif"],
+        sasaran_desc="Mereviu kecukupan desain & efektivitas PIPK Satker atas keandalan pelaporan keuangan "
+                     "(lingkup/risiko, pengendalian entitas & transaksi, ToC, simpulan efektivitas).",
+        langkah=[
+            "Telusuri per aspek: lingkup/identifikasi risiko (akun signifikan & asersi), pengendalian entitas & transaksi (SoD), ToC, konsistensi simpulan efektivitas.",
+            "Catat kelemahan K/K/S/A (Kriteria PMK PIPK/PP 60/2008 presisi; Sebab anti-mengarang; Akibat risiko salah saji; tanpa kerugian negara).",
+        ],
+    )
+
+
+def scenario_reviu_pnbp() -> Path:
+    return _simple(
+        "reviu-pnbp", jenis="Reviu PNBP", keyakinan="keyakinan terbatas",
+        tujuan="Reviu Pengelolaan PNBP Satker (BHP frekuensi/IPFR) TA 2025",
+        ruang="Data & dokumen PNBP: tarif, penetapan, piutang, penyetoran, penggunaan, pelaporan.",
+        doktrin_sebab="Sebab anti-mengarang; tanpa kerugian negara",
+        kriteria_reg=["UU 9/2018 (PNBP)", "PP Tarif PNBP Komdigi", "PMK Penatausahaan PNBP"],
+        kriteria_text="Kriteria baku dibundel di skill: UU 9/2018 PNBP, PP Jenis & Tarif PNBP Komdigi (BHP frekuensi/IPFR), "
+                      "PMK penatausahaan/penyetoran/piutang PNBP. Reviu ketepatan tarif, hitung, tagih, setor, guna, lapor.",
+        objek_text="""
+DATA & DOKUMEN PNBP SATKER TA 2025 (BHP frekuensi & IPFR).
+Tarif: penghitungan BHP frekuensi untuk 2 wajib bayar **masih memakai PP tarif LAMA (tahun 2018)** padahal telah ada PP tarif yang lebih baru berlaku → indikasi **kurang pungut**.
+Penetapan: penghitungan PNBP terutang wajib bayar lain telah sesuai formula.
+Piutang: **piutang PNBP Rp 1.200.000.000 berumur > 2 tahun tanpa upaya penagihan** dan belum disisihkan.
+Penyetoran: PNBP dipungut Rp 800.000.000 (Maret) baru **disetor ke kas negara 45 hari kemudian** (mengendap di bendahara; ketentuan setor secepatnya).
+Penggunaan: penggunaan sebagian dana PNBP sesuai izin & pagu (wajar).
+        """,
+        objek_kata=["PP tarif lama 2018", "kurang pungut", "piutang Rp1,2M >2 tahun", "terlambat setor 45 hari"],
+        objek_nilai=["Rp 1.200.000.000", "Rp 800.000.000"], objek_tgl=["2025-03-15"],
+        sasaran_desc="Mereviu pengelolaan PNBP Satker (BHP frekuensi/IPFR): ketepatan tarif & penghitungan, "
+                     "piutang, ketepatan waktu penyetoran ke kas negara, penggunaan, dan pelaporan.",
+        langkah=[
+            "Telusuri per aspek: jenis & tarif (PP berlaku), penghitungan terutang, piutang/aging, penyetoran (waktu & jumlah), penggunaan, pelaporan.",
+            "Catat ketidaksesuaian K/K/S/A (Kriteria UU 9/2018/PP tarif/PMK presisi; Sebab anti-mengarang; tanpa hitung kerugian negara; indikasi kurang bayar material → eskalasi audit).",
+        ],
+    )
+
+
 SCENARIOS = {
+    "reviu-laporan-keuangan": scenario_reviu_laporan_keuangan,
+    "reviu-pipk": scenario_reviu_pipk,
+    "reviu-pnbp": scenario_reviu_pnbp,
     "reviu-pengadaan-p1": scenario_reviu_pengadaan_p1,
     "reviu-pengadaan-p2": scenario_reviu_pengadaan_p2,
     "reviu-rka-kl": scenario_reviu_rka_kl,

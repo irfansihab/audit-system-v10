@@ -1,0 +1,12 @@
+{
+  "case_id": "reviu-pipk-draft-01",
+  "skill": "reviu-pipk",
+  "folder": "(fixture reviu-pipk)",
+  "deskripsi": "Reviu PIPK Satker TA 2025 (keyakinan terbatas): kecukupan desain & efektivitas pengendalian atas keandalan pelaporan keuangan.",
+  "_catatan_validasi": "DRAFT skill baru. UJI PRESISI: pengendalian tingkat entitas (5 unsur SPIP) dinilai memadai → TIDAK boleh jadi temuan. WAJIB divalidasi auditor; nomor PMK PIPK dikonfirmasi berlaku.",
+  "expected_key_issues": [
+    {"id": "PK1", "ringkas": "Akun signifikan 'Pendapatan PNBP' (material) tidak dimasukkan ke lingkup/identifikasi risiko PIPK — cakupan penilaian PIPK tidak lengkap terhadap akun signifikan.", "kriteria_acuan": "PMK Pedoman PIPK (14/PMK.09/2017) — identifikasi akun/proses signifikan & asersi.", "materialitas": "tinggi"},
+    {"id": "PK2", "ringkas": "Siklus kas tanpa pemisahan fungsi — bendahara merangkap fungsi pencatatan dan otorisasi pembayaran (tidak ada Segregation of Duties).", "kriteria_acuan": "PP 60/2008 SPIP (kegiatan pengendalian: pemisahan fungsi) + PMK Pedoman PIPK.", "materialitas": "tinggi"},
+    {"id": "PK3", "ringkas": "Simpulan entitas 'PIPK efektif' tidak konsisten (overstated) dengan hasil ToC — 3 dari 10 kontrol kunci tidak berjalan (rekonsiliasi bank, approval berjenjang, pembatasan akses).", "kriteria_acuan": "PMK Pedoman PIPK — simpulan efektivitas harus didukung hasil pengujian pengendalian.", "materialitas": "tinggi"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill": "reviu-pnbp",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Mereviu pengelolaan PNBP Satker (BHP frekuensi/IPFR): ketepatan tarif & penghitungan, piutang, ketepatan waktu penyetoran ke kas negara, penggunaan, dan pelaporan.",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Telusuri per aspek: jenis & tarif (PP berlaku), penghitungan terutang, piutang/aging, penyetoran (waktu & jumlah), penggunaan, pelaporan.",
+        "Catat ketidaksesuaian K/K/S/A (Kriteria UU 9/2018/PP tarif/PMK presisi; Sebab anti-mengarang; tanpa hitung kerugian negara; indikasi kurang bayar material → eskalasi audit)."
+      ]
+    }
+  ]
+}
