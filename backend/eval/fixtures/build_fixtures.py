@@ -841,8 +841,124 @@ Unit menanyakan kelayakan metode, urutan penetapan pemaketan-spesifikasi-HPS-met
     )
 
 
+# ---------------------------------------------------------------------------
+# Studi kasus hardening: DUA penugasan reviu-rka-kl, RKA SAMA, sasaran BEDA.
+# P1 fokus keselarasan RO/IRO↔kegiatan/program + isu↔intervensi.
+# P2 fokus kesesuaian RAB↔SBM + data dukung pembentuk harga (item di luar SBM).
+# RKA menanam cacat kedua dimensi + 1 UMPAN PRESISI (item luar-SBM ber-data-dukung
+# wajar yg TIDAK boleh dijadikan temuan).
+# ---------------------------------------------------------------------------
+def _rka_case(dirname: str, *, sasaran_id: str, sasaran_desc: str, langkah: list[str]) -> Path:
+    at = "Sarah Auditor"
+    root = FIX_DIR / dirname
+    if root.exists():
+        import shutil
+        shutil.rmtree(root)
+    (root / "_KKP").mkdir(parents=True)
+    (root / "_PKP").mkdir()
+    (root / "00-input").mkdir()
+    tor = {
+        "nama_ro": "RO Pengembangan Platform Literasi Digital",
+        "identitas_ro": {
+            "kementerian": "Kementerian Komunikasi dan Digital",
+            "unit_eselon_i": "Direktorat Jenderal Ekosistem Digital",
+            "program_nama": "Program Ekosistem Digital",
+            "kegiatan_nama": "Peningkatan Literasi Digital Masyarakat",
+            "ro": "01", "volume": 1, "satuan": "Platform",
+        },
+        "isu_latar_belakang": "Isu kegiatan: rendahnya tingkat literasi digital MASYARAKAT (indeks 3,2 dari 5); "
+                              "akar masalah = minimnya akses edukasi/konten literasi & pendampingan untuk masyarakat.",
+        "sasaran_kegiatan": "Meningkatnya literasi digital masyarakat.",
+        "indikator_kegiatan_IKK": "Indeks Literasi Digital Masyarakat (baseline 3,2 → target 3,8).",
+        "indikator_RO_IRO": "Jumlah kegiatan sosialisasi platform yang terlaksana (target 40 kegiatan).",
+        "strategi_intervensi": "Komponen utama RO: pengadaan server, storage, dan lisensi perangkat lunak "
+                               "platform (infrastruktur TI); pengembangan aplikasi platform.",
+        "dasar_hukum": [{"jenis_regulasi": "PMK", "nomor": "107", "tahun": "2024"}],
+        "biaya": {"total": 1650000000, "sumber_dana": "Rupiah Murni"},
+        "_catatan": "IRO berupa hitung-aktivitas (jumlah sosialisasi) — bukan outcome; IKK berbasis outcome "
+                    "(indeks literasi). Intervensi utama = infrastruktur TI, sedangkan akar isu = akses edukasi/konten "
+                    "literasi masyarakat.",
+    }
+    rab = {
+        "nama_ro": "RO Pengembangan Platform Literasi Digital",
+        "total": 1650000000, "nilai_total": 1650000000, "komponen_count": 4,
+        "komponen": [
+            {"nama": "Honorarium narasumber sosialisasi", "akun": "521213", "volume": 40, "satuan": "jam",
+             "harga_satuan": 2000000, "nilai": 80000000, "diatur_sbm": True,
+             "data_dukung": "n/a (satuan diatur SBM honorarium narasumber)",
+             "_catatan": "Rp 2.000.000/jam MELEBIHI batas SBM honorarium narasumber (Rp 1.400.000/jam)."},
+            {"nama": "Jasa pengembangan aplikasi platform (software house)", "akun": "522191", "volume": 1,
+             "satuan": "paket", "harga_satuan": 850000000, "nilai": 850000000, "diatur_sbm": False,
+             "data_dukung": "ADA & WAJAR: survei/RFI 3 penyedia (Rp 820jt / 855jt / 880jt) + HPS berbasis keahlian; "
+                            "harga RAB Rp 850jt berada di kisaran wajar data dukung.",
+             "_catatan": "Di luar SBM, TAPI data dukung pembentuk harga lengkap & wajar → BUKAN deviasi (umpan presisi)."},
+            {"nama": "Sewa infrastruktur cloud khusus", "akun": "522141", "volume": 12, "satuan": "bulan",
+             "harga_satuan": 25000000, "nilai": 300000000, "diatur_sbm": False,
+             "data_dukung": "TIDAK ADA — tidak dilampirkan survei/RFI, kontrak/PO pembanding, maupun HPS.",
+             "_catatan": "Di luar SBM & tanpa data dukung pembentuk harga → harga tak berdasar (perlu jadi catatan)."},
+            {"nama": "ATK & konsumsi rapat", "akun": "521211", "volume": 10, "satuan": "paket",
+             "harga_satuan": 2000000, "nilai": 20000000, "diatur_sbm": True,
+             "data_dukung": "n/a", "_catatan": "Dalam batas SBM → wajar."},
+        ],
+    }
+    (root / "_KKP" / "tor-01.json").write_text(json.dumps(tor, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "_KKP" / "rab-01.json").write_text(json.dumps(rab, ensure_ascii=False, indent=2), encoding="utf-8")
+    sasaran = [{"sasaran_id": sasaran_id, "deskripsi": sasaran_desc, "assigned_to": [at],
+                "status": "DISETUJUI_KT", "langkah_kerja": langkah}]
+    context = f"""
+# Konteks Penugasan — Reviu RKA-K/L
+
+Identitas: Reviu RKA-K/L RO Pengembangan Platform Literasi Digital
+Jenis Pengawasan: Reviu (keyakinan terbatas)
+Auditi: Direktorat Jenderal Ekosistem Digital, Kementerian Komunikasi dan Digital
+Periode: TA 2026 (reviu perencanaan)
+Tahun Anggaran: 2026
+
+Tujuan: Reviu kualitas & kesesuaian RKA-K/L sesuai Kriteria IR2 PMK 107/2024 Pasal 61, DIFOKUSKAN pada sasaran penugasan.
+Ruang Lingkup: 1 RO (TOR + RAB) senilai Rp 1,65 miliar; digest di _KKP (tor-01.json, rab-01.json).
+Sasaran penugasan: {sasaran_desc}
+Doktrin Sebab: anti-mengarang. Reviu tidak menghitung kerugian negara.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: Reviu perencanaan atas satu RO platform literasi digital; kedalaman & titik berat mengikuti sasaran penugasan.
+"""
+    (root / "_PKP" / "sasaran-assignment.json").write_text(
+        json.dumps({"skill": "reviu-rka-kl", "sasaran": sasaran}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "context.md").write_text(context.strip() + "\n", encoding="utf-8")
+    (root / "00-input" / ".gitkeep").write_text("", encoding="utf-8")
+    return root
+
+
+def scenario_reviu_rka_kl_p1() -> Path:
+    return _rka_case(
+        "reviu-rka-kl-p1", sasaran_id="S-01",
+        sasaran_desc="Menilai KESELARASAN RO & indikator RO (IRO) terhadap kegiatan & program, serta "
+                     "keselarasan isu dan intervensi kegiatan yang diusulkan dalam RO (relevansi/theory of change).",
+        langkah=[
+            "Telusuri kerangka logis program → kegiatan → RO; nilai keselarasan IRO terhadap IKK/indikator kegiatan.",
+            "Nilai apakah intervensi/komponen RO menjawab akar isu kegiatan; angkat ketidakselarasan sebagai catatan K/K/S/A.",
+            "Aspek biaya/SBM di luar fokus sasaran → pass ringan; bila ada sinyal material, catat sebagai eskalasi ke KT.",
+        ],
+    )
+
+
+def scenario_reviu_rka_kl_p2() -> Path:
+    return _rka_case(
+        "reviu-rka-kl-p2", sasaran_id="S-01",
+        sasaran_desc="Menilai KESESUAIAN RAB terhadap SBM, dan kewajaran harga komponen yang TIDAK diatur SBM "
+                     "berdasarkan data dukung pembentuk harga (survei/RFI, kontrak pembanding, HPS).",
+        langkah=[
+            "Untuk tiap komponen RAB: bila diatur SBM → uji harga vs batas SBM; bila di luar SBM → uji thd data dukung pembentuk harga.",
+            "Deviasi/catatan hanya bila harga > SBM, atau (luar SBM) data dukung tidak ada / harga tidak wajar. Item luar-SBM ber-data-dukung wajar → 'telah memenuhi'.",
+            "Aspek keselarasan/kerangka logis di luar fokus sasaran → pass ringan; bila ada sinyal material, catat sebagai eskalasi ke KT.",
+        ],
+    )
+
+
 SCENARIOS = {
     "reviu-rka-kl": scenario_reviu_rka_kl,
+    "reviu-rka-kl-p1": scenario_reviu_rka_kl_p1,
+    "reviu-rka-kl-p2": scenario_reviu_rka_kl_p2,
     "konsultansi-umum": scenario_konsultansi_umum,
     "konsultasi-pengadaan": scenario_konsultasi_pengadaan,
     "reviu-umum": scenario_reviu_umum,

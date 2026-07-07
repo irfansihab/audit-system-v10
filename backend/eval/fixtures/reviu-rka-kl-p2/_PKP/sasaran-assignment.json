@@ -1,0 +1,18 @@
+{
+  "skill": "reviu-rka-kl",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Menilai KESESUAIAN RAB terhadap SBM, dan kewajaran harga komponen yang TIDAK diatur SBM berdasarkan data dukung pembentuk harga (survei/RFI, kontrak pembanding, HPS).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "Untuk tiap komponen RAB: bila diatur SBM → uji harga vs batas SBM; bila di luar SBM → uji thd data dukung pembentuk harga.",
+        "Deviasi/catatan hanya bila harga > SBM, atau (luar SBM) data dukung tidak ada / harga tidak wajar. Item luar-SBM ber-data-dukung wajar → 'telah memenuhi'.",
+        "Aspek keselarasan/kerangka logis di luar fokus sasaran → pass ringan; bila ada sinyal material, catat sebagai eskalasi ke KT."
+      ]
+    }
+  ]
+}
