@@ -1,0 +1,17 @@
+{
+  "skill": "reviu-pengadaan",
+  "sasaran": [
+    {
+      "sasaran_id": "S-01",
+      "deskripsi": "Memastikan TOR/KAK dan HPS telah disusun sesuai ketentuan (kelengkapan justifikasi 5 elemen; HPS multi-source ≥2 sumber, breakdown, komponen lengkap sesuai KAK).",
+      "assigned_to": [
+        "Sarah Auditor"
+      ],
+      "status": "DISETUJUI_KT",
+      "langkah_kerja": [
+        "read_digest → telusuri Checklist Kelengkapan Justifikasi (5 elemen KAK) + Aspek C HPS (multi-source, breakdown, komponen).",
+        "Catat ketidaksesuaian K/K/S/A (Sebab anti-mengarang; kutip pasal presisi). Aspek RUP/pemilihan di luar fokus sasaran → pass ringan."
+      ]
+    }
+  ]
+}

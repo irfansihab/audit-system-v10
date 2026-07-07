@@ -955,7 +955,144 @@ def scenario_reviu_rka_kl_p2() -> Path:
     )
 
 
+# ---------------------------------------------------------------------------
+# Studi kasus reviu-pengadaan: P1 kelengkapan pendaftaran SIRUP (rekonsiliasi
+# populasi RKA/DIPA ↔ data SIRUP; via _INGESTED), P2 kesesuaian TOR & HPS
+# (via pengadaan-digest.json). P1 menanam 2 paket tak terdaftar + 3 paket
+# terdaftar (umpan presisi). P2 menanam cacat HPS single-source + KAK 5-elemen
+# kurang + komponen migrasi tak teralokasi.
+# ---------------------------------------------------------------------------
+def scenario_reviu_pengadaan_p1() -> Path:
+    at = "Sarah Auditor"
+    rup = _digest(
+        "00-input/rekap-rup-sirup.pdf", "rup-sirup",
+        """
+REKONSILIASI RENCANA UMUM PENGADAAN (RUP) ↔ SIRUP — Satker TA 2026.
+POPULASI PAKET PENGADAAN (sumber: RKA-K/L & DIPA TA 2026):
+- Paket 1: Pengadaan Server & Storage — Rp 1.200.000.000 — Tender.
+- Paket 2: Jasa Pengembangan Aplikasi Layanan Digital — Rp 850.000.000 — Tender.
+- Paket 3: Sewa Infrastruktur Cloud — Rp 300.000.000 — E-purchasing.
+- Paket 4: Pengadaan Laptop — Rp 450.000.000 — E-purchasing.
+- Paket 5: Jasa Konsultan Keamanan Siber — Rp 600.000.000 — Seleksi.
+DATA PENDAFTARAN SIRUP (export RUP terumumkan):
+- Paket 1 → TERDAFTAR & diumumkan (Kode RUP 51201001).
+- Paket 2 → TERDAFTAR & diumumkan (Kode RUP 51201002); NAMUN nilai di SIRUP Rp 800.000.000 (beda dgn RKA Rp 850.000.000).
+- Paket 4 → TERDAFTAR & diumumkan (Kode RUP 51201004).
+- Paket 3 (Sewa Cloud Rp 300 jt) → TIDAK DITEMUKAN di SIRUP (belum terdaftar/diumumkan).
+- Paket 5 (Konsultan Keamanan Siber Rp 600 jt) → TIDAK DITEMUKAN di SIRUP (belum terdaftar/diumumkan).
+        """,
+        kata_kunci=["RUP", "SIRUP", "populasi paket", "terdaftar", "tidak ditemukan"],
+        regulasi=["Perpres 16/2018 Pasal 22", "Perpres 16/2018 Pasal 23"],
+        nilai=["Rp 300.000.000", "Rp 600.000.000", "Rp 850.000.000"],
+    )
+    root = FIX_DIR / "reviu-pengadaan-p1"
+    if root.exists():
+        import shutil
+        shutil.rmtree(root)
+    (root / "00-input").mkdir(parents=True)
+    (root / "_INGESTED").mkdir()
+    (root / "_PKP").mkdir()
+    (root / "00-input" / "rekap-rup-sirup.pdf").write_text("[stub] rekap RUP↔SIRUP — lihat _INGESTED", encoding="utf-8")
+    (root / "_INGESTED" / "rup-sirup-01.json").write_text(json.dumps(rup, ensure_ascii=False, indent=2), encoding="utf-8")
+    sasaran = [{"sasaran_id": "S-01",
+                "deskripsi": "Memastikan seluruh paket pengadaan satker (populasi RKA/DIPA) TELAH TERDAFTAR & "
+                             "diumumkan di SIRUP (kelengkapan pendaftaran RUP).",
+                "assigned_to": [at], "status": "DISETUJUI_KT",
+                "langkah_kerja": [
+                    "Baca populasi paket (RKA/DIPA) & data SIRUP via read_ingested_digest; rekonsiliasi tiap paket.",
+                    "Klasifikasi terdaftar/tidak; paket wajib-umumkan yang TIDAK terdaftar di SIRUP → temuan (Perpres 16/2018 Ps 22-23); ketidaksesuaian data RUP↔RKA → catatan.",
+                    "Aspek mutu dokumen KAK/HPS di luar fokus sasaran → pass ringan.",
+                ]}]
+    context = """
+# Konteks Penugasan — Reviu Pengadaan (Kelengkapan SIRUP)
+
+Identitas: Reviu Kelengkapan Pendaftaran RUP/SIRUP Paket Pengadaan Satker
+Jenis Pengawasan: Reviu (keyakinan terbatas)
+Auditi: Satuan Kerja X, Kementerian Komunikasi dan Digital
+Periode: TA 2026 (perencanaan pengadaan)
+Tahun Anggaran: 2026
+
+Tujuan: Memastikan seluruh paket pengadaan (populasi RKA/DIPA) terdaftar & diumumkan di SIRUP.
+Ruang Lingkup: Rekonsiliasi populasi paket RKA/DIPA ↔ data pendaftaran SIRUP (di _INGESTED). Fokus Aspek A (RUP).
+Doktrin Sebab: anti-mengarang. Reviu tidak menghitung kerugian negara.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: Reviu kelengkapan pendaftaran RUP — rekonsiliasi daftar paket terhadap SIRUP.
+"""
+    (root / "_PKP" / "sasaran-assignment.json").write_text(
+        json.dumps({"skill": "reviu-pengadaan", "sasaran": sasaran}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "context.md").write_text(context.strip() + "\n", encoding="utf-8")
+    return root
+
+
+def scenario_reviu_pengadaan_p2() -> Path:
+    at = "Sarah Auditor"
+    digest = {
+        "dokumen": {
+            "kak": [{"filename": "KAK-aplikasi.pdf", "classified_by": "nama", "parsed": {
+                "nama_pekerjaan": "Pengembangan Aplikasi Layanan Digital",
+                "nilai_hps": 850000000, "periode": "6 bulan",
+                "elemen_justifikasi": {"kebutuhan": "ada", "spesifikasi_teknis": "ada",
+                                       "metode_pengadaan": "TIDAK dinyatakan", "waktu": "ada", "output": "ada"},
+                "sla_value": "99,5%",
+                "lingkup_komponen": ["pengembangan", "instalasi", "migrasi data", "pelatihan"],
+                "identifikasi_kebutuhan": "terukur",
+                "catatan": "Justifikasi tidak menyatakan METODE PENGADAAN (1 dari 5 elemen kurang).",
+            }}],
+            "hps": [{"filename": "HPS-aplikasi.pdf", "classified_by": "nama", "parsed": {
+                "nama_pekerjaan": "Pengembangan Aplikasi Layanan Digital",
+                "nilai_hps": 850000000, "jumlah_sumber_harga_valid": 1,
+                "sumber_harga": "Hanya 1 RFI valid; 2 penyedia lain menyatakan tidak bersedia (refusal).",
+                "breakdown_komponen": "ada per komponen",
+                "komponen_termasuk": ["pengembangan", "instalasi", "pelatihan"],
+                "dasar_hukum_sbm": "PMK 32/PMK.02/2025 (SBM TA 2026)",
+                "catatan": "HPS hanya berbasis 1 RFI valid. Komponen 'migrasi data' ada di KAK tetapi TIDAK teralokasi di HPS.",
+            }}],
+        },
+        "missing_types": [],
+    }
+    root = FIX_DIR / "reviu-pengadaan-p2"
+    if root.exists():
+        import shutil
+        shutil.rmtree(root)
+    (root / "00-input").mkdir(parents=True)
+    (root / "_KKP").mkdir()
+    (root / "_PKP").mkdir()
+    (root / "00-input" / ".gitkeep").write_text("", encoding="utf-8")
+    (root / "_KKP" / "pengadaan-digest.json").write_text(json.dumps(digest, ensure_ascii=False, indent=2), encoding="utf-8")
+    sasaran = [{"sasaran_id": "S-01",
+                "deskripsi": "Memastikan TOR/KAK dan HPS telah disusun sesuai ketentuan (kelengkapan justifikasi 5 "
+                             "elemen; HPS multi-source ≥2 sumber, breakdown, komponen lengkap sesuai KAK).",
+                "assigned_to": [at], "status": "DISETUJUI_KT",
+                "langkah_kerja": [
+                    "read_digest → telusuri Checklist Kelengkapan Justifikasi (5 elemen KAK) + Aspek C HPS (multi-source, breakdown, komponen).",
+                    "Catat ketidaksesuaian K/K/S/A (Sebab anti-mengarang; kutip pasal presisi). Aspek RUP/pemilihan di luar fokus sasaran → pass ringan.",
+                ]}]
+    context = """
+# Konteks Penugasan — Reviu Pengadaan (Kesesuaian TOR & HPS)
+
+Identitas: Reviu Kesesuaian TOR/KAK & HPS Paket Pengembangan Aplikasi Layanan Digital
+Jenis Pengawasan: Reviu (keyakinan terbatas)
+Auditi: Satuan Kerja X, Kementerian Komunikasi dan Digital
+Periode: TA 2026 (perencanaan)
+Tahun Anggaran: 2026
+
+Tujuan: Memastikan TOR/KAK & HPS disusun sesuai ketentuan (Perpres 16/2018 & Perlem LKPP 12/2021).
+Ruang Lingkup: KAK + HPS (digest di _KKP/pengadaan-digest.json). Fokus Aspek B (KAK) & C (HPS).
+Doktrin Sebab: anti-mengarang. Reviu tidak menghitung kerugian negara.
+Tim: Sarah Auditor (Anggota Tim).
+
+Gambaran Umum: Reviu kualitas dokumen perencanaan (KAK & HPS) satu paket pengembangan aplikasi.
+"""
+    (root / "_PKP" / "sasaran-assignment.json").write_text(
+        json.dumps({"skill": "reviu-pengadaan", "sasaran": sasaran}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (root / "context.md").write_text(context.strip() + "\n", encoding="utf-8")
+    return root
+
+
 SCENARIOS = {
+    "reviu-pengadaan-p1": scenario_reviu_pengadaan_p1,
+    "reviu-pengadaan-p2": scenario_reviu_pengadaan_p2,
     "reviu-rka-kl": scenario_reviu_rka_kl,
     "reviu-rka-kl-p1": scenario_reviu_rka_kl_p1,
     "reviu-rka-kl-p2": scenario_reviu_rka_kl_p2,

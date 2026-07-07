@@ -1,0 +1,28 @@
+{
+  "file": "00-input/rekap-rup-sirup.pdf",
+  "jenis": "rup-sirup",
+  "halaman_total": 1,
+  "halaman_total_chars": 955,
+  "ringkasan_teks": "REKONSILIASI RENCANA UMUM PENGADAAN (RUP) ↔ SIRUP — Satker TA 2026.\nPOPULASI PAKET PENGADAAN (sumber: RKA-K/L & DIPA TA 2026):\n- Paket 1: Pengadaan Server & Storage — Rp 1.200.000.000 — Tender.\n- Paket 2: Jasa Pengembangan Aplikasi Layanan Digital — Rp 850.000.000 — Tender.\n- Paket 3: Sewa Infrastruktur Cloud — Rp 300.000.000 — E-purchasing.\n- Paket 4: Pengadaan Laptop — Rp 450.000.000 — E-purchasing.\n- Paket 5: Jasa Konsultan Keamanan Siber — Rp 600.000.000 — Seleksi.\nDATA PENDAFTARAN SIRUP (export RUP terumumkan):\n- Paket 1 → TERDAFTAR & diumumkan (Kode RUP 51201001).\n- Paket 2 → TERDAFTAR & diumumkan (Kode RUP 51201002); NAMUN nilai di SIRUP Rp 800.000.000 (beda dgn RKA Rp 850.000.000).\n- Paket 4 → TERDAFTAR & diumumkan (Kode RUP 51201004).\n- Paket 3 (Sewa Cloud Rp 300 jt) → TIDAK DITEMUKAN di SIRUP (belum terdaftar/diumumkan).\n- Paket 5 (Konsultan Keamanan Siber Rp 600 jt) → TIDAK DITEMUKAN di SIRUP (belum terdaftar/diumumkan).",
+  "kata_kunci": [
+    "RUP",
+    "SIRUP",
+    "populasi paket",
+    "terdaftar",
+    "tidak ditemukan"
+  ],
+  "regulasi_terdeteksi": [
+    "Perpres 16/2018 Pasal 22",
+    "Perpres 16/2018 Pasal 23"
+  ],
+  "tanggal_terdeteksi": [],
+  "nilai_rupiah_terdeteksi": [
+    "Rp 300.000.000",
+    "Rp 600.000.000",
+    "Rp 850.000.000"
+  ],
+  "_digest_meta": {
+    "engine": "synthetic-fixture",
+    "version": "1.0"
+  }
+}

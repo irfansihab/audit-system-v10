@@ -88,7 +88,7 @@ Checklist struktural hanya menangkap inkonsistensi sederhana. Analisis di bawah 
 |---|---|---|---|
 | Kapan | Sebelum tender dimulai | Setelah tender selesai | Review menyeluruh |
 | Dokumen utama | KAK, HPS, data dukung | Dokpil, BAHP, SPPBJ | Semua |
-| **RUP/SiRUP** | ❌ **SKIP** | ❌ SKIP | Opsional |
+| **RUP/SiRUP** | ○ aktif & DIDALAMI bila sasaran RUP; selain itu pass ringan | ○ aktif bila sasaran RUP | ✅ bila data RUP+populasi tersedia |
 | **SPPBJ** | ❌ **SKIP** | ✅ Periksa | ✅ Periksa |
 | **BAHP** | ❌ SKIP | ✅ Periksa | ✅ Periksa |
 
@@ -113,15 +113,33 @@ Checklist struktural hanya menangkap inkonsistensi sederhana. Analisis di bawah 
 - Kewajaran harga pelaksanaan/pembayaran
 - Pelaksanaan fisik pekerjaan
 - BAST dan serah terima pekerjaan
-- **RUP/SiRUP** — tidak diperiksa dalam reviu perencanaan (tidak efisien, jarang tersedia)
+- *(Catatan: **RUP/SiRUP** BUKAN lagi di luar cakupan — kini **Aspek A** yang diperiksa bila **sasaran/ST menyasar kelengkapan pendaftaran SIRUP** dan data populasi+RUP disuplai. Lihat Aspek A.)*
 
 ## Aspek yang Diperiksa dan Kriteria Minimal
 
-### A. Rencana Umum Pengadaan (RUP)
+### A. Rencana Umum Pengadaan (RUP) & Pendaftaran SIRUP
 
-> ❌ **SKIP untuk Scope Perencanaan** — RUP tidak diperiksa dalam reviu perencanaan.
-> RUP hanya diperiksa jika: (1) ST secara eksplisit meminta, ATAU (2) ada indikasi paket tidak terdaftar di RUP yang menjadi temuan mandiri.
-> **Alasan efisiensi**: Dokumen RUP/SiRUP jarang tersedia dalam berkas penugasan, membutuhkan akses portal SiRUP yang tidak bisa dilakukan AI, dan bukan fokus utama reviu perencanaan teknis.
+> **Kapan diperiksa (sesuai sasaran):** aktif & **DIDALAMI** bila **sasaran/ST menyasar kelengkapan RUP / pendaftaran SIRUP** (mis. *"pastikan seluruh paket pengadaan telah terdaftar & diumumkan di SIRUP"*), atau ada indikasi paket tak terdaftar. Bila sasaran murni mutu dokumen (KAK/HPS) → Aspek A cukup **pass ringan** (lihat scoping berbasis sasaran di `panduan-format-umum`).
+
+**Kontrak data (WAJIB untuk uji kelengkapan SIRUP).** Butuh DUA sumber, disuplai sebagai dokumen input (baca via `read_ingested_digest` untuk berkas di `00-input/`, atau `read_digest` bila masuk digest pengadaan):
+1. **Populasi pengadaan** satker — daftar paket dari **RKA-K/L / DIPA / Rencana Pengadaan** (nama paket, nilai, jenis, metode, sumber dana).
+2. **Data pendaftaran SIRUP** — export RUP / hasil tarik SIRUP (mis. via skill `analisis-data-inaproc`): daftar paket yang telah diumumkan (kode RUP, nama, nilai, status umumkan/final).
+
+> **Anti-mengarang:** bila **salah satu sumber tidak tersedia** (populasi atau data SIRUP) → **JANGAN simpulkan "tidak terdaftar"** — itu bukan deviasi terkonfirmasi. Nyatakan keterbatasan & minta data (populasi RKA/DIPA atau export SIRUP), atau "tidak cukup data".
+
+**Metode — rekonsiliasi kelengkapan pendaftaran SIRUP:**
+1. Bangun **populasi paket** pengadaan dari RKA/DIPA/Rencana Pengadaan.
+2. Cocokkan tiap paket ke data SIRUP (kunci: **nama paket + nilai + kode RUP**; toleransi beda redaksi nama, cocokkan substansi).
+3. Klasifikasi tiap paket: **Terdaftar & diumumkan** · **Terdaftar belum diumumkan** · **TIDAK terdaftar** · **Tak dapat dipastikan (data tak cukup)**.
+4. Paket yang **wajib diumumkan** namun **tidak terdaftar / belum diumumkan** di SIRUP → **temuan** (pelanggaran kewajiban pengumuman RUP). Ketidaksesuaian data RUP↔RKA/DIPA (nama/nilai/metode) → catatan.
+
+| Aspek | Kriteria | Referensi |
+|---|---|---|
+| Seluruh paket pengadaan terdaftar & diumumkan di SIRUP | Tiap paket dalam populasi RKA/DIPA memiliki entri RUP yang **diumumkan** | **Perpres 16/2018 Pasal 22 ayat (1)–(3)** jo. **Pasal 23** |
+| Kesesuaian data RUP ↔ RKA/DIPA | Nama/nilai/jenis/metode paket di SIRUP konsisten dengan RKA/DIPA | Perpres 16/2018 Pasal 22 |
+| Ketepatan pengumuman RUP | RUP diumumkan setelah penetapan DIPA/alokasi anggaran | Perlem LKPP tentang SIRUP (mis. Perlem 11/2021) |
+
+> Reviu kelengkapan SIRUP = **rekonsiliasi populasi ↔ pendaftaran**; keyakinan **terbatas**. Bila akses/penarikan data SIRUP terbaru diperlukan, penarikan dilakukan lewat skill/tooling data pengadaan (mis. `analisis-data-inaproc`), lalu hasilnya direkonsiliasi di sini.
 
 ### B. Kerangka Acuan Kerja / Spesifikasi Teknis
 

@@ -59,6 +59,12 @@ Bila suatu kondisi **tidak diatur kriteria spesifik mana pun** → itu **BUKAN d
 
 **Temuan negatif (ketiadaan/tidak dilampirkan).** Untuk kondisi berupa *ketiadaan* dokumen/lampiran/tahap, **jangan** cukup menulis "X tidak ada". Bangun bukti-negatif dengan menunjuk **wadah yang diperiksa + apa yang disyaratkan**: *"Berkas [nama] hal. [x–y] diperiksa; lampiran [Y] yang disyaratkan [kriteria + butir] TIDAK terdapat"* — sehingga ketiadaan itu tertelusur (grounded) ke pemeriksaan atas dokumen yang seharusnya memuatnya.
 
+### Scoping berdasarkan SASARAN (generik vs spesifik) — semua jenis ber-checklist
+
+Sasaran penugasan menentukan **kedalaman & titik berat**, bukan sekadar dikerjakan apa adanya:
+- **Sasaran generik** (mis. *"memastikan kesesuaian dokumen dengan kriteria"*) → **dekomposisi ke checklist penuh** skill terkait, nilai per elemen.
+- **Sasaran spesifik/sempit** (mis. hanya *keselarasan indikator*, hanya *kesesuaian harga vs standar*, hanya *kelengkapan pendaftaran/registrasi*) → **petakan sasaran ke elemen/aspek yang relevan lalu DALAMI itu**; elemen/aspek **di luar sasaran** cukup **pass ringan**. Bila di area luar-sasaran muncul **sinyal material** → **catat sebagai catatan/eskalasi ke Ketua Tim** (jangan diabaikan; jangan pula dijadikan temuan penuh di luar mandat sasaran). Temuan tetap di-tag `sasaran_id`. Cakupan objek (per-RO/per-paket/per-dokumen) tetap; yang menyempit adalah **aspek/kedalaman**, sesuai sasaran.
+
 ### Penjelasan Framework:
 
 **Mengapa Audit wajib KKSA lengkap?**
