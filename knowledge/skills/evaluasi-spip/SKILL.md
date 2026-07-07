@@ -99,29 +99,21 @@ LKE memakai template `references/templates/lke-spip-kementerian.xlsx` (**24 shee
 
 > **Peta cell lengkap per sheet (baris input, kolom PM vs PK, kolom formula yang dilarang), mapping sheet ↔ bagian penilaian, dan aturan penulisan: baca `references/03-peta-cell-lke-kementerian.md`. Daftar pasti semua cell formula: `references/templates/cell-map-formulas.json`.**
 
-### Prinsip Anti-Rusak Rumus
+### Prinsip Anti-Rusak Rumus (dijamin tool `fill_lke` — konteks, bukan langkah manual agen)
 
 1. Muat workbook dengan `load_workbook(path, data_only=False, keep_vba=False)` agar rumus tetap.
 2. **Sebelum menulis cell apa pun**, pastikan target bukan formula (`cell.data_type != 'f'`).
 3. **Jangan** delete/insert row/column, jangan add/remove/rename sheet, jangan geser baris/kolom.
-4. Selalu backup file asli (`*.bak`) dan simpan output PK sebagai file baru (mis. `LKE SPIP KEMENTERIAN - PK.xlsx`).
+4. Selalu backup file asli (`*.bak`) dan tulis hasil PK sebagai **salinan kerja `_KKP/LKE-terisi-evaluasi-spip.xlsx`** (file asli/template tidak diubah).
 5. Setelah save, buka ulang dengan `data_only=True` untuk verifikasi `KKLEAD_SPIP!J...` menghitung skor akhir tanpa `#REF!`.
 
-### Cara teknis mengisi (helper LKEWriter)
+### Cara mengisi LKE — tool `fill_lke` (bukan Excel/Python mentah)
 
-Gunakan helper `references/fill_lke_safely.py` (class `LKEWriter`) — bukan openpyxl mentah. Helper memiliki tiga lapis guard: blokir sheet agregator, blokir cell formula (dari `cell-map-formulas.json`), blokir cell yang bertipe formula saat runtime; plus backup otomatis.
+Pengisian kolom PK/APIP dilakukan lewat **tool `fill_lke(penugasan_folder, skill="evaluasi-spip", entries=[...])`** — bukan menulis openpyxl/Python langsung. Tool memakai template SPIP (`references/templates/lke-spip-kementerian.xlsx`) dan menerapkan **tiga lapis guard anti-rumus** secara internal (implementasi `references/fill_lke_safely.py` / `LKEWriter`): blokir sheet agregator (`KKLEAD_*`), blokir cell formula (dari `cell-map-formulas.json`), blokir cell bertipe formula saat runtime; plus backup otomatis. **Output = salinan kerja `_KKP/LKE-terisi-evaluasi-spip.xlsx`** (file asli/template tak diubah); cell yang ditolak dilaporkan di field `refused`.
 
-```python
-from fill_lke_safely import LKEWriter
-w = LKEWriter("LKE SPIP KEMENTERIAN.xlsx", backup=True)
-w.set_row("KKE 1.1 SASTRA PEMDA", 6, {"K":"Y","L":"Y","M":"Y","N":"Y","O":"Y",
-          "P":"Dikonfirmasi — Renstra memuat indikator outcome"})
-w.set("KK3.1", "V6", 4.0, note="Override PK = modus — pembuktian kuat")
-w.set("KK4_PENALTI", "C7", "YA"); w.set("KK4_PENALTI", "D7", 2.0)
-w.save("LKE SPIP KEMENTERIAN - PK.xlsx")
-```
+`entries` = daftar `{sheet, coord, value, note?}` — mis. isi kolom PK per subunsur, override skor di `KK3.x`, veto penalti di `KK4_PENALTI` (`C[baris]="YA"` + `D[baris]=`skor). Baca nilai LKE terkini via tool **`read_lke`**.
 
-> Kontrak pemakaian lengkap (signature, guard, contoh per sheet) ada di docstring `references/fill_lke_safely.py`.
+> **Gate deliverable:** `_KKP/LKE-terisi-evaluasi-spip.xlsx` WAJIB ada sebelum render KKP/LHE — render menolak bila LKE belum diisi via `fill_lke`. Kontrak `entries` & guard lengkap: docstring `references/fill_lke_safely.py` (implementasi yang dibungkus tool).
 
 ### Veto Penalti di Excel (ringkas)
 

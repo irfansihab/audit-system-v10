@@ -9,7 +9,7 @@ Kontrak penggunaan:
     w.set("KK3.1", "V12", 4.0, note="Direvisi dari modus 3.0 ke 4.0 karena ...")
     w.set("KK4_PENALTI", "C5", "YA")
     w.set("KK4_PENALTI", "D5", 2.0)
-    w.save("LKE SPIP KEMENTERIAN - PK.xlsx")
+    w.save("_KKP/LKE-terisi-evaluasi-spip.xlsx")  # path kanonik yang ditulis tool fill_lke & dicek gate render
 
 Setiap `set()` akan GAGAL (raise) jika:
   - Sheet bernama agregator (KKlead I KL, KKLEAD II, KKLEAD III, KKLEAD_SPIP, Uraian NIlai Setiap Unsur)
@@ -152,4 +152,4 @@ if __name__ == "__main__":
     w = LKEWriter(path)
     print("\nContoh: tulis Y/T pada PK SASTRA baris 6")
     # w.set_row("KKE 1.1 SASTRA PEMDA", 6, {"K": "Y", "L": "Y", "M": "Y", "N": "Y", "O": "Y"})
-    # w.save("LKE SPIP KEMENTERIAN - PK.xlsx")
+    # w.save("_KKP/LKE-terisi-evaluasi-spip.xlsx")
