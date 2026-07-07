@@ -46,6 +46,19 @@ Gunakan istilah unsur **PERSIS**: **Kondisi · Kriteria · Sebab · Akibat · Re
 
 Tulis **Kondisi** sebagai **runtutan fakta secara kronologis** (urut waktu/tahapan: peristiwa, tanggal/nomor dokumen, nilai, pihak — dengan kutipan/sumber), **lalu di bagian akhir** baru nyatakan **isu/deviasinya** (yang menyimpang dari kriteria). Pola: *"[tahap 1: fakta + tgl/dok] → [tahap 2: fakta] → … Atas rangkaian tersebut, terdapat [isu/deviasi]: …"*. **Jangan** membuka Kondisi dengan vonis penyimpangan sebelum fakta kronologisnya dibangun — deviasi adalah simpulan dari kronologi, bukan kalimat pembuka. Berlaku untuk KKP (Anggota Tim) maupun narasi Laporan (Ketua Tim).
 
+### Penyajian unsur KRITERIA — presisi & anti-mengarang (WAJIB semua jenis ber-kriteria)
+
+Kriteria adalah **tolok ukur FORMAL yang harus dapat diverifikasi**. Sebut sumber **PERSIS**:
+
+- **regulasi/dokumen + nomor + tahun + pasal/ayat/butir** (mis. *"PMK No. 32/PMK.02/2025 Lampiran, tarif honorarium narasumber"*; *"Perpres 16/2018 Pasal 26"*), atau **SOP + nomor + butir**, beserta **kutipan normatifnya**.
+- Pakai regulasi yang **masih berlaku** — jangan mengutip peraturan yang sudah **dicabut/diganti**; bila status ragu, tulis *"perlu konfirmasi status berlaku"*.
+
+**DILARANG (anti-mengarang kriteria):** (a) menyebut regulasi tanpa nomor/pasal (mis. *"sesuai SBM"* tanpa nomor PMK & butir); (b) mengangkat *"prinsip umum / asas kepatutan / kelaziman"* sebagai kriteria formal; (c) **memaksakan pasal/butir yang TIDAK langsung mengatur kondisi** (stretch) agar seolah ada dasar.
+
+Bila suatu kondisi **tidak diatur kriteria spesifik mana pun** → itu **BUKAN deviasi terkonfirmasi**. Untuk audit/reviu: catat sebagai **indikasi/kelemahan pengendalian yang perlu ditetapkan dasar kriterianya** (mohon arahan auditor) atau eskalasi — **jangan** dipaksakan jadi temuan ber-pasal-generik. (Konsisten dengan doktrin **temuan-terkonfirmasi**: "diduga/berpotensi/perlu diverifikasi" bukan temuan.)
+
+**Temuan negatif (ketiadaan/tidak dilampirkan).** Untuk kondisi berupa *ketiadaan* dokumen/lampiran/tahap, **jangan** cukup menulis "X tidak ada". Bangun bukti-negatif dengan menunjuk **wadah yang diperiksa + apa yang disyaratkan**: *"Berkas [nama] hal. [x–y] diperiksa; lampiran [Y] yang disyaratkan [kriteria + butir] TIDAK terdapat"* — sehingga ketiadaan itu tertelusur (grounded) ke pemeriksaan atas dokumen yang seharusnya memuatnya.
+
 ### Penjelasan Framework:
 
 **Mengapa Audit wajib KKSA lengkap?**
