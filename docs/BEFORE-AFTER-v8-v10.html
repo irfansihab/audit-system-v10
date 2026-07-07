@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit AI — Before/After: v8 (SIMWAS/INTEGRAL) → v10</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --ink:#1e2330; --muted:#5b6472; --line:#e5e8ef;
+    --indigo:#4f46e5; --indigo-soft:#eef0fe;
+    --green:#0f9d58; --green-soft:#e6f4ec; --amber:#c77700; --amber-soft:#fdf1dd;
+    --gray:#8a93a3; --gray-soft:#eef0f4; --red:#c0392b; --red-soft:#fdecea;
+    --blue:#1565c0; --blue-soft:#e7f0fb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;font-size:15px}
+  .wrap{max-width:1060px;margin:0 auto;padding:32px 20px 64px}
+  header.hero{background:linear-gradient(135deg,#4f46e5,#6d5ce7);color:#fff;border-radius:16px;
+    padding:28px 30px;box-shadow:0 8px 24px rgba(79,70,229,.18)}
+  header.hero h1{margin:0 0 6px;font-size:26px;letter-spacing:-.3px}
+  header.hero p{margin:0;opacity:.92;font-size:14px}
+  .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+    padding:4px 10px;border-radius:999px;font-size:12px}
+  .summary{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px 22px;margin:20px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .summary h2{margin:0 0 8px;font-size:15px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  .side{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--card)}
+  .side.before{border-top:3px solid var(--gray)}
+  .side.after{border-top:3px solid var(--green)}
+  .side h3{margin:0 0 4px;font-size:16px}
+  .side .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .side.before .lbl{color:var(--gray)} .side.after .lbl{color:var(--green)}
+  .side ul{margin:10px 0 0;padding-left:18px;font-size:13.5px}
+  .side li{margin:4px 0}
+  .badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap}
+  .b-new{background:var(--green-soft);color:var(--green)}
+  .b-adopt{background:var(--blue-soft);color:var(--blue)}
+  .b-no{background:var(--gray-soft);color:var(--gray)}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--indigo-soft);color:#3730a3;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  th:nth-child(2){width:34%} th:nth-child(3){width:40%}
+  td.v8{color:var(--muted)} td.v10 b{color:var(--ink)}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+  .cardf{border:1px solid var(--line);border-left:3px solid var(--indigo);border-radius:10px;padding:12px 15px;background:var(--card)}
+  .cardf b{display:block;font-size:14px;margin-bottom:3px}
+  .cardf span{font-size:13px;color:var(--muted)}
+  .adv{background:var(--green-soft);border:1px solid #cfe8d8;border-radius:12px;padding:8px 14px;margin:8px 0}
+  .adv b{color:var(--green)}
+  .note{font-size:12.5px;color:var(--muted);margin-top:8px;background:var(--gray-soft);padding:8px 12px;border-radius:8px}
+  footer{margin-top:24px;font-size:12px;color:var(--gray);text-align:center}
+  @media(max-width:760px){.twocol,.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Audit AI — Before / After</h1>
+  <p><b>v8.8</b> (engine terakhir SIMWAS V2 / INTEGRAL) &nbsp;→&nbsp; <b>v10</b> (engine-only, ter-hardening, mutu terukur)</p>
+  <div class="meta">
+    <span class="chip">Before: marchelianaba/audit-system-v8 @9de52be (v8.8)</span>
+    <span class="chip">After: irfansihab/audit-system-v10</span>
+    <span class="chip">Per 7 Juli 2026</span>
+  </div>
+</header>
+
+<section class="summary">
+  <h2>Inti perubahan</h2>
+  <p><b>v10 menyerap kekuatan v8.8</b> (subsistem laporan per-seksi, Survei Pendahuluan, gate LKE) <b>lalu menambah</b> tiga hal yang belum ada di v8.8: <b>(1) pivot engine-only</b> — skill jadi substansi murni yang portabel ke INTEGRAL (buta-DB, UI-agnostik); <b>(2) mutu terukur</b> — 16/16 skill diuji live dengan judge + harness eval; <b>(3) doktrin ter-hardening & konsisten</b> — KKSAR baku, anti-mengarang, sasaran-first scoping. Ditambah <b>3 skill baru</b> (reviu keuangan) → total <b>19 skill</b>, fitur <b>administrasi/ekspor</b>, dan <b>penyelarasan Pedoman Pengawasan</b>.</p>
+</section>
+
+<div class="twocol">
+  <div class="side before">
+    <div class="lbl">BEFORE — v8.8 (INTEGRAL)</div>
+    <h3>Engine SIMWAS yang mumpuni, tapi menyatu</h3>
+    <ul>
+      <li>Skill <b>menyatu dengan orkestrasi</b> (memuat "Eksekusi di v7", peran AT/KT, titik HITL, pilihan model) → sulit dipisah dari UI/DB.</li>
+      <li>Terminologi belum baku (<code>CCSAA</code>, <code>3E</code>); unsur Sebab belum seragam per jenis.</li>
+      <li><b>Mutu output tidak terukur</b> — tak ada harness/skor kualitas.</li>
+      <li>Kuat di <b>laporan per-seksi</b> (render_lhp 3108 baris), <b>Survei Pendahuluan</b>, <b>gate LKE</b>.</li>
+      <li>Belum ada administrasi/ekspor (Daftar Temuan, Surat, Tahapan 8 TU).</li>
+    </ul>
+  </div>
+  <div class="side after">
+    <div class="lbl">AFTER — v10</div>
+    <h3>Engine portabel, ter-hardening, terukur</h3>
+    <ul>
+      <li><b>Engine-only</b>: skill = substansi murni (APA + FORMAT); orkestrasi+UI di INTEGRAL. Buta-DB, UI-agnostik (kontrak file).</li>
+      <li>Terminologi <b>KKSAR</b> baku, <b>2E</b>, Sebab <b>jenis-aware</b> + <b>anti-mengarang</b> (temuan terkonfirmasi).</li>
+      <li><b>16/16 skill terukur live</b> (judge) + harness eval reusable.</li>
+      <li><b>Mengadopsi</b> render per-seksi + Survei Pendahuluan + gate LKE v8.8, lalu <b>dikonsolidasi</b> (render_report jalur tunggal) & diperluas.</li>
+      <li>+ administrasi/ekspor, penyelarasan Pedoman, <b>3 skill baru</b>, doktrin lintas-skill.</li>
+    </ul>
+  </div>
+</div>
+
+<section class="summary">
+  <h2>Perbandingan per dimensi</h2>
+  <table>
+    <thead><tr><th>Dimensi</th><th>v8.8 (before)</th><th>v10 (after)</th></tr></thead>
+    <tbody>
+      <tr><td><b>Arsitektur</b></td><td class="v8">Monolitik — skill + orkestrasi + UI + DB menyatu</td><td class="v10"><b>Engine-only</b>: skill=substansi; orkestrasi+UI=INTEGRAL; buta-DB &amp; UI-agnostik (kontrak <code>sasaran-assignment.json</code>, <code>hitl-overlay.json</code>)</td></tr>
+      <tr><td><b>Portabilitas skill</b></td><td class="v8">Skill memuat "Eksekusi di v7", peran/HITL/model</td><td class="v10"><b>Engine-ready 16/16</b> — skill hanya menetapkan APA + FORMAT</td></tr>
+      <tr><td><b>Terminologi &amp; doktrin</b></td><td class="v8">CCSAA · 3E · Sebab belum seragam</td><td class="v10"><b>KKSAR</b> · 2E · <b>Sebab jenis-aware</b> · anti-mengarang</td></tr>
+      <tr><td><b>Mutu output</b></td><td class="v8">Tidak terukur</td><td class="v10"><b>16/16 skill terukur live</b> (judge) + <code>live_measure.py</code> / <code>build_fixtures.py</code> / rubrik</td></tr>
+      <tr><td><b>Sasaran &amp; kriteria</b></td><td class="v8">—</td><td class="v10"><b>Sasaran-first scoping</b> + <b>opsi kriteria tambahan</b> (doktrin bersama, semua skill non-LKE)</td></tr>
+      <tr><td><b>QC SAIPI</b></td><td class="v8">Generik</td><td class="v10"><code>check_LAK_005</code> <b>jenis-aware</b> (audit KRITIS · reviu/pemantauan PERINGATAN · LKE/konsultasi N/A)</td></tr>
+      <tr><td><b>Laporan (render)</b></td><td class="v8">Per-seksi faithful (render_lhp 3108) — <b>kekuatan v8.8</b></td><td class="v10"><span class="badge b-adopt">DIADOPSI</span> + dikonsolidasi: <code>render_report</code> jadi <b>jalur tunggal</b> semua skill</td></tr>
+      <tr><td><b>Survei Pendahuluan</b></td><td class="v8">Ada (audit)</td><td class="v10"><span class="badge b-adopt">DIADOPSI</span> + tombol UI di Tahapan 0</td></tr>
+      <tr><td><b>Gate LKE (deliverable)</b></td><td class="v8">Ada (SPIP/SAKIP)</td><td class="v10"><span class="badge b-adopt">DIADOPSI</span> + diperluas ke <b>RB</b>; istilah diselaraskan (<code>_KKP/LKE-terisi-&lt;skill&gt;.xlsx</code>)</td></tr>
+      <tr><td><b>Administrasi / ekspor</b></td><td class="v8">—</td><td class="v10"><span class="badge b-new">BARU</span> Daftar Temuan (<code>export_dhp</code>), Surat Penyampaian (<code>export_surat</code>), Tahapan 8 TU</td></tr>
+      <tr><td><b>Cakupan skill</b></td><td class="v8">~16 (pre-pivot)</td><td class="v10"><b>19 skill</b> — 16 engine-ready + <span class="badge b-new">3 BARU</span> reviu keuangan (LK · PIPK · PNBP)</td></tr>
+      <tr><td><b>Penyelarasan Pedoman</b></td><td class="v8">—</td><td class="v10"><span class="badge b-new">BARU</span> errata + matriks proporsionalitas per-jenis (0 gap engine)</td></tr>
+      <tr><td><b>Kontrak input dokumen</b></td><td class="v8">Implisit</td><td class="v10">Jelas: <b>Surat Tugas = metadata INTEGRAL</b> (bukan upload); dokumen wajib vs opsional per skill</td></tr>
+      <tr><td><b>Standar audit intern</b></td><td class="v8">Permenpan 5/2008 (usang)</td><td class="v10"><b>SAIPI / AAIPI 2021</b></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="summary">
+  <h2>Fitur &amp; pembaruan yang ditambahkan di v10</h2>
+  <div class="cards">
+    <div class="cardf"><b>🧩 Pivot engine-only</b><span>Skill portabel ke INTEGRAL tanpa asumsi DB/UI; orkestrasi direlokasi ke orkestrator. Kontrak file, bukan tabel DB.</span></div>
+    <div class="cardf"><b>📏 Harness mutu terukur</b><span><code>live_measure.py</code> + <code>build_fixtures.py</code> + judge/<code>judge_pendapat</code> → 16/16 skill teruji live, ter-gate regresi.</span></div>
+    <div class="cardf"><b>🎯 Doktrin lintas-skill baku</b><span>Sasaran-first scoping · opsi kriteria tambahan · presisi kutipan Kriteria (anti-mengarang) — 1 sumber di <code>panduan-format-umum</code>.</span></div>
+    <div class="cardf"><b>🆕 3 skill reviu keuangan</b><span>reviu-laporan-keuangan · reviu-pipk · reviu-pnbp — engine-ready, checklist per-aspek, teruji live.</span></div>
+    <div class="cardf"><b>🗂️ Administrasi &amp; ekspor</b><span>Daftar Temuan &amp; Rekomendasi (garis serah), Surat Penyampaian, Tahapan 8 (peran TU) — belum ada di v8.8.</span></div>
+    <div class="cardf"><b>🛡️ Hardening menyeluruh</b><span>Sweep 4 keluarga skill, QC SAIPI jenis-aware, terminologi baku, reference bersih, SAIPI menggantikan Permenpan 5/2008.</span></div>
+    <div class="cardf"><b>📑 Penyelarasan Pedoman</b><span>Alur produksi (KP→PKP→KKP→LHP→Daftar Temuan) selaras Pedoman/Juknis; garis finis = laporan disetujui.</span></div>
+    <div class="cardf"><b>⚙️ Perbaikan engine</b><span><code>read_ingested_digest</code> kini surface digest generik (9 skill criteria-driven); konsolidasi render (jalur tunggal); fix flaky judge.</span></div>
+  </div>
+</section>
+
+<section class="summary">
+  <h2>Kelebihan v10 (mengapa lebih baik)</h2>
+  <div class="adv"><b>Portabel &amp; tahan-vendor</b> — engine bisa dipasang di INTEGRAL/SIMWAS tanpa lock-in UI/DB; orkestrator bebas berganti.</div>
+  <div class="adv"><b>Mutu terbukti, bukan asumsi</b> — kualitas tiap skill terukur angka (judge) &amp; ada gate regresi; v8.8 tak punya ukuran.</div>
+  <div class="adv"><b>Doktrin konsisten &amp; anti-mengarang</b> — temuan harus terkonfirmasi bukti; kriteria dikutip presisi (pasal); sebab digali sesuai jenis. Mengurangi temuan "ngawur".</div>
+  <div class="adv"><b>Cakupan lebih luas</b> — 19 skill (termasuk reviu keuangan LK/PIPK/PNBP yang relevan Komdigi: BHP frekuensi/IPFR).</div>
+  <div class="adv"><b>Laporan tetap faithful, mesin lebih ramping</b> — warisan render per-seksi v8.8 dipertahankan, tapi jadi satu jalur (<code>render_report</code>) yang lebih hemat &amp; mudah dirawat.</div>
+  <div class="adv"><b>Mudah tumbuh</b> — menambah skill baru = folder + SKILL.md + checklist + fixture/golden → uji live. Metode E2E sudah terbukti (3 skill baru lolos).</div>
+  <p class="note">Catatan jujur: v8.8 <b>bukan versi buruk</b> — ia engine SIMWAS yang solid dan justru menyumbang subsistem laporan, survei, &amp; gate LKE ke v10. v10 = <b>superset</b>: kekuatan v8.8 + portabilitas + pengukuran + hardening + skill baru. Sebagian skor uji masih perlu <b>validasi auditor</b> (golden/fixture) sebelum jadi baseline resmi.</p>
+</section>
+
+<footer>
+  Audit AI · Before/After v8.8 → v10 · sumber: <code>docs/MERGE-PLAN-v8.8-to-v10.md</code>, <code>docs/ROADMAP-v10.md</code>, <code>docs/QUALITY-BASELINE-v10.md</code> · github.com/irfansihab/audit-system-v10
+</footer>
+
+</div>
+</body>
+</html>
