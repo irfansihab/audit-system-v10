@@ -59,6 +59,16 @@ Bila suatu kondisi **tidak diatur kriteria spesifik mana pun** → itu **BUKAN d
 
 **Temuan negatif (ketiadaan/tidak dilampirkan).** Untuk kondisi berupa *ketiadaan* dokumen/lampiran/tahap, **jangan** cukup menulis "X tidak ada". Bangun bukti-negatif dengan menunjuk **wadah yang diperiksa + apa yang disyaratkan**: *"Berkas [nama] hal. [x–y] diperiksa; lampiran [Y] yang disyaratkan [kriteria + butir] TIDAK terdapat"* — sehingga ketiadaan itu tertelusur (grounded) ke pemeriksaan atas dokumen yang seharusnya memuatnya.
 
+### Kriteria TAMBAHAN yang diunggah auditor (opsional) — semua jenis KECUALI ber-LKE
+
+Selain kriteria **baku** (regulasi yang dibundel di skill untuk PBJ/RKA/MR, atau kriteria yang diunggah untuk skill `*-umum`), auditor **boleh mengunggah kriteria TAMBAHAN** — mis. **SOP/Perkada/juklak internal**, **SBK/SSB/standar biaya khusus**, **regulasi terbaru/perubahan**, atau **kriteria spesifik objek** — pada folder kriteria yang tersedia (mis. `input/kriteria-tambahan/`, `input/kriteria/`, atau `01-peraturan-internal/`). Bila ada:
+- **WAJIB dibaca & dimasukkan ke matriks kriteria** (via `read_ingested_digest`); objek lalu dinilai terhadap kriteria **baku + tambahan**.
+- **Tandai sumber** tiap kriteria (baku vs tambahan) dan tetap **kutip presisi** (nomor + pasal/butir) sesuai aturan presisi di atas.
+- Bila kriteria tambahan **bertentangan** dengan kriteria baku (mis. SOP internal vs Perpres) → **jangan diam-diam memilih salah satu**: laporkan konflik + hierarki (regulasi lebih tinggi menang) sebagai catatan/eskalasi ke KT.
+- Bila **tak ada** kriteria tambahan → lewati; ketiadaannya **tidak** menghalangi analisis dan **bukan** temuan.
+
+**PENGECUALIAN — skill ber-LKE** (`evaluasi-spip`/`-sakip`/`-reformasi-birokrasi`): instrumen LKE sudah menetapkan komponen/sub-unsur, **bobot**, dan kriteria skor secara **mengikat standar** → **tidak menerima kriteria tambahan** yang mengubah instrumen. (Dokumen pendukung tetap diunggah sebagai **bukti**, bukan sebagai kriteria baru.)
+
 ### Scoping berdasarkan SASARAN (generik vs spesifik) — semua jenis ber-checklist
 
 Sasaran penugasan menentukan **kedalaman & titik berat**, bukan sekadar dikerjakan apa adanya:
