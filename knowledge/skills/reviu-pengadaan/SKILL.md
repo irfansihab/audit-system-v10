@@ -48,6 +48,7 @@ Tiap butir nyatakan **terpenuhi / perlu penyempurnaan / tidak terpenuhi**; yang 
 - [ ] KAK mencantumkan parameter teknis kunci (spesifikasi/SLA/kapasitas) secara tegas & **konsisten** (tak ada >1 nilai SLA berbeda)?
 - [ ] Justifikasi/KAK memuat **5 elemen** (kebutuhan · spek teknis & fungsi · metode · waktu · output)?
 - [ ] **Identifikasi kebutuhan memadai** — kuantitas didasari analisis kebutuhan (pegawai/ABK/unit kerja/aset existing/standar), **bukan asal sebut angka**?
+- [ ] **(Opsional — bila diunggah) Studi Kelayakan / Feasibility Study** dicek: konsisten dengan KAK (kebutuhan, lingkup/volume, estimasi biaya)? FS menguatkan justifikasi kebutuhan & besaran; bila kebutuhan/volume/HPS menyimpang dari FS **tanpa penjelasan** → catatan. **FS tidak diunggah → lewati** (jangan jadikan temuan ketiadaan).
 
 **Pemilihan**
 - [ ] SPPBJ disertai Permohonan/Jaminan Pelaksanaan yang sesuai?

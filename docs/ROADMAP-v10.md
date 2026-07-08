@@ -101,8 +101,8 @@ Validasi **dunia nyata oleh auditor** — bukan hanya fixture sintetis + judge. 
 
 **Pengadaan & Anggaran (PBJ / RKA-K/L):**
 - **reviu-rka-kl** — WAJIB: TOR/KAK + RAB **per RO** · OPSIONAL: data dukung harga (survei/RFI, kontrak pembanding, HPS).
-- **reviu-pengadaan** — WAJIB: dok perencanaan–pemilihan (KAK/HPS/dok tender); *aspek RUP:* populasi RKA/DIPA + export SIRUP · OPSIONAL: kontrak pembanding/RFI.
-- **audit-pengadaan** — WAJIB: dokumen **seluruh siklus** PBJ (KAK/HPS/Kontrak/BAST/pembayaran/dok pemeriksaan) · OPSIONAL: data pendukung.
+- **reviu-pengadaan** — WAJIB: dok perencanaan–pemilihan (KAK/HPS/dok tender); *aspek RUP:* populasi RKA/DIPA + export SIRUP · OPSIONAL: studi kelayakan (FS), kontrak pembanding/RFI.
+- **audit-pengadaan** — WAJIB: dokumen **seluruh siklus** PBJ (KAK/HPS/Kontrak/BAST/pembayaran/dok pemeriksaan) · OPSIONAL: studi kelayakan (FS), data pendukung.
 - **pemantauan-pengadaan** — WAJIB: kontrak + laporan progres + BA kemajuan + dokumen pembayaran.
 
 **Reviu keuangan (BARU):**

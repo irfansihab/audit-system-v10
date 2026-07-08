@@ -71,6 +71,7 @@ Telusuri dari fakta digest (verifikasi/kutip dari halaman dokumen bila perlu). T
 - [ ] Komponen ruang lingkup KAK (migrasi/instalasi/pelatihan/pemeliharaan/garansi/pengujian/lisensi) teralokasi di HPS?
 - [ ] Justifikasi/KAK memuat **5 elemen** (kebutuhan · spek teknis & fungsi · metode · waktu · output)?
 - [ ] **Identifikasi kebutuhan memadai** — kuantitas didasari analisis kebutuhan (jumlah pegawai/ABK/unit kerja/aset existing/standar), **bukan asal sebut angka**? *(kewajaran vs realita — mis. 50 unit untuk 30 pegawai — perlu data kepegawaian/aset; bila tak terbukti dari dokumen → catat + verifikasi lebih lanjut)*
+- [ ] **(Opsional — bila diunggah) Studi Kelayakan / Feasibility Study** dicek: konsisten dengan KAK & HPS (kebutuhan, lingkup/volume, asumsi & estimasi biaya, manfaat)? Untuk paket besar/konstruksi, FS/DED jadi basis kebutuhan — deviasi tanpa dasar → **dalami**. FS tak diunggah → lewati; **namun bila jenis paket mensyaratkan FS oleh ketentuan dan tak ada → catat** (assurance memadai).
 - [ ] (bila ber-SLA) nilai SLA konsisten KAK vs HPS?
 
 **Kontrak**
