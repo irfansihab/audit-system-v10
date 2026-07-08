@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blueprint — Ekosistem Pengawasan Berbasis AI | Inspektorat II Komdigi</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#fff; --ink:#161b26; --muted:#5c6675; --line:#e4e8f0;
+    --integral:#4f46e5; --integral-s:#eef0fe;
+    --engine:#0f9d58;  --engine-s:#e6f5ec;
+    --wiki:#0d9488;    --wiki-s:#e2f5f2;
+    --bot:#9333ea;     --bot-s:#f4e9fe;
+    --cacm:#d97706;    --cacm-s:#fdf0dc;
+    --ext:#64748b;     --ext-s:#eef1f5;
+    --ink-soft:#39414f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:30px 20px 72px}
+  a{color:var(--integral)}
+
+  header.hero{background:linear-gradient(125deg,#4f46e5,#7c3aed 55%,#0d9488);
+    color:#fff;border-radius:18px;padding:32px 34px;box-shadow:0 12px 34px rgba(79,70,229,.22)}
+  header.hero .kicker{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.85;font-weight:700}
+  header.hero h1{margin:6px 0 8px;font-size:30px;letter-spacing:-.4px;line-height:1.15}
+  header.hero p{margin:0;opacity:.94;font-size:14.5px;max-width:760px}
+  .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    padding:4px 11px;border-radius:999px;font-size:12px}
+
+  h2{font-size:21px;margin:40px 0 6px;letter-spacing:-.2px}
+  h2 .n{color:var(--muted);font-weight:600;font-size:15px;margin-right:6px}
+  .lead{color:var(--muted);font-size:14px;margin:2px 0 14px;max-width:820px}
+  .sub{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:0 0 10px}
+
+  /* legend */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0 0;font-size:12.5px;color:var(--muted)}
+  .legend b{color:var(--ink)}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+
+  /* principles */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}
+  .pc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-top:3px solid var(--integral)}
+  .pc b{display:block;font-size:14px;margin-bottom:3px}
+  .pc span{font-size:13px;color:var(--muted)}
+
+  /* ARCHITECTURE STACK */
+  .stack{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0;
+    box-shadow:0 2px 10px rgba(20,27,38,.05)}
+  .layer{border-radius:13px;padding:14px 16px;margin:12px 0;position:relative}
+  .layer .lh{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+  .layer .lh .badge{font-size:11px;font-weight:700;color:#fff;padding:3px 9px;border-radius:6px;letter-spacing:.3px}
+  .layer .lh .role{font-size:12.5px;color:var(--muted)}
+  .layer .lh h3{margin:0;font-size:16px}
+  .boxrow{display:flex;flex-wrap:wrap;gap:9px}
+  .box{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;font-size:13px;flex:1 1 150px;min-width:135px}
+  .box b{display:block;font-size:13px;margin-bottom:1px}
+  .box small{color:var(--muted);font-size:11.5px;line-height:1.35;display:block}
+  .box .tg{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;float:right;margin-left:6px}
+
+  .l-ext{background:var(--ext-s);border:1px dashed #b7c0cd}
+  .l-ext .badge{background:var(--ext)} .l-ext .box{border-style:dashed}
+  .l-cacm{background:var(--cacm-s);border:1px solid #f3d199}
+  .l-cacm .badge{background:var(--cacm)}
+  .l-integral{background:var(--integral-s);border:1px solid #c9caf7}
+  .l-integral .badge{background:var(--integral)}
+  .l-engine{background:var(--engine-s);border:1px solid #b6e3c8}
+  .l-engine .badge{background:var(--engine)}
+  .l-know{background:var(--wiki-s);border:1px solid #a8e0d8}
+  .l-know .badge{background:var(--wiki)}
+  .l-bot .badge{background:var(--bot)}
+  .side{background:var(--bot-s);border:1px solid #dcc2f6}
+
+  .flowlabel{text-align:center;color:var(--muted);font-size:12px;margin:2px 0}
+  .flowlabel .ar{font-size:16px;color:var(--integral);font-weight:800;letter-spacing:2px}
+
+  .tg-live{background:var(--engine-s);color:var(--engine)}
+  .tg-part{background:var(--cacm-s);color:var(--cacm)}
+  .tg-plan{background:var(--ext-s);color:var(--ext)}
+
+  /* two-col split for engine+knowledge+bot */
+  .split{display:grid;grid-template-columns:1fr 320px;gap:12px}
+  @media(max-width:860px){.split{grid-template-columns:1fr}}
+
+  /* deep dive cards */
+  .dd{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin:12px 0}
+  .dd.integral{border-left:5px solid var(--integral)}
+  .dd.engine{border-left:5px solid var(--engine)}
+  .dd.wiki{border-left:5px solid var(--wiki)}
+  .dd.bot{border-left:5px solid var(--bot)}
+  .dd.cacm{border-left:5px solid var(--cacm)}
+  .dd.ext{border-left:5px solid var(--ext)}
+  .dd h3{margin:0 0 2px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .dd h3 .badge{font-size:10.5px;font-weight:700;color:#fff;padding:2px 8px;border-radius:6px}
+  .dd .role{font-size:12.5px;color:var(--muted);margin:0 0 8px}
+  .dd ul{margin:6px 0 0;padding-left:18px}
+  .dd li{margin:3px 0;font-size:13.5px}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--integral-s);color:#3730a3;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:none}
+  code{background:#eef0f6;padding:1px 6px;border-radius:5px;font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  /* loop */
+  .loop{background:linear-gradient(135deg,#eef0fe,#e2f5f2 60%,#fdf0dc);border:1px solid var(--line);
+    border-radius:14px;padding:20px;margin:14px 0;text-align:center;font-size:14px}
+  .loop .chain{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:6px 0}
+  .loop .node{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600}
+  .loop .ar{color:var(--integral);font-weight:800}
+  .loop .cap{color:var(--muted);font-size:12.5px;margin-top:8px}
+
+  .callout{border-radius:12px;padding:14px 16px;margin:16px 0;font-size:13.5px}
+  .callout.note{background:#eef4ff;border:1px solid #c3d7fb}
+  .callout.guard{background:#fff8e6;border:1px solid #f4dd93}
+  .callout b{display:block;margin-bottom:3px}
+
+  footer{margin-top:34px;font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:16px}
+  @media(max-width:760px){.grid3,.grid2{grid-template-columns:1fr}header.hero h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Grand Design · Inspektorat II · Kementerian Komunikasi dan Digital</div>
+  <h1>Ekosistem Pengawasan Berbasis AI</h1>
+  <p>Satu arsitektur yang menyatukan <b>deteksi proaktif (CACM)</b>, <b>orkestrasi penugasan (INTEGRAL)</b>, <b>mesin analisis (Engine Audit AI)</b>, <b>memori organisasi (Wiki)</b>, dan <b>antarmuka percakapan (Chatbot)</b> — lalu menyambungkannya ke sistem pengawasan yang hari ini masih dijalankan manual (ev-SAKIP, e-ziko, SPIP, MR, RB).</p>
+  <div class="meta">
+    <span class="chip">Prinsip: AI = mesin · INTEGRAL = kokpit</span>
+    <span class="chip">Loop tertutup: deteksi → tugas → analisis → memori</span>
+    <span class="chip">Human-in-the-loop di tiap simpul keputusan</span>
+    <span class="chip">Per 8 Juli 2026</span>
+  </div>
+</header>
+
+<div class="legend">
+  <span><b>Status komponen:</b></span>
+  <span><span class="dot" style="background:var(--engine)"></span><b>Ada / berjalan</b></span>
+  <span><span class="dot" style="background:var(--cacm)"></span><b>Sebagian / prototipe</b></span>
+  <span><span class="dot" style="background:var(--ext)"></span><b>Rencana / masih manual</b></span>
+</div>
+
+<!-- IKHTISAR — SATU KESATUAN -->
+<h2 style="margin-top:34px">Satu kesatuan ekosistem</h2>
+<p class="lead">Pandangan mata-burung: setiap komponen bukan aplikasi terpisah, melainkan satu organisme yang saling menyuplai. <b>INTEGRAL</b> menjadi poros — ia yang <b>mengintegrasikan sistem eksisting lalu memanggil Engine (AI)</b>; mesin AI tak pernah menyentuh portal langsung. <b>Wiki</b> jadi memori bersama yang menyilang hampir semua simpul; <b>CACM</b> berjalan sebagai deteksi yang diorkestrasi INTEGRAL; <b>Chatbot</b> membuka seluruh isinya lewat percakapan.</p>
+
+<div class="stack" style="padding:12px 10px">
+<svg viewBox="0 0 960 660" style="width:100%;height:auto;display:block;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" role="img" aria-label="Diagram keterkaitan antar sistem dalam satu ekosistem pengawasan berbasis AI">
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto"><path d="M1,1 L8.5,4.5 L1,8 Z" fill="#8a93a3"/></marker>
+    <marker id="ahc" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto"><path d="M1,1 L8.5,4.5 L1,8 Z" fill="#4f46e5"/></marker>
+  </defs>
+
+  <!-- boundary = satu ekosistem -->
+  <rect x="20" y="58" width="920" height="584" rx="26" fill="#4f46e5" fill-opacity="0.025" stroke="#4f46e5" stroke-opacity="0.45" stroke-width="1.6" stroke-dasharray="7 6"/>
+  <rect x="300" y="44" width="360" height="30" rx="15" fill="#4f46e5"/>
+  <text x="480" y="64" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="1.2">SATU EKOSISTEM PENGAWASAN AI</text>
+
+  <!-- ================= EDGES (digambar dulu, node menimpa) ================= -->
+  <!-- relationship edges (keterkaitan, dua arah) : abu solid -->
+  <g stroke="#c3c9d4" stroke-width="2" fill="none">
+    <line x1="480" y1="158" x2="480" y2="263"/>          <!-- chatbot-integral -->
+    <line x1="480" y1="337" x2="480" y2="428"/>          <!-- integral-wiki -->
+    <line x1="760" y1="334" x2="582" y2="452"/>          <!-- engine-wiki -->
+    <line x1="200" y1="332" x2="388" y2="452"/>          <!-- cacm-wiki -->
+  </g>
+  <!-- directional: cacm -> integral (usulan penugasan) -->
+  <line x1="260" y1="300" x2="384" y2="300" stroke="#4f46e5" stroke-width="2.2" marker-end="url(#ahc)"/>
+  <!-- directional: integral -> engine (panggil AI) -->
+  <line x1="572" y1="300" x2="706" y2="300" stroke="#4f46e5" stroke-width="2.2" marker-end="url(#ahc)"/>
+  <!-- data eksisting -> DIORKESTRASI INTEGRAL (dashed, mengapit Wiki) -->
+  <g stroke="#8a93a3" stroke-width="2" stroke-dasharray="6 5" fill="none">
+    <line x1="300" y1="565" x2="416" y2="340" marker-end="url(#ah)"/>   <!-- eksisting -> integral (kiri) -->
+    <line x1="660" y1="565" x2="544" y2="340" marker-end="url(#ah)"/>   <!-- eksisting -> integral (kanan) -->
+  </g>
+
+  <!-- ================= NODES ================= -->
+  <!-- CHATBOT -->
+  <g>
+    <rect x="395" y="102" width="170" height="56" rx="13" fill="#f4e9fe" stroke="#9333ea" stroke-width="1.8"/>
+    <text x="480" y="126" text-anchor="middle" fill="#7e22ce" font-size="15" font-weight="700">CHATBOT</text>
+    <text x="480" y="144" text-anchor="middle" fill="#6b5578" font-size="10.5">antarmuka percakapan</text>
+  </g>
+  <!-- CACM -->
+  <g>
+    <rect x="100" y="268" width="160" height="64" rx="13" fill="#fdf0dc" stroke="#d97706" stroke-width="1.8"/>
+    <text x="180" y="294" text-anchor="middle" fill="#b45309" font-size="15" font-weight="700">CACM</text>
+    <text x="180" y="311" text-anchor="middle" fill="#8a6a3a" font-size="10.5">deteksi proaktif</text>
+    <text x="180" y="325" text-anchor="middle" fill="#8a6a3a" font-size="10.5">(continuous monitoring)</text>
+  </g>
+  <!-- INTEGRAL (hub) -->
+  <g>
+    <rect x="388" y="263" width="184" height="74" rx="15" fill="#4f46e5" stroke="#3730a3" stroke-width="2"/>
+    <text x="480" y="293" text-anchor="middle" fill="#fff" font-size="17" font-weight="800" letter-spacing=".3">INTEGRAL</text>
+    <text x="480" y="311" text-anchor="middle" fill="#dfe0fb" font-size="11">poros orkestrasi</text>
+    <text x="480" y="326" text-anchor="middle" fill="#dfe0fb" font-size="11">UI · alur · basis data</text>
+  </g>
+  <!-- ENGINE -->
+  <g>
+    <rect x="710" y="266" width="160" height="68" rx="13" fill="#e6f5ec" stroke="#0f9d58" stroke-width="1.8"/>
+    <text x="790" y="293" text-anchor="middle" fill="#0b7a44" font-size="15" font-weight="700">ENGINE</text>
+    <text x="790" y="310" text-anchor="middle" fill="#3d6b52" font-size="10.5">mesin analisis</text>
+    <text x="790" y="324" text-anchor="middle" fill="#3d6b52" font-size="10.5">19 skill · KKSAR</text>
+  </g>
+  <!-- WIKI -->
+  <g>
+    <rect x="375" y="428" width="210" height="60" rx="13" fill="#e2f5f2" stroke="#0d9488" stroke-width="1.8"/>
+    <text x="480" y="453" text-anchor="middle" fill="#0b7268" font-size="15" font-weight="700">WIKI</text>
+    <text x="480" y="471" text-anchor="middle" fill="#3a6b64" font-size="10.5">memori organisasi (dibaca &amp; diperbarui)</text>
+  </g>
+  <!-- SISTEM EKSISTING (bar) -->
+  <g>
+    <rect x="95" y="565" width="770" height="64" rx="13" fill="#eef1f5" stroke="#64748b" stroke-width="1.6" stroke-dasharray="6 5"/>
+    <text x="480" y="587" text-anchor="middle" fill="#475569" font-size="12.5" font-weight="700">SISTEM PENGAWASAN EKSISTING — masih manual (arah: API)</text>
+    <text x="480" y="609" text-anchor="middle" fill="#5c6675" font-size="11.5">ev-SAKIP&#160;·&#160;e-ziko&#160;·&#160;SPIP&#160;·&#160;MR&#160;·&#160;RB&#160;·&#160;SIRUP/SPSE&#160;·&#160;SAKTI/SIMPONI</text>
+  </g>
+
+  <!-- edge mini-labels -->
+  <text x="322" y="291" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="600">usulan</text>
+  <text x="639" y="291" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="600">panggil AI</text>
+  <text x="336" y="470" text-anchor="middle" fill="#5c6675" font-size="9.5">diorkestrasi</text>
+  <text x="624" y="470" text-anchor="middle" fill="#5c6675" font-size="9.5">diorkestrasi</text>
+</svg>
+<p class="legend" style="justify-content:center;padding:2px 8px 6px">
+  <span><span style="display:inline-block;width:22px;border-top:2px solid #c3c9d4;vertical-align:middle;margin-right:5px"></span>keterkaitan (dua arah)</span>
+  <span><span style="display:inline-block;width:22px;border-top:2.2px solid #4f46e5;vertical-align:middle;margin-right:5px"></span>aliran utama</span>
+  <span><span style="display:inline-block;width:22px;border-top:2px dashed #8a93a3;vertical-align:middle;margin-right:5px"></span>sistem eksisting → diorkestrasi INTEGRAL (rencana API)</span>
+</p>
+</div>
+<p class="lead" style="margin-top:2px">Karena semua sistem eksisting masuk lewat <b>INTEGRAL</b> (bukan langsung ke mesin), INTEGRAL memanggil <b>Engine (AI)</b>, dan <b>Wiki</b> menyilang Engine–CACM–INTEGRAL — tidak ada pulau terpisah: <b>satu poros orkestrasi, satu memori, satu antrean penugasan</b>. Detail tiap lapis ada pada peta di bawah.</p>
+
+<!-- PRINSIP -->
+<h2><span class="n">01</span>Prinsip perancangan</h2>
+<p class="lead">Lima kaidah yang menjaga ekosistem tetap benar, aman, dan bisa dipercaya auditor — bukan sekadar otomasi.</p>
+<div class="grid3">
+  <div class="pc"><b>Pemisahan tegas</b><span>AI = <b>mesin</b> (skill=substansi, tool=kontrak file). Orkestrasi, UI, dan basis data = <b>INTEGRAL</b>. Engine buta-DB &amp; buta-UI → portabel &amp; teruji.</span></div>
+  <div class="pc"><b>Human-in-the-loop</b><span>Setiap keputusan material — temuan, tulisan ke wiki, usulan penugasan CACM — <b>diusulkan lalu disetujui auditor</b>, bukan auto-commit.</span></div>
+  <div class="pc"><b>Agen ter-hardening</b><span>Agen in-app <code>tools=[]</code> (tak bisa shell/browser). Scraping &amp; integrasi eksternal di luar agen; agen hanya menerima hasil terkurasi.</span></div>
+  <div class="pc"><b>Anti-mengarang</b><span>Fakta wajib berjejak dokumen sumber. Data kurang → "tidak cukup data", bukan deviasi terkonfirmasi. Kualitas terukur via eval + LLM-judge.</span></div>
+  <div class="pc"><b>Loop tertutup</b><span>Sinyal → penugasan → temuan → memori → sinyal berikutnya lebih tajam. Organisasi makin pintar tiap siklus.</span></div>
+  <div class="pc"><b>Prototipe dulu, API kemudian</b><span>Integrasi diuji manual/scrape lebih dulu; setelah terbukti baru disambung ke API/DB sistem eksisting.</span></div>
+</div>
+
+<!-- ARSITEKTUR -->
+<h2><span class="n">02</span>Peta arsitektur — sistem eksisting → INTEGRAL → Engine (AI)</h2>
+<p class="lead">Aliran utama dari bawah ke atas: <b>sistem eksisting → diorkestrasi INTEGRAL → dianalisis Engine (AI) → diakses via Chatbot</b>. INTEGRAL adalah <b>satu-satunya lapis yang menyentuh sistem eksisting</b> — mesin AI tak pernah mengakses portal langsung. Wiki menyilang Engine &amp; CACM sebagai memori; CACM adalah layanan deteksi yang <b>diorkestrasi INTEGRAL</b>.</p>
+
+<div class="stack">
+
+  <!-- BAND A — CHATBOT (akses, puncak) -->
+  <div class="layer l-bot" style="background:var(--bot-s);border:1px solid #dcc2f6">
+    <div class="lh"><span class="badge">CHATBOT</span><h3>Antarmuka percakapan — akses ke seluruh ekosistem</h3><span class="tg tg-part" style="font-size:10px;padding:1px 6px;border-radius:5px">prototipe</span></div>
+    <div class="lh"><span class="role">Pintu tanya-jawab untuk auditor &amp; (terbatas) auditan — lewat INTEGRAL, sesuai RBAC.</span></div>
+    <div class="boxrow">
+      <div class="box"><b>Tanya wiki &amp; regulasi</b><small>kriteria, pola temuan, dasar hukum (ber-sitasi)</small></div>
+      <div class="box"><b>Status penugasan</b><small>progres KKP/LHP · TL jatuh tempo</small></div>
+      <div class="box"><b>Pintu konsultansi</b><small>advisory ringan → eskalasi ke skill konsultansi</small></div>
+    </div>
+  </div>
+
+  <div class="flowlabel"><span class="ar">▲▼</span> akses percakapan lewat INTEGRAL (sesuai RBAC)</div>
+
+  <!-- BAND B — ENGINE + WIKI (analisis AI + memori) -->
+  <div class="split">
+    <div class="layer l-engine">
+      <div class="lh"><span class="badge">ENGINE — Audit AI</span><h3>Mesin analisis (skill · agen · tool)</h3><span class="tg tg-live" style="font-size:10px;padding:1px 6px;border-radius:5px">19 skill · terukur live</span></div>
+      <div class="lh"><span class="role"><b>Dipanggil INTEGRAL</b> untuk menilai. Menetapkan <b>APA</b> yang dinilai &amp; <b>FORMAT</b> keluaran. Buta-DB, buta-UI, tanpa akses portal. KKSAR jenis-aware. Digest/ingest → temuan → render KKP/LHP.</span></div>
+      <div class="boxrow">
+        <div class="box"><b>Audit</b><small>kinerja · umum · pengadaan</small></div>
+        <div class="box"><b>Reviu</b><small>RKA-K/L · pengadaan · umum · <b>LK · PIPK · PNBP</b></small></div>
+        <div class="box"><b>Evaluasi</b><small>SPIP · SAKIP · RB · MR · umum</small></div>
+        <div class="box"><b>Pemantauan &amp; Konsultansi</b><small>TL · umum · pengadaan · advisory</small></div>
+      </div>
+    </div>
+    <div class="layer l-know side">
+      <div class="lh"><span class="badge">WIKI</span><h3>Memori organisasi</h3><span class="tg tg-part" style="font-size:10px;padding:1px 6px;border-radius:5px">dipakai</span></div>
+      <div class="lh"><span class="role">Dibaca agen saat analisis, diperbarui setelah penugasan (HITL). Juga memberi konteks semantik ke CACM.</span></div>
+      <div class="boxrow" style="flex-direction:column">
+        <div class="box"><b>Pola temuan</b><small><code>temuan-patterns/</code> → hipotesis awal agen (~84 pola)</small></div>
+        <div class="box"><b>Regulasi kunci &amp; catatan objek</b><small><code>read_preload_context</code> per penugasan</small></div>
+        <div class="box"><b>Vault ↔ git</b><small>llm-wiki (~217 catatan) ⇄ knowledge/wiki, anti-drift</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flowlabel"><span class="ar">▲</span> INTEGRAL memanggil Engine (AI) untuk analisis &nbsp;·&nbsp; temuan/LHP balik ke kokpit <span class="ar">▼</span></div>
+
+  <!-- BAND C — INTEGRAL + CACM (orkestrasi & integrasi) -->
+  <div class="split">
+    <div class="layer l-integral">
+      <div class="lh"><span class="badge">INTEGRAL</span><h3>Orkestrator + UI + Basis Data — integrasi &amp; kendali</h3><span class="tg tg-part" style="font-size:10px;padding:1px 6px;border-radius:5px">dalam pembangunan</span></div>
+      <div class="lh"><span class="role">Poros yang <b>MENGINTEGRASIKAN sistem eksisting</b> lalu <b>MEMANGGIL Engine (AI)</b>. Kelola siklus KP → PKP → HITL → approval → LHP, kendali mutu berjenjang, SSO/RBAC. Backend Laravel/REST (SIMWAS V2).</span></div>
+      <div class="boxrow">
+        <div class="box"><b>Integrasi eksisting</b><small>tarik LKE/data + bukti dari portal</small></div>
+        <div class="box"><b>Perencanaan</b><small>KP/PKP · sasaran &amp; lingkup · ST (metadata)</small></div>
+        <div class="box"><b>Orkestrasi engine</b><small>tetapkan skill · kontrak file · HITL AT→KT→PM</small></div>
+        <div class="box"><b>Pelaporan</b><small>KKP · Daftar Temuan · LHP · pantau TL</small></div>
+      </div>
+    </div>
+    <div class="layer l-cacm side" style="background:var(--cacm-s);border:1px solid #f3d199">
+      <div class="lh"><span class="badge">CACM</span><h3>Deteksi proaktif</h3><span class="tg tg-part" style="font-size:10px;padding:1px 6px;border-radius:5px">prototipe</span></div>
+      <div class="lh"><span class="role">Continuous monitoring yang <b>diorkestrasi INTEGRAL</b>: data eksisting → anomali → usulan penugasan berprioritas risiko, kembali ke antrean INTEGRAL.</span></div>
+      <div class="boxrow" style="flex-direction:column">
+        <div class="box"><b>Sumber (via INTEGRAL)</b><small>SIRUP · DIPA · SPSE · Kinerja</small></div>
+        <div class="box"><b>Deteksi</b><small>rule nilai/SLA + semantic anomaly (wiki)</small></div>
+        <div class="box"><b>Usulan penugasan</b><small>skor risiko → antrean INTEGRAL</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flowlabel"><span class="ar">▲</span> INTEGRAL menarik &amp; mengorkestrasi data sistem eksisting (kini manual · arah: API) <span class="ar">▲</span></div>
+
+  <!-- BAND D — SISTEM EKSISTING (sumber, dasar) -->
+  <div class="layer l-ext">
+    <div class="lh"><span class="badge">SISTEM EKSISTING</span><h3>Portal &amp; basis data pengawasan (hari ini: manual)</h3><span class="tg tg-plan" style="font-size:10px;padding:1px 6px;border-radius:5px">integrasi via INTEGRAL = rencana</span></div>
+    <div class="lh"><span class="role">Sistem resmi yang sudah berjalan di Komdigi. <b>Ditarik &amp; diorkestrasi INTEGRAL</b> (bukan diakses mesin AI langsung); ekosistem menyambung sebagai pembaca &amp; pengusul, tidak menggantikan sistem resmi.</span></div>
+    <div class="boxrow">
+      <div class="box"><b>ev-SAKIP</b><small>evsakip.komdigi.go.id — LKE &amp; bukti dukung SAKIP</small></div>
+      <div class="box"><b>e-ziko</b><small>pemantauan/Zona Integritas — data monitoring</small></div>
+      <div class="box"><b>SPIP</b><small>penilaian pengendalian intern — LKE &amp; bukti</small></div>
+      <div class="box"><b>Manajemen Risiko</b><small>Piagam · Formulir 1–5 · LED · profil risiko</small></div>
+      <div class="box"><b>Reformasi Birokrasi</b><small>PMPRB — LKE RB · Road Map · rencana aksi</small></div>
+      <div class="box"><b>Keuangan &amp; PBJ</b><small>SAKTI/SPAN · SIMPONI · SIRUP/SPSE</small></div>
+    </div>
+  </div>
+
+</div><!-- /stack -->
+
+<div class="callout note"><b>Cara membaca peta</b>
+Panah <b>naik</b> = aliran kerja utama: <b>sistem eksisting → INTEGRAL (integrasi &amp; orkestrasi) → Engine (AI)</b>. INTEGRAL adalah satu-satunya lapis yang menyentuh sistem eksisting; mesin AI tak pernah mengakses portal langsung. <b>Wiki</b> = memori dua arah (Engine ⇄ CACM ⇄ INTEGRAL); <b>CACM</b> = layanan deteksi yang diorkestrasi INTEGRAL; <b>Chatbot</b> = akses percakapan di puncak. Warna badge = status: hijau ada · oranye sebagian · abu rencana.</div>
+
+<!-- KOMPONEN DETAIL -->
+<h2><span class="n">03</span>Enam komponen — peran &amp; batas</h2>
+
+<div class="dd cacm">
+  <h3><span class="badge" style="background:var(--cacm)">CACM</span> Deteksi proaktif — mengubah "menunggu jadwal" jadi "mengejar risiko"</h3>
+  <p class="role">Continuous Auditing &amp; Continuous Monitoring. Menjadi sumber penugasan berbasis sinyal, bukan hanya PKPT tahunan.</p>
+  <ul>
+    <li><b>Masukan:</b> data SIRUP/DIPA/SPSE/Kinerja yang <b>ditarik &amp; diorkestrasi INTEGRAL</b> (prototipe: scrape manual → arah: API/DB organisasi). CACM adalah layanan yang dijalankan di bawah orkestrasi INTEGRAL.</li>
+    <li><b>Mesin:</b> kriteria rule (nilai, unit-cost benchmark, SLA) + <b>semantic anomaly</b> — mencocokkan paket dengan tupoksi direktorat memakai catatan wiki.</li>
+    <li><b>Keluaran:</b> <i>finding</i> berskor risiko → <b>usulan penugasan</b> dengan dasar permintaan terisi otomatis, masuk antrean INTEGRAL.</li>
+    <li><b>Batas:</b> CACM <b>mengusulkan</b>, manusia memutuskan. Tak ada penugasan otomatis tanpa persetujuan.</li>
+  </ul>
+</div>
+
+<div class="dd integral">
+  <h3><span class="badge" style="background:var(--integral)">INTEGRAL</span> Kokpit — satu tempat menjalankan seluruh siklus pengawasan</h3>
+  <p class="role">Orkestrator + UI + basis data. Satu-satunya lapis yang "tahu" DB, pengguna, alur birokrasi — <b>dan satu-satunya yang menyentuh sistem eksisting</b>.</p>
+  <ul>
+    <li><b>Integrasi eksisting (hulu):</b> satu-satunya lapis yang menarik data/LKE + bukti dari ev-SAKIP · e-ziko · SPIP · MR · RB (dan sumber CACM). <b>Engine tak pernah mengakses portal langsung</b> — semua lewat INTEGRAL.</li>
+    <li><b>Siklus:</b> KP → PKP (sasaran &amp; langkah) → penetapan tim &amp; skill → eksekusi engine → HITL/reviu berjenjang (AT→KT→PM) → approval → LHP → pemantauan TL.</li>
+    <li><b>Kontrak ke engine (hilir):</b> setelah integrasi, menyuplai berkas &amp; metadata (Surat Tugas = <b>metadata</b>, bukan unggahan) via kontrak file stabil; menerima temuan/KKP/LHP kembali.</li>
+    <li><b>Tata kelola:</b> SSO/RBAC, audit trail, kendali mutu, penyimpanan resmi.</li>
+    <li><b>Batas:</b> tidak melakukan penilaian substantif — itu ranah engine. INTEGRAL mengatur <b>kapan/siapa/urutan</b>.</li>
+  </ul>
+</div>
+
+<div class="dd engine">
+  <h3><span class="badge" style="background:var(--engine)">ENGINE</span> Mesin analisis — substansi pengawasan yang portabel &amp; terukur</h3>
+  <p class="role">19 skill (audit · reviu · evaluasi · pemantauan · konsultansi). Menetapkan APA yang dinilai &amp; FORMAT keluaran; buta-DB/UI.</p>
+  <ul>
+    <li><b>Substansi:</b> tiap skill = kriteria + checklist/aspek + doktrin KKSAR jenis-aware (Sebab: audit WAJIB/RCA · reviu/evaluasi-nonLKE/pemantauan anti-mengarang · LKE tanpa-Sebab · konsultansi pendapat).</li>
+    <li><b>Alur data:</b> ingest dokumen → digest terstruktur → penilaian judgment → temuan berjejak dokumen sumber → render KKP/LHP.</li>
+    <li><b>Mutu:</b> harness eval + LLM-judge (recall, ketepatan kriteria, kelengkapan unsur) — 16/16 baseline live + 3 skill keuangan baru.</li>
+    <li><b>Batas:</b> tak menyimpan status, tak memanggil UI, tak scraping. Menerima berkas, mengembalikan penilaian.</li>
+  </ul>
+</div>
+
+<div class="dd wiki">
+  <h3><span class="badge" style="background:var(--wiki)">WIKI</span> Memori organisasi — tempat sistem belajar antar-penugasan</h3>
+  <p class="role">Basis pengetahuan pola temuan, regulasi kunci, &amp; catatan objek. Dibaca agen, diperbarui (HITL) setelah penugasan.</p>
+  <ul>
+    <li><b>Ke engine:</b> pola temuan → hipotesis awal agen; <code>read_preload_context</code> → regulasi &amp; catatan objek per penugasan.</li>
+    <li><b>Ke CACM:</b> catatan tupoksi direktorat → penilaian relevansi paket (semantic anomaly).</li>
+    <li><b>Umpan balik:</b> temuan/pelajaran penugasan → usul pola baru (disetujui auditor, aturan sitasi) → memperkaya siklus berikut.</li>
+    <li><b>Batas:</b> vault (llm-wiki) tetap repo terpisah; sistem menyambung sebagai referensi &amp; pengusul — tidak meng-vendor vault.</li>
+  </ul>
+</div>
+
+<div class="dd bot">
+  <h3><span class="badge" style="background:var(--bot)">CHATBOT</span> Antarmuka percakapan — akses cepat ke pengetahuan &amp; status</h3>
+  <p class="role">Lapis percakapan di atas ekosistem. Menurunkan hambatan akses tanpa membuka celah keamanan.</p>
+  <ul>
+    <li><b>Tanya pengetahuan:</b> kriteria/regulasi, pola temuan historis, definisi &amp; prosedur — jawaban ber-sitasi wiki.</li>
+    <li><b>Tanya operasional:</b> status KKP/LHP, tindak lanjut jatuh tempo, ringkasan penugasan (via INTEGRAL, sesuai RBAC).</li>
+    <li><b>Pintu konsultansi:</b> pertanyaan advisory ringan → jika material, eskalasi ke skill <code>konsultansi</code> yang berjejak.</li>
+    <li><b>Batas:</b> tetap ter-hardening &amp; ber-RBAC — chatbot mengurasi, bukan mengeksekusi tindakan berisiko sendiri.</li>
+  </ul>
+</div>
+
+<div class="dd ext">
+  <h3><span class="badge" style="background:var(--ext)">SISTEM EKSISTING</span> Integrasi ke portal pengawasan yang sudah berjalan</h3>
+  <p class="role">ev-SAKIP · e-ziko · SPIP · MR · RB (kini dijalankan manual). Disambungkan <b>melalui INTEGRAL</b> sebagai pembaca data &amp; pengembali hasil penilaian APIP — bukan diakses mesin AI langsung.</p>
+  <ul>
+    <li><b>Tarik masuk (via INTEGRAL):</b> LKE self-assessment + bukti dukung dari portal → INTEGRAL orkestrasi → jadi input skill evaluasi terkait.</li>
+    <li><b>Kembalikan (via INTEGRAL):</b> hasil penilaian ulang APIP (predikat, catatan, area of improvement) → dokumentasi/portal.</li>
+    <li><b>Pendekatan:</b> mulai dari unggah/scrape manual (aman &amp; cepat) yang dikelola INTEGRAL, lalu naik ke API/DB begitu pola stabil.</li>
+    <li><b>Batas:</b> sistem AI <b>tidak</b> mengubah nilai resmi di portal; menghasilkan penilaian APIP independen untuk ditindaklanjuti sesuai tata kelola.</li>
+  </ul>
+</div>
+
+<!-- MATRIKS INTEGRASI -->
+<h2><span class="n">04</span>Matriks integrasi — sistem eksisting ↔ skill engine</h2>
+<p class="lead">Pemetaan konkret: portal mana memberi data ke skill mana, dan status jalurnya hari ini. <b>Semua jalur melewati INTEGRAL</b> sebagai orkestrator — engine tak mengakses portal langsung.</p>
+<table>
+  <thead><tr><th>Sistem eksisting</th><th>Domain</th><th>Skill engine (dipanggil INTEGRAL)</th><th>Alur via INTEGRAL: masuk → keluar</th><th>Status jalur</th></tr></thead>
+  <tbody>
+    <tr><td><b>ev-SAKIP</b></td><td>Akuntabilitas kinerja</td><td><code>evaluasi-sakip</code></td><td>LKE SAKIP + bukti dukung per sub-komponen → penilaian ulang APIP &amp; predikat</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+    <tr><td><b>SPIP</b></td><td>Pengendalian intern</td><td><code>evaluasi-spip</code></td><td>LKE SPIP + bukti unsur → maturitas &amp; area perbaikan</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+    <tr><td><b>Manajemen Risiko</b></td><td>Manajemen risiko</td><td><code>evaluasi-manajemen-risiko</code></td><td>Piagam · Formulir 1–5 · LED · profil risiko → maturitas MR</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+    <tr><td><b>Reformasi Birokrasi</b></td><td>PMPRB</td><td><code>evaluasi-reformasi-birokrasi</code></td><td>LKE RB · Road Map · rencana aksi + bukti → penilaian PM vs APIP</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+    <tr><td><b>e-ziko</b></td><td>Pemantauan / Zona Integritas</td><td><code>pemantauan-umum</code> · <code>pemantauan-tindak-lanjut</code></td><td>Data monitoring / progres → pemantauan status &amp; tindak lanjut</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+    <tr><td><b>SIRUP / SPSE / DIPA</b></td><td>Pengadaan &amp; anggaran</td><td>CACM → <code>reviu-pengadaan</code> · <code>audit-pengadaan</code> · <code>reviu-rka-kl</code></td><td>Populasi paket &amp; realisasi → deteksi anomali → reviu/audit terarah</td><td><span class="tg tg-part" style="padding:2px 7px;border-radius:5px">prototipe (scrape)</span></td></tr>
+    <tr><td><b>SAKTI/SPAN · SIMPONI</b></td><td>Keuangan &amp; PNBP</td><td><code>reviu-laporan-keuangan</code> · <code>reviu-pnbp</code> · <code>reviu-pipk</code></td><td>Komponen LK · rekonsiliasi · bukti setor PNBP → reviu keyakinan terbatas</td><td><span class="tg tg-plan" style="padding:2px 7px;border-radius:5px">manual → rencana API</span></td></tr>
+  </tbody>
+</table>
+<p class="lead" style="margin-top:4px">Pola integrasi seragam: <b>portal → INTEGRAL (tarik LKE/data + bukti, orkestrasi) → skill engine menilai → hasil APIP balik lewat INTEGRAL</b>. Engine tak pernah menyentuh portal langsung. Skill evaluasi berbasis LKE memetakan satu-lawan-satu dengan portal SAKIP/SPIP/MR/RB.</p>
+
+<!-- LOOP -->
+<h2><span class="n">05</span>Loop tertutup — bagaimana organisasi jadi makin pintar</h2>
+<div class="loop">
+  <div class="chain">
+    <span class="node" style="border-color:var(--cacm)">CACM deteksi anomali</span>
+    <span class="ar">→</span>
+    <span class="node" style="border-color:var(--integral)">INTEGRAL: usulan → penugasan</span>
+    <span class="ar">→</span>
+    <span class="node" style="border-color:var(--engine)">Engine: analisis &amp; temuan</span>
+    <span class="ar">→</span>
+    <span class="node" style="border-color:var(--integral)">HITL &amp; LHP</span>
+    <span class="ar">→</span>
+    <span class="node" style="border-color:var(--wiki)">Wiki: pola &amp; pelajaran</span>
+    <span class="ar" style="color:var(--wiki)">↺</span>
+  </div>
+  <div class="cap">Temuan memperbarui Wiki → Wiki mempertajam interpretasi sinyal CACM &amp; hipotesis agen berikutnya → deteksi makin presisi, penugasan makin terarah. <b>Chatbot</b> membuka seluruh memori ini untuk tanya-jawab kapan saja.</div>
+</div>
+
+<div class="callout guard"><b>Rambu tata kelola (dijaga di setiap simpul)</b>
+Persetujuan manusia untuk tiap keputusan material · sitasi wajib untuk tulisan wiki · agen ter-hardening tanpa akses shell/browser · penilaian AI bersifat independen &amp; tidak menimpa nilai resmi di portal eksisting · data kurang → "tidak cukup data", bukan mengarang.</div>
+
+<!-- STATUS & ARAH -->
+<h2><span class="n">06</span>Status &amp; arah bangun</h2>
+<div class="grid2">
+  <div class="pc" style="border-top-color:var(--engine)"><b><span class="dot" style="background:var(--engine)"></span>Sudah ada / berjalan</b><span>Engine 19 skill terukur live · Wiki dibaca agen (pola temuan, preload context) · CACM prototipe SIRUP (scrape + evaluator + semantic anomaly PoC).</span></div>
+  <div class="pc" style="border-top-color:var(--cacm)"><b><span class="dot" style="background:var(--cacm)"></span>Sebagian / dibangun</b><span>INTEGRAL (SIMWAS V2) sebagai orkestrator produksi · sinkronisasi Wiki vault↔git · Chatbot tanya-wiki prototipe.</span></div>
+  <div class="pc" style="border-top-color:var(--ext)"><b><span class="dot" style="background:var(--ext)"></span>Rencana</b><span>Integrasi API ke ev-SAKIP/e-ziko/SPIP/MR/RB (kini manual) · Chatbot status &amp; konsultansi · CACM naik dari scrape ke API/DB.</span></div>
+  <div class="pc" style="border-top-color:var(--integral)"><b>Prasyarat mutu → produksi</b><span>Validasi golden/fixture oleh auditor · UAT dengan berkas nyata · konfirmasi kriteria riil (3 skill keuangan baru) · uji integrasi INTEGRAL. (lihat Roadmap v10 Fase 6–7)</span></div>
+</div>
+
+<footer>
+  Blueprint Ekosistem Pengawasan Berbasis AI · Inspektorat II · Kementerian Komunikasi dan Digital · per 8 Juli 2026<br>
+  Pendamping: <code>docs/ROADMAP-v10.html</code> · <code>docs/rencana-cacm-wiki.html</code> · <code>docs/BEFORE-AFTER-v8-v10.html</code> · Engine: github.com/irfansihab/audit-system-v10
+</footer>
+
+</div>
+</body>
+</html>

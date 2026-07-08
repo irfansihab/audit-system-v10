@@ -82,5 +82,42 @@ Validasi **dunia nyata oleh auditor** — bukan hanya fixture sintetis + judge. 
 
 ---
 
+## Kontrak dokumen per skill — reminder unggah (WAJIB vs OPSIONAL)
+
+**Berlaku umum:** Surat Tugas + sasaran/lingkup = **metadata dari INTEGRAL** (TIDAK diunggah). Semua skill **non-LKE** boleh menerima **Kriteria tambahan (opsional)**.
+
+**Criteria-driven** (unggah kriteria + objek):
+- **audit-umum** — WAJIB: kriteria (regulasi/SOP/SK/Juklak) + dokumen objek · OPSIONAL: ND permintaan, data pendukung.
+- **reviu-umum** — WAJIB: kriteria (juklak/juknis/format/SOP) + dokumen objek · OPSIONAL: data pendukung.
+- **evaluasi-umum** — WAJIB: kriteria evaluasi (pedoman + LKE/rubrik) + dokumen & data objek · OPSIONAL: instrumen survei, data baseline.
+- **pemantauan-umum** — WAJIB: kriteria/acuan (rencana aksi/target/jadwal/instruksi bertenggat) + data realisasi · OPSIONAL: data historis, foto/BA, dashboard.
+- **audit-kinerja** — WAJIB: dokumen internal program (proses bisnis/SOP/target/PK) sbg kriteria + data kinerja & objek · OPSIONAL: sub-skill program.
+- **evaluasi-manajemen-risiko** — WAJIB: Piagam MR, Formulir 1–5, LED, SK Komite MR, dokumen SPIP.
+
+**Berbasis LKE** (tanpa opsi kriteria tambahan):
+- **evaluasi-spip** — WAJIB: LKE SPIP (template *bundled*) + folder bukti dukung per unsur.
+- **evaluasi-sakip** — WAJIB: LKE SAKIP self-assessment (PermenPAN-RB 88/2021) + bukti dukung per sub-komponen (evsakip).
+- **evaluasi-reformasi-birokrasi** — WAJIB: LKE RB (*diunggah*) + Rencana Aksi/Road Map RB + bukti dukung · OPSIONAL: laporan capaian triwulan, Renstra/PK.
+
+**Digest pipeline (PBJ/RKA):**
+- **reviu-rka-kl** — WAJIB: TOR/KAK + RAB **per RO** · OPSIONAL: data dukung harga (survei/RFI, kontrak pembanding, HPS).
+- **reviu-pengadaan** — WAJIB: dok perencanaan–pemilihan (KAK/HPS/dok tender); *aspek RUP:* populasi RKA/DIPA + export SIRUP · OPSIONAL: kontrak pembanding/RFI.
+- **audit-pengadaan** — WAJIB: dokumen **seluruh siklus** PBJ (KAK/HPS/Kontrak/BAST/pembayaran/dok pemeriksaan) · OPSIONAL: data pendukung.
+- **pemantauan-pengadaan** — WAJIB: kontrak + laporan progres + BA kemajuan + dokumen pembayaran.
+
+**Reviu keuangan (BARU):**
+- **reviu-laporan-keuangan** — WAJIB: komponen LK (LRA/Neraca/LO/LPE/CaLK) + rekonsiliasi (SAKTI↔SPAN/BMN/kas) + BAS/kertas kerja · OPSIONAL: LK periode lalu, LHP BPK.
+- **reviu-pipk** — WAJIB: dok penerapan/penilaian PIPK (lingkup & risiko, dokumentasi pengendalian entitas & proses, kertas kerja ToC/CSA, simpulan efektivitas) + LK konteks · OPSIONAL: rencana perbaikan.
+- **reviu-pnbp** — WAJIB: target & realisasi PNBP, SK/penetapan tarif, PNBP terutang per wajib bayar, bukti setor/SSBP (SIMPONI), kartu piutang · OPSIONAL: izin & realisasi penggunaan, rekonsiliasi.
+
+**Lainnya:**
+- **pemantauan-tindak-lanjut** — WAJIB: daftar rekomendasi (dari LHP/CHR) + bukti tindak lanjut per rekomendasi · OPSIONAL: rekap TLHP internal.
+- **konsultansi-umum** — WAJIB: ND/disposisi + **pertanyaan tertulis** + dokumen konteks objek · OPSIONAL: dokumen kriteria/regulasi.
+- **konsultasi-pengadaan** — WAJIB: pertanyaan advisory + draft dokumen PBJ yang didampingi · OPSIONAL: regulasi/SE terkait.
+
+> Dokumen WAJIB tak lengkap → engine mencatat **keterbatasan** ("tidak cukup data"), bukan mengarang deviasi. LKE scan/gambar tak terekstrak → turunkan 1 level predikat + catat keterbatasan.
+
+---
+
 ## Urutan disarankan
 **Fase 0–3 ✅ · Fase 4 (16/16 live) 🟢 · Fase 5 (skill baru) berjalan.** Forward: **Fase 6 (Integrasi Wiki)** + **Fase 7 (User Test / UAT auditor)** — dua ini yang membawa v10 dari "terukur via judge" ke "**tervalidasi manusia & siap produksi**". Fase 6 & 7 dapat berjalan **paralel** (wiki memperkaya pola; UAT memvalidasi output). Prasyarat UAT yang menunggu Anda: (a) validasi golden/fixture auditor · (b) konfirmasi nomor kriteria (3 skill baru) · (c) berkas penugasan nyata untuk uji E2E.
