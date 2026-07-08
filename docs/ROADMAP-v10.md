@@ -86,7 +86,7 @@ Validasi **dunia nyata oleh auditor** — bukan hanya fixture sintetis + judge. 
 
 **Berlaku umum:** Surat Tugas + sasaran/lingkup = **metadata dari INTEGRAL** (TIDAK diunggah). Semua skill **non-LKE** boleh menerima **Kriteria tambahan (opsional)**.
 
-**Criteria-driven** (unggah kriteria + objek):
+**Unggah kriteria sendiri (regulasi/SOP) + objek:**
 - **audit-umum** — WAJIB: kriteria (regulasi/SOP/SK/Juklak) + dokumen objek · OPSIONAL: ND permintaan, data pendukung.
 - **reviu-umum** — WAJIB: kriteria (juklak/juknis/format/SOP) + dokumen objek · OPSIONAL: data pendukung.
 - **evaluasi-umum** — WAJIB: kriteria evaluasi (pedoman + LKE/rubrik) + dokumen & data objek · OPSIONAL: instrumen survei, data baseline.
@@ -99,7 +99,7 @@ Validasi **dunia nyata oleh auditor** — bukan hanya fixture sintetis + judge. 
 - **evaluasi-sakip** — WAJIB: LKE SAKIP self-assessment (PermenPAN-RB 88/2021) + bukti dukung per sub-komponen (evsakip).
 - **evaluasi-reformasi-birokrasi** — WAJIB: LKE RB (*diunggah*) + Rencana Aksi/Road Map RB + bukti dukung · OPSIONAL: laporan capaian triwulan, Renstra/PK.
 
-**Digest pipeline (PBJ/RKA):**
+**Pengadaan & Anggaran (PBJ / RKA-K/L):**
 - **reviu-rka-kl** — WAJIB: TOR/KAK + RAB **per RO** · OPSIONAL: data dukung harga (survei/RFI, kontrak pembanding, HPS).
 - **reviu-pengadaan** — WAJIB: dok perencanaan–pemilihan (KAK/HPS/dok tender); *aspek RUP:* populasi RKA/DIPA + export SIRUP · OPSIONAL: kontrak pembanding/RFI.
 - **audit-pengadaan** — WAJIB: dokumen **seluruh siklus** PBJ (KAK/HPS/Kontrak/BAST/pembayaran/dok pemeriksaan) · OPSIONAL: data pendukung.
