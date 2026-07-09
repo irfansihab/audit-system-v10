@@ -40,6 +40,11 @@ Objek reviu: **data & dokumen PNBP** — target & realisasi PNBP, SK/penetapan t
 | 5 | **Penggunaan Dana PNBP** (bila diizinkan) | Sesuai izin & **Pagu Penggunaan Dana PNBP** | **PMK 155/2021 jo. 58/2023** (penggunaan dana PNBP, Ps. 108 dst) + KMK/PMK izin penggunaan |
 | 6 | **Penatausahaan & pelaporan** | Pencatatan, **rekonsiliasi**, pelaporan akurat & lengkap | **PMK 155/2021** (penatausahaan & pelaporan) Ps. 135 (rekonsiliasi triwulanan) |
 
+> **Presisi sitasi PNBP (anti-over-cite).** Kutip **hanya pasal yang langsung mengatur kondisi**; jangan menambah pasal tangensial. Khususnya:
+> - **Pasal 41** = kewajiban **pembayaran** PNBP Terutang oleh **Wajib Bayar** (Aspek 3) — **BUKAN** dasar kewajiban **penyetoran ke Kas Negara**. **Aspek 4 (penyetoran)** dasarnya **UU 9/2018** (seluruh PNBP wajib disetor ke Kas Negara) + tata cara PMK 155/2021; jangan pakai Pasal 41 untuk keterlambatan setor bendahara/instansi.
+> - **Pasal 55A** (optimalisasi piutang saat verifikasi potensi kurang bayar) **hanya** relevan bila ada **potensi kurang bayar dari verifikasi** — **bukan** untuk aging piutang biasa (itu Pasal 42 + penyisihan).
+> - **BHP frekuensi:** rujuk **PP 43/2023** sebagai **dasar tarif** (ISR Ps. 3 / IPFR Ps. 10); **jangan mengarang detail variabel formula** bila sumber tak menampilkannya — cukup "tarif tidak sesuai PP 43/2023 yang berlaku (menggantikan PP 80/2015)".
+
 ### Checklist Reviu PNBP (per aspek — wajib ditelusuri; nilai per elemen: Sesuai / Sesuai dgn catatan / Tidak sesuai)
 
 **Aspek 1 — Jenis & tarif:** jenis PNBP yang dipungut termasuk **daftar PP 43/2023 Ps. 1(1)** (BHP frekuensi, sertifikasi/pengujian alat telekomunikasi, pos, telekomunikasi, penyiaran, SPBE, dll); **tarif/formula = PP 43/2023** (ISR Ps. 3, IPFR Ps. 10). Memakai **PP 80/2015 (sudah dicabut)** atau tarif di luar ketetapan → catatan. Tarif **Rp0/0%** hanya sah bila memenuhi **Permen Kominfo 1/2024** (jenis Ps. 2 + persyaratan).
@@ -48,7 +53,7 @@ Objek reviu: **data & dokumen PNBP** — target & realisasi PNBP, SK/penetapan t
 
 **Aspek 3 — Penagihan & piutang:** pembayaran **≤ jatuh tempo (PMK 155/2021 Ps. 41)**; tunggakan **wajib dicatat sebagai Piutang PNBP (Ps. 42)** — **umur (aging)** dianalisis, **penyisihan** wajar; potensi kurang bayar → **optimalisasi penyelesaian piutang (Ps. 55A, PMK 58/2023)** sebelum hasil verifikasi; tunggakan lama tanpa upaya tagih → catatan.
 
-**Aspek 4 — Penyetoran ke Kas Negara:** setor **tepat waktu & tepat jumlah** (SSBP via **SIMPONI**); **tidak ada PNBP mengendap** di bendahara/rekening di luar kas negara; kesesuaian tanggal pungut vs setor.
+**Aspek 4 — Penyetoran ke Kas Negara:** setor **tepat waktu & tepat jumlah** (SSBP via **SIMPONI**); **tidak ada PNBP mengendap** di bendahara/rekening di luar kas negara; kesesuaian tanggal pungut vs setor. **Dasar = UU 9/2018** (kewajiban setor seluruh PNBP ke Kas Negara) — **bukan** Pasal 41 (itu jatuh tempo pembayaran Wajib Bayar). Bila ketentuan menetapkan batas waktu setor spesifik, kutip itu; bila tidak → nyatakan "terlambat setor / mengendap" tanpa mengarang batas hari.
 
 **Aspek 5 — Penggunaan PNBP** (bila objek ber-izin guna): penggunaan **sesuai izin (KMK/PMK)** & **proporsi/pagu**; tidak dipakai di luar peruntukan.
 
