@@ -2,13 +2,14 @@
 name: reviu-laporan-keuangan
 jenis: Reviu Laporan Keuangan (LK Kementerian/Lembaga)
 format_laporan: kksa
-dasar-hukum: PMK 255/PMK.09/2015 (Standar Reviu LK K/L, ganti PMK 41/PMK.09/2010 — cek perubahan lanjutan mis. PMK 8/PMK.09/2019 untuk periode objek); PP 71/2010 (SAP akrual); PP 8/2006
+dasar-hukum: PMK 255/PMK.09/2015 (Standar Reviu LK K/L, ganti PMK 41/PMK.09/2010 — cek perubahan lanjutan mis. PMK 8/PMK.09/2019 untuk periode objek); PP 71/2010 (SAP akrual); PMK 100/2025 (Kebijakan Akuntansi Pempus, ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — berlaku LK TA 2025); PP 8/2006
 kode-surat: PW.04.04
 tingkat-keyakinan: terbatas
-version: "0.2"
+version: "0.3"
 changelog:
   - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT.
-  - v0.2 (2026-07-09): **Standar reviu inti dikonfirmasi & diringkas** — PMK 255/PMK.09/2015 (tahapan reviu, keyakinan terbatas, CHR/IHR/LHR + Pernyataan Telah Direviu) ke `references/01-...md`. Kriteria akuntansi pendukung (SAKTI/BAS/Kebijakan Akuntansi/Penyusunan LK) masih menunggu konfirmasi nomor/versi auditor.
+  - v0.2 (2026-07-09): **Standar reviu inti dikonfirmasi & diringkas** — PMK 255/PMK.09/2015 (tahapan reviu, keyakinan terbatas, CHR/IHR/LHR + Pernyataan Telah Direviu) ke `references/01-...md`.
+  - v0.3 (2026-07-09): **Kebijakan Akuntansi dikonfirmasi & dibundel** — PMK 100/2025 (Kebijakan Akuntansi Pempus, ganti PMK 231/2022 jo. 57/2023; pengakuan/pengukuran/penyajian per pos LK, berlaku TA 2025) → `references/02-...md` + PDF. Sisa pendukung (SAKTI/BAS/Penyusunan LK) menunggu konfirmasi nomor auditor.
 ---
 
 # Skill: Reviu Laporan Keuangan (LK K/L)

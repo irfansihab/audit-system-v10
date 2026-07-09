@@ -4,7 +4,7 @@ kategori: konteks
 judul: "Regulasi & Pasal Kunci yang Sering Dirujuk"
 sumber: "Sintesis pattern temuan + LHR Inspektorat II"
 tanggal_update: "2026-07-09"
-tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, sitasi, anti-halusinasi]
+tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, pipk, pmk-17-2019, pmk-100-2025, kebijakan-akuntansi, sitasi, anti-halusinasi]
 ---
 
 # Regulasi & Pasal Kunci — Cheat Sheet Anti-Halusinasi
@@ -185,7 +185,38 @@ Skill: `reviu-laporan-keuangan`. Melaksanakan Pasal 57(5) PP 60/2008; menerapkan
 | **Simpulan** | LK K/L **telah / belum disajikan sesuai SAP** (bukan "WTP"). |
 | **Output** | **Pernyataan Telah Direviu**; perbaikan belum dilakukan → **Paragraf Penjelas**. |
 
-Kriteria substansi akuntansi = **PP 71/2010 (PSAP)**; PMK 255/2015 = kriteria **proses & bentuk keyakinan**. Salah saji material → **eskalasi audit**.
+Kriteria substansi akuntansi = **PP 71/2010 (PSAP)** + **PMK 100/2025** (kebijakan akuntansi per pos); PMK 255/2015 = kriteria **proses & bentuk keyakinan**. Salah saji material → **eskalasi audit**.
+
+### PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023
+
+Berlaku **sejak LK TA 2025** (periode < TA2025 → pakai PMK 231/2022 jo. 57/2023). Menjabarkan SAP akrual (PP 71/2010).
+
+| Aspek | Substansi |
+|---|---|
+| **Hakikat** | Prinsip/dasar/aturan/praktik spesifik penyusunan & penyajian LK pempus. |
+| **Ruang lingkup (Ps.4)** | Kebijakan akuntansi per pos: kas & setara kas · investasi · piutang · persediaan · aset tetap · konsesi jasa · properti investasi · aset lainnya · kewajiban · ekuitas · pendapatan · beban/belanja/transfer · pembiayaan · SiLPA/SiKPA & SAL · transitoris · dampak darurat bencana. |
+| **Tiap pos** | Mengatur **Pengakuan · Pengukuran · Penyajian · Pengungkapan · Perlakuan Khusus**. |
+
+Sitasi deviasi pos LK: **"PMK 100/2025 (kebijakan akuntansi <pos>) + PP 71/2010 (PSAP terkait)"**.
+
+---
+
+## Pengendalian Intern atas Pelaporan Keuangan (PIPK)
+
+### PMK 17/PMK.09/2019 (Pedoman Penerapan, Penilaian & Reviu PIPK Pempus) — ganti PMK 14/PMK.09/2017
+
+Skill: `reviu-pipk`. Dasar: Pasal 8 UU 17/2003 & Pasal 55 UU 1/2004. Tiga aktivitas: **Penerapan → Penilaian (Tim Penilai/Manajemen) → Reviu (APIP)**.
+
+| Istilah/Aspek | Substansi |
+|---|---|
+| **PITE** (Tingkat Entitas) | Pengendalian yang memberi keyakinan atas **keseluruhan** proses/transaksi/akun/asersi LK. |
+| **Tingkat Proses/Transaksi** | Memitigasi risiko pemrosesan transaksi **spesifik** (akun/asersi tertentu). |
+| **Penerapan** | Lingkup pelaporan → materialitas → key business processes → akun signifikan → asersi → penilaian risiko (RCM) → dokumentasi. |
+| **Penilaian** | Pengujian PITE + Tingkat Proses/Transaksi (**ToC/CSA**); efektivitas operasi + kelemahan + saran. |
+| **Klasifikasi kelemahan** | defisiensi / defisiensi signifikan / kelemahan material. |
+| **Output reviu** | **CHR PIPK → LHR PIPK** + **Pernyataan Telah Direviu (PTD)** LK. |
+
+Reviu PIPK = keyakinan terbatas; kelemahan material → dapat memicu pendalaman audit.
 
 ---
 

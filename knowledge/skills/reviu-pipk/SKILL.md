@@ -2,12 +2,13 @@
 name: reviu-pipk
 jenis: Reviu Pengendalian Intern atas Pelaporan Keuangan (PIPK)
 format_laporan: kksa
-dasar-hukum: PMK Pedoman PIPK (PMK 14/PMK.09/2017 — konfirmasi versi berlaku), PP 60/2008 (SPIP)
+dasar-hukum: PMK 17/PMK.09/2019 (Pedoman Penerapan, Penilaian & Reviu PIPK Pempus — mengganti PMK 14/PMK.09/2017); PP 60/2008 (SPIP); Pasal 8 UU 17/2003 & Pasal 55 UU 1/2004
 kode-surat: PW.04.04
 tingkat-keyakinan: terbatas
-version: "0.1"
+version: "0.2"
 changelog:
-  - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT, perlu pengisian & validasi auditor senior.
+  - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT.
+  - v0.2 (2026-07-09): **Kriteria PIPK dikonfirmasi & diringkas** — PMK 14/PMK.09/2017 **sudah diganti PMK 17/PMK.09/2019** (regulasi diunggah auditor 9 Jul) → ringkasan `references/01-...md`. Aspek/checklist diikat pasal/definisi PMK 17/2019 (PITE, tingkat proses/transaksi, ToC, CHR/LHR PIPK, PTD). RAGU `kriteria` PIPK tertutup. (Validasi golden/fixture auditor tetap menyusul.)
 ---
 
 # Skill: Reviu Pengendalian Intern atas Pelaporan Keuangan (PIPK)
@@ -26,18 +27,18 @@ Kamu adalah reviewer APIP yang melakukan **reviu atas Pengendalian Intern atas P
 
 Objek reviu: **dokumen penerapan & penilaian PIPK** entitas — penetapan lingkup & identifikasi risiko pelaporan keuangan, dokumentasi pengendalian tingkat entitas & tingkat proses/transaksi, kertas kerja pengujian pengendalian (ToC)/Control Self-Assessment (CSA), simpulan efektivitas PIPK, rencana perbaikan; plus LK terkait sebagai konteks asersi. Fakta ditarik dari digest; verifikasi ke sumber untuk kutipan. Keyakinan **terbatas**.
 
-## Aspek & Kriteria Reviu (DRAFT — perlu pengisian & validasi auditor)
+## Aspek & Kriteria Reviu
 
-> Kerangka rancangan awal; kriteria pasti (PMK/pasal) **wajib dikonfirmasi berlaku**. Nilai per elemen: kecukupan **desain** + efektivitas **operasi** (Memadai / Memadai dengan catatan / Tidak memadai).
+> Kriteria inti = **PMK 17/PMK.09/2019** (ganti PMK 14/2017), diringkas di [`references/01-...md`](references/01-pmk-17-2019-pipk.md). Kutip **presisi** pasal/istilah. Nilai per elemen: kecukupan **desain** + efektivitas **operasi** (Memadai / Memadai dengan catatan / Tidak memadai).
 
-| # | Aspek | Yang dinilai | Kriteria acuan (kandidat) |
+| # | Aspek | Yang dinilai | Kriteria acuan (bernomor) |
 |---|-------|--------------|---------------------------|
-| 1 | **Lingkup & identifikasi risiko pelaporan keuangan** | Akun/proses signifikan & asersi teridentifikasi; risiko salah saji dipetakan | PMK Pedoman PIPK |
-| 2 | **Pengendalian tingkat entitas** (entity-level) | Lingkungan pengendalian, penilaian risiko, informasi & komunikasi, pemantauan | PMK Pedoman PIPK + PP 60/2008 (unsur SPIP) |
-| 3 | **Pengendalian tingkat proses/transaksi** | Kontrol per siklus (pendapatan, belanja, aset/persediaan, kas) memadai & dijalankan | PMK Pedoman PIPK |
-| 4 | **Pengujian pengendalian (ToC) & CSA** | Metode/ sampel memadai; simpulan didukung bukti | PMK Pedoman PIPK |
-| 5 | **Simpulan efektivitas & rencana perbaikan** | Simpulan konsisten dengan hasil pengujian; kelemahan → rencana aksi (AoI) | PMK Pedoman PIPK |
-| 6 | **Keandalan dokumentasi PIPK** | Kertas kerja lengkap, tertelusur, ter-review berjenjang | PMK Pedoman PIPK |
+| 1 | **Lingkup & identifikasi risiko pelaporan keuangan** | Akun/proses signifikan & asersi teridentifikasi; risiko salah saji dipetakan (RCM) | **PMK 17/2019** (penetapan lingkup: materialitas · key business processes · akun signifikan · asersi · penilaian risiko) |
+| 2 | **Pengendalian tingkat entitas** (PITE) | Lingkungan pengendalian, penilaian risiko, informasi & komunikasi, pemantauan | **PMK 17/2019** (PITE) + **PP 60/2008** (5 unsur SPIP) |
+| 3 | **Pengendalian tingkat proses/transaksi** | Kontrol per siklus (pendapatan, belanja, aset/persediaan, kas) memadai & dijalankan | **PMK 17/2019** (PI Tingkat Proses/Transaksi) |
+| 4 | **Pengujian pengendalian (ToC) & CSA** | Metode/ sampel memadai; menguji efektivitas operasi; simpulan didukung bukti | **PMK 17/2019** (Pengujian PITE & Tingkat Proses/Transaksi) |
+| 5 | **Simpulan efektivitas & rencana perbaikan** | Simpulan konsisten dengan hasil pengujian; defisiensi diklasifikasi → rencana aksi (AoI); output CHR→LHR PIPK + PTD | **PMK 17/2019** (klasifikasi kelemahan · CHR/LHR PIPK · PTD) |
+| 6 | **Keandalan dokumentasi PIPK** | Kertas kerja lengkap, tertelusur, ter-review berjenjang | **PMK 17/2019** (dokumentasi) |
 
 ### Checklist Reviu PIPK (per aspek — wajib ditelusuri; nilai kecukupan DESAIN + efektivitas OPERASI: Memadai / Memadai dgn catatan / Tidak memadai)
 
@@ -53,7 +54,7 @@ Objek reviu: **dokumen penerapan & penilaian PIPK** entitas — penetapan lingku
 
 **Aspek 6 — Keandalan dokumentasi:** kertas kerja lengkap, tertelusur ke bukti, ter-review berjenjang.
 
-> Tiap elemen **tidak memadai** → catatan **K/K/S/A** (Kondisi = kelemahan desain/operasi pengendalian; Kriteria kutip **presisi** PMK PIPK/PP 60/2008 + pasal; Sebab anti-mengarang; Akibat = **risiko salah saji/keandalan pelaporan**, tanpa kerugian negara). Elemen memadai → nyatakan "telah memenuhi". Kriteria (versi PMK PIPK) tak dapat dipastikan → catatan, bukan deviasi terkonfirmasi.
+> Tiap elemen **tidak memadai** → catatan **K/K/S/A** (Kondisi = kelemahan desain/operasi pengendalian; Kriteria kutip **presisi** PMK 17/PMK.09/2019 / PP 60/2008 + pasal; Sebab anti-mengarang; Akibat = **risiko salah saji/keandalan pelaporan**, tanpa kerugian negara). Elemen memadai → nyatakan "telah memenuhi". Bila periode objek di luar rentang berlaku PMK 17/2019 → catatan, bukan deviasi terkonfirmasi.
 
 ## Format Unsur Temuan (KKSAR)
 
@@ -63,14 +64,15 @@ Catatan reviu **K/K/S/A** — **Kondisi** (kelemahan pengendalian: proses/kontro
 
 Nota Dinas → Cover → Pendahuluan → Hasil Reviu (per aspek/level pengendalian) → Simpulan efektivitas PIPK (keyakinan terbatas) → Saran perbaikan. Ikuti `panduan-format-umum/PANDUAN.md`.
 
-## Referensi (kriteria untuk dibundel — lihat `references/README.md`)
+## Referensi (kriteria dibundel — lihat [`references/`](references/))
 
-Lihat [`references/README.md`](references/README.md) untuk daftar kriteria kandidat + status konfirmasi.
+- [`01-pmk-17-2019-pipk.md`](references/01-pmk-17-2019-pipk.md) — Pedoman Penerapan/Penilaian/Reviu PIPK (ganti PMK 14/2017); PITE, tingkat proses/transaksi, ToC, CHR/LHR PIPK, PTD.
+- [`README.md`](references/README.md) — daftar lengkap + status. PP 60/2008 (SPIP) sbg unsur pengendalian pendukung.
 
 ## Batasan
 
 - Reviu = keyakinan terbatas atas simpulan PIPK entitas, **bukan** pengujian pengendalian menyeluruh oleh APIP; bukan opini.
-- Kriteria PIPK teknis & dapat diperbarui → **konfirmasi versi PMK**; kriteria tak tersedia → catatan, bukan temuan.
+- **PMK 17/PMK.09/2019** menggantikan PMK 14/PMK.09/2017 — gunakan yang berlaku untuk periode objek; bila di luar rentang → catatan, bukan temuan.
 
 ## Posisi dalam Keluarga Skill
 

@@ -16,7 +16,7 @@ Kriteria yang **mungkin digunakan** untuk reviu LK K/L. **⚠️ WAJIB dikonfirm
 |---|---------------------|-----------|--------|
 | 4 | **PMK Sistem Akuntansi & Pelaporan Keuangan Instansi (SAKTI)** — mis. PMK 225/PMK.05/2019 jo. perubahan | Rekonsiliasi SAKTI/SAIBA ↔ SPAN | ⬜ konfirmasi nomor/versi |
 | 5 | **PMK Bagan Akun Standar (BAS)** | Klasifikasi & kodefikasi akun | ⬜ konfirmasi nomor |
-| 6 | **PMK Kebijakan Akuntansi Pemerintah Pusat** | Pengakuan/pengukuran pos | ⬜ konfirmasi nomor |
+| 6 | **PMK 100/2025** — Kebijakan Akuntansi Pemerintah Pusat (ganti PMK 231/2022 jo. 57/2023; berlaku TA 2025) → [`02-...md`](02-pmk-100-2025-kebijakan-akuntansi.md) + [`pmk-100-2025-kebijakan-akuntansi.pdf`](pmk-100-2025-kebijakan-akuntansi.pdf) | Pengakuan/pengukuran/penyajian/pengungkapan per pos LK | ✅ (periode <TA2025 pakai PMK 231/2022 jo. 57/2023) |
 | 7 | **PMK Penyusunan & Penyampaian LK K/L** — mis. PMK 222/PMK.05/2016 jo. perubahan | Jadwal, format, rekonsiliasi BMN | ⬜ konfirmasi nomor/versi |
 
 ## C. Payung UU (konteks)
