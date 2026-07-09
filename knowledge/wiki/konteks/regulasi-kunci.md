@@ -3,8 +3,8 @@ id: KONTEKS-REGULASI
 kategori: konteks
 judul: "Regulasi & Pasal Kunci yang Sering Dirujuk"
 sumber: "Sintesis pattern temuan + LHR Inspektorat II"
-tanggal_update: "2026-04-24"
-tags: [regulasi, perpres-16, pmk-107, sitasi, anti-halusinasi]
+tanggal_update: "2026-07-09"
+tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, sitasi, anti-halusinasi]
 ---
 
 # Regulasi & Pasal Kunci — Cheat Sheet Anti-Halusinasi
@@ -136,6 +136,56 @@ Substansi: kerangka Sistem Pengendalian Intern Pemerintah; 5 unsur (lingkungan p
 ### Perka BPKP 5/2021 (Penilaian Maturitas SPIP Terintegrasi)
 
 Substansi: skala 5 level + 3 komponen (Penetapan Tujuan 40% + Struktur Proses 30% + Pencapaian Tujuan 30%); dasar penjaminan kualitas SPIP Kemkomdigi.
+
+---
+
+## Penerimaan Negara Bukan Pajak (PNBP) — Komdigi
+
+> Nama K/L di regulasi = **"Komunikasi dan Informatika" (Kominfo)**; kini **Komdigi**. Kutip nama sesuai teks regulasi — jangan ubah. Skill: `reviu-pnbp`. Pola terkait: [[RK-67]], [[RK-68]], [[RK-69]].
+
+### PP 43/2023 (Jenis & Tarif PNBP pada Kemenkominfo) — ganti PP 80/2015
+
+| Pasal | Topik | Kutipan inti |
+|---|---|---|
+| **Pasal 1 (1)** | Jenis PNBP Komdigi | Berasal dari: (a) penggunaan spektrum frekuensi radio; (b) sertifikat alat/perangkat telekomunikasi; (c) pengujian alat/perangkat telekomunikasi; (d) kalibrasi alat ukur; (e) pos; (f) telekomunikasi; (g) penyiaran; (h) sistem & transaksi elektronik; (i) pelatihan fungsional; (j) pendidikan tinggi; (k) dst. |
+| **Pasal 2** | BHP frekuensi | BHP spektrum = (a) **BHP ISR** (izin stasiun radio) + (b) **BHP IPFR** (izin pita frekuensi radio). |
+| **Pasal 3** | Tarif BHP ISR | Dihitung dengan **formula** (harga dasar lebar pita × Ib × b) + (harga dasar daya pancar × …). Verifikasi variabel ke teks. |
+| **Pasal 10–11** | IPFR | Ditetapkan lewat **seleksi**; terdiri **biaya izin awal + biaya IPFR tahunan**. |
+
+### PMK 155/PMK.02/2021 jo. PMK 58/2023 (Tata Cara Pengelolaan PNBP)
+
+Selalu rujuk gabungan **"PMK 155/PMK.02/2021 jo. PMK 58/2023 Pasal XX"** (melaksanakan PP 58/2020 & PP 1/2021).
+
+| Pasal | Topik | Kutipan inti |
+|---|---|---|
+| **Pasal 41 (1)** | Jatuh tempo | "Wajib Bayar wajib melakukan pembayaran PNBP Terutang **paling lambat pada saat jatuh tempo**." |
+| **Pasal 42** | Tunggakan → Piutang | Tidak bayar s.d. jatuh tempo → **dicatat sebagai Piutang PNBP**. |
+| **Pasal 55A** (sisipan PMK 58/2023) | Optimalisasi piutang | Potensi kurang bayar saat verifikasi → **optimalisasi penyelesaian piutang** dulu sebelum hasil verifikasi. |
+| **Pasal 135** | Rekonsiliasi | DJA + Instansi Pengelola PNBP rekonsiliasi hasil monitoring **triwulanan, ≤ 1 bulan** setelah periode. |
+| **Pasal 136** | Pengawasan PNBP | Hasil monitoring ditindaklanjuti **Pengawasan PNBP oleh APIP**/DJA — mandat reviu APIP. |
+
+PMK 58/2023 memperkuat: perencanaan, penggunaan dana, optimalisasi piutang, pengawasan, & penilaian kinerja PNBP.
+
+### Permen Kominfo 1/2024 (Tarif s.d. Rp0,00 / 0% PNBP volatil)
+
+Melaksanakan **Pasal 25(2) PP 43/2023**. **Pasal 2:** jenis yang dapat dikenakan tarif nol (ISR, sertifikat/pengujian alat telekomunikasi, pelatihan fungsional, pendidikan tinggi, dll) — hanya sah bila memenuhi **persyaratan & tata cara**. Tarif nol tanpa dasar → potensi kurang pungut.
+
+---
+
+## Reviu Laporan Keuangan K/L
+
+### PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010
+
+Skill: `reviu-laporan-keuangan`. Melaksanakan Pasal 57(5) PP 60/2008; menerapkan SAP akrual (PP 71/2010).
+
+| Aspek | Substansi |
+|---|---|
+| **Hakikat** | Reviu ≠ audit; **keyakinan terbatas** atas akurasi/keandalan/keabsahan LK sesuai SAP; **tidak menyatakan opini**. |
+| **Tahapan (3)** | Perencanaan → Pelaksanaan (**Kertas Kerja Reviu/KKR**) → Pelaporan (**CHR → IHR → LHR**). |
+| **Simpulan** | LK K/L **telah / belum disajikan sesuai SAP** (bukan "WTP"). |
+| **Output** | **Pernyataan Telah Direviu**; perbaikan belum dilakukan → **Paragraf Penjelas**. |
+
+Kriteria substansi akuntansi = **PP 71/2010 (PSAP)**; PMK 255/2015 = kriteria **proses & bentuk keyakinan**. Salah saji material → **eskalasi audit**.
 
 ---
 

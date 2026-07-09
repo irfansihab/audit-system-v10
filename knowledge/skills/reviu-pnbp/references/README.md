@@ -1,23 +1,24 @@
 # References — Reviu PNBP
 
-Kriteria yang **mungkin digunakan** untuk reviu pengelolaan PNBP. **⚠️ WAJIB dikonfirmasi auditor**: nomor & status berlaku — khususnya **PP tarif PNBP spesifik Komdigi** (sering diperbarui) dan PP turunan UU 9/2018. Bundel dokumen kriteria di folder ini setelah divalidasi; kutip **presisi** saat menilai.
+Kriteria pengelolaan PNBP Komdigi. **Kriteria inti kini DIBUNDEL & BERNOMOR** (di-git); kutip **presisi** (nomor + pasal) saat menilai. Regulasi memakai nama **"Komunikasi dan Informatika" (Kominfo)** — kini **Komdigi**; kutip sesuai teks.
 
-## A. Kriteria PRIMER
+## A. Kriteria PRIMER — ✅ dibundel
+
+| # | Kriteria | File / PDF | Untuk apa | Status |
+|---|----------|-----------|-----------|--------|
+| 1 | **UU 9/2018** — PNBP (ganti UU 20/1997) | (payung, tak dibundel) | Jenis, tarif, penetapan, penyetoran, penggunaan, pengawasan | ✅ payung |
+| 2 | **PP 43/2023** — Jenis & Tarif PNBP Kominfo (ganti PP 80/2015) | [`01-...md`](01-pp-43-2023-jenis-tarif-pnbp-komdigi.md) + [`pp-43-2023-jenis-tarif-pnbp.pdf`](pp-43-2023-jenis-tarif-pnbp.pdf) | Jenis (Ps.1) & tarif/formula BHP ISR (Ps.3), IPFR (Ps.10) | ✅ |
+| 3 | **PMK 155/PMK.02/2021 jo. PMK 58/2023** — Tata Cara Pengelolaan PNBP | [`02-...md`](02-pmk-155-2021-jo-58-2023-pengelolaan-pnbp.md) + [`pmk-58-2023-perubahan-pengelolaan-pnbp.pdf`](pmk-58-2023-perubahan-pengelolaan-pnbp.pdf) | Perencanaan, jatuh tempo (Ps.41), piutang (Ps.42), rekonsiliasi (Ps.135) | ✅ (PDF induk 155 tak dibundel — ±19MB) |
+| 4 | **Permen Kominfo 1/2024** — Tarif s.d. Rp0/0% PNBP volatil | [`03-...md`](03-permen-kominfo-1-2024-tarif-nol-pnbp.md) + [`permen-kominfo-1-2024-tarif-nol-pnbp.pdf`](permen-kominfo-1-2024-tarif-nol-pnbp.pdf) | Keabsahan tarif nol (Ps.2 + persyaratan) | ✅ |
+
+## B. Kriteria PENDUKUNG — ⬜ tambahan bila diperlukan auditor
 
 | # | Kriteria (kandidat) | Untuk apa | Status |
 |---|---------------------|-----------|--------|
-| 1 | **UU 9/2018** — Penerimaan Negara Bukan Pajak (mengganti UU 20/1997) | Payung: jenis, tarif, penetapan, penyetoran, penggunaan, pengawasan PNBP | ⬜ |
-| 2 | **PP Jenis & Tarif PNBP pada Kementerian Komunikasi & Digital** (dahulu Kominfo) — BHP frekuensi, IPFR, sertifikasi/izin | Dasar tarif objek PNBP Komdigi | ⬜ **konfirmasi PP & nomor terbaru** |
-| 3 | **PP turunan UU 9/2018** — tata cara penetapan tarif · pengelolaan · pemeriksaan PNBP | Prosedur penetapan/pengelolaan/pemeriksaan | ⬜ konfirmasi nomor PP |
-
-## B. Kriteria PENDUKUNG (PMK/juknis)
-
-| # | Kriteria (kandidat) | Untuk apa | Status |
-|---|---------------------|-----------|--------|
-| 4 | **PMK Penatausahaan/Penyetoran & Pelaporan PNBP** (SIMPONI) | Ketepatan waktu & jumlah setor; pelaporan | ⬜ konfirmasi nomor |
-| 5 | **PMK Piutang PNBP** | Pencatatan, umur, penyisihan piutang PNBP | ⬜ konfirmasi nomor |
-| 6 | **KMK/PMK Izin Penggunaan Sebagian Dana PNBP** (bila objek ber-izin guna) | Kesesuaian penggunaan & pagu | ⬜ konfirmasi nomor |
-| 7 | **Juknis penghitungan BHP frekuensi / IPFR** (Ditjen terkait) | Dasar hitung PNBP spektrum | ⬜ dari auditor |
+| 5 | **PP 58/2020** (Pengelolaan PNBP) & **PP 1/2021** (Pemeriksaan PNBP) | Payung PP yang dilaksanakan PMK 155/2021 | ⬜ opsional bundel |
+| 6 | **PMK Piutang PNBP** (bila objek berpiutang material) | Pencatatan, umur, penyisihan | ⬜ konfirmasi nomor bila perlu |
+| 7 | **KMK/PMK Izin Penggunaan Dana PNBP** (bila objek ber-izin guna) | Kesesuaian penggunaan & Pagu Penggunaan | ⬜ dari auditor |
+| 8 | **Juknis penghitungan BHP frekuensi / IPFR** (Ditjen terkait) | Variabel formula spektrum | ⬜ dari auditor bila menilai angka |
 
 ## C. Payung UU (konteks)
 
@@ -27,7 +28,8 @@ Kriteria yang **mungkin digunakan** untuk reviu pengelolaan PNBP. **⚠️ WAJIB
 
 Target & realisasi PNBP · SK penetapan tarif/PNBP terutang · daftar wajib bayar · kartu & umur piutang PNBP · bukti setor/SSBP + rekap SIMPONI · izin & realisasi penggunaan PNBP · laporan & rekonsiliasi PNBP.
 
-## Catatan pengisian
+## Catatan
 
-- Fokus Komdigi: **BHP frekuensi & IPFR** biasanya nilai material → prioritas uji ketepatan hitung & setor.
-- **Currency**: PP tarif PNBP per-K/L dan PP turunan UU 9/2018 sering diperbarui — bila status ragu, tandai "perlu konfirmasi berlaku"; jangan jadikan deviasi terkonfirmasi atas dasar tarif yang belum dipastikan (doktrin `panduan-format-umum`).
+- Fokus Komdigi: **BHP frekuensi & IPFR** biasanya nilai material → prioritas uji ketepatan hitung (formula PP 43/2023) & setor.
+- **Currency**: bila periode objek di luar rentang berlaku suatu PP/PMK → tandai "perlu konfirmasi berlaku"; jangan jadikan deviasi terkonfirmasi atas dasar tarif yang belum dipastikan (doktrin `panduan-format-umum`).
+- ⏳ Sisa validasi: **golden + fixture** reviu-pnbp perlu disahkan auditor sebelum jadi baseline resmi.

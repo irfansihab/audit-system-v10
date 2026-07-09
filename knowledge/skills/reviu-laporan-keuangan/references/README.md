@@ -4,10 +4,10 @@ Kriteria yang **mungkin digunakan** untuk reviu LK K/L. **⚠️ WAJIB dikonfirm
 
 ## A. Kriteria PRIMER (standar reviu & akuntansi)
 
-| # | Kriteria (kandidat) | Untuk apa | Status |
-|---|---------------------|-----------|--------|
-| 1 | **PMK Standar Reviu atas LK K/L** — PMK 255/PMK.09/2015 **jo. PMK 8/PMK.09/2019** | Prosedur & ruang lingkup reviu, Pernyataan Telah Direviu | ⬜ konfirmasi versi terbaru |
-| 2 | **PP 71/2010** — Standar Akuntansi Pemerintahan (SAP) + **Buletin Teknis SAP** | Basis penyajian LRA/Neraca/LO/LPE/CaLK (akrual) | ⬜ bundel PSAP relevan |
+| # | Kriteria | Untuk apa | Status |
+|---|----------|-----------|--------|
+| 1 | **PMK 255/PMK.09/2015** — Standar Reviu atas LK K/L (ganti PMK 41/PMK.09/2010) → [`01-...md`](01-pmk-255-2015-standar-reviu-lk.md) | Tahapan reviu, keyakinan terbatas, CHR/IHR/LHR + Pernyataan Telah Direviu | ✅ diringkas (cek perubahan lanjutan mis. PMK 8/PMK.09/2019 utk periode objek) |
+| 2 | **PP 71/2010** — Standar Akuntansi Pemerintahan (SAP) + **Buletin Teknis SAP** | Basis penyajian LRA/Neraca/LO/LPE/CaLK (akrual) | ⬜ bundel PSAP relevan bila perlu |
 | 3 | **PP 8/2006** — Pelaporan Keuangan & Kinerja Instansi Pemerintah | Kewajiban & komponen pelaporan | ⬜ |
 
 ## B. Kriteria PENDUKUNG (teknis/sistem)

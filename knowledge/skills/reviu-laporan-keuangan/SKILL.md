@@ -2,12 +2,13 @@
 name: reviu-laporan-keuangan
 jenis: Reviu Laporan Keuangan (LK Kementerian/Lembaga)
 format_laporan: kksa
-dasar-hukum: PMK Standar Reviu LK K/L (PMK 255/PMK.09/2015 jo. PMK 8/PMK.09/2019 — konfirmasi versi berlaku), PP 71/2010 (SAP), PP 8/2006
+dasar-hukum: PMK 255/PMK.09/2015 (Standar Reviu LK K/L, ganti PMK 41/PMK.09/2010 — cek perubahan lanjutan mis. PMK 8/PMK.09/2019 untuk periode objek); PP 71/2010 (SAP akrual); PP 8/2006
 kode-surat: PW.04.04
 tingkat-keyakinan: terbatas
-version: "0.1"
+version: "0.2"
 changelog:
-  - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT, perlu pengisian & validasi auditor senior.
+  - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT.
+  - v0.2 (2026-07-09): **Standar reviu inti dikonfirmasi & diringkas** — PMK 255/PMK.09/2015 (tahapan reviu, keyakinan terbatas, CHR/IHR/LHR + Pernyataan Telah Direviu) ke `references/01-...md`. Kriteria akuntansi pendukung (SAKTI/BAS/Kebijakan Akuntansi/Penyusunan LK) masih menunggu konfirmasi nomor/versi auditor.
 ---
 
 # Skill: Reviu Laporan Keuangan (LK K/L)
