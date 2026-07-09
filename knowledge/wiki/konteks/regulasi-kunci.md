@@ -4,7 +4,7 @@ kategori: konteks
 judul: "Regulasi & Pasal Kunci yang Sering Dirujuk"
 sumber: "Sintesis pattern temuan + LHR Inspektorat II"
 tanggal_update: "2026-07-09"
-tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, pipk, pmk-17-2019, pmk-100-2025, kebijakan-akuntansi, sitasi, anti-halusinasi]
+tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, pipk, pmk-17-2019, pmk-100-2025, kebijakan-akuntansi, sakti, bas, pmk-214-2013, pmk-232-2022, sitasi, anti-halusinasi]
 ---
 
 # Regulasi & Pasal Kunci — Cheat Sheet Anti-Halusinasi
@@ -198,6 +198,16 @@ Berlaku **sejak LK TA 2025** (periode < TA2025 → pakai PMK 231/2022 jo. 57/202
 | **Tiap pos** | Mengatur **Pengakuan · Pengukuran · Penyajian · Pengungkapan · Perlakuan Khusus**. |
 
 Sitasi deviasi pos LK: **"PMK 100/2025 (kebijakan akuntansi <pos>) + PP 71/2010 (PSAP terkait)"**.
+
+### Sistem, klasifikasi & penyusunan LK (pendukung)
+
+| Regulasi | Untuk | Substansi |
+|---|---|---|
+| **PMK 232/PMK.05/2022** | Sistem Akuntansi & Pelaporan Keuangan Instansi | Unit akuntansi **UAKPA→UAPPA-W→UAPPA-E1→UAPA**; definisi & kewajiban **rekonsiliasi**; penyampaian LK semester I & tahunan. |
+| **PMK 214/PMK.05/2013 jo. PMK 42/2025** | Bagan Akun Standar (BAS) | BAS = **12 segmen** (Satker · KPPN · **Akun** · Program · Output · Dana · Bank · Kewenangan · Lokasi · Anggaran · Antar Entitas · Cadangan). PMK 42/2025 = sinergi BAS pusat–daerah (PP 1/2024). |
+| **PMK 171/PMK.05/2021 jo. PMK 158/2023** | Sistem SAKTI | Sistem sumber angka LK (integrasi perencanaan-pelaksanaan-pertanggungjawaban APBN); rekonsiliasi **SAKTI ↔ SPAN**. |
+
+Uji rekonsiliasi: **SAKTI ↔ SPAN nihil selisih** (PMK 171/2021 jo. 158/2023 + PMK 232/2022). Klasifikasi akun → **Segmen Akun BAS (PMK 214/2013)**.
 
 ---
 

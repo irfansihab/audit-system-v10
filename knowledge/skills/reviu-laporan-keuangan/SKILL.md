@@ -2,14 +2,15 @@
 name: reviu-laporan-keuangan
 jenis: Reviu Laporan Keuangan (LK Kementerian/Lembaga)
 format_laporan: kksa
-dasar-hukum: PMK 255/PMK.09/2015 (Standar Reviu LK K/L, ganti PMK 41/PMK.09/2010 — cek perubahan lanjutan mis. PMK 8/PMK.09/2019 untuk periode objek); PP 71/2010 (SAP akrual); PMK 100/2025 (Kebijakan Akuntansi Pempus, ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — berlaku LK TA 2025); PP 8/2006
+dasar-hukum: PMK 255/PMK.09/2015 (Standar Reviu LK K/L, ganti PMK 41/PMK.09/2010 — cek perubahan lanjutan mis. PMK 8/PMK.09/2019 untuk periode objek); PP 71/2010 (SAP akrual); PMK 100/2025 (Kebijakan Akuntansi Pempus, ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — berlaku LK TA 2025); PMK 232/PMK.05/2022 (Sistem Akuntansi & Pelaporan Keuangan Instansi); PMK 214/PMK.05/2013 jo. PMK 42/2025 (Bagan Akun Standar); PMK 171/PMK.05/2021 jo. PMK 158/2023 (Sistem SAKTI); PP 8/2006
 kode-surat: PW.04.04
 tingkat-keyakinan: terbatas
-version: "0.3"
+version: "0.4"
 changelog:
   - v0.1 (2026-07-07): **Rumah skill (skeleton)** — kerangka engine-ready + daftar kriteria kandidat. Aspek/checklist substantif masih DRAFT.
   - v0.2 (2026-07-09): **Standar reviu inti dikonfirmasi & diringkas** — PMK 255/PMK.09/2015 (tahapan reviu, keyakinan terbatas, CHR/IHR/LHR + Pernyataan Telah Direviu) ke `references/01-...md`.
-  - v0.3 (2026-07-09): **Kebijakan Akuntansi dikonfirmasi & dibundel** — PMK 100/2025 (Kebijakan Akuntansi Pempus, ganti PMK 231/2022 jo. 57/2023; pengakuan/pengukuran/penyajian per pos LK, berlaku TA 2025) → `references/02-...md` + PDF. Sisa pendukung (SAKTI/BAS/Penyusunan LK) menunggu konfirmasi nomor auditor.
+  - v0.3 (2026-07-09): **Kebijakan Akuntansi dikonfirmasi & dibundel** — PMK 100/2025 (ganti PMK 231/2022 jo. 57/2023; per pos LK, berlaku TA 2025) → `references/02-...md` + PDF.
+  - v0.4 (2026-07-09): **Kriteria pendukung LENGKAP** — PMK 232/2022 (Sistem Akuntansi & Pelaporan Instansi), PMK 214/2013 jo. 42/2025 (BAS, 12 segmen), PMK 171/2021 jo. 158/2023 (SAKTI) diringkas ke `references/03-05` (+PDF BAS/Sinergi/SAKTI). Aspek diikat ke nomor spesifik; caveat DRAFT dihapus. Kriteria inti reviu LK LENGKAP.
 ---
 
 # Skill: Reviu Laporan Keuangan (LK K/L)
@@ -28,17 +29,17 @@ Kamu adalah reviewer APIP (bukan auditor penuh) yang melakukan **reviu atas Lapo
 
 Objek reviu: **komponen LK** (LRA, Neraca, LO, LPE, CaLK; LAK/LPSAL untuk BUN) beserta **data dukung**: rekonsiliasi (SAKTI/SAIBA ↔ SPAN, internal, BMN/SIMAK-BMN, kas), Bagan Akun Standar, kertas kerja penyusunan, LK periode sebelumnya, dan LHP BPK/reviu terdahulu. Fakta ditarik dari digest dokumen yang diunggah; buka halaman sumber hanya untuk verifikasi angka/kutipan. Keyakinan **terbatas**.
 
-## Aspek & Kriteria Reviu (DRAFT — perlu pengisian & validasi auditor)
+## Aspek & Kriteria Reviu
 
-> Kerangka aspek di bawah adalah **rancangan awal**; kriteria pasti (nomor PMK/pasal) **wajib dikonfirmasi status berlakunya** oleh auditor sebelum dijadikan acuan (lihat Referensi). Setiap aspek dinilai per elemen: **Sesuai / Sesuai dengan catatan / Tidak sesuai**.
+> Kriteria inti sudah **dibundel & bernomor** di [`references/`](references/); kutip **presisi** (nomor + pasal/PSAP). Untuk periode **< TA 2025** pakai PMK 231/2022 jo. 57/2023 (bukan PMK 100/2025). Setiap aspek dinilai per elemen: **Sesuai / Sesuai dengan catatan / Tidak sesuai**.
 
-| # | Aspek | Yang dinilai | Kriteria acuan (kandidat) |
+| # | Aspek | Yang dinilai | Kriteria acuan (bernomor) |
 |---|-------|--------------|---------------------------|
-| 1 | **Kesesuaian penyajian dengan SAP** | Struktur & pos LRA/Neraca/LO/LPE sesuai basis akrual | PP 71/2010 (SAP) + Buletin Teknis SAP |
-| 2 | **Kelengkapan & keandalan CaLK** | Pengungkapan wajib (kebijakan akuntansi, rincian pos material, kejadian penting) | PP 71/2010 (PSAP CaLK) |
-| 3 | **Rekonsiliasi** | SAKTI/SAIBA ↔ SPAN; internal; BMN (SIMAK); kas — tanpa selisih/suspend tak terjelaskan | PMK Sistem Akuntansi (SAKTI) + PMK penyusunan LK |
-| 4 | **Akurasi saldo & klasifikasi akun** | Ketepatan akun (BAS), tidak ada suspend/salah klasifikasi material | PMK Bagan Akun Standar + Kebijakan Akuntansi Pempus |
-| 5 | **Kepatuhan proses penyusunan** | Jadwal, reviu berjenjang, Pernyataan Telah Direviu | PMK Standar Reviu LK K/L |
+| 1 | **Kesesuaian penyajian dengan SAP** | Struktur & pos LRA/Neraca/LO/LPE sesuai basis akrual | **PP 71/2010** (SAP, PSAP) + Buletin Teknis |
+| 2 | **Kelengkapan & keandalan CaLK** | Pengungkapan wajib (kebijakan akuntansi, rincian pos material, kejadian penting) | **PP 71/2010** (PSAP CaLK) + **PMK 100/2025** (kebijakan pos) |
+| 3 | **Rekonsiliasi** | SAKTI ↔ SPAN; internal; BMN (SIMAK); kas — tanpa selisih/suspend tak terjelaskan | **PMK 171/2021 jo. 158/2023** (SAKTI) + **PMK 232/2022** (kewajiban rekonsiliasi) |
+| 4 | **Akurasi saldo & klasifikasi akun** | Ketepatan akun (BAS), tidak ada suspend/salah klasifikasi material | **PMK 214/2013 jo. 42/2025** (BAS) + **PMK 100/2025** (Kebijakan Akuntansi) |
+| 5 | **Kepatuhan proses penyusunan** | Jenjang unit akuntansi, jadwal, reviu berjenjang, Pernyataan Telah Direviu | **PMK 232/2022** (penyusunan/penyampaian) + **PMK 255/2015** (standar reviu) |
 | 6 | **Tindak lanjut temuan berdampak LK** | Koreksi atas temuan BPK/reviu terdahulu yang memengaruhi saldo/penyajian | LHP BPK + status TLHP |
 
 ### Checklist Reviu LK (per aspek — wajib ditelusuri; nilai per elemen: Sesuai / Sesuai dgn catatan / Tidak sesuai)
@@ -69,14 +70,20 @@ Catatan reviu direkam **K/K/S/A** — **Kondisi** (fakta: pos/angka/dokumen + ru
 
 Nota Dinas → Cover → Pendahuluan (dasar, tujuan, ruang lingkup, metodologi) → Hasil Reviu (per aspek) → Simpulan (keyakinan terbatas) → Saran/Rekomendasi → **Pernyataan Telah Direviu** (lampiran). Ikuti `panduan-format-umum/PANDUAN.md`.
 
-## Referensi (kriteria untuk dibundel — lihat `references/README.md`)
+## Referensi (kriteria dibundel — lihat [`references/`](references/))
 
-Daftar kriteria kandidat + status "perlu konfirmasi berlaku" ada di [`references/README.md`](references/README.md). Bundel dokumen kriteria di `references/` setelah divalidasi auditor.
+Kriteria inti **dibundel & bernomor**:
+- [`01-pmk-255-2015-standar-reviu-lk.md`](references/01-pmk-255-2015-standar-reviu-lk.md) — standar & tahapan reviu, PTD.
+- [`02-pmk-100-2025-kebijakan-akuntansi.md`](references/02-pmk-100-2025-kebijakan-akuntansi.md) (+ PDF) — kebijakan akuntansi per pos (TA 2025; <2025 = PMK 231/2022 jo. 57/2023).
+- [`03-pmk-232-2022-sistem-akuntansi-pelaporan-instansi.md`](references/03-pmk-232-2022-sistem-akuntansi-pelaporan-instansi.md) — unit akuntansi, rekonsiliasi, penyusunan/penyampaian LK.
+- [`04-pmk-214-2013-jo-42-2025-bagan-akun-standar.md`](references/04-pmk-214-2013-jo-42-2025-bagan-akun-standar.md) (+ PDF) — BAS 12 segmen + sinergi pusat-daerah.
+- [`05-pmk-171-2021-jo-158-2023-sakti.md`](references/05-pmk-171-2021-jo-158-2023-sakti.md) (+ PDF) — sistem SAKTI (sumber angka LK, rekonsiliasi ↔ SPAN).
+- [`README.md`](references/README.md) — daftar lengkap + status. PSAP/Bultek SAP dibundel bila diperlukan auditor.
 
 ## Batasan
 
 - Reviu = **keyakinan terbatas**, bukan audit/opini; tidak menghitung kerugian negara.
-- Kriteria akuntansi bersifat teknis & sering diperbarui → **konfirmasi versi PMK/Bultek terbaru** sebelum menilai; kriteria acuan tak tersedia → catatan/"tidak cukup data", bukan temuan.
+- Kriteria akuntansi teknis & dapat diperbarui → **pakai versi yang berlaku untuk periode/TA objek** (mis. kebijakan akuntansi TA<2025 = PMK 231/2022 jo. 57/2023); bila di luar rentang → catatan/"tidak cukup data", bukan temuan.
 
 ## Posisi dalam Keluarga Skill
 

@@ -1,6 +1,6 @@
 # References — Reviu Laporan Keuangan (LK K/L)
 
-Kriteria yang **mungkin digunakan** untuk reviu LK K/L. **⚠️ WAJIB dikonfirmasi auditor**: nomor & status berlaku tiap regulasi (banyak PMK akuntansi diperbarui berkala). Bundel dokumen kriteria (`.md`/PDF) di folder ini setelah divalidasi; kutip **presisi** (nomor + pasal/PSAP) saat menilai.
+Kriteria reviu LK K/L. **Kriteria inti kini DIBUNDEL & BERNOMOR** (standar reviu + SAP + kebijakan akuntansi + sistem/BAS/SAKTI); kutip **presisi** (nomor + pasal/PSAP) saat menilai. **Currency**: pilih versi yang berlaku untuk **periode/TA objek** (mis. kebijakan akuntansi TA<2025 = PMK 231/2022 jo. 57/2023, bukan PMK 100/2025).
 
 ## A. Kriteria PRIMER (standar reviu & akuntansi)
 
@@ -14,10 +14,10 @@ Kriteria yang **mungkin digunakan** untuk reviu LK K/L. **⚠️ WAJIB dikonfirm
 
 | # | Kriteria (kandidat) | Untuk apa | Status |
 |---|---------------------|-----------|--------|
-| 4 | **PMK Sistem Akuntansi & Pelaporan Keuangan Instansi (SAKTI)** — mis. PMK 225/PMK.05/2019 jo. perubahan | Rekonsiliasi SAKTI/SAIBA ↔ SPAN | ⬜ konfirmasi nomor/versi |
-| 5 | **PMK Bagan Akun Standar (BAS)** | Klasifikasi & kodefikasi akun | ⬜ konfirmasi nomor |
+| 4 | **PMK 171/PMK.05/2021 jo. PMK 158/2023** — Pelaksanaan Sistem SAKTI → [`05-...md`](05-pmk-171-2021-jo-158-2023-sakti.md) + [`pmk-158-2023-sakti.pdf`](pmk-158-2023-sakti.pdf) | Sumber angka LK; rekonsiliasi SAKTI ↔ SPAN | ✅ (induk 171/2021 dari JDIH) |
+| 5 | **PMK 214/PMK.05/2013 jo. PMK 42/2025** — Bagan Akun Standar → [`04-...md`](04-pmk-214-2013-jo-42-2025-bagan-akun-standar.md) + [`pmk-214-2013-bagan-akun-standar.pdf`](pmk-214-2013-bagan-akun-standar.pdf) · [`pmk-42-2025-sinergi-bas.pdf`](pmk-42-2025-sinergi-bas.pdf) | Klasifikasi & kodefikasi akun (12 segmen) | ✅ (Lampiran segmen 214 dari JDIH) |
 | 6 | **PMK 100/2025** — Kebijakan Akuntansi Pemerintah Pusat (ganti PMK 231/2022 jo. 57/2023; berlaku TA 2025) → [`02-...md`](02-pmk-100-2025-kebijakan-akuntansi.md) + [`pmk-100-2025-kebijakan-akuntansi.pdf`](pmk-100-2025-kebijakan-akuntansi.pdf) | Pengakuan/pengukuran/penyajian/pengungkapan per pos LK | ✅ (periode <TA2025 pakai PMK 231/2022 jo. 57/2023) |
-| 7 | **PMK Penyusunan & Penyampaian LK K/L** — mis. PMK 222/PMK.05/2016 jo. perubahan | Jadwal, format, rekonsiliasi BMN | ⬜ konfirmasi nomor/versi |
+| 7 | **PMK 232/PMK.05/2022** — Sistem Akuntansi & Pelaporan Keuangan Instansi → [`03-...md`](03-pmk-232-2022-sistem-akuntansi-pelaporan-instansi.md) | Unit akuntansi (UAKPA→UAPA), rekonsiliasi, penyusunan/penyampaian LK | ✅ (PDF induk ±12MB dari JDIH) |
 
 ## C. Payung UU (konteks)
 
