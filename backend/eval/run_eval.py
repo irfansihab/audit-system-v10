@@ -23,6 +23,32 @@ from eval import deterministic
 EVAL_DIR = Path(__file__).parent
 GOLDEN_DIR = EVAL_DIR / "golden"
 OUT_DIR = EVAL_DIR / "out"
+KNOWLEDGE_DIR = EVAL_DIR.parent.parent / "knowledge"
+_KRITERIA_CTX_CAP = 30000  # char, agar prompt judge tak membengkak
+
+
+def _load_kriteria_context(skill: str | None) -> str:
+    """Ringkasan kriteria yang BERLAKU untuk skill (references/*.md digest +
+    wiki regulasi-kunci) agar judge dapat memverifikasi sitasi pasal.
+    Sama dengan yang diakses agen (read_skill_reference + read_preload_context)."""
+    if not skill:
+        return ""
+    parts: list[str] = []
+    ref_dir = KNOWLEDGE_DIR / "skills" / skill / "references"
+    if ref_dir.is_dir():
+        for md in sorted(ref_dir.glob("*.md")):
+            try:
+                parts.append(f"# [{skill}/references/{md.name}]\n{md.read_text()}")
+            except OSError:
+                continue
+    wiki = KNOWLEDGE_DIR / "wiki" / "konteks" / "regulasi-kunci.md"
+    if wiki.is_file():
+        try:
+            parts.append(f"# [wiki/konteks/regulasi-kunci.md]\n{wiki.read_text()}")
+        except OSError:
+            pass
+    ctx = "\n\n".join(parts).strip()
+    return ctx[:_KRITERIA_CTX_CAP]
 
 
 def _data_root() -> Path:
@@ -84,7 +110,8 @@ def score_case(case: dict, use_judge: bool) -> dict:
 
     try:
         is_audit = deterministic.is_audit_skill(case.get("skill"))
-        per_temuan = judge.judge_per_temuan(temuan, is_audit=is_audit)
+        kriteria_ctx = _load_kriteria_context(case.get("skill"))
+        per_temuan = judge.judge_per_temuan(temuan, is_audit=is_audit, kriteria_context=kriteria_ctx)
         expected = case.get("expected_key_issues", [])
         recall = judge.judge_recall(expected, temuan) if expected else []
     except anthropic.APIStatusError as e:

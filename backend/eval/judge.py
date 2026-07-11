@@ -66,7 +66,7 @@ _PER_TEMUAN_SCHEMA = {
     "required": ["scores"],
 }
 
-def _per_temuan_system(is_audit: bool) -> str:
+def _per_temuan_system(is_audit: bool, kriteria_context: str = "") -> str:
     if is_audit:
         unsur_rule = ("- unsur_lengkap: kondisi/kriteria/SEBAB/akibat semua terisi substantif "
                       "(penugasan AUDIT wajib menggali sebab/akar penyebab).")
@@ -74,19 +74,39 @@ def _per_temuan_system(is_audit: bool) -> str:
         unsur_rule = ("- unsur_lengkap: kondisi/kriteria/akibat terisi substantif. "
                       "PENTING: ini penugasan REVIU/EVALUASI/PEMANTAUAN — TIDAK menggali penyebab; "
                       "'sebab' yang kosong itu BENAR dan TIDAK boleh menurunkan skor.")
+    if kriteria_context:
+        # Judge tanpa akses teks regulasi cenderung meng-cap sitasi sub-pasal
+        # granular ke 1 ("tidak dapat diverifikasi"). Suplai ringkasan kriteria
+        # yang BERLAKU agar sitasi bisa diverifikasi, bukan diragukan buta.
+        kriteria_rule = (
+            "- kriteria_tepat: VERIFIKASI sitasi terhadap REFERENSI KRITERIA di bawah. "
+            "Pasal/nomor yang dikutip agen COCOK & KONSISTEN dengan referensi → 2 "
+            "(JANGAN turunkan hanya karena sitasi spesifik/granular — presisi itu benar). "
+            "Regulasi/pasal TIDAK ada di referensi & tak dapat dipastikan → maksimal 1. "
+            "BERTENTANGAN dgn referensi / salah nomor / salah subjek pasal → 0. "
+            "Jangan lagi menilai 'tidak dapat diverifikasi' untuk pasal yang ADA di referensi ini.")
+        ref_block = f"\n\n=== REFERENSI KRITERIA (regulasi berlaku — untuk verifikasi sitasi) ===\n{kriteria_context}\n=== akhir referensi ===\n"
+    else:
+        kriteria_rule = "- kriteria_tepat: regulasi yang dikutip nyata, pasal benar, relevan dengan kondisi. Regulasi karangan/salah → 0."
+        ref_block = ""
     return f"""Anda auditor senior APIP Inspektorat yang menilai mutu temuan hasil pengawasan (Kertas Kerja Pengawasan).
 Nilai SETIAP temuan secara adversarial — default skeptis. Pakai rubrik (skor 0/1/2 per aspek):
 - grounded: dokumen_sumber ada (file+halaman+kutipan) DAN kutipan benar-benar mendukung 'kondisi' (angka cocok). Bila tak ber-bukti → 0.
-- kriteria_tepat: regulasi yang dikutip nyata, pasal benar, relevan dengan kondisi. Regulasi karangan/salah → 0.
+{kriteria_rule}
 {unsur_rule}
 - narasi: bahasa jelas, formal, angka konsisten, tidak ambigu.
 PENTING: JANGAN menilai rekomendasi — di tahap KKP temuan TIDAK memuat rekomendasi (itu ranah LHR/Ketua Tim).
 Nilai hanya 4 aspek di atas (grounded/kriteria_tepat/unsur_lengkap/narasi). Verdict dihitung otomatis dari skor, jangan kirim verdict.
-Jangan menilai murah hati — tujuan menemukan temuan ngawur, bukan meloloskannya."""
+Jangan menilai murah hati — tujuan menemukan temuan ngawur, bukan meloloskannya.{ref_block}"""
 
 
-def judge_per_temuan(temuan_list: list[dict], is_audit: bool = False) -> list[dict]:
-    """Skor tiap temuan. Kembalikan list dict skor (urut sesuai input)."""
+def judge_per_temuan(temuan_list: list[dict], is_audit: bool = False, kriteria_context: str = "") -> list[dict]:
+    """Skor tiap temuan. Kembalikan list dict skor (urut sesuai input).
+
+    kriteria_context: ringkasan regulasi yang berlaku (references skill + wiki
+    regulasi-kunci) agar judge dapat MEMVERIFIKASI sitasi pasal alih-alih
+    menandainya 'tidak dapat diverifikasi'. Kosong = perilaku lama (skeptis buta).
+    """
     payload = []
     for t in temuan_list:
         payload.append({
@@ -100,7 +120,7 @@ def judge_per_temuan(temuan_list: list[dict], is_audit: bool = False) -> list[di
     user = ("Nilai temuan berikut (JSON array; index dimulai 0). "
             "Kembalikan satu objek skor per temuan via tool.\n\n"
             + json.dumps(payload, ensure_ascii=False, indent=2))
-    out = _call_tool(_per_temuan_system(is_audit), user, "rekam_skor_temuan", _PER_TEMUAN_SCHEMA,
+    out = _call_tool(_per_temuan_system(is_audit, kriteria_context), user, "rekam_skor_temuan", _PER_TEMUAN_SCHEMA,
                      max_tokens=400 + 220 * len(payload))
     scores = out.get("scores", [])
     scores.sort(key=lambda s: s.get("index", 0))
