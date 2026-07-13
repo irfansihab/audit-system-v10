@@ -9,6 +9,7 @@ Index pattern temuan yang berlaku untuk skill `reviu-keuangan`. Tambahkan patter
 | RK-67 | PNBP Overstating — Kesalahan Pencatatan di Sistem SAKTI | RK-AKURASI | MEDIUM-HIGH | PMK 107/2024 Pasal 63 (Akurasi Laporan Keuangan) |
 | RK-68 | Piutang PNBP — Lag Sinkronisasi Antara Sistem Manajemen Piutang & SAKTI | RK-SISTEM | HIGH | PMK 107/2024 Pasal 61 (Reconciliation) + PP 60/2008 |
 | RK-69 | Tagihan OM — Keterbatasan Anggaran & Payment Timing Delay | RK-LIKUIDITAS | MEDIUM | PMK Pelaksanaan Anggaran + kontrak SLA |
+| **RK-70** | **Cross-DIPA Budget Transfer — Kontrol & Dokumentasi Approval Lemah** | **RK-KONTROL** | **HIGH** | **PP 60/2008 + PMK 107/2024** |
 
 ## Kategori yang dipakai
 

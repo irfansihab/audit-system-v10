@@ -52,13 +52,13 @@ PMK 107/2024 Pasal 63 — Laporan Keuangan wajib disajikan dengan akurat, dapat 
   "kondisi": "PNBP {jenis} dicatat di SAKTI Rp{recorded}, namun realisasi kas hanya Rp{actual}. Gap Rp{X} (overstating) disebabkan {penyebab: duplikat entry / posting periode salah / entry ke rekening yang salah}. Terdapat {n} posting anomali pada tanggal {tgl}.",
   "kriteria": "PMK 107/2024 Pasal 63 — Laporan Keuangan wajib akurat & dapat diverifikasi; PP 60/2008 Pasal 4 — SPI wajib identifikasi & evaluasi penyimpangan.",
   "akibat": "LK overstated; temuan BPK potential; keputusan manajemen berbasis data salah; SPI tidak efektif mendeteksi anomali.",
-  "dokumen_sumber": [{"file": "SK-156 Konfirmasi TLHP Itjen II", "hal": "X", "kutipan": "PNBP PSrE overstated Rp62.2M ..."}]
+  "dokumen_sumber": [{"file": "ND-156 Konfirmasi TLHP Itjen II", "hal": "X", "kutipan": "PNBP PSrE overstated Rp62.2M ..."}]
 }
 ```
 
 ## Contoh Kasus Historis
 
-- **Konfirmasi TLHP Inspektorat Jenderal (SK-156, 05 Juni 2026)** — PNBP PSrE (Penerimaan Sumber Energi) dicatat di laporan Rp{X}, namun setelah reconciliation realisasi kas hanya Rp{Y}, gap **Rp62.2M overstating**. Penyebab: duplikat entry di SAKTI periode Mei–Juni 2026. Lihat [[nota-dinas-ir2-juni-2026]] SK-156, [[pemantauan-tindak-lanjut/PTL-48-rekomendasi-outstanding-bpk]].
+- **Konfirmasi TLHP Inspektorat Jenderal (ND-156, 05 Juni 2026)** — PNBP PSrE (Penerimaan Sumber Energi) dicatat di laporan Rp{X}, namun setelah reconciliation realisasi kas hanya Rp{Y}, gap **Rp62.2M overstating**. Penyebab: duplikat entry di SAKTI periode Mei–Juni 2026. Lihat [[nota-dinas-ir2-juni-2026]] ND-156, [[pemantauan-tindak-lanjut/PTL-48-rekomendasi-outstanding-bpk]].
 
 ## Catatan
 

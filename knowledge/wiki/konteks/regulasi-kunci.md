@@ -3,8 +3,8 @@ id: KONTEKS-REGULASI
 kategori: konteks
 judul: "Regulasi & Pasal Kunci yang Sering Dirujuk"
 sumber: "Sintesis pattern temuan + LHR Inspektorat II"
-tanggal_update: "2026-07-09"
-tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, pipk, pmk-17-2019, pmk-100-2025, kebijakan-akuntansi, sakti, bas, pmk-214-2013, pmk-232-2022, sitasi, anti-halusinasi]
+tanggal_update: "2026-07-10"
+tags: [regulasi, perpres-16, perpres-46-2025, pmk-107, pnbp, pmk-206-2021, bhp-telekomunikasi, uu-pdp, permenkominfo-2-2024, igrs, sakip, reformasi-birokrasi, lpu, pmk-255-2015, reviu-lk, pipk, sitasi, anti-halusinasi]
 ---
 
 # Regulasi & Pasal Kunci — Cheat Sheet Anti-Halusinasi
@@ -30,17 +30,22 @@ tags: [regulasi, perpres-16, pmk-107, pnbp, pp-43-2023, pmk-255-2015, reviu-lk, 
 | **Pasal 22** | Pengumuman RUP | "RUP wajib diumumkan paling lambat 31 Maret TA berjalan untuk paket APBN." |
 | **Pasal 26 ayat (5)** | HPS — sumber harga | "Penyusunan HPS didasarkan pada hasil survei pasar... mengumpulkan informasi harga dari sekurang-kurangnya 2 (dua) penyedia atau sumber informasi harga lainnya." |
 
-**Catatan**: Perpres 16/2018 telah diubah dengan Perpres 12/2021 — selalu rujuk gabungan: "Perpres 16/2018 jo. Perpres 12/2021 Pasal XX".
+**Catatan**: Perpres 16/2018 telah diubah dengan Perpres 12/2021 — rujuk gabungan "Perpres 16/2018 jo. Perpres 12/2021 Pasal XX". **Perpres 16/2018 jo. 12/2021 TETAP dasar utama PBJ**; **Perpres 46/2025 hanya mengubah SEBAGIAN pasal** (bukan seluruhnya) — lihat catatan reconcile di bawah.
 
 ---
 
-### Perpres 46/2025 (Pengadaan Tahap Transisi/Mendesak)
+### Perpres 46/2025 (perubahan SEBAGIAN Perpres 16/2018)
+
+> **Reconcile (penting, anti-halusinasi):** Perpres 46/2025 **hanya menggantikan/mengubah SEBAGIAN pasal** Perpres 16/2018 jo. 12/2021 — **bukan** menggantikan seluruhnya. Maka:
+> - Untuk pasal umum yang **belum** diubah (mis. prinsip Ps 6, perencanaan Ps 18, RUP Ps 22, HPS Ps 26(5)) → tetap rujuk **Perpres 16/2018 jo. 12/2021**.
+> - Untuk pasal yang **telah diubah** Perpres 46/2025 (mis. Pasal 9(1)f² kondisi khusus/kontrak transisi) → rujuk **Perpres 46/2025**.
+> - **Bila ragu** apakah suatu pasal sudah diubah Perpres 46/2025 → **verifikasi ke auditor**; jangan asumsikan "seluruhnya diganti".
 
 | Pasal | Topik | Kutipan inti |
 |---|---|---|
 | **Pasal 9 ayat (1) huruf f angka 2** | Pekerjaan berjalan sebelum anggaran | Membenarkan pekerjaan yang sudah berjalan sebelum anggaran ditetapkan dapat diproses pembayarannya sepanjang justifikasi terpenuhi (kasus DIPA terlambat). |
 
-**Konteks**: Dasar yuridis untuk kontrak yang berjalan tanpa kontrak akibat keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[RP-09]].
+**Konteks**: Dasar yuridis untuk kontrak yang berjalan tanpa kontrak akibat keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[RP-09]], [[lhr-kontrak-aptika-2025]].
 
 ---
 
@@ -93,7 +98,14 @@ Pattern terkait: [[RKA-01]], [[RKA-02]], [[RKA-03]], [[RKA-04]], [[RKA-05]], [[R
 
 ### UU 27/2022 (Perlindungan Data Pribadi / UU PDP)
 
-Substansi: kewajiban PSE melindungi data pribadi pengguna; sanksi administratif + pidana.
+| Pasal | Topik | Kutipan inti |
+|---|---|---|
+| **Pasal 46** | Notifikasi kebocoran | Kebocoran data pribadi wajib diberitahukan ke subjek data + Lembaga PDP **paling lambat 3×24 jam / 14 hari kerja** (cek teks) — dasar deadline pelanggaran IGRS. |
+| **Pasal 35** | Kewajiban teknis | Pengendali data wajib melindungi & memastikan keamanan (enkripsi, kontrol akses). |
+| **Pasal 4** | Data pribadi spesifik/sensitif | Kategori data sensitif yang wajib pengamanan lebih. |
+| **Pasal 57–67** | Sanksi | Administratif (denda **s.d. 2% pendapatan tahunan**) + pidana (mis. maks 6 tahun) — kutip presisi dari teks. |
+
+Substansi umum: kewajiban PSE/pengendali data melindungi data pengguna. **Serves: audit-kinerja IGRS / Wasdig.**
 
 ---
 
@@ -103,9 +115,27 @@ Substansi: penyelenggaraan sistem elektronik, transaksi elektronik, ranah pengaw
 
 ---
 
-### Permenkominfo 2/2024 (Tata Kelola Konten Negatif)
+### PP 71/2019 (Penyelenggaraan Sistem & Transaksi Elektronik / PSTE)
 
-Substansi: mekanisme pemblokiran konten, koordinasi PSE, peran TKPPSE.
+| Pasal | Topik |
+|---|---|
+| **Pasal 12** | PSE wajib menjaga **kerahasiaan, keutuhan, ketersediaan** data — companion UU PDP dalam analisis kebocoran data IGRS. |
+
+---
+
+### Permenkominfo 2/2024 (Tata Kelola Konten Negatif / IGRS klasifikasi gim)
+
+| Pasal | Topik | Kutipan inti |
+|---|---|---|
+| **Pasal 9–13** | Kriteria & mekanisme rating | Kriteria konten per rating (3+/7+/13+/15+/18+/RC); **mekanisme 2 tahap** (self-assessment penerbit → uji kesesuaian oleh penguji yang ditetapkan Menteri; hanya tahap 2 = rating resmi); kategori **RC (Refused Classification)**; keberatan diproses **7 hari** dengan ahli. |
+
+Substansi umum: pemblokiran konten, koordinasi PSE, peran TKPPSE. Operasionalisasi **Perpres 19/2024**. **Serves: audit-kinerja-klasifikasi-gim / IGRS.**
+
+---
+
+### Perpres 19/2024 (Percepatan Pengembangan Industri Gim Nasional)
+
+Substansi: mandat pembangunan sistem **IGRS** (Indonesia Game Rating System) — **parent** dari Permenkominfo 2/2024. **Serves: audit-kinerja IGRS.**
 
 ---
 
@@ -170,6 +200,18 @@ PMK 58/2023 memperkuat: perencanaan, penggunaan dana, optimalisasi piutang, peng
 
 Melaksanakan **Pasal 25(2) PP 43/2023**. **Pasal 2:** jenis yang dapat dikenakan tarif nol (ISR, sertifikat/pengujian alat telekomunikasi, pelatihan fungsional, pendidikan tinggi, dll) — hanya sah bila memenuhi **persyaratan & tata cara**. Tarif nol tanpa dasar → potensi kurang pungut.
 
+### Koreksi & Pengembalian Lebih Bayar PNBP + BHP Telekomunikasi (dirujuk banyak LHR koreksi PNBP)
+
+| Regulasi + pasal | Kutipan inti / kriteria | Dipakai untuk |
+|---|---|---|
+| **PMK 206/PMK.02/2021** — Ps 68(2)c · Ps 74(2) | Pengembalian lebih bayar via **pemindahbukuan** hanya bila WB **tidak** berkewajiban PNBP sejenis berulang (pemegang izin telko yang bayar BHP tiap tahun **tidak** memenuhi syarat → kompensasi, bukan tunai). Pengelola wajib meneliti **substansi** perhitungan, bukan sekadar kelengkapan dokumen. | reviu-pnbp — dasar Setuju/Tolak koreksi (8+ LHR) |
+| **PMK 155/PMK.02/2021 — Pasal 91(1)** | **Koreksi substantif = perbaikan kesalahan matematis/formula SAJA** (bukan tafsir/keberatan) — kriteria pembeda "Setuju" (XenithIG/SSU) vs "Tolak" (Atlasat/Dalnet). | reviu-pnbp |
+| **PM Kominfo 5/2021 — Pasal 205(3)** | Lebih bayar pokok **BHP Telekomunikasi** diperhitungkan sebagai **pembayaran di muka tahun berikutnya** (kompensasi, bukan pengembalian tunai). | reviu-pnbp |
+| **UU 36/1999 (Telekomunikasi)** | Definisi luas "telekomunikasi" → layanan baru (SIP Trunk, SMS Notifikasi) tetap jasa telko **wajib BHP + Kontribusi KPU/USO**. | reviu-pnbp |
+| **PM Kominfo 13/2019 · Perdirjen PPI 1/2021 & 1/2023** | Definisi teleponi dasar / jasa telekomunikasi — basis sengketa objek BHP (SIP Trunk/SMS). | reviu-pnbp |
+
+**Catatan currency (LPU):** **Kepmen LPU 442/2024 melengkapi/menggantikan Kepmen 486/2023** (supersession parsial) — untuk TA 2025+ rujuk 442/2024; alias nama K/L "Kominfo/Komdigi" untuk regulasi yang sama.
+
 ---
 
 ## Reviu Laporan Keuangan K/L
@@ -230,6 +272,32 @@ Reviu PIPK = keyakinan terbatas; kelemahan material → dapat memicu pendalaman 
 
 ---
 
+## Evaluasi AKIP/SAKIP & Reformasi Birokrasi
+
+### Evaluasi SAKIP/AKIP
+
+| Regulasi | Substansi |
+|---|---|
+| **PermenPAN-RB 88/2021** | Pedoman Evaluasi AKIP — 4 komponen (bobot **30/30/15/25**), 12 sub-komponen, **79 kriteria**, predikat **AA–E**. Instrumen LKE. |
+| **Perpres 29/2014** | Sistem Akuntabilitas Kinerja Instansi Pemerintah (SAKIP). |
+| **PP 8/2006** | Pelaporan Keuangan & Kinerja Instansi Pemerintah. |
+
+**Serves: evaluasi-sakip.** (Selaras skill `evaluasi-sakip` + `references/01-kriteria-lke-permen88-2021.md`.)
+
+---
+
+### Evaluasi Reformasi Birokrasi (RB)
+
+| Regulasi | Substansi |
+|---|---|
+| **PermenPAN-RB 9/2023** | Pedoman Evaluasi Pelaksanaan Reformasi Birokrasi. |
+| **KepmenPAN-RB 182/2024** | Juknis evaluasi RB. |
+| **SE MenPAN-RB 6/2025** | RB Transisi (penyesuaian pelaksanaan). |
+
+**Serves: evaluasi-reformasi-birokrasi.**
+
+---
+
 ## SOTK Kemkomdigi
 
 ### Permenkomdigi 1/2025 (Organisasi dan Tata Kerja Kemkomdigi)
@@ -253,6 +321,12 @@ Substansi:
 - Kepmen 442/2024 — Tata Cara Perencanaan, Perhitungan, Pembayaran, dan Pengawasan SO LPU.
 
 Dasar perhitungan: BO LPU dari realisasi tahun N-1 + proyeksi pertumbuhan tahun N+1; SO-LPU = selisih biaya operasional - pendapatan KPC LPU.
+
+**Currency**: Kepmen 442/2024 **melengkapi/menggantikan** 486/2023 (supersession parsial — TA 2025+ pakai 442/2024).
+
+### PMK 72/PMK.02/2017 jo. PMK 82/2016 (Dana BO LPU)
+
+Tata Cara Penyediaan, Pencairan, & Pertanggungjawaban **Dana BO LPU**. Versi yang **belum direvisi** menjadi **sebab langsung** LPU BUN (BA 999.08) TA 2025 realisasi **0%** (tidak ada PKS EkDig × PT Pos). **Serves: reviu-LK / RKA BUN LPU.**
 
 ---
 

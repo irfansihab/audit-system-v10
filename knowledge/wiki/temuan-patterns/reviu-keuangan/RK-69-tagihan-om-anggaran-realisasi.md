@@ -52,13 +52,13 @@ PMK Pelaksanaan Anggaran mensyaratkan SPJ tagihan didukung bukti transfer >7 har
   "kondisi": "Tagihan OM {vendor}/{layanan} invoice {tgl} Rp{X}; due date {tgl}, namun pembayaran baru di-process {tgl} (delay {n} hari). Penyebab: realisasi anggaran unit masih {%} per DIPA (belum available untuk SPJ tagihan). {Vendor} telah mengirim {n} reminder email; service belum disrupted namun dalam status 'warning'.",
   "kriteria": "PMK Pelaksanaan Anggaran — SPJ tagihan dalam {n} hari; Perpres 16/2018 Pasal 27 — payment default >30 hari adalah breach kontrak.",
   "akibat": "Risk service disruption; compliance risk (SAKTI posting delayed); vendor relation tension; SLA at risk; cash flow misprojection.",
-  "dokumen_sumber": [{"file": "SK-155 LHR Audit OM TKPPSE Tahap 4", "hal": "X", "kutipan": "Tagihan OM Rp10.6M menunggu ketersediaan anggaran ..."}]
+  "dokumen_sumber": [{"file": "ND-155 LHR Audit OM TKPPSE Tahap 4", "hal": "X", "kutipan": "Tagihan OM Rp10.6M menunggu ketersediaan anggaran ..."}]
 }
 ```
 
 ## Contoh Kasus Historis
 
-- **Audit OM TKPPSE Tahap 4 (SK-155, 06 Juni 2026)** — Tagihan OM TKPPSE untuk bulan {bulan} 202X invoice {tgl} Rp10.6M; due date {tgl}. Namun sampai audit fieldwork {tgl}, tagihan belum di-pay (delay {n} hari). Tim audit menemukan email dari vendor TKPPSE tgl {tgl} reminder payment, dengan ancaman "if payment not received by {date}, service will be degraded to maintenance-only mode." Root cause: realisasi anggaran unit masih {%}; anggaran tersebut dialokasikan ke program prioritas lain. Lihat [[nota-dinas-ir2-juni-2026]] SK-155, [[lhr-om-tkppse-2025]].
+- **Audit OM TKPPSE Tahap 4 (ND-155, 06 Juni 2026)** — Tagihan OM TKPPSE untuk bulan {bulan} 202X invoice {tgl} Rp10.6M; due date {tgl}. Namun sampai audit fieldwork {tgl}, tagihan belum di-pay (delay {n} hari). Tim audit menemukan email dari vendor TKPPSE tgl {tgl} reminder payment, dengan ancaman "if payment not received by {date}, service will be degraded to maintenance-only mode." Root cause: realisasi anggaran unit masih {%}; anggaran tersebut dialokasikan ke program prioritas lain. Lihat [[nota-dinas-ir2-juni-2026]] ND-155, [[lhr-om-tkppse-2025]].
 
 ## Catatan
 
