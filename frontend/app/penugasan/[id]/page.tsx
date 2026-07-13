@@ -936,6 +936,33 @@ function formatChatTime(iso: string | null): string {
   }
 }
 
+// Render teks agen; blok ((BATCH-REMINDER))…((/BATCH-REMINDER)) — dipakai agen
+// evaluasi SPIP saat satu batch selesai — ditampilkan sebagai KOTAK MERAH mencolok
+// agar auditor sadar evaluasi belum selesai & harus lanjut batch berikutnya.
+function AgentMessageText({ text }: { text: string }) {
+  if (!text || !text.includes('((BATCH-REMINDER))')) return <>{text}</>;
+  const RE = /\(\(BATCH-REMINDER\)\)([\s\S]*?)\(\(\/BATCH-REMINDER\)\)/g;
+  const parts: JSX.Element[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let i = 0;
+  while ((m = RE.exec(text)) !== null) {
+    if (m.index > last) parts.push(<span key={`t${i}`}>{text.slice(last, m.index)}</span>);
+    parts.push(
+      <div key={`r${i}`} className="my-2 border-2 border-red-500 bg-red-50 rounded-lg p-3">
+        <div className="flex items-center gap-2 text-red-700 font-bold text-sm mb-1">
+          🔴 BELUM SELESAI — LANJUTKAN KE BATCH BERIKUTNYA
+        </div>
+        <div className="text-sm text-red-800 whitespace-pre-wrap font-medium">{m[1].trim()}</div>
+      </div>
+    );
+    last = m.index + m[0].length;
+    i++;
+  }
+  if (last < text.length) parts.push(<span key={`t${i}`}>{text.slice(last)}</span>);
+  return <>{parts}</>;
+}
+
 function ChatTab({
   penugasanId,
   role,
@@ -1201,7 +1228,7 @@ function ChatTab({
                     )}
                   </div>
                   <div className="text-sm whitespace-pre-wrap text-gray-800">
-                    {run.output_summary || '(tidak ada output)'}
+                    <AgentMessageText text={run.output_summary || '(tidak ada output)'} />
                   </div>
                   {/* Audit trail (rincian tool call) hanya untuk ADMIN. */}
                   {role === 'ADMIN' && run.tool_calls && run.tool_calls.length > 0 && (
@@ -1244,7 +1271,7 @@ function ChatTab({
             </div>
             {streamText && (
               <div className="text-sm whitespace-pre-wrap text-gray-800 bg-white border border-gray-200 rounded p-2 mb-2 max-h-[300px] overflow-y-auto">
-                {streamText}
+                <AgentMessageText text={streamText} />
                 <span className="inline-block w-2 h-4 bg-primary align-middle ml-0.5 animate-pulse" />
               </div>
             )}
