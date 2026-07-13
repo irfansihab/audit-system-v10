@@ -54,7 +54,23 @@ SAIPI Standar **2300** (pelaksanaan penugasan) — setiap simpulan/opini wajib d
 
 ## Contoh Kasus Historis
 
-- **ND-138 Rencana Pengawasan IACM (Elemen 1 — Kualitas Peran & Layanan, bobot 40% skor 2,00 = prioritas tertinggi)** — kegiatan 1A Pendampingan Penyusunan **Template KKA Asurans**: wajib memuat *root cause analysis*, implikasi risiko, identifikasi pengendalian kunci lemah, rekomendasi perbaikan proses/kebijakan (bukan hanya korektif administratif), + checklist atribut temuan lengkap (KKSAR). Kegiatan 2D Pendampingan Standar Dokumentasi Reviu Berjenjang. Lihat [[nota-dinas-ir2-mei-2026]] (ND-138).
+**Case 1: ND-138 Rencana Pengawasan IACM (Plan Level)**
+- **Context:** Elemen 1 — Kualitas Peran & Layanan, bobot 40% skor 2,00 = prioritas tertinggi
+- **Kegiatan:** 1A Pendampingan Penyusunan **Template KKA Asurans**: wajib memuat *root cause analysis*, implikasi risiko, identifikasi pengendalian kunci lemah, rekomendasi perbaikan proses/kebijakan (bukan hanya korektif administratif), + checklist atribut temuan lengkap (KKSAR). Kegiatan 2D Pendampingan Standar Dokumentasi Reviu Berjenjang
+- **Sumber:** [[nota-dinas-ir2-mei-2026]] (ND-138)
+
+**Case 2: ND-195 Laporan Pendampingan Template KKP (Execution Level)** ✅ **NEW EVIDENCE**
+- **Context:** IACM Assessment oleh BPKP TA 2025 menunjukkan Itjen Level 2 (terendah) untuk "Kualitas Peran & Layanan"
+- **Finding Konkret:**
+  - KKP format tidak seragam di seluruh auditor (setiap auditor punya format sendiri)
+  - Temuan audit tidak memuat root cause analysis (hanya sampai level "kondisi")
+  - Rekomendasi audit cenderung administratif (bukan strategis)
+  - Quality Assurance process single-level (hanya ketua tim review, belum pengendali teknis)
+  - Atribut temuan tidak lengkap (missing: penyebab, pengendalian kunci, implikasi risiko)
+- **Impact:** IACM Level 2 (2,00 score) untuk Kualitas Peran & Layanan → bobot 40% → hambat peningkatan IACM Itjen
+- **Solution in Progress:** Tim Penguatan Efektivitas Pengawasan membuat template KKP standardized + RCA training (Agustus 2026)
+- **Status:** OPEN (implementasi ongoing, dipantau)
+- **Sumber:** ND-195 (Laporan Pendampingan Penyusunan Template Kertas Kerja Pengawasan Itjen), 08 Juli 2026
 
 ## Catatan
 

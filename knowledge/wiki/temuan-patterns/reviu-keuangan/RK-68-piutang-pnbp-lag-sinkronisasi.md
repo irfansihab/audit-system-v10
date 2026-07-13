@@ -52,13 +52,13 @@ PMK 107/2024 Pasal 61 — Laporan Keuangan wajib didasari data yang lengkap, aku
   "kondisi": "Piutang PNBP di SAKTI (per {bulan} 202X): Rp{SAKTI}, sedangkan di sistem manajemen piutang: Rp{system}. Selisih Rp{X} (lag {n} hari). Penyebab: {interface manual / batch update tidak real-time / reconciliation tertunda}. Terdapat {n} invoice yang sudah lunas di sistem piutang tapi belum di-mark lunas di SAKTI.",
   "kriteria": "PMK 107/2024 Pasal 61 — data wajib lengkap, akurat, reconcilable; PP 60/2008 Pasal 4 — SPI wajib deteksi & atasi penyimpangan.",
   "akibat": "LK potentially misstated; cash flow forecast meleset; aging piutang tidak akurat; TLHP tracking sulit; SPI deficiency di Information & Communication.",
-  "dokumen_sumber": [{"file": "SK-156 Konfirmasi TLHP Itjen II", "hal": "X", "kutipan": "Piutang PNBP selisih Rp316.4M lag sync 1 bulan SAKTI ..."}]
+  "dokumen_sumber": [{"file": "ND-156 Konfirmasi TLHP Itjen II", "hal": "X", "kutipan": "Piutang PNBP selisih Rp316.4M lag sync 1 bulan SAKTI ..."}]
 }
 ```
 
 ## Contoh Kasus Historis
 
-- **Konfirmasi TLHP Inspektorat Jenderal (SK-156, 05 Juni 2026)** — Piutang PNBP per neraca SAKTI Mei 2026 tercatat Rp{X}. Setelah reconciliation dengan sistem manajemen piutang, piutang outstanding yg benar Rp{Y}. **Gap Rp316.4M** dengan lag 1 bulan. Penyebab: interface SAKTI-SimPiutang tidak real-time, upload batch harian Jam 08:00 saja. Terdapat {n} piutang sudah dibayar akhir Mei tapi belum di-update SAKTI sampai awal Juni. Lihat [[nota-dinas-ir2-juni-2026]] SK-156, [[pemantauan-tindak-lanjut/PTL-49-integrity-sistem]].
+- **Konfirmasi TLHP Inspektorat Jenderal (ND-156, 05 Juni 2026)** — Piutang PNBP per neraca SAKTI Mei 2026 tercatat Rp{X}. Setelah reconciliation dengan sistem manajemen piutang, piutang outstanding yg benar Rp{Y}. **Gap Rp316.4M** dengan lag 1 bulan. Penyebab: interface SAKTI-SimPiutang tidak real-time, upload batch harian Jam 08:00 saja. Terdapat {n} piutang sudah dibayar akhir Mei tapi belum di-update SAKTI sampai awal Juni. Lihat [[nota-dinas-ir2-juni-2026]] ND-156, [[pemantauan-tindak-lanjut/PTL-49-integrity-sistem]].
 
 ## Catatan
 
