@@ -27,7 +27,7 @@ Kamu adalah APIP yang mengisi kolom **Nilai PK** pada LKE secara mandiri berdasa
 2. **Baca LKE** — identifikasi subunsur yang perlu dinilai; baca Nilai PM sebagai referensi (bukan patokan).
 3. **Analisis dokumen per unsur** — SOP, SK, laporan, notulen, data kinerja untuk memahami kondisi nyata pengendalian (baca cuplikan bukti yang relevan, bukan seluruh PDF).
 4. **Isi kolom Nilai PK (1–5)** per subunsur/parameter berdasarkan bukti + catatan singkat alasan skor.
-5. **Identifikasi penalti** — kasus korupsi yang memengaruhi skor (hanya jika dikonfirmasi pada KP); terapkan via veto `KK4_PENALTI`.
+5. **Identifikasi penalti** — kasus korupsi yang memengaruhi skor (hanya jika dikonfirmasi pada KP); terapkan via veto `KK 4`.
 6. **Susun AoI (WAJIB)** — untuk setiap subunsur dengan Nilai PK ≤ 3 atau direvisi turun dari PM. AoI menjadi acuan LHE. **Catatan/AoI TANPA unsur Sebab** (isi Kondisi/Kriteria/Dampak/Rekomendasi + sumber).
 7. **Hitung nilai akhir** — nilai tertimbang setelah seluruh komponen dinilai, tentukan tingkat maturitas, susun ringkasan eksekutif.
 
@@ -46,17 +46,17 @@ Termasuk dalam keluarga skill kinerja (audit-kinerja, evaluasi-sakip, evaluasi-s
 Sebelum mengisi LKE, pastikan 4 hal kritis dari Kartu Penugasan / `sasaran-assignment.json` / `context.md`. Bila salah satu belum jelas, pakai *default* di bawah dan catat sebagai keterbatasan — bukan menghentikan pengisian untuk bertanya interaktif.
 
 1. **Status Nilai PM** — Default: PM sudah diisi manajemen, dibaca sebagai referensi (bukan patokan). Jika sebagian kosong: hanya kolom PK diisi, kolom PM dibiarkan kosong dengan catatan.
-2. **Cakupan Satker** — Default (Inspektorat II Komdigi): **semua 4 satker** (Ditjen Infradigi, Ditjen Ekodigi, Ditjen KPM, Badan Aksesibilitas) wajib dinilai. **Aturan bukti parsial:** jika bukti satker tertentu tidak lengkap, satker tersebut dinilai **tidak lengkap** — skor pada kolom satker bersangkutan **diturunkan** (bukan disamakan dengan satker lain). Catat di kolom W: "Satker X bukti parsial — skor diturunkan".
+2. **Cakupan Satker (satker wajib) — jangan diasumsikan.** Satker wajib **berbeda tiap tahun** & ditetapkan AT. **Bila sudah tercantum di `context.md`/sasaran → pakai itu.** Bila belum & ada kanal tanya-jawab → tanyakan **satu hal**: *daftar satker wajib tahun ini*, catat di `context.md`. Bila **tak ada kanal** (run otomatis/eval) → nyatakan asumsi singkat & **lanjut analisis** (jangan menahan output). *Contoh* (Inspektorat II Komdigi, tahun tertentu — BUKAN ketentuan tetap): Ditjen Infradigi, Ditjen Ekodigi, Ditjen KPM, Badan Aksesibilitas. **Aturan bukti parsial:** jika bukti satker tertentu tidak lengkap, satker tersebut dinilai **tidak lengkap** — skor pada kolom/baris satker bersangkutan **diturunkan** (bukan disamakan dengan satker lain). Catat di kolom keterangan: "Satker X bukti parsial — skor diturunkan".
 3. **Subunsur tanpa bukti dukung** — Default: ikut Nilai PM dengan catatan "Bukti dukung tidak tersedia di folder — mengikuti Nilai PM, perlu verifikasi langsung ke satker/unit."
-4. **Kasus Korupsi untuk Penalti** — Default: **Tidak ada** → `KK4_PENALTI` kolom C seluruhnya "TIDAK". Jika ada (kasus pada K/L yang memasuki tahap penuntutan/putusan atau OTT dalam periode Jul tahun n-1 s.d. Jun tahun n): catat detail (nama, jenis institusional/individual, subunsur terkait) lalu isi `KK4_PENALTI!C[baris]="YA"` + `D[baris]=skor penalti`.
+4. **Kasus Korupsi untuk Penalti** — Default: **Tidak ada** → `KK 4` kolom C seluruhnya "TIDAK". Jika ada (kasus pada K/L yang memasuki tahap penuntutan/putusan atau OTT dalam periode Jul tahun n-1 s.d. Jun tahun n): catat detail (nama, jenis institusional/individual, subunsur terkait) lalu isi `KK 4!C[baris]="YA"` + `D[baris]=skor penalti`.
 
-Hasil keempat hal dicatat di `context.md` dan/atau kolom W KK3.1 baris pertama relevan sebagai jejak audit trail.
+Hasil keempat hal dicatat di `context.md` (dan/atau kolom keterangan blok PK baris pertama relevan) sebagai jejak audit trail.
 
 ### Prinsip Penetapan Nilai PK
 
 > **Nilai PK bersifat independen.** Nilai PM dibaca sebagai informasi, bukan patokan. Nilai PK ditetapkan murni berdasarkan dokumen yang dianalisis.
 
-> **Bukti parsial per satker:** jika bukti satu dari 4 satker tidak lengkap, skor satker itu **diturunkan satu level**, dengan catatan eksplisit di kolom W KK3.1. JANGAN meratakan skor ke satker lain.
+> **Bukti parsial per satker:** jika bukti salah satu **satker wajib (yang ditetapkan AT di awal)** tidak lengkap, skor satker itu **diturunkan satu level**, dengan catatan eksplisit di kolom keterangan. JANGAN meratakan skor ke satker lain.
 
 Format catatan singkat di kolom Nilai PK (status — alasan berbasis dokumen):
 - **PK = PM** → "Dikonfirmasi — [alasan singkat berdasarkan dokumen]"
@@ -78,26 +78,23 @@ IEPK : Kapabilitas Pengelolaan Risiko Korupsi (48%) + Strategi Pencegahan (36%)
 
 ## Cakupan Penilaian per Komponen (peta blok LKE)
 
-Penilaian mencakup **25 subunsur dalam 5 unsur**, dikelompokkan ke tiga komponen berbobot:
+Penilaian mencakup **25 subunsur dalam 5 unsur**, dikelompokkan ke tiga komponen berbobot. Template **rev4 2025 (multi-satker, 28 sheet, ribuan baris)** → pengisian dikerjakan **PER BATCH (satu batch per run)** agar tak timeout/tertinggal sebagian (orkestrasi loop batch di `anggota_tim.md` — tool `lke_batch_status` + `fill_lke`). Peta blok → **3 batch = KK Lead I/II/III** (sheet mengikuti nama rev4):
 
 ```
-Konfirmasi Awal             — 4 hal kritis (lihat seksi Konfirmasi Awal Penugasan)
-Penetapan Tujuan            — KKE 1.1, 1.2, 2.1, 2.2
-Struktur-Proses Unsur I     — Lingkungan Pengendalian 1.1–1.8
-Struktur-Proses Unsur II    — Penilaian Risiko 2.1–2.2
-Struktur-Proses Unsur III-A — Kegiatan Pengendalian 3.1–3.4
-Struktur-Proses Unsur III-B — Kegiatan Pengendalian 3.5–3.11
-Struktur-Proses Unsur IV & V — Informasi & Komunikasi 4.1, 4.2 · Pemantauan 5.1, 5.2
-Pencapaian Tujuan SPIP      — KK 5.1A, 5.1B, 5.2, 6, 7, 8
-Veto Penalti                — KK4_PENALTI + verifikasi KKLEAD_SPIP
+Konfirmasi Awal             — Satker wajib (TANYA AT) + 4 hal kritis
+Batch 1 · KK Lead I  (Penetapan Tujuan)   — KKE 1 SASTRA, KKE 2.1 SASPRO, KKE 2.2 SASKEG, KKE 2.3 SAS RO
+Batch 2 · KK Lead II (Struktur & Proses)  — KK3.1, KK3.2, KK3.3, KK3.4
+Batch 3 · KK Lead III (Pencapaian Tujuan) — KK 5.1 A, KK 5.1 B, KK 5.2, KK 6, KK 7, KK 8, KK 4 (veto penalti)
 AoI + Ringkasan Eksekutif   — tingkat maturitas final & area perbaikan prioritas
 ```
 
+**Struktur kolom (rev4):** tiap sheet detail baris atas memuat blok **`PM | PK | EVALUASI`**. APIP mengisi **blok PK** (jangan sentuh PM/EVALUASI/rumus). **Baris hidup = kolom B terisi** (dari PM satker) — isi PK untuk **setiap** baris B-hidup (anti-kebolongan); jumlah baris **dinamis**. Sheet agregator lead (`KKLEAD I/II/III`, `KKLEAD_SPIP`) terhitung otomatis dari rumus → **jangan ditulis**. Alur per run: `lke_batch_status` → isi sheet `next_batch` via `read_lke`+`fill_lke` → `lke_batch_status` lagi; **`render_kkp_docx` ditolak selama `all_complete=false`**.
+
 ## Struktur LKE & Pengisian (peta cell)
 
-LKE memakai template `references/templates/lke-spip-kementerian.xlsx` (**24 sheet** berlapis): **sheet input** yang diisi APIP (KKE 1.x/2.x, KK3.1–3.4, KK 5.x, KK 6–8, KK4_PENALTI, qa 3.1 8 satker, kolom M `Uraian NIlai Setiap Unsur`) vs **sheet agregator** yang **HANYA BACA** (`KKlead I KL`, `KKLEAD II`, `KKLEAD III`, `KKLEAD_SPIP`).
+LKE memakai template **rev4 2025** `references/templates/lke-spip-kementerian.xlsx` (**28 sheet, multi-satker**): **sheet input** yang diisi APIP di **blok PK** (`KKE 1 SASTRA`, `KKE 2.1 SASPRO`, `KKE 2.2 SASKEG`, `KKE 2.3 SAS RO`, `KK3.1`–`KK3.4`, `KK 5.1 A`, `KK 5.1 B`, `KK 5.2`, `KK 6`–`KK 8`, `KK 4`) vs **sheet agregator lead** yang **HANYA BACA** (`KKLEAD I`, `KKLEAD II`, `KKLEAD III`, `KKLEAD_SPIP`). Sheet tanpa blok PK (mis. KK3.2–3.4, KK 6–8) = panduan-saja: tetap dikerjakan tapi tak jadi alasan blok render.
 
-> **Peta cell lengkap per sheet (baris input, kolom PM vs PK, kolom formula yang dilarang), mapping sheet ↔ bagian penilaian, dan aturan penulisan: baca `references/03-peta-cell-lke-kementerian.md`. Daftar pasti semua cell formula: `references/templates/cell-map-formulas.json`.**
+> **Peta cell/blok PK per sheet, mapping sheet ↔ bagian penilaian, dan aturan penulisan: baca `references/03-peta-cell-lke-kementerian.md`.** Tool `fill_lke`/`LKEWriter` menolak cell formula & sheet agregator **otomatis via `cell.data_type`** saat runtime (template rev4 sudah membawa rumus — tak perlu `cell-map-formulas.json` lagi).
 
 ### Prinsip Anti-Rusak Rumus (dijamin tool `fill_lke` — konteks, bukan langkah manual agen)
 
@@ -109,15 +106,15 @@ LKE memakai template `references/templates/lke-spip-kementerian.xlsx` (**24 shee
 
 ### Cara mengisi LKE — tool `fill_lke` (bukan Excel/Python mentah)
 
-Pengisian kolom PK/APIP dilakukan lewat **tool `fill_lke(penugasan_folder, skill="evaluasi-spip", entries=[...])`** — bukan menulis openpyxl/Python langsung. Tool memakai template SPIP (`references/templates/lke-spip-kementerian.xlsx`) dan menerapkan **tiga lapis guard anti-rumus** secara internal (implementasi `references/fill_lke_safely.py` / `LKEWriter`): blokir sheet agregator (`KKLEAD_*`), blokir cell formula (dari `cell-map-formulas.json`), blokir cell bertipe formula saat runtime; plus backup otomatis. **Output = salinan kerja `_KKP/LKE-terisi-evaluasi-spip.xlsx`** (file asli/template tak diubah); cell yang ditolak dilaporkan di field `refused`.
+Pengisian kolom PK/APIP dilakukan lewat **tool `fill_lke(penugasan_folder, skill="evaluasi-spip", entries=[...])`** — bukan menulis openpyxl/Python langsung. Tool memakai template rev4 SPIP (`references/templates/lke-spip-kementerian.xlsx`) dan menerapkan **guard anti-rumus** secara internal (implementasi `references/fill_lke_safely.py` / `LKEWriter`): blokir sheet agregator (`KKLEAD_*`) + blokir cell bertipe formula **saat runtime** (`cell.data_type == 'f'`, langsung dari template rev4 — tak perlu daftar cell terpisah); plus backup otomatis. **Output = salinan kerja `_KKP/LKE-terisi-evaluasi-spip.xlsx`** (file asli/template tak diubah); cell yang ditolak dilaporkan di field `refused`.
 
-`entries` = daftar `{sheet, coord, value, note?}` — mis. isi kolom PK per subunsur, override skor di `KK3.x`, veto penalti di `KK4_PENALTI` (`C[baris]="YA"` + `D[baris]=`skor). Baca nilai LKE terkini via tool **`read_lke`**.
+`entries` = daftar `{sheet, coord, value, note?}` — mis. isi kolom PK per subunsur, override skor di `KK3.x`, veto penalti di `KK 4` (`C[baris]="YA"` + `D[baris]=`skor). Baca nilai LKE terkini via tool **`read_lke`**.
 
 > **Gate deliverable:** `_KKP/LKE-terisi-evaluasi-spip.xlsx` WAJIB ada sebelum render KKP/LHE — render menolak bila LKE belum diisi via `fill_lke`. Kontrak `entries` & guard lengkap: docstring `references/fill_lke_safely.py` (implementasi yang dibungkus tool).
 
 ### Veto Penalti di Excel (ringkas)
 
-Jangan menurunkan skor manual di KK3.x. Terapkan veto via `KK4_PENALTI`: tulis `C[baris]="YA"` (persis, case-sensitive) + `D[baris]=` skor penalti. Rumus di `KKLEAD II` (M/N) otomatis meng-cap skor subunsur terkait.
+Jangan menurunkan skor manual di KK3.x. Terapkan veto via `KK 4`: tulis `C[baris]="YA"` (persis, case-sensitive) + `D[baris]=` skor penalti. Rumus di `KKLEAD II` (M/N) otomatis meng-cap skor subunsur terkait.
 
 > Detail formula cap (`KKLEAD II!N6=IF(M6="YA",...)`, `N7=IF(AND($M$6="YA",...))`) dan pemetaan baris: `references/03-peta-cell-lke-kementerian.md` seksi "Veto Penalti".
 
@@ -142,7 +139,7 @@ LANGKAH 2 — ANALISIS PER SUBUNSUR & TETAPKAN NILAI PK
 LANGKAH 3 — ANALISIS PENALTI
   • Cari kasus korupsi tahap penuntutan/putusan/OTT → hubungkan ke subunsur (Tabel III.1, ref/01).
   • Penurunan: kelemahan implementasi → turun 1 level; kelemahan komunikasi kebijakan → turun 2.
-  • Terapkan via KK4_PENALTI (bukan edit KKLEAD II); keterangan "PENALTI — turun [X]→[Y] karena ...".
+  • Terapkan via KK 4 (bukan edit KKLEAD II); keterangan "PENALTI — turun [X]→[Y] karena ...".
 
 LANGKAH 4 — HITUNG NILAI AKHIR (pakai Nilai PK, bukan PM)
   • Nilai SPIP = (Penetapan Tujuan ×40%) + (Struktur & Proses ×30%) + (Pencapaian Tujuan ×30%)
@@ -241,6 +238,6 @@ F. APRESIASI
 |---------|--------|-----|
 | Pedoman PK — BPKP 5/2021 | `references/01-bpkp-5-2021-pedoman-pk.md` | Prosedur PM & PK, KK LEAD I, mekanisme penalti + Tabel III.1, pelaporan PK, karakteristik maturitas, waktu pelaksanaan |
 | Parameter & Bobot Lengkap | `references/02-parameter-bobot-spip.md` | Bobot per subunsur SPIP/MRI/IEPK; kriteria validasi gradasi skor 1–5; kriteria skor Pencapaian Tujuan; red flag; formulir kalkulasi |
-| Peta Cell LKE Kementerian | `references/03-peta-cell-lke-kementerian.md` | Input vs formula per sheet, baris & kolom yang boleh ditulis, mekanisme veto |
-| Helper pengisi LKE (aman) | `references/fill_lke_safely.py` | Class `LKEWriter` — guard sheet/cell formula, backup otomatis |
-| Daftar cell formula (guard) | `references/templates/cell-map-formulas.json` | Daftar pasti semua cell formula per sheet |
+| Peta Cell LKE (legacy) | `references/03-peta-cell-lke-kementerian.md` | Panduan cell template LAMA — untuk rev4 pakai **deteksi blok PK dinamis** (`read_lke` → baris B-hidup), bukan koordinat statis |
+| Helper pengisi LKE (aman) | `references/fill_lke_safely.py` | Class `LKEWriter` — guard sheet/cell formula (runtime `data_type`), backup otomatis |
+| Template rev4 SPIP | `references/templates/lke-spip-kementerian.xlsx` | Template 28-sheet multi-satker (rumus embedded — guard runtime, tanpa cell-map JSON) |

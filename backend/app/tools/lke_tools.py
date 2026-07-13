@@ -20,8 +20,9 @@ from openpyxl import load_workbook
 from app.config import get_settings
 from app.lke_writer import LKEWriter
 
-# Sheet agregator SPIP (formula-only) — tak boleh ditulis.
-_SPIP_AGGREGATORS = {"KKlead I KL", "KKLEAD II", "KKLEAD III", "KKLEAD_SPIP"}
+# Sheet agregator SPIP (formula-only lead) — tak boleh ditulis. Nama mengikuti
+# template rev4 2025 (KKlead I KL → KKLEAD I).
+_SPIP_AGGREGATORS = {"KKLEAD_SPIP", "KKLEAD I", "KKLEAD II", "KKLEAD III"}
 
 
 def _slug(skill: str) -> str:
@@ -198,4 +199,240 @@ async def write_penilaian_lke(args: dict) -> dict:
     return {"content": [{"type": "text", "text": f"OK|penilaian-lke ditulis|n_komponen={n}|{out.relative_to(folder)}"}]}
 
 
-LKE_TOOLS = [read_lke, fill_lke, write_penilaian_lke]
+# =============================================================================
+# BATCH EVALUASI SPIP — LKE SPIP volumenya besar (25 sub-unsur, ~24 sheet, ribuan
+# sel APIP). Satu run agen sering kehabisan budget sebelum tuntas → sheet volume
+# tinggi ditinggalkan kosong. Solusi: kerjakan per BATCH (per komponen/KK Lead),
+# satu batch per run, dengan gate kelengkapan deterministik.
+# =============================================================================
+
+# Sheet detail (diisi blok PK) dikelompokkan ke 3 batch = KK Lead I/II/III.
+# Nama sheet mengikuti template rev4 2025 (multi-satker). Sheet lead/agregator
+# (KKLEAD*) terhitung otomatis dari rumus → tidak masuk batch.
+SPIP_BATCHES = [
+    {"no": 1, "nama": "KK Lead I — Penetapan Tujuan",
+     "sheets": ["KKE 1 SASTRA", "KKE 2.1 SASPRO", "KKE 2.2 SASKEG", "KKE 2.3 SAS RO"]},
+    {"no": 2, "nama": "KK Lead II — Struktur & Proses",
+     "sheets": ["KK3.1", "KK3.2", "KK3.3", "KK3.4"]},
+    {"no": 3, "nama": "KK Lead III — Pencapaian Tujuan",
+     "sheets": ["KK 5.1 A", "KK 5.1 B", "KK 5.2", "KK 6", "KK 7", "KK 8", "KK 4"]},
+]
+
+# Ambang: sheet dianggap lengkap bila >=95% baris hidup (kolom B terisi) sudah ada
+# isian di blok PK. Tinggi karena tujuannya ANTI-KEBOLONGAN (semua baris PM harus
+# dinilai). Kolom label blok penilaian di baris atas: PM | PK | EVALUASI.
+_BATCH_THRESHOLD = 0.95
+_PK_LABELS = ("PK",)
+_EVAL_LABELS = ("EVALUASI", "EVALUASI APIP")
+
+
+def _find_pk_block(ws) -> tuple[int, int, int] | None:
+    """Cari blok kolom PK (penilaian APIP) → (pk_start, pk_end, header_row).
+
+    Template rev4: baris atas memuat label blok `PM | PK | EVALUASI`. Blok PK =
+    kolom dari label 'PK' sampai sebelum 'EVALUASI'. Return None bila tak ada
+    label PK (sheet tak terukur → panduan-saja, tak di-gate keras).
+    """
+    pk_col = eval_col = None
+    header_row = 0
+    for r in range(1, 7):
+        for c in range(1, ws.max_column + 1):
+            v = str(ws.cell(r, c).value or "").strip().upper()
+            if v in _PK_LABELS and pk_col is None:
+                pk_col = c
+                header_row = r
+            elif v in _EVAL_LABELS and eval_col is None and pk_col is not None and c > pk_col:
+                eval_col = c
+    if pk_col is None:
+        return None
+    pk_end = (eval_col - 1) if eval_col else min(pk_col + 4, ws.max_column)
+    return (pk_col, pk_end, header_row)
+
+
+def _sheet_apip_ratio(ws) -> tuple[float, int, int]:
+    """(ratio, filled_rows, total_data_rows) kelengkapan blok PK satu sheet.
+
+    Baris data = baris di bawah header yang **kolom B**-nya berisi & bukan rumus
+    (aturan auditor: baris hidup ditandai isi kolom B dari PM satker). Baris
+    dianggap terisi PK bila minimal satu sel di blok PK non-kosong.
+    ratio = -1 bila (a) tak ada blok PK, atau (b) tak ada baris hidup (kolom B).
+    """
+    blk = _find_pk_block(ws)
+    if blk is None:
+        return (-1.0, 0, 0)
+    pk_start, pk_end, hr = blk
+    # Baris DATA mulai setelah baris "counter" auto-nomor (salah satu kolom A–C
+    # berupa rumus `=X{n}+1`). Ini memisahkan baris HEADER (yang kolom B-nya berisi
+    # label, mis. "URAIAN SASARAN STRATEGIS") dari baris data asli → hindari
+    # false positive header terhitung sebagai baris hidup.
+    data_start = hr + 1
+    for r in range(hr + 1, min(hr + 12, ws.max_row + 1)):
+        if any(isinstance(ws.cell(r, c).value, str)
+               and ws.cell(r, c).value.startswith("=") and "+1" in ws.cell(r, c).value
+               for c in (1, 2, 3)):
+            data_start = r + 1
+            break
+    # Hitung hanya BLOK DATA KONTIGU dari data_start. Berhenti di baris kosong
+    # (akhir blok) atau marker legend "Petunjuk"/"Kolom N :" — blok instruksi di
+    # bawah sheet (kolom B berisi teks) JANGAN ikut terhitung sebagai baris data.
+    total = filled = 0
+    started = False
+    for r in range(data_start, ws.max_row + 1):
+        b = ws.cell(r, 2).value
+        b_empty = b in (None, "") or (isinstance(b, str) and b.startswith("="))
+        if b_empty:
+            if started:
+                break
+            continue
+        bs = str(b).strip().lower()
+        if bs.startswith("petunjuk") or re.match(r"kolom\s+\d+\s*:", bs):
+            break
+        started = True
+        total += 1
+        if any(ws.cell(r, c).value not in (None, "") for c in range(pk_start, pk_end + 1)):
+            filled += 1
+    if total == 0:
+        return (-1.0, 0, 0)
+    return (filled / total, filled, total)
+
+
+# ── Dukungan struktur LKE LAMA (pra-rev4) ─────────────────────────────────────
+# Menambah cabang tanpa mengubah jalur rev4. Batch struktur lama pakai nama sheet
+# lama (KKE 1.1 SASTRA PEMDA, KKlead I KL, dst; ada trailing space di KK 5.x).
+SPIP_BATCHES_OLD = [
+    {"no": 1, "nama": "KK Lead I — Penetapan Tujuan",
+     "sheets": ["KKE 1.1 SASTRA PEMDA", "KKE 1.2 SASARAN OPD", "KKE 2.1 SASKEG",
+                "KK 2.2 RO", "KKE 2.2 KEGIATAN"]},
+    {"no": 2, "nama": "KK Lead II — Struktur & Proses",
+     "sheets": ["KK3.1", "KK3.2", "KK3.3", "KK3.4"]},
+    {"no": 3, "nama": "KK Lead III — Pencapaian Tujuan",
+     "sheets": ["KK 5.1A", "KK 5.1 B ", "KK 5.2 ", "KK 6", "KK 7", "KK 8", "KK4_PENALTI"]},
+]
+
+_APIP_HEADER_HINTS_OLD = ("PENJAMIN", "EVALUASI APIP", "NILAI PK", "PENJAMINAN")
+
+
+def _sheet_apip_ratio_old(ws) -> tuple[float, int, int]:
+    """Detektor struktur LAMA: kolom penilaian dari header 'PENJAMIN/NILAI PK'.
+    Baris data = kolom A/B/C berisi. Kasar tapi cukup untuk MEMICU batching
+    (mencegah overload) pada LKE lama. ratio=-1 bila kolom APIP tak terdeteksi."""
+    apip_cols: list[int] = []
+    header_row = 0
+    for r in range(1, min(ws.max_row, 12) + 1):
+        for c in range(1, ws.max_column + 1):
+            v = ws.cell(r, c).value
+            if isinstance(v, str) and any(h in v.upper() for h in _APIP_HEADER_HINTS_OLD):
+                apip_cols.append(c)
+                header_row = max(header_row, r)
+    apip_cols = sorted(set(apip_cols))
+    if not apip_cols:
+        return (-1.0, 0, 0)
+    total = filled = 0
+    for r in range(header_row + 1, ws.max_row + 1):
+        if not any(ws.cell(r, c).value not in (None, "") for c in (1, 2, 3)):
+            continue
+        total += 1
+        if any(ws.cell(r, c).value not in (None, "") for c in apip_cols):
+            filled += 1
+    if total == 0:
+        return (-1.0, 0, 0)
+    return (filled / total, filled, total)
+
+
+def _detect_spip_structure(wb) -> str:
+    """'rev4' (KKE 1 SASTRA / KKLEAD I) atau 'old' (KKE 1.1 SASTRA PEMDA /
+    KKlead I KL). Default 'rev4' bila tak jelas."""
+    names = set(wb.sheetnames)
+    if "KKE 1 SASTRA" in names or "KKLEAD I" in names:
+        return "rev4"
+    if "KKE 1.1 SASTRA PEMDA" in names or "KKlead I KL" in names:
+        return "old"
+    return "rev4"
+
+
+def spip_batch_progress(folder: Path) -> dict:
+    """Status kelengkapan per batch SPIP dari `_KKP/LKE-terisi-evaluasi-spip.xlsx`.
+
+    Deterministik (no-LLM). Dipakai tool `lke_batch_status` + gate render_kkp_docx.
+    Tiap sheet ter-gate melapor terisi/total/sisa (sisa = baris hidup yang blok
+    PK-nya masih kosong) → mendukung batch sambung lintas run untuk sheet raksasa.
+    """
+    src = folder / "_KKP" / "LKE-terisi-evaluasi-spip.xlsx"
+    if not src.is_file():
+        return {
+            "exists": False, "all_complete": False, "next_batch": SPIP_BATCHES[0]["no"],
+            "batches": [{"no": b["no"], "nama": b["nama"], "complete": False,
+                         "sisa_baris": None, "sheets": {}} for b in SPIP_BATCHES],
+        }
+    try:
+        wb = load_workbook(src, data_only=False, read_only=False)
+    except Exception as e:  # noqa: BLE001
+        return {"exists": True, "error": str(e)[:200], "all_complete": False, "next_batch": 1, "batches": []}
+
+    # Deteksi struktur → pilih definisi batch + detektor yang cocok (rev4 tetap
+    # jalur utama; struktur lama ditambahkan agar LKE lama tetap bisa dibatch).
+    struktur = _detect_spip_structure(wb)
+    batches_def = SPIP_BATCHES if struktur == "rev4" else SPIP_BATCHES_OLD
+    ratio_fn = _sheet_apip_ratio if struktur == "rev4" else _sheet_apip_ratio_old
+
+    batches_out: list[dict] = []
+    next_batch: int | None = None
+    any_measured = False  # minimal 1 sheet punya baris hidup (kolom B) + blok PK
+    for b in batches_def:
+        sheet_stat: dict[str, dict] = {}
+        incomplete = False   # ada sheet terukur yang belum lengkap
+        sisa_batch = 0       # total baris hidup yang belum ada PK (untuk sambung)
+        for sn in b["sheets"]:
+            if sn not in wb.sheetnames:
+                continue
+            ratio, filled, total = ratio_fn(wb[sn])
+            if ratio < 0:
+                sheet_stat[sn] = {"status": "panduan-saja"}  # tak ada blok PK / baris hidup
+                continue
+            any_measured = True
+            ok = ratio >= _BATCH_THRESHOLD
+            sisa = total - filled
+            sheet_stat[sn] = {"terisi": filled, "total": total, "sisa": sisa,
+                              "pct": round(ratio * 100), "ok": ok}
+            if not ok:
+                incomplete = True
+                sisa_batch += sisa
+        complete = not incomplete
+        batches_out.append({"no": b["no"], "nama": b["nama"], "complete": complete,
+                            "sisa_baris": sisa_batch, "sheets": sheet_stat})
+        if incomplete and next_batch is None:
+            next_batch = b["no"]
+    # Guard anti false-pass: bila TIDAK ADA baris hidup terdeteksi (mis. LKE masih
+    # kosong / PM belum diisi satker), JANGAN nyatakan lengkap.
+    if not any_measured:
+        return {"exists": True, "struktur": struktur, "batches": batches_out,
+                "next_batch": batches_def[0]["no"], "all_complete": False, "any_measured": False,
+                "catatan": "Tidak ada baris hidup terdeteksi — pastikan LKE berisi PM "
+                           "satker sebelum mengisi PK."}
+    return {"exists": True, "struktur": struktur, "batches": batches_out, "next_batch": next_batch,
+            "all_complete": next_batch is None, "any_measured": True}
+
+
+@tool(
+    "lke_batch_status",
+    "Cek progres BATCH evaluasi SPIP (khusus evaluasi-spip). LKE SPIP volumenya besar "
+    "→ dikerjakan per BATCH (per komponen/KK Lead), satu batch per run. Panggil DI AWAL "
+    "tiap run untuk tahu batch mana yang harus dikerjakan (next_batch + daftar sheet-nya), "
+    "dan SETELAH fill_lke untuk memastikan batch itu lengkap (semua sheet ok) sebelum "
+    "berhenti & memberi reminder ke auditor. Return JSON: batches[] (per sheet: %terisi "
+    "kolom APIP + ok), next_batch, all_complete. Skill selain evaluasi-spip → applicable=false.",
+    {"penugasan_folder": str, "skill": str},
+)
+async def lke_batch_status(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    skill = _slug(args.get("skill", ""))
+    if skill != "evaluasi-spip":
+        return {"content": [{"type": "text", "text": json.dumps(
+            {"applicable": False, "skill": skill,
+             "catatan": "Batch hanya untuk evaluasi-spip. SAKIP/lainnya 1-lintasan."})}]}
+    prog = spip_batch_progress(folder)
+    prog["applicable"] = True
+    return {"content": [{"type": "text", "text": json.dumps(prog, ensure_ascii=False)}]}
+
+
+LKE_TOOLS = [read_lke, fill_lke, write_penilaian_lke, lke_batch_status]

@@ -579,6 +579,32 @@ async def render_kkp_docx(args: dict) -> dict:
                 f"Output LKE Excel = deliverable wajib evaluasi ber-LKE; `write_penilaian_lke` "
                 f"(JSON rekap) TIDAK menggantikannya."
             )}], "is_error": True}
+        # SPIP: LKE rev4 volume besar dikerjakan per BATCH (KK Lead I/II/III) —
+        # pastikan SEMUA batch LENGKAP (bukan hanya file ada) agar LKE tak ter-render
+        # setengah jadi. Struktur lama = advisory; hanya rev4 di-gate keras. (port v8.1)
+        if _lke_skill == "evaluasi-spip":
+            from app.tools.lke_tools import spip_batch_progress
+            prog = spip_batch_progress(folder)
+            if not prog.get("all_complete"):
+                if not prog.get("any_measured", True):
+                    return {"content": [{"type": "text", "text": (
+                        "FAILED|LKE SPIP: tidak ada baris hidup (kolom B) terdeteksi — "
+                        "pastikan LKE berisi PM satker & sudah diisi PK sebelum render KKP."
+                    )}], "is_error": True}
+                if prog.get("struktur") != "old":
+                    kurang = []
+                    for b in prog.get("batches", []):
+                        if b.get("complete"):
+                            continue
+                        sheets = [f"{sn}: {d.get('sisa', '?')} baris belum PK ({d.get('pct', '?')}%)"
+                                  for sn, d in b.get("sheets", {}).items()
+                                  if d.get("ok") is False]
+                        kurang.append(f"Batch {b['no']} ({b['nama']}): {', '.join(sheets) or 'belum diisi'}")
+                    return {"content": [{"type": "text", "text": (
+                        f"FAILED|LKE SPIP belum LENGKAP — blok PK masih ada baris kosong: "
+                        f"{' | '.join(kurang)}. Lanjutkan `fill_lke` (cek `lke_batch_status`) "
+                        f"sampai all_complete, baru `render_kkp_docx`."
+                    )}], "is_error": True}
     backup, stats = await _filter_temuan_by_review(folder)
     filter_note = ""
     if stats is not None:
