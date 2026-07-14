@@ -11,6 +11,8 @@ Substansi kriteria (standar audit intern, kerangka 2E, teknik sampling, akar mas
 | # | File | Isi | Status |
 |---|------|-----|--------|
 | 08 | `08-checklist-survey-pendahuluan.md` | Checklist penajaman sasaran, pemetaan risiko 2E, hipotesis awal | ✅ ADA |
+| 09 | `09-survey-pendahuluan-memo-research.md` | Detail research online (whitelist/anti-halusinasi) + **template Memo Survey Pendahuluan** siap-isi (dipisah dari SKILL.md pada ramping 3.4) | ✅ ADA |
+| 10 | `10-template-sub-skill-program.md` | Template membangun **sub-skill spesifik program** (struktur folder + SKILL.md turunan) — dipisah dari SKILL.md pada ramping 3.4 | ✅ ADA |
 | 01 | `01-aaipi-standar-audit-intern.md` | Standar AAIPI 3000-5000 (3100 Survei Pendahuluan, 3200 Program, 3300 Eksekusi, 3400 Komunikasi) | ⬜ opsional (inline di SKILL) |
 | 02 | `02-standar-audit-intern-saipi.md` | Standar Audit Intern Pemerintah Indonesia (SAIPI/AAIPI 2021) — tahapan, kertas kerja, pelaporan (Permenpan 5/2008 sbg pendahulu) | ⬜ opsional (inline di SKILL) |
 | 03 | `03-kerangka-2e-efisiensi-efektivitas.md` | Definisi operasional 2E, indikator, contoh temuan per dimensi | ⬜ opsional (inline di SKILL §Dimensi) |

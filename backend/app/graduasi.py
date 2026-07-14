@@ -1,6 +1,6 @@
 """Meta-skill Graduasi — suling pola penugasan jadi DRAFT skill spesifik.
 
-Port v7-native dari orchestrator cowork `knowledge/skills/graduasi-skill-spesifik/
+Port v7-native dari orchestrator cowork `knowledge/meta/graduasi-skill-spesifik/
 scripts/graduasi.py` (algoritma sama: deteksi domain, konsolidasi kriteria, cluster
 temuan Jaccard), tapi membaca data TERSTRUKTUR v7 (`_KKP/temuan.json`) bukan teks
 kriteria mentah, dan menulis ke `knowledge/skills/_draft/<nama>/`.
