@@ -23,16 +23,14 @@ from app.config import get_settings
 # (mis. di CI). Mempertahankan kompatibilitas penugasan lama.
 LEGACY_SKILLS = ("reviu-rka-kl", "reviu-pengadaan")
 
-# Folder yang bukan skill pengawasan yang bisa dipilih untuk penugasan, meski
-# punya SKILL.md. `graduasi-skill-spesifik` adalah meta-skill (pengembangan
-# sistem), bukan jenis pengawasan — diakses terpisah saat fitur graduasi (Fase C).
-_EXCLUDE_DIRS = {"_draft", "panduan-format-umum", "graduasi-skill-spesifik"}
+# Folder di knowledge/skills/ yang BUKAN skill pengawasan (meski punya SKILL.md).
+# Meta-skill (`kepatuhan-saipi` QC SAIPI, `graduasi-skill-spesifik` pengembangan)
+# sudah DIPINDAH ke `knowledge/meta/` (P4/Fase 3.3) → tak lagi di sini, jadi tak
+# perlu dikecualikan. Sisa yang di-skills/ tapi bukan skill: draft & doktrin bersama.
+_EXCLUDE_DIRS = {"_draft", "panduan-format-umum"}
 
-# Skill yang TETAP loadable agen (via load_skill/_scan) tapi TIDAK ditawarkan di
-# dropdown pemilihan skill auditor. `kepatuhan-saipi` adalah META-SKILL QA SAIPI
-# yang dipakai agen untuk penjaminan mutu (QC), bukan jenis pengawasan yang dipilih
-# auditor. (Beda dgn _EXCLUDE_DIRS yang juga menyembunyikan dari _scan/load_skill.)
-_HIDDEN_FROM_PICKER = {"kepatuhan-saipi"}
+# (kosong sejak 3.3 — meta-skill dipindah ke knowledge/meta/, bukan lagi disembunyikan)
+_HIDDEN_FROM_PICKER: set[str] = set()
 
 
 def _skills_dir() -> Path:
