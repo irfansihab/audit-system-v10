@@ -39,6 +39,15 @@ _SKILL_WITH_NATIVE_DIGEST = {
 # Klasifikasi jenis dokumen berbasis pattern nama file + folder.
 # Order matters — pattern lebih spesifik lebih dulu.
 _JENIS_PATTERNS: list[tuple[str, list[re.Pattern]]] = [
+    # Bukti lapangan AT (pemeriksaan fisik/observasi/wawancara-diskusi ahli/BA)
+    # — PALING SPESIFIK, cek sebelum NOTULEN/BUKTI generik: bila ada WAJIB
+    # dianalisis agen (doktrin panduan-format-umum), jadi label harus tepat.
+    ("BUKTI-LAPANGAN", [
+        re.compile(r"bukti[\s_\-]*lapangan", re.IGNORECASE),
+        re.compile(r"pemeriksaan[\s_\-]*fisik|cek[\s_\-]*fisik|opname", re.IGNORECASE),
+        re.compile(r"observasi|wawancara", re.IGNORECASE),
+        re.compile(r"diskusi[\s_\-]*ahli|keterangan[\s_\-]*ahli|tenaga[\s_\-]*ahli", re.IGNORECASE),
+    ]),
     # Dokumen Surat Tugas & administrasi
     ("ST", [
         re.compile(r"\b(?:Signed_|TTD_)?ST[\s_\-]\d+", re.IGNORECASE),
@@ -100,6 +109,7 @@ _FOLDER_JENIS_HINT = {
     "02-kontrak": "KONTRAK",
     "03-perencanaan": "PERENCANAAN",
     "04-pelaksanaan": "PELAKSANAAN",
+    "04-bukti-lapangan": "BUKTI-LAPANGAN",
     "05-keuangan": "KEUANGAN",
 }
 

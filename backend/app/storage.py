@@ -89,6 +89,17 @@ def classify_doc_by_filename(name: str) -> str:
         return "KRITERIA"
     if "objek" in n or "obyek" in n:
         return "OBJEK"
+    # Bukti lapangan AT (opsional; bila ada WAJIB dianalisis agen) — hasil
+    # pemeriksaan fisik, observasi lapangan, wawancara/diskusi dengan ahli,
+    # berita acara. Cek SEBELUM survey: "observasi"/"ba-" jangan nyasar.
+    if (
+        "bukti-lapangan" in n or "bukti lapangan" in n
+        or "pemeriksaan fisik" in n or "cek fisik" in n or "opname" in n
+        or "observasi" in n or "wawancara" in n
+        or "diskusi ahli" in n or "keterangan ahli" in n or "tenaga ahli" in n
+        or "berita acara" in n or n.startswith("ba-") or n.startswith("ba_")
+    ):
+        return "BUKTI-LAPANGAN"
     # Survey pendahuluan (audit-*) — memo SP, hasil entry meeting, profil auditi awal.
     if "survey" in n or "survei" in n or n.startswith("sp") or "memo sp" in n:
         return "SURVEY"
@@ -116,6 +127,7 @@ def target_subfolder_for(jenis: str) -> str:
         "KRITERIA": "01-peraturan-internal",  # regulasi/SOP/juknis acuan (criteria-driven)
         "OBJEK": "00-input",                   # dokumen objek pengawasan (criteria-driven)
         "SURVEY": "00-survey",                 # bahan survey pendahuluan audit-* (tahapan 0)
+        "BUKTI-LAPANGAN": "04-bukti-lapangan", # hasil pemeriksaan fisik/observasi/diskusi ahli (AT)
     }
     return mapping.get(jenis, "00-input")
 

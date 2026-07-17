@@ -78,6 +78,14 @@ def extract_pages(
     p = Path(path)
     if not p.is_file() or not is_supported(p):
         return []
+    # Teks polos (.txt/.md): baca langsung — LiteParse mengembalikan 0 halaman
+    # untuk format ini (ketahuan saat uji BUKTI-LAPANGAN: BA .md → digest kosong
+    # SENYAP, agen tidak bisa membaca bukti). Tanpa parser juga lebih cepat.
+    if p.suffix.lower() in {".txt", ".md"}:
+        try:
+            return [p.read_text(encoding="utf-8", errors="replace")]
+        except OSError:
+            return []
     parser = _get_parser(
         _OCR_DEFAULT if ocr is None else ocr,
         _QUIET_DEFAULT if quiet is None else quiet,

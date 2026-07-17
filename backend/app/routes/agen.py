@@ -36,7 +36,7 @@ from app.tools.v6_bridge import run_v6_script, safe_read_json
 settings = get_settings()
 
 # Jenis dokumen yang punya V6 digest script (perlu di-ingest ulang saat re-ingest)
-_DIGESTIBLE_JENIS = ("TOR", "RAB", "KAK", "HPS", "RFI", "KONTRAK")
+_DIGESTIBLE_JENIS = ("TOR", "RAB", "KAK", "HPS", "RFI", "KONTRAK", "BUKTI-LAPANGAN")
 
 # Batas subprocess digest yang jalan bersamaan. Tiap digest = 1 proses python3
 # (CPU/mem). 4 cukup mempercepat penugasan multi-dokumen tanpa membanjiri host.
@@ -222,6 +222,7 @@ async def _run_ingestion(penugasan_id: int) -> None:
         tor_docs = [d for d in docs if d.jenis == "TOR"]
         rab_docs = [d for d in docs if d.jenis == "RAB"]
         pbj_docs = [d for d in docs if d.jenis in ("KAK", "HPS", "RFI", "KONTRAK")]
+        bukti_docs = [d for d in docs if d.jenis == "BUKTI-LAPANGAN"]
         other_docs = [d for d in docs if d.jenis in (None, "ST", "KP", "PKP", "OTHER")]
 
         sem = asyncio.Semaphore(_INGEST_CONCURRENCY)
@@ -285,6 +286,44 @@ async def _run_ingestion(penugasan_id: int) -> None:
         for d in other_docs:
             d.status = DokumenStatus.READY
             d.ingested_at = datetime.utcnow()
+
+        # Bukti lapangan AT (pemeriksaan fisik/observasi/diskusi ahli) — digest
+        # generik atas folder 04-bukti-lapangan utk SEMUA skill, termasuk skill
+        # ber-pipeline khusus (reviu-rka-kl/PBJ) yang tidak menjalankan
+        # digest_generic penuh. Doktrin: dokumen ini opsional, tapi BILA ADA
+        # wajib dianalisis agen — jadi digest-nya tidak boleh bergantung jenis skill.
+        if bukti_docs:
+            try:
+                from app.digest_generic import digest_folder as _digest_bukti
+
+                res = await asyncio.to_thread(
+                    _digest_bukti, folder, subfolder_scan=["04-bukti-lapangan"]
+                )
+                # Petakan file sumber → file digest supaya ingested_json_path terisi.
+                out_map: dict[str, str] = {}
+                for rel in res.get("files", []):
+                    try:
+                        dj = json.loads((folder / rel).read_text(encoding="utf-8"))
+                        src = dj.get("file")
+                        if src:
+                            out_map[str(folder / src)] = str(folder / rel)
+                    except (OSError, json.JSONDecodeError):
+                        continue
+                for d in bukti_docs:
+                    d.status = DokumenStatus.READY
+                    d.ingested_at = datetime.utcnow()
+                    d.ingested_json_path = out_map.get(d.file_path)
+                    if d.ingested_json_path is None:
+                        # File tak terdigest (format tak didukung, mis. foto) —
+                        # tetap READY sebagai lampiran, tapi katakan jujur.
+                        d.error_message = (
+                            "format tidak terdigest — agen tidak bisa membaca isinya; "
+                            "unggah versi teks/PDF bila perlu dianalisis"
+                        )
+            except Exception as exc:  # noqa: BLE001
+                for d in bukti_docs:
+                    d.status = DokumenStatus.FAILED
+                    d.error_message = f"digest bukti lapangan gagal: {exc}"[:500]
 
         # Digest generik untuk skill criteria-driven (audit-kinerja, evaluasi-*,
         # kepatuhan-saipi, konsultansi-*, pemantauan-*, audit-umum, reviu-umum)

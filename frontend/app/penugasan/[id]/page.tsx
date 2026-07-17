@@ -745,6 +745,9 @@ function jenisOptionsFor(skill: string): string[] {
   else if (PBJ_SKILLS.includes(skill)) base = ['KAK', 'HPS', 'RFI', 'KONTRAK', 'KP', 'PKP', 'ST', 'OTHER'];
   // criteria-driven (audit-kinerja, evaluasi-*, *-umum, kepatuhan-saipi, dll)
   else base = ['KRITERIA', 'OBJEK', 'KP', 'PKP', 'ST', 'OTHER'];
+  // Bukti lapangan AT (pemeriksaan fisik/observasi/diskusi ahli) — SEMUA skill,
+  // opsional; bila diupload otomatis di-digest & WAJIB dianalisis agen.
+  base = [...base.slice(0, -1), 'BUKTI-LAPANGAN', 'OTHER'];
   // Tahapan 0: bahan Survey Pendahuluan didahulukan untuk skill audit-*.
   return AUDIT_SKILLS.includes(skill) ? ['SURVEY', ...base] : base;
 }
@@ -796,6 +799,17 @@ function DokumenTab({
             <code className="bg-amber-100 px-1 rounded">KP</code> / <code className="bg-amber-100 px-1 rounded">PKP</code>.
           </>
         )}
+      </div>
+      <div className="mb-4 p-3 rounded bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs">
+        🧭 <strong>Bukti lapangan (opsional — bila diupload, WAJIB dianalisis agen):</strong> hasil{' '}
+        <strong>pemeriksaan/cek fisik</strong>, <strong>observasi</strong>,{' '}
+        <strong>wawancara/diskusi dengan ahli</strong>, atau <strong>berita acara</strong>. Pilih jenis{' '}
+        <strong>BUKTI-LAPANGAN</strong> atau awali nama file{' '}
+        <code className="bg-emerald-100 px-1 rounded">observasi-</code>/
+        <code className="bg-emerald-100 px-1 rounded">ba-</code>. Unggah dalam bentuk{' '}
+        <strong>teks/PDF/Office</strong> (foto tidak bisa dibaca agen — sertakan berita acaranya).
+        Bukti fisik/observasi dipakai agen sebagai bukti kuat unsur Kondisi; keterangan ahli
+        diatribusikan sebagai pendukung analisis.
       </div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-primary-dark">Dokumen Penugasan</h2>

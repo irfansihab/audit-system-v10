@@ -69,6 +69,17 @@ Selain kriteria **baku** (regulasi yang dibundel di skill untuk PBJ/RKA/MR, atau
 
 **PENGECUALIAN — skill ber-LKE** (`evaluasi-spip`/`-sakip`/`-reformasi-birokrasi`): instrumen LKE sudah menetapkan komponen/sub-unsur, **bobot**, dan kriteria skor secara **mengikat standar** → **tidak menerima kriteria tambahan** yang mengubah instrumen. (Dokumen pendukung tetap diunggah sebagai **bukti**, bukan sebagai kriteria baru.)
 
+### Bukti LAPANGAN yang diunggah AT (opsional) — BILA ADA, WAJIB DIANALISIS — semua jenis
+
+Anggota Tim boleh mengunggah **hasil kerja lapangan** sebagai dokumen penugasan (jenis `BUKTI-LAPANGAN`, folder `04-bukti-lapangan/`, digest `_INGESTED/bukti-lapangan-*.json`): **hasil pemeriksaan/cek fisik (opname)**, **hasil observasi lapangan**, **hasil wawancara/diskusi dengan ahli atau tenaga ahli**, **berita acara**. Sifatnya **opsional** — tetapi **bila ada, setiap agen WAJIB membacanya dan memakainya dalam analisis**; mengabaikan bukti lapangan yang tersedia = cacat analisis.
+
+Cara memperlakukannya:
+- **Pemeriksaan fisik / observasi** = **bukti primer** dengan bobot KUAT untuk unsur **Kondisi** — lebih kuat daripada dokumen administratif. Kutip sebagai `dokumen_sumber` dengan identitas jelas (nama dokumen/BA, tanggal, lokasi bila ada).
+- **Keterangan/diskusi ahli** = masukan profesional: dipakai untuk mempertajam **analisis/Sebab** atau pemahaman teknis, **WAJIB diatribusikan** ("menurut keterangan ahli … dalam diskusi tanggal …") — bukan diklaim sebagai kesimpulan auditor sendiri, dan **bukan pengganti bukti** untuk Kondisi.
+- **Diskrepansi = sinyal temuan**: bila bukti lapangan **bertentangan** dengan dokumen administratif (mis. fisik tidak sesuai laporan kemajuan), JANGAN dirata-ratakan atau dipilih diam-diam — angkat perbedaannya secara eksplisit; ini justru kandidat temuan terkuat.
+- Doktrin **anti-mengarang tetap berlaku**: pakai hanya yang tertulis di dokumen bukti; jangan mengisi celah dengan asumsi tentang apa yang "mungkin" diamati di lapangan.
+- Bila **tidak ada** bukti lapangan → lewati; ketiadaannya **bukan** temuan dan tidak menghalangi analisis.
+
 ### Scoping berdasarkan SASARAN (generik vs spesifik) — semua jenis ber-checklist
 
 Sasaran penugasan menentukan **kedalaman & titik berat**, bukan sekadar dikerjakan apa adanya:

@@ -104,7 +104,10 @@ async def upload_dokumen(
     # - TOR/RAB/KAK/HPS/RFI/KONTRAK → INGESTING (auto-trigger background)
     if staged_path:
         initial_status = DokumenStatus.READY
-    elif jenis_final in ("TOR", "RAB", "KAK", "HPS", "RFI", "KONTRAK"):
+    elif jenis_final in ("TOR", "RAB", "KAK", "HPS", "RFI", "KONTRAK", "BUKTI-LAPANGAN"):
+        # BUKTI-LAPANGAN ikut INGESTING: digest generik folder 04-bukti-lapangan
+        # dijalankan utk semua skill (lihat _run_ingestion) — dokumen bukti yang
+        # diupload HARUS bisa dibaca agen, bukan cuma tersimpan.
         initial_status = DokumenStatus.INGESTING
     else:
         # ST, KP, PKP, OTHER, None — tidak ada V6 digest script untuk ini,
