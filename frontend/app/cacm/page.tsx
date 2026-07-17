@@ -85,28 +85,30 @@ export default function CacmPage() {
     }
   };
 
+  /** Muat SEMUA data contoh: EWS SIRUP (pengadaan) + dummy anggaran & kinerja.
+   * Keduanya jadi run terpisah karena beda sumber & periode — pilih lewat
+   * dropdown run. Sengaja tidak fail-fast: kalau satu sumber gagal, sumber lain
+   * tetap dimuat dan kegagalannya dilaporkan apa adanya. */
   const ingestSample = async () => {
     setBusy('ingest');
+    setError(null);
+    const gagal: string[] = [];
+    const jalankan = async (label: string, fn: () => Promise<unknown>) => {
+      try {
+        await fn();
+      } catch (e: any) {
+        gagal.push(`${label}: ${e.message}`);
+      }
+    };
+    await jalankan('EWS SIRUP', api.ingestCacmSample);
+    await jalankan('Anggaran & Kinerja', api.ingestCacmObservasiSample);
     try {
-      await api.ingestCacmSample();
       await loadRuns();
     } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setBusy(null);
+      gagal.push(`muat ulang daftar run: ${e.message}`);
     }
-  };
-
-  const ingestAngkinSample = async () => {
-    setBusy('ingest-angkin');
-    try {
-      await api.ingestCacmObservasiSample();
-      await loadRuns();
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setBusy(null);
-    }
+    if (gagal.length) setError(`Gagal memuat — ${gagal.join(' | ')}`);
+    setBusy(null);
   };
 
   const syncAgent = async () => {
@@ -170,19 +172,12 @@ export default function CacmPage() {
                 {busy === 'sync' ? 'Sinkron…' : '⟳ Sync dari agent'}
               </button>
               <button
-                onClick={ingestAngkinSample}
-                disabled={busy === 'ingest-angkin'}
-                className="px-3 py-2 text-sm rounded border border-primary text-primary font-semibold hover:bg-primary-50 disabled:opacity-50"
-                title="Muat data DUMMY dimensi Anggaran & Kinerja (belum tersambung ke OM SPAN/sistem kinerja)"
-              >
-                {busy === 'ingest-angkin' ? 'Memuat…' : '＋ Contoh Anggaran & Kinerja'}
-              </button>
-              <button
                 onClick={ingestSample}
                 disabled={busy === 'ingest'}
                 className="px-3 py-2 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark disabled:opacity-50"
+                title="Muat data contoh semua dimensi: EWS SIRUP (pengadaan) + dummy Anggaran & Kinerja. Masing-masing jadi run tersendiri."
               >
-                {busy === 'ingest' ? 'Memuat…' : '＋ Muat contoh EWS'}
+                {busy === 'ingest' ? 'Memuat…' : '＋ Muat data contoh'}
               </button>
             </div>
           )}
@@ -202,8 +197,8 @@ export default function CacmPage() {
           <div className="text-gray-500 text-sm">Memuat…</div>
         ) : !run ? (
           <div className="bg-white border border-dashed border-gray-300 rounded-lg p-10 text-center text-gray-500">
-            Belum ada data EWS.{' '}
-            {isPT ? 'Klik "Muat contoh EWS" untuk mengisi dengan data sample.' : 'Tunggu PT mengisi data EWS.'}
+            Belum ada data CACM.{' '}
+            {isPT ? 'Klik "Muat data contoh" untuk mengisi dengan data sample.' : 'Tunggu PT mengisi data CACM.'}
           </div>
         ) : (
           <>
