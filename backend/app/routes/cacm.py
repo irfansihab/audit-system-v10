@@ -328,11 +328,20 @@ _DIMENSI_VALID = set(get_args(DimensiCacm))
 _SUMBER_VALID = set(get_args(SumberData))
 
 
-async def _ingest_observasi(db: AsyncSession, payload: Any, source: str) -> tuple[CacmRun, int]:
+async def _ingest_observasi(
+    db: AsyncSession,
+    payload: Any,
+    source: str,
+    run: CacmRun | None = None,
+) -> tuple[CacmRun, int]:
     """Ingest observasi generik → CacmObservasi + CacmFinding per (dimensi, satker).
 
     Payload: `{"meta": {...}, "observasi": [{sumber, dimensi, satker,
     satker_kode, periode, data{}}, ...]}`. Return (run, jumlah_finding).
+
+    `run` diisi bila observasi harus MENUMPANG run yang sudah ada (mis. loader
+    contoh: pengadaan + anggaran + kinerja jadi satu run supaya auditor melihat
+    seluruh dimensi dalam satu tampilan, tidak perlu ganti-ganti dropdown).
     """
     if not isinstance(payload, dict):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Payload harus object dengan key 'observasi'.")
@@ -366,20 +375,22 @@ async def _ingest_observasi(db: AsyncSession, payload: Any, source: str) -> tupl
     load_registry()
 
     periode_default = str(meta.get("periode_crawl") or datetime.utcnow().strftime("%Y-%m"))
-    run_id = str(meta.get("run_id") or f"{source}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}")
-    if (await db.execute(select(CacmRun).where(CacmRun.run_id == run_id))).scalar_one_or_none():
-        run_id = f"{run_id}-{datetime.utcnow().strftime('%H%M%S%f')}"
 
-    run = CacmRun(
-        run_id=run_id,
-        source=source,
-        tanggal_evaluasi=meta.get("tanggal_evaluasi"),
-        periode_crawl=meta.get("periode_crawl"),
-        summary={"total": 0, "merah": 0, "kuning": 0, "hijau": 0, "info": 0},
-        rekap=[],
-    )
-    db.add(run)
-    await db.flush()
+    if run is None:
+        run_id = str(meta.get("run_id") or f"{source}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}")
+        if (await db.execute(select(CacmRun).where(CacmRun.run_id == run_id))).scalar_one_or_none():
+            run_id = f"{run_id}-{datetime.utcnow().strftime('%H%M%S%f')}"
+
+        run = CacmRun(
+            run_id=run_id,
+            source=source,
+            tanggal_evaluasi=meta.get("tanggal_evaluasi"),
+            periode_crawl=meta.get("periode_crawl"),
+            summary={"total": 0, "merah": 0, "kuning": 0, "hijau": 0, "info": 0},
+            rekap=[],
+        )
+        db.add(run)
+        await db.flush()
 
     # Tulis observasi, group per (dimensi, satker) untuk dievaluasi bersama.
     groups: dict[tuple[str, str | None, str], list[CacmObservasi]] = {}
@@ -401,7 +412,6 @@ async def _ingest_observasi(db: AsyncSession, payload: Any, source: str) -> tupl
 
     await db.flush()  # butuh ID observasi untuk bukti_observasi_ids
 
-    counts = {"total": 0, "merah": 0, "kuning": 0, "hijau": 0, "info": 0}
     n_findings = 0
     for (dimensi, satker_kode, satker_nama), obs_list in groups.items():
         rows = [{"data": o.data, "_id": o.id} for o in obs_list]
@@ -428,15 +438,28 @@ async def _ingest_observasi(db: AsyncSession, payload: Any, source: str) -> tupl
                 cacm_run_id=run.id,
             ))
             n_findings += 1
-            counts["total"] += 1
-            key = {"MERAH": "merah", "KUNING": "kuning", "HIJAU": "hijau", "INFO": "info"}.get(h.status)
-            if key:
-                counts[key] += 1
 
-    run.summary = counts
+    await db.flush()
+    # Summary dihitung ulang atas SELURUH CacmFinding run — bukan hanya batch ini
+    # — supaya saat observasi menumpang run yang sudah ada (loader contoh), angka
+    # badge tetap mencakup dimensi yang lebih dulu masuk.
+    run.summary = await _summary_v7(db, run.id)
     await db.commit()
     await db.refresh(run)
     return run, n_findings
+
+
+async def _summary_v7(db: AsyncSession, run_id: int) -> dict[str, int]:
+    """Rekap status seluruh CacmFinding (v7-native) milik 1 run."""
+    rows = (
+        await db.execute(select(CacmFinding.status).where(CacmFinding.cacm_run_id == run_id))
+    ).scalars().all()
+    counts = {"total": len(rows), "merah": 0, "kuning": 0, "hijau": 0, "info": 0}
+    for st in rows:
+        key = {"MERAH": "merah", "KUNING": "kuning", "HIJAU": "hijau", "INFO": "info"}.get(str(st).upper())
+        if key:
+            counts[key] += 1
+    return counts
 
 
 @router.post("/observasi/ingest", status_code=status.HTTP_201_CREATED)
@@ -461,7 +484,10 @@ async def ingest_observasi_sample(
     current: tuple[User, Role] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    """Muat fixture DUMMY anggaran+kinerja (demo dimensi non-pengadaan)."""
+    """Muat fixture DUMMY anggaran+kinerja SAJA (run tersendiri).
+
+    Untuk demo penuh pakai `/sample/load-all` — semua dimensi dalam satu run.
+    """
     user, role = current
     _require_pt(role)
     if not _FIXTURE_ANGKIN.exists():
@@ -469,6 +495,54 @@ async def ingest_observasi_sample(
     payload = json.loads(_FIXTURE_ANGKIN.read_text(encoding="utf-8"))
     run, n = await _ingest_observasi(db, payload, source="offline")
     return {"ok": True, "sample": True, "dummy": True, **_run_summary_dict(run, n)}
+
+
+@router.post("/sample/load-all", status_code=status.HTTP_201_CREATED)
+async def load_all_sample(
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Muat SELURUH data contoh ke SATU run: pengadaan (EWS SIRUP) + anggaran +
+    kinerja. Satu run supaya auditor melihat semua dimensi per satker sekaligus,
+    tanpa berpindah-pindah run.
+
+    Kalau fixture anggaran/kinerja gagal, run EWS tetap ada — dilaporkan lewat
+    `partial`, bukan didiamkan atau di-rollback diam-diam.
+    """
+    user, role = current
+    _require_pt(role)
+    if not _FIXTURE.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Fixture tidak ada: {_FIXTURE.name}")
+
+    # 1) EWS SIRUP → bikin run (+ EwsFinding legacy + finding v7 dimensi pengadaan)
+    run = await _ingest(db, json.loads(_FIXTURE.read_text(encoding="utf-8")), source="offline")
+
+    # 2) Anggaran & kinerja dummy → menumpang run yang sama
+    dimensi_dimuat = ["PENGADAAN_RENCANA"]
+    partial: str | None = None
+    if _FIXTURE_ANGKIN.exists():
+        try:
+            run, _ = await _ingest_observasi(
+                db,
+                json.loads(_FIXTURE_ANGKIN.read_text(encoding="utf-8")),
+                source="offline",
+                run=run,
+            )
+            dimensi_dimuat += ["ANGGARAN", "KINERJA"]
+        except Exception as exc:  # noqa: BLE001 — run EWS sudah commit, jangan ikut gagal
+            log.warning("load-all: fixture anggaran/kinerja gagal: %s", exc)
+            partial = f"Data anggaran & kinerja gagal dimuat: {exc}"
+    else:
+        partial = f"Fixture {_FIXTURE_ANGKIN.name} tidak ada — hanya data pengadaan yang dimuat."
+
+    n_v7 = (run.summary or {}).get("total", 0)
+    return {
+        "ok": True,
+        "sample": True,
+        "dimensi": dimensi_dimuat,
+        "partial": partial,
+        **_run_summary_dict(run, n_v7),
+    }
 
 
 @router.get("/runs")
@@ -1265,10 +1339,17 @@ async def runs_findings_diff(
             .order_by(EwsFinding.satker, EwsFinding.kode)
         )
     ).scalars().all()
+    # Hanya dimensi PENGADAAN_RENCANA yang dibandingkan: EWS legacy memang cuma
+    # mengevaluasi SIRUP. Kalau dimensi lain (ANGGARAN/KINERJA) ikut ditarik,
+    # semuanya masuk "v7-only" dan match% anjlok — seolah evaluator tidak sepakat,
+    # padahal cakupannya saja yang lebih luas.
     v7_rows = (
         await db.execute(
             select(CacmFinding)
-            .where(CacmFinding.cacm_run_id == run_id)
+            .where(
+                CacmFinding.cacm_run_id == run_id,
+                CacmFinding.dimensi == "PENGADAAN_RENCANA",
+            )
             .order_by(CacmFinding.satker_nama, CacmFinding.kriteria_id)
         )
     ).scalars().all()

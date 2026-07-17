@@ -85,30 +85,22 @@ export default function CacmPage() {
     }
   };
 
-  /** Muat SEMUA data contoh: EWS SIRUP (pengadaan) + dummy anggaran & kinerja.
-   * Keduanya jadi run terpisah karena beda sumber & periode — pilih lewat
-   * dropdown run. Sengaja tidak fail-fast: kalau satu sumber gagal, sumber lain
-   * tetap dimuat dan kegagalannya dilaporkan apa adanya. */
+  /** Muat SEMUA data contoh (pengadaan + anggaran + kinerja) ke SATU run,
+   * supaya seluruh dimensi tampil sekaligus per satker. */
   const ingestSample = async () => {
     setBusy('ingest');
     setError(null);
-    const gagal: string[] = [];
-    const jalankan = async (label: string, fn: () => Promise<unknown>) => {
-      try {
-        await fn();
-      } catch (e: any) {
-        gagal.push(`${label}: ${e.message}`);
-      }
-    };
-    await jalankan('EWS SIRUP', api.ingestCacmSample);
-    await jalankan('Anggaran & Kinerja', api.ingestCacmObservasiSample);
     try {
+      const r = await api.loadCacmSampleAll();
       await loadRuns();
+      // Backend memuat data pengadaan lebih dulu; bila fixture anggaran/kinerja
+      // gagal, run-nya tetap ada — katakan apa adanya, jangan seolah sukses penuh.
+      if (r.partial) setError(`Sebagian data tidak dimuat — ${r.partial}`);
     } catch (e: any) {
-      gagal.push(`muat ulang daftar run: ${e.message}`);
+      setError(e.message);
+    } finally {
+      setBusy(null);
     }
-    if (gagal.length) setError(`Gagal memuat — ${gagal.join(' | ')}`);
-    setBusy(null);
   };
 
   const syncAgent = async () => {
@@ -460,11 +452,24 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
     </div>
   );
 
-  // Group by satker_nama
-  const bySatker: Record<string, V7Finding[]> = {};
+  // Group by satker_kode — BUKAN satker_nama. Tiap sumber menulis nama dengan
+  // gaya berbeda (SIRUP HURUF BESAR SEMUA, sumber lain Title Case), sehingga
+  // memakai nama sebagai kunci memecah satu satker jadi beberapa kartu dan
+  // dimensinya tidak terlihat berdampingan. Kode satker konsisten lintas sumber.
+  const bySatker: Record<string, { label: string; items: V7Finding[] }> = {};
   for (const f of findings) {
-    bySatker[f.satker_nama] = bySatker[f.satker_nama] || [];
-    bySatker[f.satker_nama].push(f);
+    const key = (f.satker_kode || f.satker_nama || '(tanpa satker)').toLowerCase();
+    if (!bySatker[key]) bySatker[key] = { label: f.satker_nama, items: [] };
+    // Label: hindari varian HURUF BESAR SEMUA bila ada varian yang lebih terbaca.
+    const label = bySatker[key].label;
+    if (label === label.toUpperCase() && f.satker_nama !== f.satker_nama.toUpperCase()) {
+      bySatker[key].label = f.satker_nama;
+    }
+    bySatker[key].items.push(f);
+  }
+  // Urut dalam kartu: per dimensi, lalu kriteria — supaya sedimensi berdampingan.
+  for (const g of Object.values(bySatker)) {
+    g.items.sort((a, b) => a.dimensi.localeCompare(b.dimensi) || a.kriteria_id.localeCompare(b.kriteria_id));
   }
 
   return (
@@ -485,9 +490,15 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
       {msg && <div className="mb-2 p-2 rounded bg-amber-50 border border-amber-200 text-amber-800 text-xs">{msg}</div>}
 
       <div className="space-y-3">
-        {Object.entries(bySatker).map(([satker, items]) => (
-          <div key={satker} className="bg-white border border-gray-200 rounded-lg p-3">
-            <div className="text-sm font-semibold text-gray-800 mb-2">{satker}</div>
+        {Object.entries(bySatker).map(([satkerKey, { label, items }]) => (
+          <div key={satkerKey} className="bg-white border border-gray-200 rounded-lg p-3">
+            <div className="text-sm font-semibold text-gray-800 mb-2">
+              {label}
+              <span className="ml-2 text-[11px] font-normal text-gray-400">
+                {items.length} finding ·{' '}
+                {[...new Set(items.map((i) => DIMENSI_LABEL[i.dimensi] || i.dimensi))].join(' · ')}
+              </span>
+            </div>
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-left text-gray-500 border-b border-gray-200">

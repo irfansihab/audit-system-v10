@@ -904,7 +904,7 @@ export const api = {
       { method: 'POST' }
     ),
 
-  /** Ingest fixture DUMMY dimensi anggaran + kinerja (multi-sumber). PT only. */
+  /** Ingest fixture DUMMY dimensi anggaran + kinerja saja (run tersendiri). PT only. */
   ingestCacmObservasiSample: () =>
     request<{
       ok: boolean;
@@ -915,6 +915,19 @@ export const api = {
       summary: Record<string, number>;
       total_findings: number;
     }>('/cacm/observasi/ingest-sample', { method: 'POST' }),
+
+  /** Muat SEMUA data contoh (pengadaan + anggaran + kinerja) ke SATU run. PT only. */
+  loadCacmSampleAll: () =>
+    request<{
+      ok: boolean;
+      sample: boolean;
+      dimensi: string[];
+      partial: string | null;
+      id: number;
+      run_id: string;
+      summary: Record<string, number>;
+      total_findings: number;
+    }>('/cacm/sample/load-all', { method: 'POST' }),
 
   /** Daftar run EWS yang sudah masuk. */
   getCacmRuns: () =>
