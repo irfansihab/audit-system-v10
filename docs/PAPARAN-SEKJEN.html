@@ -81,6 +81,7 @@
     <span class="chip">19 skill pengawasan · 47 tool</span>
     <span class="chip">Mutu terukur: skor 0,80–1,00</span>
     <span class="chip">Analisis 1 penugasan ≈ 5 menit</span>
+    <span class="chip">Chatbot: pernah jalan → migrasi WA</span>
     <span class="chip">Juli 2026</span>
   </div>
 </section>
@@ -136,8 +137,8 @@
     </g>
     <!-- nodes -->
     <g><rect x="396" y="86" width="168" height="54" rx="12" fill="#f4e9fe" stroke="#9333ea" stroke-width="1.8"/>
-      <text x="480" y="110" text-anchor="middle" fill="#7e22ce" font-size="14" font-weight="700">CHATBOT / TELEGRAM</text>
-      <text x="480" y="128" text-anchor="middle" fill="#6b5578" font-size="10.5">akses percakapan — RENCANA</text></g>
+      <text x="480" y="110" text-anchor="middle" fill="#7e22ce" font-size="14" font-weight="700">CHATBOT (Telegram→WA)</text>
+      <text x="480" y="128" text-anchor="middle" fill="#6b5578" font-size="10.5">pernah jalan — nonaktif (hosting)</text></g>
     <g><rect x="106" y="200" width="160" height="64" rx="12" fill="#fdf0dc" stroke="#d97706" stroke-width="1.8"/>
       <text x="186" y="226" text-anchor="middle" fill="#b45309" font-size="14" font-weight="700">CACM / EWS</text>
       <text x="186" y="243" text-anchor="middle" fill="#8a6a3a" font-size="10.5">deteksi dini risiko</text>
@@ -160,8 +161,8 @@
   </svg>
   <div class="legend">
     <span><span class="st s-run">BERJALAN</span> Engine · Wiki</span>
-    <span><span class="st s-proto">PROTOTIPE</span> CACM · INTEGRAL (dibangun)</span>
-    <span><span class="st s-plan">RENCANA</span> Chatbot/Telegram · integrasi API sistem eksisting</span>
+    <span><span class="st s-proto">PROTOTIPE / NONAKTIF</span> CACM · INTEGRAL (dibangun) · Chatbot (pernah jalan)</span>
+    <span><span class="st s-plan">RENCANA</span> migrasi kanal ke WhatsApp · integrasi API sistem eksisting</span>
   </div>
   <div class="callout c-note"><b>Alur inti</b>
     Sistem eksisting → <b>INTEGRAL</b> (integrasi &amp; orkestrasi) → <b>Engine AI</b> (analisis) → temuan/laporan → <b>Wiki</b> (memori) → mempertajam deteksi &amp; penugasan berikutnya. <b>Wiki</b> menyilang semua simpul; mesin AI tidak pernah menyentuh portal langsung.</div>
@@ -253,9 +254,18 @@
   <h3>3. Wiki — memori organisasi <span class="st s-run">BERJALAN</span></h3>
   <p>Basis pengetahuan yang <b>dibaca agen saat menganalisis</b> dan diperbarui setelah penugasan: <b>85 pola temuan</b> (18 keluarga), <b>315 catatan</b> (profil auditee, vendor, regulasi, riwayat LHR), serta <b>daftar regulasi kunci</b> sebagai penangkal salah sitasi.</p>
 
-  <h3>4. Chatbot / Telegram — akses percakapan <span class="st s-plan">RENCANA</span></h3>
-  <div class="callout c-warn"><b>Status jujur: belum dibangun</b>
-    Belum ada kode/integrasi Telegram di sistem saat ini. Konsepnya: kanal tanya-jawab bagi auditor — menanyakan <b>pola temuan &amp; regulasi</b> (jawaban ber-sitasi wiki), <b>status penugasan/tindak lanjut</b>, dan pintu konsultansi ringan; tetap ber-RBAC &amp; ter-hardening. <b>Perlu keputusan</b>: apakah dijadikan prioritas berikutnya.</div>
+  <h3>4. Chatbot (Telegram → WhatsApp) — akses percakapan <span class="st s-proto">PERNAH BERJALAN · NONAKTIF</span></h3>
+  <p>Kanal tanya-jawab bagi auditor: menanyakan <b>pola temuan &amp; regulasi</b> (jawaban ber-sitasi wiki), <b>status penugasan &amp; tindak lanjut</b>, serta pintu konsultansi ringan — tanpa harus membuka aplikasi. Tetap ber-RBAC &amp; ter-hardening.</p>
+  <table>
+    <thead><tr><th>Aspek</th><th>Keterangan</th></tr></thead>
+    <tbody>
+      <tr><td><b>Riwayat</b></td><td><b>Bot Telegram sudah pernah dibangun &amp; berjalan.</b> Saat ini <b>nonaktif</b> — bukan karena masalah teknis, melainkan <b>biaya hosting (Fly.io) tidak berlanjut</b>.</td></tr>
+      <tr><td><b>Rencana</b></td><td>(a) <b>Aktifkan kembali</b> layanan bot; (b) <b>migrasi kanal ke WhatsApp</b> — organisasi <b>sudah memiliki</b> kanal WA, sehingga lebih selaras dengan alat kerja resmi &amp; adopsi pengguna lebih cepat.</td></tr>
+      <tr><td><b>Yang dibutuhkan</b></td><td><b>Kepastian hosting</b> (biaya/infrastruktur) + akses kanal WhatsApp resmi organisasi.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout c-note"><b>Poin untuk pimpinan</b>
+    Kanal percakapan <b>bukan konsep di atas kertas</b> — versi Telegram-nya sudah terbukti jalan. Hambatannya <b>biaya hosting</b>, bukan teknologi. Dengan memakai <b>WhatsApp yang sudah dimiliki organisasi</b>, biaya kanal dapat ditekan dan adopsi auditor lebih mudah.</div>
 </section>
 
 <!-- 6. OUTPUT -->
@@ -285,8 +295,8 @@
   <h2>Posisi saat ini dan yang dibutuhkan</h2>
   <div class="grid3">
     <div class="card" style="border-top:3px solid var(--green)"><b>✅ Sudah berjalan</b><span>Engine 19 skill (mutu terukur 19/19) · Wiki (85 pola, 315 catatan) · render KKP/LHP/LKE · gate QC SAIPI · kriteria 3 skill keuangan lengkap &amp; bernomor.</span></div>
-    <div class="card" style="border-top:3px solid var(--amber)"><b>🟡 Dibangun / prototipe</b><span>INTEGRAL (kokpit produksi, terhubung SIMWAS v2) · CACM (deteksi dini, prototipe SIRUP).</span></div>
-    <div class="card" style="border-top:3px solid var(--gray)"><b>⚪ Rencana</b><span>Chatbot/Telegram · integrasi API ke ev-SAKIP/e-ziko/SPIP/MR/RB (kini manual).</span></div>
+    <div class="card" style="border-top:3px solid var(--amber)"><b>🟡 Dibangun / prototipe / nonaktif</b><span>INTEGRAL (kokpit produksi, terhubung SIMWAS v2) · CACM (deteksi dini, prototipe SIRUP) · <b>Chatbot Telegram — sudah pernah berjalan, nonaktif krn biaya hosting</b>.</span></div>
+    <div class="card" style="border-top:3px solid var(--gray)"><b>⚪ Rencana</b><span><b>Migrasi kanal chatbot ke WhatsApp</b> (organisasi sudah punya) · integrasi API ke ev-SAKIP/e-ziko/SPIP/MR/RB (kini manual).</span></div>
   </div>
   <h3>Yang dibutuhkan agar naik ke produksi</h3>
   <table>
@@ -295,7 +305,7 @@
       <tr><td>1</td><td><b>Validasi auditor senior</b> atas kasus uji (golden) → skor menjadi <b>baseline resmi</b>, bukan sekadar uji internal.</td><td>Inspektorat II</td></tr>
       <tr><td>2</td><td><b>Uji coba dengan berkas penugasan nyata</b> (UAT) — menilai mutu temuan &amp; laporan end-to-end.</td><td>Tim auditor</td></tr>
       <tr><td>3</td><td><b>Integrasi INTEGRAL ↔ SIMWAS v2</b> + akses data sistem eksisting (ev-SAKIP, SPIP, MR, RB, SIRUP).</td><td>Sekretariat / pemilik sistem</td></tr>
-      <tr><td>4</td><td><b>Keputusan prioritas</b>: kanal Chatbot/Telegram &amp; perluasan CACM.</td><td>Pimpinan</td></tr>
+      <tr><td>4</td><td><b>Kepastian hosting</b> (penyebab bot Telegram mati) + <b>akses kanal WhatsApp resmi</b> organisasi; keputusan perluasan CACM.</td><td>Pimpinan / Sekretariat</td></tr>
     </tbody>
   </table>
   <div class="callout c-note"><b>Prinsip yang dipegang</b>
