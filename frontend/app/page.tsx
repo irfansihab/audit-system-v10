@@ -24,7 +24,7 @@ export default function HomePage() {
         </Link>
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500">
           <div className="p-3 rounded-lg bg-white border border-gray-100">
-            <div className="text-primary font-semibold text-lg">17</div>
+            <div className="text-primary font-semibold text-lg">19</div>
             skill pengawasan
           </div>
           <div className="p-3 rounded-lg bg-white border border-gray-100">
