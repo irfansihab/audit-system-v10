@@ -36,7 +36,7 @@ const MENU_ITEMS: MenuItem[] = [
     icon: '🎯',
     children: [
       { href: '/cacm', label: 'Run CACM' },
-      { href: '/knowledge#kriteria-cacm', label: 'Kriteria CACM' },
+      { href: '/cacm/kriteria', label: 'Kriteria CACM' },
     ],
   },
   { href: '/tlhp', label: 'Tindak Lanjut', icon: '🔁' },

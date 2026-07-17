@@ -13,6 +13,7 @@ import hashlib
 import hmac
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, get_args
@@ -1267,6 +1268,148 @@ async def kriteria_detail(
     if not m:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Kriteria '{kriteria_id}' tidak ada di registry.")
     return _kriteria_to_dict(m)
+
+
+# ============================================================
+# Kelola kriteria (PT only) — edit/tambah/hapus YAML dari UI
+# ============================================================
+# File YAML tetap sumber kebenaran (di-git, PR tetap jalur audit trail utama).
+# UI ini jalur cepat untuk PT; validasi PENUH (skema + parse DSL metric &
+# threshold) dijalankan SEBELUM file ditulis supaya registry tidak pernah
+# kemasukan kriteria rusak.
+
+_KRITERIA_ID_RE = r"^[A-Z]+(-[A-Z0-9]+)+$"
+
+
+def _kriteria_file(kriteria_id: str) -> Path:
+    from app.cacm_evaluator import _kriteria_root
+
+    return _kriteria_root() / f"{kriteria_id}.yaml"
+
+
+def _validate_kriteria_yaml_text(text: str) -> tuple[Any, list[str]]:
+    """Validasi teks YAML kriteria TANPA menulis file. Return (model|None, errors)."""
+    import yaml as _yaml
+
+    from app.cacm_dsl import DSLError, parse_metric_expression, parse_threshold_expression
+    from app.cacm_schema import validate_kriteria_yaml
+
+    try:
+        raw = _yaml.safe_load(text)
+    except Exception as exc:  # noqa: BLE001
+        return None, [f"YAML tidak bisa di-parse: {exc}"]
+    if not isinstance(raw, dict):
+        return None, ["Root YAML harus mapping (key: value), bukan list/teks."]
+    if raw.get("tipe", "numeric_threshold") != "numeric_threshold":
+        return None, ["Hanya tipe numeric_threshold yang didukung evaluator saat ini."]
+
+    model, errs = validate_kriteria_yaml(raw)
+    if errs or model is None:
+        return None, errs or ["Skema tidak valid."]
+    try:
+        parse_metric_expression(model.metric.expression)
+    except DSLError as exc:
+        return None, [f"metric.expression tidak valid: {exc}"]
+    for t in model.thresholds:
+        try:
+            parse_threshold_expression(t.condition)
+        except DSLError as exc:
+            return None, [f"threshold {t.status} ('{t.condition}') tidak valid: {exc}"]
+    return model, []
+
+
+@router.get("/kriteria/{kriteria_id}/yaml")
+async def kriteria_yaml(
+    kriteria_id: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Isi mentah file YAML 1 kriteria (untuk form edit). Semua role baca."""
+    if not re.match(_KRITERIA_ID_RE, kriteria_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Format id kriteria tidak valid.")
+    f = _kriteria_file(kriteria_id)
+    if not f.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"File {f.name} tidak ada.")
+    return {"id": kriteria_id, "yaml": f.read_text(encoding="utf-8")}
+
+
+@router.put("/kriteria/{kriteria_id}")
+async def kriteria_update(
+    kriteria_id: str,
+    payload: dict = Body(...),
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Simpan perubahan YAML 1 kriteria — PT only, tervalidasi penuh dulu."""
+    user, role = current
+    _require_pt(role)
+    if not re.match(_KRITERIA_ID_RE, kriteria_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Format id kriteria tidak valid.")
+    text = payload.get("yaml")
+    if not isinstance(text, str) or not text.strip():
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Body harus {'yaml': '<isi file>'} dan tidak kosong.")
+
+    model, errs = _validate_kriteria_yaml_text(text)
+    if errs:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, {"errors": errs})
+    if model.id != kriteria_id:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            f"id di YAML ('{model.id}') harus sama dengan kriteria yang diedit ('{kriteria_id}'). "
+            "Untuk ganti id, buat kriteria baru lalu hapus yang lama.",
+        )
+    f = _kriteria_file(kriteria_id)
+    if not f.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Kriteria '{kriteria_id}' tidak ada — pakai POST untuk buat baru.")
+
+    f.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8")
+    load_registry(force_reload=True)
+    log.info("Kriteria CACM %s diubah oleh %s (PT) via UI", kriteria_id, user.username or user.email)
+    return {"ok": True, "id": kriteria_id, "file": f.name}
+
+
+@router.post("/kriteria", status_code=status.HTTP_201_CREATED)
+async def kriteria_create(
+    payload: dict = Body(...),
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Buat kriteria baru dari YAML — PT only. id diambil dari isi YAML."""
+    user, role = current
+    _require_pt(role)
+    text = payload.get("yaml")
+    if not isinstance(text, str) or not text.strip():
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Body harus {'yaml': '<isi file>'} dan tidak kosong.")
+
+    model, errs = _validate_kriteria_yaml_text(text)
+    if errs:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, {"errors": errs})
+    f = _kriteria_file(model.id)
+    if f.exists():
+        raise HTTPException(status.HTTP_409_CONFLICT, f"Kriteria '{model.id}' sudah ada — pakai PUT untuk mengubah.")
+
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8")
+    load_registry(force_reload=True)
+    log.info("Kriteria CACM %s dibuat oleh %s (PT) via UI", model.id, user.username or user.email)
+    return {"ok": True, "id": model.id, "file": f.name}
+
+
+@router.delete("/kriteria/{kriteria_id}")
+async def kriteria_delete(
+    kriteria_id: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Hapus 1 kriteria — PT only. Finding lama yang terlanjur dihasilkan tetap
+    tersimpan di DB (audit trail); kriteria ini hanya berhenti dipakai run baru."""
+    user, role = current
+    _require_pt(role)
+    if not re.match(_KRITERIA_ID_RE, kriteria_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Format id kriteria tidak valid.")
+    f = _kriteria_file(kriteria_id)
+    if not f.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Kriteria '{kriteria_id}' tidak ada.")
+    f.unlink()
+    load_registry(force_reload=True)
+    log.info("Kriteria CACM %s DIHAPUS oleh %s (PT) via UI", kriteria_id, user.username or user.email)
+    return {"ok": True, "id": kriteria_id, "deleted": True}
 
 
 @router.get("/runs/{run_id}/findings/v7-native")

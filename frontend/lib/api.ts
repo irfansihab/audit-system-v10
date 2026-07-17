@@ -1039,6 +1039,30 @@ export const api = {
     }>(`/cacm/kriteria/library${qs}`);
   },
 
+  /** Isi mentah file YAML 1 kriteria (untuk form edit). */
+  getCacmKriteriaYaml: (id: string) =>
+    request<{ id: string; yaml: string }>(`/cacm/kriteria/${encodeURIComponent(id)}/yaml`),
+
+  /** Simpan perubahan YAML kriteria (PT only; divalidasi penuh di backend). */
+  updateCacmKriteria: (id: string, yaml: string) =>
+    request<{ ok: boolean; id: string; file: string }>(`/cacm/kriteria/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ yaml }),
+    }),
+
+  /** Buat kriteria baru dari YAML (PT only; id diambil dari isi YAML). */
+  createCacmKriteria: (yaml: string) =>
+    request<{ ok: boolean; id: string; file: string }>(`/cacm/kriteria`, {
+      method: 'POST',
+      body: JSON.stringify({ yaml }),
+    }),
+
+  /** Hapus kriteria (PT only). Finding lama tetap tersimpan di DB. */
+  deleteCacmKriteria: (id: string) =>
+    request<{ ok: boolean; id: string; deleted: boolean }>(`/cacm/kriteria/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
+
   /** Detail 1 kriteria CACM. */
   getCacmKriteria: (id: string) =>
     request<{
