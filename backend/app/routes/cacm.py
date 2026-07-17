@@ -15,7 +15,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, get_args
 
 import httpx
 from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
@@ -30,6 +30,7 @@ from app.cacm_evaluator import (
     list_kriteria,
     load_registry,
 )
+from app.cacm_schema import DimensiCacm, SumberData
 from app.config import get_settings
 from app.database import get_db
 from app.models import (
@@ -45,6 +46,7 @@ from app.models import (
 )
 from app.routes.penugasan import _scaffold_penugasan_files
 from app.schemas import PenugasanCreate
+from app.skills_registry import skill_exists
 from app.storage import gen_kode_penugasan, penugasan_folder
 
 log = logging.getLogger(__name__)
@@ -52,6 +54,9 @@ settings = get_settings()
 router = APIRouter(prefix="/cacm", tags=["cacm"])
 
 _FIXTURE = Path(__file__).resolve().parent.parent / "fixtures" / "cacm-sample-ews-hasil.json"
+_FIXTURE_ANGKIN = (
+    Path(__file__).resolve().parent.parent / "fixtures" / "cacm-sample-anggaran-kinerja.json"
+)
 _PROMOTABLE = {"MERAH", "KUNING"}
 
 
@@ -310,6 +315,162 @@ async def ingest_sample(
     return {"ok": True, "sample": True, **_run_summary_dict(run, run.summary.get("total", 0))}
 
 
+# ============================================================
+# Ingest observasi multi-sumber (dimensi-agnostik)
+# ============================================================
+# `/ingest` di atas khusus payload EWS SIRUP: bentuknya rekap+findings dan
+# dimensinya dikunci ke PENGADAAN_RENCANA. Jalur di bawah menerima observasi
+# MENTAH dari sumber apa pun (DIPA, sistem kinerja, SPSE) — `sumber` & `dimensi`
+# datang dari payload, lalu evaluator memilih kriteria yang cocok per dimensi.
+# Tidak ada EwsFinding di jalur ini; hasilnya murni CacmObservasi + CacmFinding.
+
+_DIMENSI_VALID = set(get_args(DimensiCacm))
+_SUMBER_VALID = set(get_args(SumberData))
+
+
+async def _ingest_observasi(db: AsyncSession, payload: Any, source: str) -> tuple[CacmRun, int]:
+    """Ingest observasi generik → CacmObservasi + CacmFinding per (dimensi, satker).
+
+    Payload: `{"meta": {...}, "observasi": [{sumber, dimensi, satker,
+    satker_kode, periode, data{}}, ...]}`. Return (run, jumlah_finding).
+    """
+    if not isinstance(payload, dict):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Payload harus object dengan key 'observasi'.")
+    meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
+    rows_in = payload.get("observasi")
+    if not isinstance(rows_in, list) or not rows_in:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Payload tidak berisi 'observasi' (list tidak kosong).")
+
+    # Validasi dulu SELURUH baris sebelum menulis apa pun — supaya payload
+    # setengah-valid tidak meninggalkan run separuh terisi.
+    parsed: list[dict] = []
+    for i, o in enumerate(rows_in):
+        if not isinstance(o, dict):
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, f"observasi[{i}] bukan object.")
+        dim = str(o.get("dimensi", "")).strip()
+        sbr = str(o.get("sumber", "")).strip()
+        if dim not in _DIMENSI_VALID:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                f"observasi[{i}]: dimensi '{dim}' tidak dikenal. Pilihan: {sorted(_DIMENSI_VALID)}",
+            )
+        if sbr not in _SUMBER_VALID:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                f"observasi[{i}]: sumber '{sbr}' tidak dikenal. Pilihan: {sorted(_SUMBER_VALID)}",
+            )
+        if not isinstance(o.get("data"), dict) or not o["data"]:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, f"observasi[{i}]: 'data' kosong/bukan object.")
+        parsed.append(o)
+
+    load_registry()
+
+    periode_default = str(meta.get("periode_crawl") or datetime.utcnow().strftime("%Y-%m"))
+    run_id = str(meta.get("run_id") or f"{source}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}")
+    if (await db.execute(select(CacmRun).where(CacmRun.run_id == run_id))).scalar_one_or_none():
+        run_id = f"{run_id}-{datetime.utcnow().strftime('%H%M%S%f')}"
+
+    run = CacmRun(
+        run_id=run_id,
+        source=source,
+        tanggal_evaluasi=meta.get("tanggal_evaluasi"),
+        periode_crawl=meta.get("periode_crawl"),
+        summary={"total": 0, "merah": 0, "kuning": 0, "hijau": 0, "info": 0},
+        rekap=[],
+    )
+    db.add(run)
+    await db.flush()
+
+    # Tulis observasi, group per (dimensi, satker) untuk dievaluasi bersama.
+    groups: dict[tuple[str, str | None, str], list[CacmObservasi]] = {}
+    for o in parsed:
+        satker_nama = str(o.get("satker") or "").strip() or "(tanpa satker)"
+        satker_kode = str(o["satker_kode"]).strip() if o.get("satker_kode") else None
+        obs = CacmObservasi(
+            sumber=str(o["sumber"]),
+            dimensi=str(o["dimensi"]),
+            satker_kode=satker_kode,
+            satker_nama=satker_nama,
+            periode_label=str(o.get("periode") or periode_default),
+            data=o["data"],
+            raw_source_id=(str(o["raw_source_id"])[:120] if o.get("raw_source_id") else None),
+            cacm_run_id=run.id,
+        )
+        db.add(obs)
+        groups.setdefault((str(o["dimensi"]), satker_kode, satker_nama), []).append(obs)
+
+    await db.flush()  # butuh ID observasi untuk bukti_observasi_ids
+
+    counts = {"total": 0, "merah": 0, "kuning": 0, "hijau": 0, "info": 0}
+    n_findings = 0
+    for (dimensi, satker_kode, satker_nama), obs_list in groups.items():
+        rows = [{"data": o.data, "_id": o.id} for o in obs_list]
+        bukti_ids = [o.id for o in obs_list]
+        periode_label = obs_list[0].periode_label
+        hasils: list[EvaluasiHasil] = evaluate_all_for_dimensi(dimensi, rows)
+        for h in hasils:
+            val = h.value if isinstance(h.value, (int, float)) else None
+            db.add(CacmFinding(
+                kriteria_id=h.kriteria_id,
+                kriteria_revisi=h.kriteria_revisi,
+                status=h.status,
+                metric_value=(float(val) if val is not None and val == val else None),  # NaN guard
+                metric_satuan=h.satuan,
+                metric_display=h.value_display,
+                satker_kode=satker_kode,
+                satker_nama=satker_nama,
+                periode_label=periode_label,
+                dimensi=dimensi,
+                bukti_observasi_ids=bukti_ids[:50],
+                evidence=h.evidence,
+                narasi=h.narasi,
+                tindak_lanjut="BARU",
+                cacm_run_id=run.id,
+            ))
+            n_findings += 1
+            counts["total"] += 1
+            key = {"MERAH": "merah", "KUNING": "kuning", "HIJAU": "hijau", "INFO": "info"}.get(h.status)
+            if key:
+                counts[key] += 1
+
+    run.summary = counts
+    await db.commit()
+    await db.refresh(run)
+    return run, n_findings
+
+
+@router.post("/observasi/ingest", status_code=status.HTTP_201_CREATED)
+async def ingest_observasi(
+    payload: Any = Body(...),
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Ingest observasi CACM multi-sumber (ANGGARAN/KINERJA/PENGADAAN_*).
+
+    Beda dengan `/ingest` (khusus EWS SIRUP): di sini dimensi & sumber datang
+    dari payload, jadi sumber data baru tidak perlu route baru.
+    """
+    user, role = current
+    _require_pt(role)
+    run, n = await _ingest_observasi(db, payload, source="offline")
+    return {"ok": True, **_run_summary_dict(run, n)}
+
+
+@router.post("/observasi/ingest-sample", status_code=status.HTTP_201_CREATED)
+async def ingest_observasi_sample(
+    current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Muat fixture DUMMY anggaran+kinerja (demo dimensi non-pengadaan)."""
+    user, role = current
+    _require_pt(role)
+    if not _FIXTURE_ANGKIN.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Fixture tidak ada: {_FIXTURE_ANGKIN.name}")
+    payload = json.loads(_FIXTURE_ANGKIN.read_text(encoding="utf-8"))
+    run, n = await _ingest_observasi(db, payload, source="offline")
+    return {"ok": True, "sample": True, "dummy": True, **_run_summary_dict(run, n)}
+
+
 @router.get("/runs")
 async def list_runs(
     current: tuple[User, Role] = Depends(get_current_user),
@@ -437,6 +598,61 @@ async def _create_usulan_from_ews_finding(db: AsyncSession, f: EwsFinding) -> Pe
     return p
 
 
+_SKILL_FALLBACK = "reviu-umum"
+
+
+def _resolve_promote_skill(kriteria_id: str) -> str:
+    """Skill tujuan promote — dari `promote.skill` di YAML kriteria.
+
+    Divalidasi terhadap registry skill (folder `knowledge/skills/`), BUKAN enum
+    `Skill` yang cuma sisa 2 nilai lama. Skill tak dikenal → fallback jenis-netral
+    + warning, supaya salah ketik di YAML tidak diam-diam bikin penugasan dengan
+    skill yang keliru.
+    """
+    try:
+        k = get_kriteria(kriteria_id)
+        slug = (k.promote.skill or "").strip() if (k and k.promote) else ""
+    except Exception as exc:  # noqa: BLE001 — YAML rusak tidak boleh gagalkan promote
+        log.warning("Gagal baca promote.skill kriteria %s: %s", kriteria_id, exc)
+        slug = ""
+    if not slug:
+        return _SKILL_FALLBACK
+    if not skill_exists(slug):
+        log.warning(
+            "Kriteria %s: promote.skill '%s' tidak ada di registry skill — pakai '%s'.",
+            kriteria_id, slug, _SKILL_FALLBACK,
+        )
+        return _SKILL_FALLBACK
+    return slug
+
+
+def _build_obyek_usulan(kriteria_id: str, f: CacmFinding, judul_singkat: str) -> str:
+    """Obyek penugasan usulan — pakai `promote.prefilled_obyek_tpl` bila ada.
+
+    Placeholder didukung: {satker}, {tahun}, {periode}, {metric}. Template rusak
+    (placeholder tak dikenal) → jatuh ke default jenis-netral, bukan error.
+    """
+    tpl = ""
+    try:
+        k = get_kriteria(kriteria_id)
+        tpl = (k.promote.prefilled_obyek_tpl or "").strip() if (k and k.promote) else ""
+    except Exception:  # noqa: BLE001
+        tpl = ""
+    if tpl:
+        periode = f.periode_label or ""
+        tahun = periode[:4] if len(periode) >= 4 and periode[:4].isdigit() else ""
+        try:
+            return tpl.format(
+                satker=f.satker_nama,
+                tahun=tahun,
+                periode=periode,
+                metric=f.metric_display or "",
+            )[:400]
+        except (KeyError, IndexError, ValueError) as exc:
+            log.warning("Kriteria %s: prefilled_obyek_tpl gagal di-format: %s", kriteria_id, exc)
+    return f"{f.satker_nama} — {kriteria_id}: {judul_singkat}"[:400]
+
+
 async def _create_usulan_from_cacm_finding(db: AsyncSession, f: CacmFinding) -> Penugasan:
     """V7-native variant — load paket dari CacmObservasi via bukti_observasi_ids,
     regulasi dari YAML kriteria via load_registry. Output context.md "Sinyal CACM"
@@ -445,70 +661,85 @@ async def _create_usulan_from_cacm_finding(db: AsyncSession, f: CacmFinding) -> 
     # Judul singkat dari kriteria_id + status
     kriteria_id = f.kriteria_id
     judul_singkat = f"{kriteria_id}: {(f.narasi or 'finding v7-native').split('.')[0]}"[:120]
-    obyek = f"Reviu Pengadaan {f.satker_nama} — {kriteria_id}: {judul_singkat}"[:400]
 
-    kode_pen = gen_kode_penugasan("reviu-pengadaan")
+    # Skill & obyek mengikuti blok `promote` di YAML kriteria — kriteria dimensi
+    # ANGGARAN/KINERJA tidak boleh jadi penugasan reviu-pengadaan.
+    skill_slug = _resolve_promote_skill(kriteria_id)
+    obyek = _build_obyek_usulan(kriteria_id, f, judul_singkat)
+
+    kode_pen = gen_kode_penugasan(skill_slug)
     folder = penugasan_folder(kode_pen)
-    payload = PenugasanCreate(obyek=obyek, skill=Skill.REVIU_PENGADAAN, nomor_st=None, tanggal_st=None)
+    payload = PenugasanCreate(obyek=obyek, skill=skill_slug, nomor_st=None, tanggal_st=None)
     _scaffold_penugasan_files(folder=folder, kode=kode_pen, payload=payload, ketua_tim_name=None)
 
-    # Load paket dari CacmObservasi via bukti_observasi_ids
-    paket_lines = ""
-    n_paket = 0
-    total_pagu = 0
-    if f.bukti_observasi_ids:
-        obs_rows = (
-            await db.execute(
-                select(CacmObservasi).where(CacmObservasi.id.in_(f.bukti_observasi_ids))
-            )
-        ).scalars().all()
-        n_paket = len(obs_rows)
-        paket_items: list[str] = []
-        for o in obs_rows[:15]:
-            d = o.data or {}
-            nama = d.get("nama") or d.get("nama_paket", "")
-            pagu = _to_int(d.get("pagu"))
-            total_pagu += pagu or 0
-            paket_items.append(
-                f"  - {nama} — Rp {pagu:,} ({d.get('metode','')}, {d.get('jenis','')})"
-            )
-        paket_lines = "\n".join(paket_items)
-        # Hitung total pagu seluruh observasi (bukan hanya 15)
-        for o in obs_rows:
-            d = o.data or {}
-            total_pagu += _to_int(d.get("pagu")) or 0
+    # Model kriteria dipakai untuk regulasi, threshold, & pemilihan field bukti.
+    # CATATAN: load_registry() mengembalikan _RegistryEntry (punya .model), BUKAN
+    # KriteriaModel — dulu di sini diakses .regulasi langsung sehingga selalu
+    # AttributeError & ditelan except, membuat regulasi/threshold selalu "-".
+    kmodel = get_kriteria(kriteria_id)
 
-    # Load regulasi & threshold display dari YAML kriteria
     regulasi_str = "-"
     threshold_str = "-"
-    try:
-        from app.cacm_evaluator import load_registry
-        reg = load_registry()
-        k = reg.get(kriteria_id)
-        if k:
-            regulasi_str = k.regulasi or "-"
-            # Threshold display: ambil dari first MERAH (paling kritis)
-            thr_lines: list[str] = []
-            for thr in (k.thresholds or []):
-                thr_lines.append(f"{thr.status}: {thr.condition}")
-            threshold_str = " | ".join(thr_lines) or "-"
-    except Exception:  # noqa: BLE001 — graceful
-        pass
+    if kmodel:
+        if kmodel.regulasi:
+            regulasi_str = "; ".join(kmodel.regulasi)
+        thr_lines = [f"{t.status}: {t.condition}" for t in (kmodel.thresholds or [])]
+        threshold_str = " | ".join(thr_lines) or "-"
+
+    # Bukti observasi. Blok bergaya "paket + pagu" hanya masuk akal untuk dimensi
+    # PENGADAAN_*; ANGGARAN/KINERJA berbasis Rincian Output, jadi barisnya
+    # dibangun dari evidence_fields kriteria agar tidak keluar "— Rp 0 (, )".
+    is_pbj = str(f.dimensi or "").startswith("PENGADAAN")
+    obs_rows: list[CacmObservasi] = []
+    if f.bukti_observasi_ids:
+        obs_rows = list(
+            (
+                await db.execute(
+                    select(CacmObservasi).where(CacmObservasi.id.in_(f.bukti_observasi_ids))
+                )
+            ).scalars().all()
+        )
+    n_obs = len(obs_rows)
+    total_pagu = sum(_to_int((o.data or {}).get("pagu")) for o in obs_rows) if is_pbj else 0
+
+    # Field yang ditampilkan per baris bukti non-PBJ (dari evidence_fields YAML,
+    # buang prefix "data." dan field nama yang sudah jadi label baris).
+    ev_keys = [
+        e.split(".", 1)[1] for e in (kmodel.evidence_fields if kmodel else []) if e.startswith("data.")
+    ]
+    ev_keys = [k for k in ev_keys if k not in ("satker", "ro_nama", "nama", "nama_paket")]
+
+    def _bukti_line(o: CacmObservasi) -> str:
+        d = o.data or {}
+        if is_pbj:
+            nama = d.get("nama") or d.get("nama_paket", "")
+            pagu = _to_int(d.get("pagu"))
+            return f"  - {nama} — Rp {pagu:,} ({d.get('metode','')}, {d.get('jenis','')})"
+        nama = d.get("ro_nama") or d.get("nama") or o.raw_source_id or "(tanpa nama)"
+        kode_ro = d.get("ro_kode")
+        detail = ", ".join(f"{k}={d[k]}" for k in ev_keys if d.get(k) is not None)
+        head = f"  - {nama}" + (f" [{kode_ro}]" if kode_ro else "")
+        return head + (f" — {detail}" if detail else "")
+
+    bukti_lines = "\n".join(_bukti_line(o) for o in obs_rows[:15])
+    bukti_label = "Paket terdampak" if is_pbj else "Observasi terkait (Rincian Output)"
 
     cacm_section = (
         f"\n\n## Sinyal CACM / v7-native (sumber usulan penugasan)\n\n"
         f"- Kriteria v7: {kriteria_id} (rev {f.kriteria_revisi}) — status: {f.status}\n"
         f"- Satker: {f.satker_nama}\n"
+        f"- Periode: {f.periode_label or '-'}\n"
         f"- Metrik: {f.metric_display or '-'}\n"
-        f"- Paket terdampak: {n_paket}"
+        f"- {bukti_label}: {n_obs}"
         + (f" | Total pagu: Rp {total_pagu:,}\n" if total_pagu else "\n")
         + f"- Threshold YAML: {threshold_str}\n"
         + f"- Regulasi: {regulasi_str}\n"
         + f"- Dimensi: {f.dimensi}\n\n"
         + f"Narasi evaluator:\n{f.narasi or '-'}\n"
-        + (f"\nPaket terdampak (top 15):\n{paket_lines}\n" if paket_lines else "")
+        + (f"\n{bukti_label} (maks 15):\n{bukti_lines}\n" if bukti_lines else "")
         + "\n> Sumber: CACM v7-native (kriteria YAML deterministik). Bukti: "
         + f"{len(f.bukti_observasi_ids or [])} observasi.\n"
+        + "> Sinyal ini HIPOTESIS awal, bukan simpulan — wajib diverifikasi ke dokumen sumber.\n"
     )
     ctx_path = folder / "context.md"
     try:
@@ -520,7 +751,7 @@ async def _create_usulan_from_cacm_finding(db: AsyncSession, f: CacmFinding) -> 
     p = Penugasan(
         kode=kode_pen,
         obyek=obyek,
-        skill=Skill.REVIU_PENGADAAN,
+        skill=skill_slug,
         nomor_st=None,
         tanggal_st=None,
         status=PenugasanStatus.USULAN_CACM,

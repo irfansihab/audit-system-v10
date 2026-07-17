@@ -1,0 +1,343 @@
+{
+  "meta": {
+    "run_id": "dummy-anggaran-kinerja-2026-Q2",
+    "tanggal_evaluasi": "2026-07-17",
+    "periode_crawl": "2026-Q2",
+    "catatan": "DATA DUMMY — BUKAN DATA RIIL KOMDIGI. Dibuat untuk membuka jalur CACM multi-sumber (dimensi ANGGARAN & KINERJA) sebelum integrasi ke sumber resmi (OM SPAN/DIPA & sistem kinerja). Angka pagu/realisasi/target adalah rekaan. Ambang kriteria ANG-*/KIN-* juga belum divalidasi auditor."
+  },
+  "observasi": [
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.EBA-2026-Q2-anggaran",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.EBA",
+        "ro_nama": "Layanan Audit Internal",
+        "pagu": 5000000000,
+        "realisasi": 4100000000,
+        "realisasi_q4": 1100000000,
+        "serapan_persen": 82.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.EBA-2026-Q2-kinerja",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.EBA",
+        "ro_nama": "Layanan Audit Internal",
+        "target_volume": 40,
+        "realisasi_volume": 34,
+        "satuan_volume": "laporan",
+        "capaian_persen": 85.0,
+        "serapan_persen": 82.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.EBB-2026-Q2-anggaran",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "pagu": 3000000000,
+        "realisasi": 2400000000,
+        "realisasi_q4": 700000000,
+        "serapan_persen": 80.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.EBB-2026-Q2-kinerja",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "target_volume": 12,
+        "realisasi_volume": 11,
+        "satuan_volume": "layanan bulanan",
+        "capaian_persen": 91.7,
+        "serapan_persen": 80.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.CAN-2026-Q2-anggaran",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.CAN",
+        "ro_nama": "Sistem Informasi Pengawasan",
+        "pagu": 2000000000,
+        "realisasi": 1500000000,
+        "realisasi_q4": 500000000,
+        "serapan_persen": 75.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "itjen",
+      "satker": "Inspektorat Jenderal",
+      "periode": "2026-Q2",
+      "raw_source_id": "5241.CAN-2026-Q2-kinerja",
+      "data": {
+        "satker": "Inspektorat Jenderal",
+        "ro_kode": "5241.CAN",
+        "ro_nama": "Sistem Informasi Pengawasan",
+        "target_volume": 1,
+        "realisasi_volume": 1,
+        "satuan_volume": "sistem",
+        "capaian_persen": 100.0,
+        "serapan_persen": 75.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.BMA-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.BMA",
+        "ro_nama": "Fasilitasi Ekonomi Digital",
+        "pagu": 12000000000,
+        "realisasi": 7800000000,
+        "realisasi_q4": 3400000000,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.BMA-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.BMA",
+        "ro_nama": "Fasilitasi Ekonomi Digital",
+        "target_volume": 25,
+        "realisasi_volume": 19,
+        "satuan_volume": "fasilitasi",
+        "capaian_persen": 76.0,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.QDB-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.QDB",
+        "ro_nama": "Pengembangan Talenta Digital",
+        "pagu": 20000000000,
+        "realisasi": 13000000000,
+        "realisasi_q4": 5800000000,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.QDB-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.QDB",
+        "ro_nama": "Pengembangan Talenta Digital",
+        "target_volume": 5000,
+        "realisasi_volume": 3900,
+        "satuan_volume": "peserta",
+        "capaian_persen": 78.0,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.EBB-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "pagu": 4000000000,
+        "realisasi": 2600000000,
+        "realisasi_q4": 1000000000,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "ekosdig",
+      "satker": "Direktorat Jenderal Ekosistem Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "4321.EBB-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Ekosistem Digital",
+        "ro_kode": "4321.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "target_volume": 12,
+        "realisasi_volume": 10,
+        "satuan_volume": "layanan bulanan",
+        "capaian_persen": 83.3,
+        "serapan_persen": 65.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.BMA-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.BMA",
+        "ro_nama": "Pengawasan Konten dan Ruang Digital",
+        "pagu": 15000000000,
+        "realisasi": 12750000000,
+        "realisasi_q4": 7000000000,
+        "serapan_persen": 85.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.BMA-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.BMA",
+        "ro_nama": "Pengawasan Konten dan Ruang Digital",
+        "target_volume": 15,
+        "realisasi_volume": 6,
+        "satuan_volume": "laporan",
+        "capaian_persen": 40.0,
+        "serapan_persen": 85.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.CAN-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.CAN",
+        "ro_nama": "Sistem Pemantauan Ruang Digital",
+        "pagu": 25000000000,
+        "realisasi": 21250000000,
+        "realisasi_q4": 13000000000,
+        "serapan_persen": 85.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.CAN-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.CAN",
+        "ro_nama": "Sistem Pemantauan Ruang Digital",
+        "target_volume": 4,
+        "realisasi_volume": 2,
+        "satuan_volume": "modul sistem",
+        "capaian_persen": 50.0,
+        "serapan_persen": 85.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "dipa",
+      "dimensi": "ANGGARAN",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.EBB-2026-Q2-anggaran",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "pagu": 5000000000,
+        "realisasi": 4000000000,
+        "realisasi_q4": 1500000000,
+        "serapan_persen": 80.0,
+        "tahun": 2026
+      }
+    },
+    {
+      "sumber": "kinerja_eperformance",
+      "dimensi": "KINERJA",
+      "satker_kode": "wasdig",
+      "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+      "periode": "2026-Q2",
+      "raw_source_id": "6112.EBB-2026-Q2-kinerja",
+      "data": {
+        "satker": "Direktorat Jenderal Pengawasan Ruang Digital",
+        "ro_kode": "6112.EBB",
+        "ro_nama": "Layanan Dukungan Manajemen Internal",
+        "target_volume": 12,
+        "realisasi_volume": 8,
+        "satuan_volume": "layanan bulanan",
+        "capaian_persen": 66.7,
+        "serapan_persen": 80.0,
+        "tahun": 2026
+      }
+    }
+  ]
+}

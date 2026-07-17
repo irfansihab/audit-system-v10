@@ -1,0 +1,60 @@
+# Fase 2 — Anggaran. Serapan anggaran per satker s/d periode berjalan.
+id: ANG-SERAPAN-RENDAH
+revisi: "2026-Q3-dummy"
+nama: "Serapan Anggaran Rendah s/d Periode Berjalan"
+catatan_revisi: |
+  Kriteria PERTAMA dimensi ANGGARAN (Fase 2 rencana CACM). Dibuat bersama data
+  DUMMY untuk membuka jalur multi-sumber — ambang & regulasi BELUM divalidasi
+  auditor. Lihat catatan_implementasi sebelum dipakai atas data riil.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [itjen, ekosdig, wasdig]
+
+regulasi:
+  - "PP 45/2013 tentang Tata Cara Pelaksanaan APBN — pelaksanaan anggaran secara tertib & tepat waktu [VERIFIKASI AUDITOR: pasal spesifik belum dikonfirmasi]"
+  - "[VERIFIKASI AUDITOR] Target serapan per triwulan mengikuti surat/edaran DJPb & target Kementerian tahun berjalan — nomor belum dikonfirmasi"
+
+metric:
+  # Serapan = total realisasi / total pagu, seluruh RO satker pada periode.
+  expression: "ratio(sum(data.realisasi), sum(data.pagu)) * 100"
+  satuan: persen
+  format_display: "{:.1f}%"
+  catatan_evaluator: |
+    Row = 1 Rincian Output (RO) per satker per periode; field `pagu` &
+    `realisasi` dalam rupiah.
+
+thresholds:
+  - status: MERAH
+    condition: "<50"
+    catatan: "Serapan sangat rendah — risiko tidak terserap/penumpukan akhir tahun; telusuri hambatan pelaksanaan"
+  - status: KUNING
+    condition: ">=50 AND <75"
+    catatan: "Serapan di bawah target — cek jadwal kegiatan & rencana penarikan dana"
+  - status: HIJAU
+    condition: ">=75"
+    catatan: "Serapan sesuai/di atas target periode"
+
+evidence_fields:
+  - data.satker
+  - data.ro_nama
+  - data.pagu
+  - data.realisasi
+
+promote:
+  # Belum ada skill khusus pelaksanaan/penyerapan anggaran di knowledge/skills/
+  # — pakai reviu-umum (jenis-netral). Ganti bila skill khusus dibuat.
+  skill: reviu-umum
+  prefilled_obyek_tpl: "Pelaksanaan Anggaran {satker} TA {tahun}"
+  prefilled_dasar_permintaan: "Sinyal CACM ANG-SERAPAN-RENDAH — serapan {metric} s/d {periode}"
+
+catatan_implementasi: |
+  ⚠️ AMBANG DUMMY — BELUM DIVALIDASI AUDITOR.
+  Ambang 50/75 adalah placeholder yang lazim dipakai sebagai rule-of-thumb, BUKAN
+  hasil konfirmasi atas target resmi. Sebelum dipakai atas data riil:
+    1) Konfirmasi target serapan per triwulan yang berlaku di Komdigi.
+    2) Ambang harus periode-aware (serapan 50% wajar di Q2, merah di Q4) —
+       saat ini kriteria ini TIDAK sadar posisi triwulan. Pakai `periode_relevansi`
+       + kriteria terpisah per triwulan, atau tambah field `target_periode` di data.
+    3) Konfirmasi nomor regulasi/edaran target serapan.

@@ -1,0 +1,54 @@
+# Fase 2 — Anggaran. Penumpukan realisasi belanja di triwulan IV.
+id: ANG-NUMPUK-Q4
+revisi: "2026-Q3-dummy"
+nama: "Penumpukan Realisasi Belanja di Triwulan IV"
+catatan_revisi: |
+  Kriteria kedua dimensi ANGGARAN (Fase 2). Data DUMMY — ambang & regulasi
+  belum divalidasi auditor.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [itjen, ekosdig, wasdig]
+
+regulasi:
+  - "PP 45/2013 tentang Tata Cara Pelaksanaan APBN — pelaksanaan anggaran proporsional sepanjang tahun [VERIFIKASI AUDITOR: pasal spesifik belum dikonfirmasi]"
+
+metric:
+  # Porsi realisasi Q4 terhadap total realisasi setahun.
+  expression: "ratio(sum(data.realisasi_q4), sum(data.realisasi)) * 100"
+  satuan: persen
+  format_display: "{:.1f}%"
+  catatan_evaluator: |
+    Butuh field `realisasi_q4` (realisasi Okt–Des) dan `realisasi` (total
+    setahun) per RO. Hanya bermakna untuk periode yang sudah melewati Q4.
+
+thresholds:
+  - status: MERAH
+    condition: ">=50"
+    catatan: "Lebih dari separuh belanja menumpuk di Q4 — risiko kualitas belanja rendah & pekerjaan tidak selesai"
+  - status: KUNING
+    condition: ">=35 AND <50"
+    catatan: "Penumpukan Q4 di atas proporsional (25%) — cek penyebab keterlambatan"
+  - status: HIJAU
+    condition: "<35"
+    catatan: "Distribusi belanja relatif proporsional"
+
+evidence_fields:
+  - data.satker
+  - data.ro_nama
+  - data.realisasi
+  - data.realisasi_q4
+
+promote:
+  # Belum ada skill khusus pelaksanaan anggaran — pakai reviu-umum (jenis-netral).
+  skill: reviu-umum
+  prefilled_obyek_tpl: "Pelaksanaan Anggaran {satker} TA {tahun}"
+  prefilled_dasar_permintaan: "Sinyal CACM ANG-NUMPUK-Q4 — porsi realisasi Q4 {metric}"
+
+catatan_implementasi: |
+  ⚠️ AMBANG DUMMY — BELUM DIVALIDASI AUDITOR.
+  Basis proporsional 25%/triwulan adalah asumsi aritmetika, bukan norma resmi.
+  Ambang 35/50 placeholder. Kriteria ini hanya valid dievaluasi SETELAH Q4
+  berjalan — evaluasi di Q1–Q3 akan menghasilkan angka yang menyesatkan karena
+  `realisasi_q4` masih 0. Batasi lewat `periode_relevansi` saat dipakai riil.

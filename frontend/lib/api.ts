@@ -904,6 +904,18 @@ export const api = {
       { method: 'POST' }
     ),
 
+  /** Ingest fixture DUMMY dimensi anggaran + kinerja (multi-sumber). PT only. */
+  ingestCacmObservasiSample: () =>
+    request<{
+      ok: boolean;
+      sample: boolean;
+      dummy: boolean;
+      id: number;
+      run_id: string;
+      summary: Record<string, number>;
+      total_findings: number;
+    }>('/cacm/observasi/ingest-sample', { method: 'POST' }),
+
   /** Daftar run EWS yang sudah masuk. */
   getCacmRuns: () =>
     request<{

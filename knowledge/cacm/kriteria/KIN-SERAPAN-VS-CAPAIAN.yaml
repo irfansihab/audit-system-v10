@@ -1,0 +1,59 @@
+# Fase 4 — Kinerja. Selisih serapan anggaran vs capaian output (efektivitas).
+id: KIN-SERAPAN-VS-CAPAIAN
+revisi: "2026-Q3-dummy"
+nama: "Serapan Anggaran Tinggi tapi Capaian Output Rendah"
+catatan_revisi: |
+  Kriteria kedua dimensi KINERJA (Fase 4). Sinyal klasik pengawasan: uang sudah
+  keluar tapi output belum ada. Data DUMMY; ambang belum divalidasi auditor.
+
+tipe: numeric_threshold
+dimensi: KINERJA
+sumber_data: kinerja_eperformance
+satker_terapkan: [itjen, ekosdig, wasdig]
+
+regulasi:
+  - "[VERIFIKASI AUDITOR] Perjanjian Kinerja & DIPA satker TA berjalan — dokumen sumber belum dikonfirmasi"
+
+metric:
+  # Gap = serapan anggaran − capaian output (poin persen). Positif besar =
+  # anggaran terserap tanpa output sepadan.
+  expression: "avg(data.serapan_persen) - avg(data.capaian_persen)"
+  satuan: poin persen
+  format_display: "{:+.1f} poin"
+  catatan_evaluator: |
+    Row = 1 RO per satker per periode, membawa `serapan_persen` DAN
+    `capaian_persen` sekaligus (join anggaran×kinerja dilakukan di sisi ingest).
+    Gap negatif = output melampaui serapan (indikasi efisien) → HIJAU.
+
+thresholds:
+  - status: MERAH
+    condition: ">=30"
+    catatan: "Serapan jauh melampaui capaian output — indikasi belanja tidak efektif; telusuri realisasi fisik & keandalan pelaporan"
+  - status: KUNING
+    condition: ">=15 AND <30"
+    catatan: "Serapan mendahului capaian output — cek keselarasan realisasi keuangan & fisik"
+  - status: HIJAU
+    condition: "<15"
+    catatan: "Serapan & capaian output relatif selaras"
+
+evidence_fields:
+  - data.satker
+  - data.ro_nama
+  - data.serapan_persen
+  - data.capaian_persen
+
+promote:
+  skill: audit-kinerja
+  prefilled_obyek_tpl: "Kinerja {satker} TA {tahun}"
+  prefilled_dasar_permintaan: "Sinyal CACM KIN-SERAPAN-VS-CAPAIAN — gap serapan vs capaian {metric}"
+
+catatan_implementasi: |
+  ⚠️ AMBANG DUMMY — BELUM DIVALIDASI AUDITOR.
+  Ambang 15/30 poin persen adalah placeholder. Dua keterbatasan yang harus
+  disadari sebelum dipakai riil:
+    1) Gap besar TIDAK otomatis berarti tidak efektif — ada RO yang memang
+       outputnya baru terhitung di akhir periode (mis. pembangunan sistem).
+       Sinyal ini hipotesis awal, bukan simpulan.
+    2) Perbandingan hanya sah bila serapan & capaian mengacu RO yang sama pada
+       periode yang sama. Join lintas sumber dilakukan saat ingest — pastikan
+       kunci RO konsisten antara DIPA dan sistem kinerja.

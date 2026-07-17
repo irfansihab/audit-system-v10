@@ -97,6 +97,18 @@ export default function CacmPage() {
     }
   };
 
+  const ingestAngkinSample = async () => {
+    setBusy('ingest-angkin');
+    try {
+      await api.ingestCacmObservasiSample();
+      await loadRuns();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const syncAgent = async () => {
     setBusy('sync');
     setError(null);
@@ -146,7 +158,7 @@ export default function CacmPage() {
 
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex justify-between items-start mb-1">
-          <h1 className="text-2xl font-bold text-primary-dark">CACM — Early Warning System SIRUP</h1>
+          <h1 className="text-2xl font-bold text-primary-dark">CACM — Pemantauan Berkelanjutan</h1>
           {isPT && (
             <div className="flex gap-2">
               <button
@@ -156,6 +168,14 @@ export default function CacmPage() {
                 title="Pull run terbaru dari agent EWS tim (butuh agent ter-deploy + CACM_AGENT_* di .env)"
               >
                 {busy === 'sync' ? 'Sinkron…' : '⟳ Sync dari agent'}
+              </button>
+              <button
+                onClick={ingestAngkinSample}
+                disabled={busy === 'ingest-angkin'}
+                className="px-3 py-2 text-sm rounded border border-primary text-primary font-semibold hover:bg-primary-50 disabled:opacity-50"
+                title="Muat data DUMMY dimensi Anggaran & Kinerja (belum tersambung ke OM SPAN/sistem kinerja)"
+              >
+                {busy === 'ingest-angkin' ? 'Memuat…' : '＋ Contoh Anggaran & Kinerja'}
               </button>
               <button
                 onClick={ingestSample}
@@ -168,9 +188,10 @@ export default function CacmPage() {
           )}
         </div>
         <p className="text-sm text-gray-500 mb-4">
-          Hasil evaluasi 9 skenario EWS atas data SIRUP (RUP/perencanaan). Finding MERAH/KUNING dapat
-          dijadikan usulan penugasan reviu pengadaan. <span className="text-gray-400">C1a: ingest dari
-          file/sample; webhook &amp; pull otomatis (C1b) menyusul.</span>
+          Evaluasi otomatis atas data pengawasan terhadap kriteria terkurasi. Finding MERAH/KUNING dapat
+          dijadikan usulan penugasan. Dimensi aktif: <b>Pengadaan</b> (SIRUP — data agent EWS),
+          <b> Anggaran</b> &amp; <b>Kinerja</b>{' '}
+          <span className="text-amber-700">(masih data dummy — belum tersambung ke OM SPAN/sistem kinerja)</span>.
         </p>
 
         {error && (
@@ -204,6 +225,7 @@ export default function CacmPage() {
               <span className="text-xs px-2 py-1 rounded bg-gray-100">Total {s.total ?? 0}</span>
               <span className="text-xs px-2 py-1 rounded bg-red-100 text-red-800">🔴 {s.merah ?? 0} Merah</span>
               <span className="text-xs px-2 py-1 rounded bg-amber-100 text-amber-800">🟡 {s.kuning ?? 0} Kuning</span>
+              <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-800">🟢 {s.hijau ?? 0} Hijau</span>
               <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">ℹ️ {s.info ?? 0} Info</span>
               <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-600" title="Sumber data run">
                 {run.source === 'webhook' ? '📡 webhook' : run.source === 'pull' ? '⟳ pull agent' : '📄 offline'}
@@ -237,14 +259,19 @@ export default function CacmPage() {
               </div>
             )}
 
-            {/* Diff EWS legacy vs v7-native — validasi cut-over */}
-            <DiffSection runId={run.id} />
+            {/* Diff EWS legacy vs v7-native — validasi cut-over. Hanya relevan
+                untuk run EWS SIRUP; run multi-sumber tidak punya pembanding
+                legacy, jadi diff-nya akan selalu "0% match" & menyesatkan. */}
+            {run.findings.length > 0 && <DiffSection runId={run.id} />}
 
             {/* V7-native findings (paralel CACM Fase 1 evaluator) */}
             <V7NativeFindingsSection runId={run.id} />
 
-            {/* Findings */}
+            {/* Findings legacy — hanya run EWS SIRUP yang punya; run multi-sumber
+                (anggaran/kinerja) murni v7-native, jadi section ini disembunyikan. */}
+            {run.findings.length > 0 && (
             <h2 className="text-lg font-bold text-primary-dark mb-2">Temuan EWS legacy ({run.findings.length})</h2>
+            )}
             <div className="space-y-2">
               {run.findings.map((f) => (
                 <div key={f.id} className="bg-white border border-gray-200 rounded-lg">
@@ -354,6 +381,21 @@ const CACM_STATUS_CLS_V7: Record<string, string> = {
   INFO: 'bg-gray-100 text-gray-600 border-gray-300',
 };
 
+// Dimensi CACM (lihat DimensiCacm di backend/app/cacm_schema.py).
+const DIMENSI_LABEL: Record<string, string> = {
+  PENGADAAN_RENCANA: 'Pengadaan',
+  PENGADAAN_REALISASI: 'Pengadaan (realisasi)',
+  ANGGARAN: 'Anggaran',
+  KINERJA: 'Kinerja',
+};
+
+const DIMENSI_CLS: Record<string, string> = {
+  PENGADAAN_RENCANA: 'bg-indigo-50 text-indigo-700',
+  PENGADAAN_REALISASI: 'bg-indigo-50 text-indigo-700',
+  ANGGARAN: 'bg-sky-50 text-sky-700',
+  KINERJA: 'bg-violet-50 text-violet-700',
+};
+
 function V7NativeFindingsSection({ runId }: { runId: number }) {
   const session = getSession();
   const canReEval = session?.role_aktif === 'PT' || session?.role_aktif === 'PM';
@@ -455,6 +497,7 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
               <thead>
                 <tr className="text-left text-gray-500 border-b border-gray-200">
                   <th className="py-1.5 pr-2">Kriteria</th>
+                  <th className="py-1.5 px-2">Dimensi</th>
                   <th className="py-1.5 px-2">Status</th>
                   <th className="py-1.5 px-2">Metric</th>
                   <th className="py-1.5 px-2">Narasi</th>
@@ -468,6 +511,11 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
                   return (
                     <tr key={f.id} className="border-b border-gray-100 last:border-0">
                       <td className="py-1.5 pr-2 font-mono text-gray-500">{f.kriteria_id}</td>
+                      <td className="py-1.5 px-2">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${DIMENSI_CLS[f.dimensi] || 'bg-gray-100 text-gray-600'}`}>
+                          {DIMENSI_LABEL[f.dimensi] || f.dimensi}
+                        </span>
+                      </td>
                       <td className="py-1.5 px-2">
                         <span className={`px-1.5 py-0.5 rounded border text-[10px] ${CACM_STATUS_CLS_V7[f.status] || 'bg-gray-100'}`}>
                           {f.status}

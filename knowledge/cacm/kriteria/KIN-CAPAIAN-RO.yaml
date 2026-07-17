@@ -1,0 +1,61 @@
+# Fase 4 — Kinerja. Capaian volume Rincian Output (RO) terhadap target.
+id: KIN-CAPAIAN-RO
+revisi: "2026-Q3-dummy"
+nama: "Capaian Rincian Output (RO) di Bawah Target"
+catatan_revisi: |
+  Kriteria PERTAMA dimensi KINERJA (Fase 4 rencana CACM). README menandai fase
+  ini "butuh klarifikasi sumber" — sumber data di sini masih ASUMSI
+  (`kinerja_eperformance`). Data DUMMY; ambang & sumber belum divalidasi.
+
+tipe: numeric_threshold
+dimensi: KINERJA
+sumber_data: kinerja_eperformance
+satker_terapkan: [itjen, ekosdig, wasdig]
+
+regulasi:
+  - "[VERIFIKASI AUDITOR] Perjanjian Kinerja & target RO satker TA berjalan — dokumen sumber belum dikonfirmasi"
+  - "[VERIFIKASI AUDITOR] PP 8/2006 tentang Pelaporan Keuangan dan Kinerja Instansi Pemerintah — relevansi pasal belum dikonfirmasi"
+
+metric:
+  # Rata-rata capaian volume RO (realisasi volume / target volume) per satker.
+  expression: "avg(data.capaian_persen)"
+  satuan: persen
+  format_display: "{:.1f}%"
+  catatan_evaluator: |
+    Row = 1 RO per satker per periode. `capaian_persen` = realisasi_volume /
+    target_volume * 100, dihitung di sisi ingest (bukan di DSL) agar tiap RO
+    ternormalisasi terhadap satuannya masing-masing (dokumen, laporan, sistem…).
+
+thresholds:
+  - status: MERAH
+    condition: "<70"
+    catatan: "Capaian output jauh di bawah target — telusuri hambatan & keandalan data capaian"
+  - status: KUNING
+    condition: ">=70 AND <90"
+    catatan: "Capaian output di bawah target — cek rencana penyelesaian sisa periode"
+  - status: HIJAU
+    condition: ">=90"
+    catatan: "Capaian output sesuai/mendekati target"
+
+evidence_fields:
+  - data.satker
+  - data.ro_nama
+  - data.target_volume
+  - data.realisasi_volume
+  - data.satuan_volume
+  - data.capaian_persen
+
+promote:
+  skill: evaluasi-sakip
+  prefilled_obyek_tpl: "Akuntabilitas Kinerja {satker} TA {tahun}"
+  prefilled_dasar_permintaan: "Sinyal CACM KIN-CAPAIAN-RO — rata-rata capaian RO {metric}"
+
+catatan_implementasi: |
+  ⚠️ AMBANG & SUMBER DUMMY — BELUM DIVALIDASI AUDITOR.
+  Dua hal yang WAJIB diklarifikasi sebelum dipakai atas data riil:
+    1) SUMBER: sistem mana yang jadi rujukan capaian RO — e-Performance,
+       SAKIP/LKj, SMART DJA, atau input manual INTEGRAL? `sumber_data` di sini
+       baru asumsi. README kriteria menandai ini sebagai open question.
+    2) AMBANG: 70/90 placeholder. Rata-rata antar-RO juga menyamarkan RO yang
+       nol capaian bila RO lain sudah 100% — pertimbangkan kriteria pendamping
+       berbasis count(RO capaian <50) saat dipakai riil.
