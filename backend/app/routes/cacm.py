@@ -1275,7 +1275,19 @@ async def runs_v7_native_findings(
     current: tuple[User, Role] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    """List CacmFinding v7-native utk satu run (paralel dgn /runs/{id} legacy)."""
+    """Daftar finding CACM satu run — SATU daftar untuk semua dimensi.
+
+    Finding dimensi pengadaan disinkronkan dengan temuan EWS legacy pasangannya
+    (via `app/cacm_mapping.py`): narasi kaya milik agen — judul, penjelasan,
+    rekomendasi awal, nilai aktual, threshold, regulasi — ikut menempel di field
+    `ews`, supaya UI tidak perlu daftar legacy terpisah.
+
+    Status yang ditampilkan tetap status evaluator kriteria YAML. Kalau vonis
+    EWS berbeda, ini DIBERITAHU lewat `ews.status_beda`, bukan didiamkan —
+    perbedaan vonis itu informasi untuk auditor, bukan noise.
+    """
+    from app.cacm_mapping import V7_TO_EWS
+
     rows = (
         await db.execute(
             select(CacmFinding)
@@ -1283,6 +1295,38 @@ async def runs_v7_native_findings(
             .order_by(CacmFinding.satker_nama, CacmFinding.kriteria_id)
         )
     ).scalars().all()
+
+    ews_rows = (
+        await db.execute(select(EwsFinding).where(EwsFinding.cacm_run_id == run_id))
+    ).scalars().all()
+    # Index by (satker_kode, kode EWS). Fallback ke nama ter-normalisasi bila
+    # satker_kode kosong — penulisan nama antar sumber tidak konsisten.
+    ews_idx: dict[tuple[str, str], EwsFinding] = {}
+    for e in ews_rows:
+        key = (e.satker_kode or (e.satker or "").strip().lower(), e.kode)
+        ews_idx.setdefault(key, e)
+
+    def _ews_for(r: CacmFinding) -> dict | None:
+        kode = V7_TO_EWS.get(r.kriteria_id)
+        if not kode:
+            return None
+        e = ews_idx.get((r.satker_kode or (r.satker_nama or "").strip().lower(), kode))
+        if not e:
+            return None
+        return {
+            "kode": e.kode,
+            "status": e.status,
+            "status_beda": (e.status or "").upper() != (r.status or "").upper(),
+            "judul": e.judul,
+            "penjelasan": e.penjelasan or e.ringkasan,
+            "rekomendasi": e.rekomendasi,
+            "nilai_aktual": e.nilai_aktual,
+            "threshold": e.threshold,
+            "regulasi": e.regulasi,
+            "jumlah_paket_terdampak": e.jumlah_paket_terdampak,
+            "total_nilai_terdampak": e.total_nilai_terdampak,
+        }
+
     return {
         "total": len(rows),
         "findings": [
@@ -1304,6 +1348,7 @@ async def runs_v7_native_findings(
                 "tindak_lanjut": r.tindak_lanjut,
                 "penugasan_id": r.penugasan_id,
                 "evaluated_at": r.evaluated_at.isoformat() if r.evaluated_at else None,
+                "ews": _ews_for(r),
             }
             for r in rows
         ],

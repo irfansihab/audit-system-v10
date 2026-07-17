@@ -1079,6 +1079,21 @@ export const api = {
         tindak_lanjut: string;
         penugasan_id: number | null;
         evaluated_at: string | null;
+        // Narasi kaya dari agen EWS (hanya finding dimensi pengadaan yang punya
+        // pasangan). null bila tak ada padanan legacy.
+        ews: {
+          kode: string;
+          status: string;
+          status_beda: boolean;
+          judul: string | null;
+          penjelasan: string | null;
+          rekomendasi: string | null;
+          nilai_aktual: string | null;
+          threshold: string | null;
+          regulasi: string | null;
+          jumlah_paket_terdampak: number;
+          total_nilai_terdampak: number;
+        } | null;
       }>;
     }>(`/cacm/runs/${runId}/findings/v7-native`),
 

@@ -4,21 +4,12 @@
 // Webhook/pull live (C1b) menyusul. Sumber data = sample fixture untuk demo.
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api, clearToken, getSession, Session } from '@/lib/api';
 import { confirmDialog } from '@/lib/confirm';
 import { AppShell } from '@/components/AppShell';
 
 type Run = Awaited<ReturnType<typeof api.getCacmRun>>;
-type Finding = Run['findings'][number];
-
-const STATUS_CLS: Record<string, string> = {
-  MERAH: 'bg-red-100 text-red-800 border-red-300',
-  KUNING: 'bg-amber-100 text-amber-800 border-amber-300',
-  HIJAU: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-  INFO: 'bg-blue-100 text-blue-800 border-blue-300',
-};
 
 function rupiah(n: number): string {
   return 'Rp ' + (n || 0).toLocaleString('id-ID');
@@ -34,7 +25,6 @@ export default function CacmPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState<number | null>(null);
 
   const isPT = session?.role_aktif === 'PT';
 
@@ -77,7 +67,6 @@ export default function CacmPage() {
     setBusy('run');
     try {
       setRun(await api.getCacmRun(id));
-      setExpanded(null);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -112,31 +101,6 @@ export default function CacmPage() {
     } catch (e: any) {
       // 503 = agent belum dikonfigurasi (pesan jelas dari backend)
       setError(e.message?.includes('503') ? 'Agent EWS belum dikonfigurasi (set CACM_AGENT_BASE_URL + CACM_AGENT_API_KEY di .env backend).' : e.message);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const promote = async (f: Finding) => {
-    if (!(await confirmDialog(`Jadikan finding ${f.kode} (${f.satker}) sebagai usulan penugasan?`))) return;
-    setBusy(`promote-${f.id}`);
-    try {
-      await api.promoteFinding(f.id);
-      if (run) setRun(await api.getCacmRun(run.id));
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const dismiss = async (f: Finding) => {
-    setBusy(`dismiss-${f.id}`);
-    try {
-      await api.dismissFinding(f.id);
-      if (run) setRun(await api.getCacmRun(run.id));
-    } catch (e: any) {
-      setError(e.message);
     } finally {
       setBusy(null);
     }
@@ -246,102 +210,10 @@ export default function CacmPage() {
               </div>
             )}
 
-            {/* Finding CACM — evaluator kriteria YAML (v7-native) */}
+            {/* SATU daftar untuk semua dimensi. Narasi kaya milik agen EWS
+                (judul/penjelasan/rekomendasi) sudah disinkronkan ke tiap finding
+                pengadaan lewat field `ews` — tidak ada lagi daftar legacy terpisah. */}
             <V7NativeFindingsSection runId={run.id} />
-
-            {/* Findings legacy — hanya run EWS SIRUP yang punya; run multi-sumber
-                (anggaran/kinerja) murni v7-native, jadi section ini disembunyikan. */}
-            {run.findings.length > 0 && (
-            <h2 className="text-lg font-bold text-primary-dark mb-2">Temuan EWS legacy ({run.findings.length})</h2>
-            )}
-            <div className="space-y-2">
-              {run.findings.map((f) => (
-                <div key={f.id} className="bg-white border border-gray-200 rounded-lg">
-                  <div className="flex items-start gap-3 p-3">
-                    <span className={`shrink-0 px-2 py-0.5 text-xs rounded border ${STATUS_CLS[f.status] || 'bg-gray-100'}`}>
-                      {f.status}
-                    </span>
-                    <span className="shrink-0 text-xs font-mono text-gray-500 mt-0.5">{f.kode}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-800">
-                        {f.judul || f.ringkasan || f.kode}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-0.5">
-                        {f.satker}
-                        {f.nilai_aktual ? ` · ${f.nilai_aktual}` : ''}
-                      </div>
-                      {f.tindak_lanjut === 'DIPROMOSIKAN' && f.penugasan_id && (
-                        <Link href={`/penugasan/${f.penugasan_id}`} className="text-xs text-emerald-700 hover:underline">
-                          ✓ Jadi penugasan #{f.penugasan_id} →
-                        </Link>
-                      )}
-                      {f.tindak_lanjut === 'DIABAIKAN' && (
-                        <span className="text-xs text-gray-400">✕ Diabaikan</span>
-                      )}
-                    </div>
-                    <div className="shrink-0 flex items-center gap-2">
-                      <button
-                        onClick={() => setExpanded(expanded === f.id ? null : f.id)}
-                        className="text-xs text-gray-500 hover:text-gray-700"
-                      >
-                        {expanded === f.id ? 'Tutup' : 'Detail'}
-                      </button>
-                      {isPT && f.promotable && f.tindak_lanjut === 'BARU' && (
-                        <>
-                          <button
-                            onClick={() => promote(f)}
-                            disabled={busy === `promote-${f.id}`}
-                            className="text-xs px-2 py-1 rounded bg-primary text-white hover:bg-primary-dark disabled:opacity-50"
-                          >
-                            {busy === `promote-${f.id}` ? '…' : 'Jadikan usulan'}
-                          </button>
-                          <button
-                            onClick={() => dismiss(f)}
-                            disabled={busy === `dismiss-${f.id}`}
-                            className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
-                          >
-                            Abaikan
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {expanded === f.id && (
-                    <div className="border-t border-gray-100 p-3 text-sm text-gray-700 space-y-2 bg-gray-50">
-                      {/* Narasi: MERAH punya `penjelasan`; KUNING/INFO pakai `ringkasan`. */}
-                      {(f.penjelasan || f.ringkasan) && (
-                        <p className="whitespace-pre-wrap">{f.penjelasan || f.ringkasan}</p>
-                      )}
-                      <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
-                        {f.nilai_aktual && <div className="sm:col-span-2"><span className="text-gray-400">Nilai aktual:</span> {f.nilai_aktual}</div>}
-                        {f.threshold && <div><span className="text-gray-400">Threshold:</span> {f.threshold}</div>}
-                        {(f.jumlah_paket_terdampak > 0 || f.total_nilai_terdampak > 0) && (
-                          <div>
-                            <span className="text-gray-400">Paket terdampak:</span> {f.jumlah_paket_terdampak}
-                            {f.total_nilai_terdampak > 0 ? ` · ${rupiah(f.total_nilai_terdampak)}` : ''}
-                          </div>
-                        )}
-                        {f.regulasi && <div className="sm:col-span-2"><span className="text-gray-400">Regulasi:</span> {f.regulasi}</div>}
-                        {f.rekomendasi && <div className="sm:col-span-2"><span className="text-gray-400">Rekomendasi EWS:</span> {f.rekomendasi}</div>}
-                      </div>
-                      {f.paket_detail.length > 0 && (
-                        <div className="mt-1">
-                          <div className="text-xs text-gray-400 mb-1">Paket terdampak ({f.paket_detail.length}):</div>
-                          <div className="space-y-0.5">
-                            {f.paket_detail.slice(0, 15).map((p, i) => (
-                              <div key={i} className="text-xs font-mono bg-white border border-gray-200 rounded px-2 py-1">
-                                {p.nama || p.nama_paket} — {rupiah(p.pagu)} ({p.metode}, {p.jenis})
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
           </>
         )}
       </div>
@@ -388,6 +260,7 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
   const [busy, setBusy] = useState(false);
   const [promotingId, setPromotingId] = useState<number | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const refresh = async () => {
     setLoading(true);
@@ -524,7 +397,25 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
                         </span>
                       </td>
                       <td className="py-1.5 px-2 text-gray-700">{f.metric_display || '—'}</td>
-                      <td className="py-1.5 px-2 text-gray-500 text-[11px]">{f.narasi}</td>
+                      <td className="py-1.5 px-2 text-gray-500 text-[11px]">
+                        {f.ews?.judul || f.narasi}
+                        {f.ews && (
+                          <button
+                            onClick={() => setOpenId(openId === f.id ? null : f.id)}
+                            className="ml-1 text-primary hover:underline whitespace-nowrap"
+                          >
+                            {openId === f.id ? '− tutup' : '+ detail'}
+                          </button>
+                        )}
+                        {f.ews?.status_beda && (
+                          <span
+                            className="ml-1 px-1 py-0.5 rounded bg-amber-50 text-amber-700 text-[10px] whitespace-nowrap"
+                            title={`Agen EWS menilai ${f.ews.status} untuk sinyal ini; evaluator kriteria menilai ${f.status}. Ditampilkan apa adanya — perlu penilaian auditor.`}
+                          >
+                            EWS: {f.ews.status}
+                          </span>
+                        )}
+                      </td>
                       <td className="py-1.5 pl-2 text-right">
                         {alreadyPromoted ? (
                           <span className="text-[10px] text-gray-400 italic">→ #{f.penugasan_id}</span>
@@ -542,6 +433,36 @@ function V7NativeFindingsSection({ runId }: { runId: number }) {
                     </tr>
                   );
                 })}
+                {/* Detail sinkron dari agen EWS — dulu daftar terpisah "Temuan
+                    EWS legacy"; kini menempel di finding-nya sendiri. */}
+                {items.map((f) =>
+                  openId === f.id && f.ews ? (
+                    <tr key={`${f.id}-detail`} className="bg-gray-50">
+                      <td colSpan={6} className="p-3 text-[11px] text-gray-700 space-y-2">
+                        {f.ews.penjelasan && <p className="whitespace-pre-wrap">{f.ews.penjelasan}</p>}
+                        <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1">
+                          <div><span className="text-gray-400">Narasi evaluator:</span> {f.narasi}</div>
+                          {f.ews.nilai_aktual && <div><span className="text-gray-400">Nilai aktual (EWS):</span> {f.ews.nilai_aktual}</div>}
+                          {f.ews.threshold && <div><span className="text-gray-400">Threshold:</span> {f.ews.threshold}</div>}
+                          {(f.ews.jumlah_paket_terdampak > 0 || f.ews.total_nilai_terdampak > 0) && (
+                            <div>
+                              <span className="text-gray-400">Paket terdampak:</span> {f.ews.jumlah_paket_terdampak}
+                              {f.ews.total_nilai_terdampak > 0 ? ` · ${rupiah(f.ews.total_nilai_terdampak)}` : ''}
+                            </div>
+                          )}
+                          {f.ews.regulasi && <div className="sm:col-span-2"><span className="text-gray-400">Regulasi:</span> {f.ews.regulasi}</div>}
+                          {f.ews.rekomendasi && <div className="sm:col-span-2"><span className="text-gray-400">Rekomendasi awal agen:</span> {f.ews.rekomendasi}</div>}
+                        </div>
+                        {f.ews.status_beda && (
+                          <p className="text-amber-700">
+                            ⚠ Vonis berbeda — agen EWS: <b>{f.ews.status}</b> ({f.ews.kode}), evaluator kriteria: <b>{f.status}</b> ({f.kriteria_id}).
+                            Keduanya bisa mengukur hal yang berbeda; perlu penilaian auditor.
+                          </p>
+                        )}
+                      </td>
+                    </tr>
+                  ) : null
+                )}
               </tbody>
             </table>
           </div>
