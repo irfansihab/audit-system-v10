@@ -352,6 +352,25 @@ def build_dasar_hukum_blocks(jenis: str) -> list:
             "Peraturan Presiden Nomor 16 Tahun 2018 sebagaimana diubah dengan Peraturan Presiden Nomor 12 Tahun 2021 tentang Pengadaan Barang/Jasa Pemerintah;",
             "Peraturan Lembaga Kebijakan Pengadaan Barang/Jasa Pemerintah Nomor 12 Tahun 2021 tentang Pedoman Pelaksanaan Pengadaan Barang/Jasa Pemerintah melalui Penyedia;",
         ]
+    # Keluarga reviu keuangan (Fase 5) — kriteria riil ter-bundel di skill.
+    # Tanpa ini, LHP hanya memuat PP 60/2008 + SAIPI (kriteria substantif hilang).
+    elif jenis == "reviu-laporan-keuangan":
+        items += [
+            "Peraturan Menteri Keuangan Nomor 255/PMK.09/2015 tentang Standar Reviu atas Laporan Keuangan Kementerian Negara/Lembaga;",
+            "Peraturan Pemerintah Nomor 71 Tahun 2010 tentang Standar Akuntansi Pemerintahan;",
+            "Peraturan Menteri Keuangan Nomor 100 Tahun 2025 tentang Kebijakan Akuntansi Pemerintah Pusat;",
+            "Peraturan Menteri Keuangan Nomor 232/PMK.05/2022 tentang Sistem Akuntansi dan Pelaporan Keuangan Instansi;",
+        ]
+    elif jenis == "reviu-pipk":
+        items += [
+            "Peraturan Menteri Keuangan Nomor 17/PMK.09/2019 tentang Pedoman Penerapan, Penilaian, dan Reviu Pengendalian Intern atas Pelaporan Keuangan Pemerintah Pusat;",
+        ]
+    elif jenis == "reviu-pnbp":
+        items += [
+            "Undang-Undang Nomor 9 Tahun 2018 tentang Penerimaan Negara Bukan Pajak;",
+            "Peraturan Pemerintah Nomor 43 Tahun 2023 tentang Jenis dan Tarif atas Jenis Penerimaan Negara Bukan Pajak yang Berlaku pada Kementerian Komunikasi dan Informatika;",
+            "Peraturan Menteri Keuangan Nomor 155/PMK.02/2021 sebagaimana diubah dengan Peraturan Menteri Keuangan Nomor 58 Tahun 2023 tentang Tata Cara Pengelolaan Penerimaan Negara Bukan Pajak;",
+        ]
     items += [
         "Standar Audit Intern Pemerintah Indonesia (SAIPI) AAIPI 2021 (PER-01/AAIPI/DPN/2021);",
         "Program Kerja Pengawasan Tahunan Inspektorat Jenderal Komdigi.",
