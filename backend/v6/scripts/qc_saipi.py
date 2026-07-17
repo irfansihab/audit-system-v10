@@ -335,6 +335,12 @@ def check_LAK_009(rule, ctx) -> dict:
 
 # ---- LHP-specific checks ----
 
+# Nama file laporan mengikuti jenis pengawasan (lihat _JENIS_LABEL di
+# app/tools/lhr_tools.py): LHA audit, LHE evaluasi, LP pemantauan, LHR reviu,
+# LHP default/konsultansi. QC harus mengenali semuanya.
+_REPORT_PREFIXES = ("LHP", "LHR", "LHA", "LHE", "LP")
+
+
 def _lhp_text(ctx) -> str:
     if "lhp_text" in ctx:
         return ctx["lhp_text"]
@@ -342,7 +348,7 @@ def _lhp_text(ctx) -> str:
     if not lhp_dir.exists():
         ctx["lhp_text"] = ""
         return ""
-    docs = list(lhp_dir.glob("LHP*.docx"))
+    docs = sorted({p for pref in _REPORT_PREFIXES for p in lhp_dir.glob(f"{pref}*.docx")})
     if not docs:
         ctx["lhp_text"] = ""
         return ""
