@@ -1,0 +1,37 @@
+# USULAN OTOMATIS dari basis regulasi wiki — 2026-07-17
+# Sumber: Reviu Laporan Keuangan K/L. Deterministik, BUKAN hasil LLM.
+id: USL-PMK-255-2015
+revisi: "usulan-wiki"
+nama: "Kepatuhan PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010 (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [ALL]
+
+regulasi:
+  - "PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010"
+  - "PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010 — Aspek (Substansi)"
+  - "PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010 — Hakikat (Reviu ≠ audit; **keyakinan terbatas** atas akurasi/keandalan/keabsahan LK sesuai SAP; **tidak menyatakan opini**.)"
+  - "PMK 255/PMK.09/2015 (Standar Reviu atas LK K/L) — ganti PMK 41/PMK.09/2010 — Tahapan (3) (Perencanaan → Pelaksanaan (**Kertas Kerja Reviu/KKR**) → Pelaporan (**CHR → IHR → LHR**).)"
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{:.0f} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker

@@ -45,9 +45,10 @@ const MENU_ITEMS: MenuItem[] = [
     label: 'Knowledge',
     icon: '📚',
     children: [
-      { href: '/knowledge#pattern', label: 'Pattern Temuan' },
-      { href: '/knowledge#template-kp', label: 'Template KP/PKP' },
-      { href: '/knowledge#writeback', label: 'Tulis-balik Vault' },
+      { href: '/knowledge/pattern', label: 'Pattern Temuan' },
+      { href: '/knowledge/template', label: 'Template KP/PKP' },
+      { href: '/knowledge/kriteria-pengawasan', label: 'Kriteria Pengawasan' },
+      { href: '/knowledge/writeback', label: 'Tulis-balik Wiki' },
     ],
   },
   { href: '/feedback', label: 'Feedback Agen', icon: '💬' },

@@ -13,6 +13,7 @@ import { confirmDialog } from '@/lib/confirm';
 import { AppShell } from '@/components/AppShell';
 
 type Kriteria = Awaited<ReturnType<typeof api.listCacmKriteria>>['items'][number];
+type Usulan = Awaited<ReturnType<typeof api.listCacmUsulan>>['items'][number];
 
 const STATUS_COLOR: Record<string, string> = {
   MERAH: 'bg-red-100 text-red-800 border-red-300',
@@ -72,15 +73,21 @@ export default function CacmKriteriaPage() {
   const [yamlText, setYamlText] = useState('');
   const [saving, setSaving] = useState(false);
 
+  // Usulan kriteria dari wiki (menunggu keputusan PT).
+  const [usulan, setUsulan] = useState<Usulan[]>([]);
+  const [usulanOpen, setUsulanOpen] = useState<string | null>(null);
+  const [usulanBusy, setUsulanBusy] = useState<string | null>(null);
+
   const isPT = session?.role_aktif === 'PT';
 
   const refresh = useCallback(async (dim: string) => {
     setLoading(true);
     setErr(null);
     try {
-      const r = await api.listCacmKriteria(dim || undefined);
+      const [r, u] = await Promise.all([api.listCacmKriteria(dim || undefined), api.listCacmUsulan()]);
       setItems(r.items);
       setDimensions(r.dimensi_available);
+      setUsulan(u.items);
     } catch (e: any) {
       setErr(e.message);
     } finally {
@@ -146,6 +153,60 @@ export default function CacmKriteriaPage() {
     }
   };
 
+  const generateUsulan = async () => {
+    setUsulanBusy('generate');
+    setErr(null);
+    setMsg(null);
+    try {
+      const r = await api.generateCacmUsulan();
+      setMsg(
+        r.total_dibuat > 0
+          ? `✓ ${r.total_dibuat} usulan dibuat dari basis regulasi wiki (${r.dilewati.length} dilewati — sudah dirujuk/sudah ada). Ambang masih placeholder.`
+          : `Tidak ada usulan baru — ${r.dilewati.length} kandidat dilewati (sudah dirujuk kriteria aktif atau usulannya sudah ada).`
+      );
+      await refresh(dimensi);
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setUsulanBusy(null);
+    }
+  };
+
+  const terimaUsulan = async (u: Usulan) => {
+    if (
+      !(await confirmDialog(
+        `Terima usulan ${u.id} jadi kriteria aktif? Ambang di dalamnya masih PLACEHOLDER — Anda tetap harus meng-edit metrik & ambang riilnya setelah diterima.`
+      ))
+    )
+      return;
+    setUsulanBusy(u.id);
+    setErr(null);
+    try {
+      const r = await api.terimaCacmUsulan(u.id);
+      setMsg(`✓ ${r.id} kini kriteria aktif. ${r.catatan}`);
+      await refresh(dimensi);
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setUsulanBusy(null);
+    }
+  };
+
+  const tolakUsulan = async (u: Usulan) => {
+    if (!(await confirmDialog({ message: `Tolak & hapus usulan ${u.id}?`, danger: true, confirmText: 'Tolak' }))) return;
+    setUsulanBusy(u.id);
+    setErr(null);
+    try {
+      await api.tolakCacmUsulan(u.id);
+      setMsg(`✓ Usulan ${u.id} ditolak.`);
+      await refresh(dimensi);
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setUsulanBusy(null);
+    }
+  };
+
   const hapus = async (k: Kriteria) => {
     if (
       !(await confirmDialog({
@@ -177,12 +238,22 @@ export default function CacmKriteriaPage() {
         <div className="flex justify-between items-start mb-1 flex-wrap gap-2">
           <h1 className="text-2xl font-bold text-primary-dark">Kriteria CACM</h1>
           {isPT && (
-            <button
-              onClick={mulaiBaru}
-              className="px-3 py-2 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark"
-            >
-              ＋ Kriteria baru
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={generateUsulan}
+                disabled={usulanBusy === 'generate'}
+                className="px-3 py-2 text-sm rounded border border-primary text-primary font-semibold hover:bg-primary-50 disabled:opacity-50"
+                title="Scan basis regulasi wiki (regulasi-kunci + hasil upload di Knowledge > Kriteria Pengawasan) → buat draft usulan untuk regulasi yang belum dirujuk kriteria mana pun. Deterministik, tanpa LLM."
+              >
+                {usulanBusy === 'generate' ? 'Memindai wiki…' : '⚡ Generate usulan dari wiki'}
+              </button>
+              <button
+                onClick={mulaiBaru}
+                className="px-3 py-2 text-sm rounded bg-primary text-white font-semibold hover:bg-primary-dark"
+              >
+                ＋ Kriteria baru
+              </button>
+            </div>
           )}
         </div>
         <p className="text-sm text-gray-500 mb-4">
@@ -237,6 +308,65 @@ export default function CacmKriteriaPage() {
           </div>
         ) : (
           <>
+            {/* ===== Usulan dari wiki (menunggu keputusan PT) ===== */}
+            {usulan.length > 0 && (
+              <div className="mb-5 bg-amber-50/50 border border-amber-300 rounded-lg p-4">
+                <h2 className="font-semibold text-amber-900 text-sm mb-1">
+                  Usulan kriteria dari wiki ({usulan.length})
+                </h2>
+                <p className="text-xs text-amber-800/80 mb-3">
+                  Draft otomatis dari basis regulasi wiki — ambang &amp; metrik masih <b>placeholder</b>.
+                  {isPT
+                    ? ' Terima yang relevan (lalu Edit untuk menetapkan ambang riil), tolak sisanya.'
+                    : ' Keputusan terima/tolak di tangan Pengendali Teknis.'}
+                </p>
+                <div className="space-y-2">
+                  {usulan.map((u) => (
+                    <div key={u.id} className="bg-white border border-amber-200 rounded p-2.5">
+                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                        <div className="min-w-0">
+                          <span className="font-mono text-[11px] text-gray-500">{u.id}</span>
+                          <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{u.dimensi}</span>
+                          <div className="text-xs text-gray-800 mt-0.5">{u.nama}</div>
+                        </div>
+                        <div className="flex gap-1.5 shrink-0">
+                          <button
+                            onClick={() => setUsulanOpen(usulanOpen === u.id ? null : u.id)}
+                            className="text-[11px] px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
+                          >
+                            {usulanOpen === u.id ? '− YAML' : '+ YAML'}
+                          </button>
+                          {isPT && (
+                            <>
+                              <button
+                                onClick={() => terimaUsulan(u)}
+                                disabled={usulanBusy !== null}
+                                className="text-[11px] px-2 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+                              >
+                                {usulanBusy === u.id ? '…' : '✓ Terima'}
+                              </button>
+                              <button
+                                onClick={() => tolakUsulan(u)}
+                                disabled={usulanBusy !== null}
+                                className="text-[11px] px-2 py-1 rounded border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                              >
+                                ✕ Tolak
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {usulanOpen === u.id && (
+                        <pre className="mt-2 text-[10px] bg-gray-50 border border-gray-200 rounded p-2 whitespace-pre-wrap font-mono text-gray-700 max-h-64 overflow-y-auto">
+                          {u.yaml}
+                        </pre>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="mb-3 flex items-center gap-3">
               <select
                 value={dimensi}

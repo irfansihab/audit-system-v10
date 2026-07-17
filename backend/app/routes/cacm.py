@@ -1560,3 +1560,283 @@ async def runs_re_evaluate(
         "removed_findings_old": len(old_fnd),
         "new_findings": n_new,
     }
+
+
+# ============================================================
+# Usulan kriteria dari wiki (PT only utk aksi; semua role baca)
+# ============================================================
+# Generator DETERMINISTIK (bukan LLM): scan basis regulasi wiki —
+# konteks/regulasi-kunci.md (cheat sheet inti) + konteks/regulasi/*.md (hasil
+# upload di Knowledge > Kriteria Pengawasan) — lalu untuk regulasi yang BELUM
+# dirujuk kriteria aktif mana pun, buat draft YAML usulan di
+# knowledge/cacm/kriteria/_usulan/ (registry hanya glob root, jadi usulan
+# tidak ikut termuat sebelum diterima PT).
+#
+# Ambang di usulan adalah PLACEHOLDER yang valid DSL — bukan angka sungguhan.
+# Menerima usulan = memindahkan file ke root registry; PT tetap wajib
+# mengganti metric/threshold lewat tombol Edit.
+
+_USULAN_DIRNAME = "_usulan"
+
+
+def _usulan_dir() -> Path:
+    from app.cacm_evaluator import _kriteria_root
+
+    d = _kriteria_root() / _USULAN_DIRNAME
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _reg_tokens(text: str) -> set[str]:
+    """Token pembanding regulasi: '16/2018', '255/PMK.02/2015' → {'16-2018','255-2015'}.
+
+    Dipakai untuk dedup 'regulasi ini sudah dirujuk kriteria aktif' — cukup
+    nomor+tahun, abaikan format penulisan di antaranya.
+    """
+    out: set[str] = set()
+    for m in re.finditer(r"\b(\d{1,4})\s*(?:/[\w.\-]*?)*/\s*(\d{4})\b", text):
+        out.add(f"{m.group(1)}-{m.group(2)}")
+    for m in re.finditer(r"\b(\d{1,4})\s+tahun\s+(\d{4})\b", text, re.IGNORECASE):
+        out.add(f"{m.group(1)}-{m.group(2)}")
+    return out
+
+
+def _guess_dimensi(context_text: str) -> tuple[str, str]:
+    """Tebak (dimensi, sumber_data) dari kata kunci — tebakan, ditandai di catatan."""
+    t = context_text.lower()
+    if any(k in t for k in ("pengadaan", "pbj", "tender", "rup", "sirup", "lelang")):
+        return "PENGADAAN_RENCANA", "sirup"
+    if any(k in t for k in ("kinerja", "sakip", "lakip", "reformasi birokrasi", "akuntabilitas kinerja")):
+        return "KINERJA", "kinerja_eperformance"
+    return "ANGGARAN", "dipa"
+
+
+_REG_KEYWORD_RE = re.compile(
+    r"^(UU|PP|PERPRES|PMK|PERMEN\w*|PERKA\s?\w*|KEPMEN\w*|PERATURAN|PEDOMAN|KEPUTUSAN)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_regulasi_nama(blok: dict) -> bool:
+    """Saring section non-regulasi (mis. '## Cara Pakai untuk Agen' di
+    regulasi-kunci.md): terima bila namanya bernomor regulasi, diawali kata
+    kunci jenis peraturan, ATAU section-nya punya tabel pasal."""
+    nama = blok.get("nama", "")
+    if _reg_tokens(nama):
+        return True
+    if _REG_KEYWORD_RE.match(nama.strip()):
+        return True
+    return bool(blok.get("pasal"))
+
+
+def _usulan_id_from(nama: str) -> str:
+    """ID ringkas: jenis + nomor-tahun bila terdeteksi (USL-PMK-155-2021);
+    fallback slug terpotong."""
+    m = _REG_KEYWORD_RE.match(nama.strip())
+    jenis = re.sub(r"[^A-Z0-9]+", "", m.group(1).upper()) if m else ""
+    # token nomor-tahun PERTAMA sesuai urutan kemunculan (bukan sort) — untuk
+    # "Perpres 46/2025 (perubahan Perpres 16/2018)" id-nya harus 46-2025.
+    mt = re.search(r"\b(\d{1,4})\s*(?:/[\w.\-]*?)*/\s*(\d{4})\b", nama) or re.search(
+        r"\b(\d{1,4})\s+tahun\s+(\d{4})\b", nama, re.IGNORECASE
+    )
+    if jenis and mt:
+        return f"USL-{jenis}-{mt.group(1)}-{mt.group(2)}"
+    s = re.sub(r"[/.]", "-", nama.upper())
+    s = re.sub(r"[^A-Z0-9-]+", "-", s)
+    s = re.sub(r"-{2,}", "-", s).strip("-")[:40]
+    return f"USL-{s}" if s else "USL-BARU"
+
+
+def _collect_wiki_regulasi() -> list[dict]:
+    """Kumpulkan kandidat regulasi dari wiki: [{nama, regulasi_lines, konteks}]."""
+    wiki = settings.wiki_path / "konteks"
+    out: list[dict] = []
+
+    # 1) regulasi-kunci.md: tiap '### <nama regulasi>' + baris pasal tabelnya
+    kunci = wiki / "regulasi-kunci.md"
+    if kunci.exists():
+        txt = kunci.read_text(encoding="utf-8")
+        kategori = ""
+        blok: dict | None = None
+        for line in txt.split("\n"):
+            if line.startswith("## ") and not line.startswith("###"):
+                kategori = line[3:].strip()
+            elif line.startswith("### "):
+                if blok:
+                    out.append(blok)
+                nama = line[4:].strip()
+                blok = {"nama": nama, "kategori": kategori, "pasal": []}
+            elif blok and line.strip().startswith("|") and "Pasal" not in line and "---" not in line:
+                cells = [c.strip().strip("*") for c in line.strip().strip("|").split("|")]
+                if len(cells) >= 2 and cells[0]:
+                    blok["pasal"].append((cells[0], cells[1]))
+        if blok:
+            out.append(blok)
+
+    # 2) konteks/regulasi/*.md (kelolaan UI — hasil upload dokumen)
+    reg_dir = wiki / "regulasi"
+    if reg_dir.is_dir():
+        for f in sorted(reg_dir.glob("*.md")):
+            try:
+                txt = f.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            m = re.search(r'judul:\s*"([^"]+)"', txt)
+            nama = m.group(1) if m else f.stem.replace("-", " ").title()
+            out.append({"nama": nama, "kategori": "(upload wiki)", "pasal": []})
+    return out
+
+
+@router.get("/kriteria/usulan/list")
+async def kriteria_usulan_list(
+    _current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Daftar usulan kriteria yang menunggu keputusan PT."""
+    items: list[dict] = []
+    for f in sorted(_usulan_dir().glob("*.yaml")):
+        try:
+            txt = f.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        nama = ""
+        dim = ""
+        m = re.search(r'nama:\s*"([^"]+)"', txt)
+        if m:
+            nama = m.group(1)
+        m = re.search(r"dimensi:\s*(\S+)", txt)
+        if m:
+            dim = m.group(1)
+        items.append({"id": f.stem, "nama": nama, "dimensi": dim, "yaml": txt})
+    return {"total": len(items), "items": items}
+
+
+@router.post("/kriteria/usulan/generate", status_code=status.HTTP_201_CREATED)
+async def kriteria_usulan_generate(
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Generate usulan kriteria dari basis regulasi wiki — PT only.
+
+    Deterministik (tanpa LLM): regulasi yang belum dirujuk kriteria aktif mana
+    pun → 1 draft usulan. Ambang placeholder; PT edit setelah menerima.
+    """
+    user, role = current
+    _require_pt(role)
+    load_registry()
+
+    # Token regulasi yang SUDAH dirujuk kriteria aktif → dilewati (dedup).
+    aktif_tokens: set[str] = set()
+    for k in list_kriteria():
+        for r in k.regulasi or []:
+            aktif_tokens |= _reg_tokens(r)
+
+    dibuat: list[str] = []
+    dilewati: list[dict] = []
+    for kand in _collect_wiki_regulasi():
+        if not _is_regulasi_nama(kand):
+            continue  # section panduan/non-regulasi — bukan kandidat
+        nama = kand["nama"]
+        tokens = _reg_tokens(nama)
+        if tokens and tokens & aktif_tokens:
+            dilewati.append({"nama": nama, "alasan": "sudah dirujuk kriteria aktif"})
+            continue
+        uid = _usulan_id_from(nama)
+        f = _usulan_dir() / f"{uid}.yaml"
+        if f.exists() or (_kriteria_file(uid)).exists():
+            dilewati.append({"nama": nama, "alasan": "usulan/kriteria dengan id sama sudah ada"})
+            continue
+
+        dim, sumber = _guess_dimensi(f"{kand.get('kategori','')} {nama}")
+        reg_lines = [f'  - "{nama}"']
+        for pasal, topik in (kand.get("pasal") or [])[:3]:
+            reg_lines.append(f'  - "{nama} — {pasal} ({topik})"')
+        yaml_text = f"""# USULAN OTOMATIS dari basis regulasi wiki — {datetime.utcnow().strftime('%Y-%m-%d')}
+# Sumber: {kand.get('kategori') or 'wiki konteks'}. Deterministik, BUKAN hasil LLM.
+id: {uid}
+revisi: "usulan-wiki"
+nama: "Kepatuhan {nama} (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: {dim}
+sumber_data: {sumber}
+satker_terapkan: [ALL]
+
+regulasi:
+{chr(10).join(reg_lines)}
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{{:.0f}} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker
+"""
+        model, errs = _validate_kriteria_yaml_text(yaml_text)
+        if errs:
+            dilewati.append({"nama": nama, "alasan": f"draft gagal validasi: {errs[0][:120]}"})
+            continue
+        f.write_text(yaml_text, encoding="utf-8")
+        dibuat.append(uid)
+
+    log.info("Usulan kriteria digenerate oleh %s (PT): %d dibuat, %d dilewati",
+             user.username or user.email, len(dibuat), len(dilewati))
+    return {"ok": True, "dibuat": dibuat, "total_dibuat": len(dibuat), "dilewati": dilewati}
+
+
+@router.post("/kriteria/usulan/{usulan_id}/terima")
+async def kriteria_usulan_terima(
+    usulan_id: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Terima usulan → jadi kriteria aktif (pindah ke root registry). PT only."""
+    user, role = current
+    _require_pt(role)
+    if not re.match(_KRITERIA_ID_RE, usulan_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Format id usulan tidak valid.")
+    src = _usulan_dir() / f"{usulan_id}.yaml"
+    if not src.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Usulan '{usulan_id}' tidak ada.")
+    text = src.read_text(encoding="utf-8")
+    model, errs = _validate_kriteria_yaml_text(text)
+    if errs:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, {"errors": errs})
+    dst = _kriteria_file(model.id)
+    if dst.exists():
+        raise HTTPException(status.HTTP_409_CONFLICT, f"Kriteria '{model.id}' sudah ada di registry.")
+    dst.write_text(text, encoding="utf-8")
+    src.unlink()
+    load_registry(force_reload=True)
+    log.info("Usulan kriteria %s DITERIMA oleh %s (PT)", usulan_id, user.username or user.email)
+    return {"ok": True, "id": model.id, "aktif": True,
+            "catatan": "Ambang masih placeholder — segera Edit untuk menetapkan metrik & ambang riil."}
+
+
+@router.delete("/kriteria/usulan/{usulan_id}")
+async def kriteria_usulan_tolak(
+    usulan_id: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Tolak (hapus) usulan — PT only."""
+    user, role = current
+    _require_pt(role)
+    if not re.match(_KRITERIA_ID_RE, usulan_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Format id usulan tidak valid.")
+    f = _usulan_dir() / f"{usulan_id}.yaml"
+    if not f.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Usulan '{usulan_id}' tidak ada.")
+    f.unlink()
+    log.info("Usulan kriteria %s DITOLAK oleh %s (PT)", usulan_id, user.username or user.email)
+    return {"ok": True, "id": usulan_id, "deleted": True}

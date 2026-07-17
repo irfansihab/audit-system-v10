@@ -1,0 +1,34 @@
+# USULAN OTOMATIS dari basis regulasi wiki — 2026-07-17
+# Sumber: Manajemen Risiko & Layanan Pos Universal. Deterministik, BUKAN hasil LLM.
+id: USL-PMK-72-2017
+revisi: "usulan-wiki"
+nama: "Kepatuhan PMK 72/PMK.02/2017 jo. PMK 82/2016 (Dana BO LPU) (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [ALL]
+
+regulasi:
+  - "PMK 72/PMK.02/2017 jo. PMK 82/2016 (Dana BO LPU)"
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{:.0f} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker

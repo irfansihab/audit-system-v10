@@ -1,0 +1,37 @@
+# USULAN OTOMATIS dari basis regulasi wiki — 2026-07-17
+# Sumber: Reviu Laporan Keuangan K/L. Deterministik, BUKAN hasil LLM.
+id: USL-SISTEM-KLASIFIKASI-PENYUSUNAN-LK-PENDUKU
+revisi: "usulan-wiki"
+nama: "Kepatuhan Sistem, klasifikasi & penyusunan LK (pendukung) (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [ALL]
+
+regulasi:
+  - "Sistem, klasifikasi & penyusunan LK (pendukung)"
+  - "Sistem, klasifikasi & penyusunan LK (pendukung) — Regulasi (Untuk)"
+  - "Sistem, klasifikasi & penyusunan LK (pendukung) — PMK 232/PMK.05/2022 (Sistem Akuntansi & Pelaporan Keuangan Instansi)"
+  - "Sistem, klasifikasi & penyusunan LK (pendukung) — PMK 214/PMK.05/2013 jo. PMK 42/2025 (Bagan Akun Standar (BAS))"
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{:.0f} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker

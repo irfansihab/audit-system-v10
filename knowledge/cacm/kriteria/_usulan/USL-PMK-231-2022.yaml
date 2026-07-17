@@ -1,0 +1,37 @@
+# USULAN OTOMATIS dari basis regulasi wiki — 2026-07-17
+# Sumber: Reviu Laporan Keuangan K/L. Deterministik, BUKAN hasil LLM.
+id: USL-PMK-231-2022
+revisi: "usulan-wiki"
+nama: "Kepatuhan PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: ANGGARAN
+sumber_data: dipa
+satker_terapkan: [ALL]
+
+regulasi:
+  - "PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023"
+  - "PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — Aspek (Substansi)"
+  - "PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — Hakikat (Prinsip/dasar/aturan/praktik spesifik penyusunan & penyajian LK pempus.)"
+  - "PMK 100 Tahun 2025 (Kebijakan Akuntansi Pemerintah Pusat) — ganti PMK 231/PMK.05/2022 jo. PMK 57/2023 — Ruang lingkup (Ps.4) (Kebijakan akuntansi per pos: kas & setara kas · investasi · piutang · persediaan · aset tetap · konsesi jasa · properti investasi · aset lainnya · kewajiban · ekuitas · pendapatan · beban/belanja/transfer · pembiayaan · SiLPA/SiKPA & SAL · transitoris · dampak darurat bencana.)"
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{:.0f} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker

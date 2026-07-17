@@ -139,7 +139,13 @@ def _bundle_patterns(skill: str, max_patterns: int = 8) -> dict:
 # ---------------------------------------------------------------------------
 
 def _bundle_konteks() -> dict:
-    """Baca 3 file konteks pendukung dari wiki tim — anti-halusinasi."""
+    """Baca konteks pendukung dari wiki tim — anti-halusinasi.
+
+    3 file inti + regulasi tambahan yang dikelola lewat UI Knowledge >
+    Kriteria Pengawasan (`konteks/regulasi/*.md`, mis. hasil upload dokumen).
+    Regulasi tambahan di-cap per file DAN total supaya bundle tidak meledak
+    saat koleksinya tumbuh.
+    """
     konteks_dir = settings.wiki_path / "konteks"
     out: dict[str, str] = {}
     for kategori in ("pola-temuan-berulang", "glossary-komdigi", "regulasi-kunci"):
@@ -153,6 +159,25 @@ def _bundle_konteks() -> dict:
         # buang frontmatter bila ada
         _, body = _parse_frontmatter(text)
         out[kategori] = body[:4000]  # cap
+
+    reg_dir = konteks_dir / "regulasi"
+    if reg_dir.is_dir():
+        total_cap = 6000  # total budget utk seluruh regulasi tambahan
+        parts: list[str] = []
+        used = 0
+        for f in sorted(reg_dir.glob("*.md")):
+            if used >= total_cap:
+                parts.append(f"_(+ regulasi lain terpotong — lihat wiki konteks/regulasi/{f.name} dst.)_")
+                break
+            try:
+                _, body = _parse_frontmatter(f.read_text(encoding="utf-8"))
+            except OSError:
+                continue
+            piece = body.strip()[:1500]
+            parts.append(piece)
+            used += len(piece)
+        if parts:
+            out["regulasi-tambahan"] = "\n\n---\n\n".join(parts)
     return out
 
 

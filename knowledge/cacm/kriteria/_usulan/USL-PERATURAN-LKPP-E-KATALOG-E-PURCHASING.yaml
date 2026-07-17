@@ -1,0 +1,37 @@
+# USULAN OTOMATIS dari basis regulasi wiki — 2026-07-17
+# Sumber: Pengadaan Barang/Jasa. Deterministik, BUKAN hasil LLM.
+id: USL-PERATURAN-LKPP-E-KATALOG-E-PURCHASING
+revisi: "usulan-wiki"
+nama: "Kepatuhan Peraturan LKPP (E-Katalog & E-Purchasing) (usulan — ambang belum ditetapkan)"
+catatan_revisi: |
+  Usulan kriteria yang dibangun otomatis dari basis regulasi wiki. Metric dan
+  seluruh ambang adalah PLACEHOLDER — WAJIB diganti PT sebelum dipakai menilai
+  data riil. Dimensi/sumber_data adalah TEBAKAN kata kunci; koreksi bila salah.
+
+tipe: numeric_threshold
+dimensi: PENGADAAN_RENCANA
+sumber_data: sirup
+satker_terapkan: [ALL]
+
+regulasi:
+  - "Peraturan LKPP (E-Katalog & E-Purchasing)"
+  - "Peraturan LKPP (E-Katalog & E-Purchasing) — Peraturan (Topik)"
+  - "Peraturan LKPP (E-Katalog & E-Purchasing) — Peraturan LKPP 9/2021 (Toko Daring & Katalog Elektronik)"
+  - "Peraturan LKPP (E-Katalog & E-Purchasing) — Peraturan LKPP 4/2024 (PBJ melalui Penyedia)"
+
+metric:
+  # PLACEHOLDER — ganti dengan metrik nyata (lihat kriteria lain sbg contoh).
+  expression: "count(WHERE data.tidak_sesuai == TRUE)"
+  satuan: kasus
+  format_display: "{:.0f} kasus"
+
+thresholds:
+  - status: MERAH
+    condition: ">=1"
+    catatan: "[GANTI] placeholder — tetapkan ambang riil bersama auditor"
+  - status: HIJAU
+    condition: "<1"
+    catatan: "[GANTI] placeholder"
+
+evidence_fields:
+  - data.satker

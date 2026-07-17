@@ -656,6 +656,53 @@ export const api = {
   // ===== Knowledge / Wiki vault (W1 — baca vault pengetahuan) =====
 
   /** Cari catatan di vault pengetahuan organisasi (read-only). */
+  // ===== Kriteria Pengawasan — regulasi wiki (konteks/regulasi/*.md) =====
+
+  /** Daftar regulasi wiki (kelolaan Knowledge > Kriteria Pengawasan). */
+  listRegulasi: () =>
+    request<{
+      items: Array<{
+        slug: string;
+        judul: string;
+        nomor: string;
+        tahun: string;
+        status: string;
+        sumber_file: string;
+        updated: string;
+        size_bytes: number;
+      }>;
+      total: number;
+      kunci_ada: boolean;
+    }>('/knowledge/regulasi'),
+
+  /** Isi markdown 1 regulasi (slug 'regulasi-kunci' = cheat sheet inti). */
+  getRegulasi: (slug: string) =>
+    request<{ slug: string; content: string }>(`/knowledge/regulasi/${encodeURIComponent(slug)}`),
+
+  /** Simpan perubahan regulasi — PT only. */
+  updateRegulasi: (slug: string, content: string) =>
+    request<{ ok: boolean; slug: string }>(`/knowledge/regulasi/${encodeURIComponent(slug)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+    }),
+
+  /** Hapus regulasi — PT only (regulasi-kunci dilindungi). */
+  deleteRegulasi: (slug: string) =>
+    request<{ ok: boolean; slug: string; deleted: boolean }>(
+      `/knowledge/regulasi/${encodeURIComponent(slug)}`,
+      { method: 'DELETE' }
+    ),
+
+  /** Upload PDF regulasi → auto-generate draft markdown ke wiki — PT only. */
+  uploadRegulasi: (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return request<{ ok: boolean; slug: string; judul: string; nomor: string; tahun: string; file: string }>(
+      '/knowledge/regulasi/upload',
+      { method: 'POST', body: fd }
+    );
+  },
+
   searchWiki: (q: string, limit = 12) =>
     request<{
       configured: boolean;
@@ -1038,6 +1085,33 @@ export const api = {
       }>;
     }>(`/cacm/kriteria/library${qs}`);
   },
+
+  /** Daftar usulan kriteria dari wiki (menunggu keputusan PT). */
+  listCacmUsulan: () =>
+    request<{ total: number; items: Array<{ id: string; nama: string; dimensi: string; yaml: string }> }>(
+      '/cacm/kriteria/usulan/list'
+    ),
+
+  /** Generate usulan kriteria dari basis regulasi wiki — PT only, deterministik. */
+  generateCacmUsulan: () =>
+    request<{ ok: boolean; dibuat: string[]; total_dibuat: number; dilewati: Array<{ nama: string; alasan: string }> }>(
+      '/cacm/kriteria/usulan/generate',
+      { method: 'POST' }
+    ),
+
+  /** Terima usulan → jadi kriteria aktif (PT only). */
+  terimaCacmUsulan: (id: string) =>
+    request<{ ok: boolean; id: string; aktif: boolean; catatan: string }>(
+      `/cacm/kriteria/usulan/${encodeURIComponent(id)}/terima`,
+      { method: 'POST' }
+    ),
+
+  /** Tolak (hapus) usulan — PT only. */
+  tolakCacmUsulan: (id: string) =>
+    request<{ ok: boolean; id: string; deleted: boolean }>(
+      `/cacm/kriteria/usulan/${encodeURIComponent(id)}`,
+      { method: 'DELETE' }
+    ),
 
   /** Isi mentah file YAML 1 kriteria (untuk form edit). */
   getCacmKriteriaYaml: (id: string) =>
