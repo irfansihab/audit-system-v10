@@ -43,6 +43,12 @@ const SUBMENU = [
     desc: 'Daftar regulasi & pasal yang dipakai kriteria. Upload dokumen → auto-generate regulasi ke wiki (PT).',
   },
   {
+    href: '/knowledge/skill',
+    icon: '🛠️',
+    judul: 'Kelola Skill',
+    desc: 'Baca skill eksisting, buat skill baru dari 0, edit SKILL.md (PT), dan graduasi skill dari penugasan nyata (PT/PM).',
+  },
+  {
     href: '/knowledge/writeback',
     icon: '↩️',
     judul: 'Tulis-balik Wiki',

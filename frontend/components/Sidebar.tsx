@@ -48,6 +48,7 @@ const MENU_ITEMS: MenuItem[] = [
       { href: '/knowledge/pattern', label: 'Pattern Temuan' },
       { href: '/knowledge/template', label: 'Template KP/PKP' },
       { href: '/knowledge/kriteria-pengawasan', label: 'Kriteria Pengawasan' },
+      { href: '/knowledge/skill', label: 'Kelola Skill' },
       { href: '/knowledge/writeback', label: 'Tulis-balik Wiki' },
     ],
   },

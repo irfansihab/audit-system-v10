@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSession, Session } from '@/lib/api';
 import { AppShell } from '@/components/AppShell';
-import { GraduasiPanel, PatternLibraryPanel, PatternMonitorPanel } from '../panels';
+import { PatternLibraryPanel, PatternMonitorPanel } from '../panels';
 
 export default function KnowledgePatternPage() {
   const router = useRouter();
@@ -41,7 +41,8 @@ export default function KnowledgePatternPage() {
         <PatternLibraryPanel />
 
         {isPtPm && <PatternMonitorPanel />}
-        {isPtPm && <GraduasiPanel />}
+        {/* Graduasi skill pindah ke Knowledge > Kelola Skill (satu rumah dgn
+            baca/buat/edit skill). */}
       </div>
     </AppShell>
   );

@@ -146,6 +146,34 @@ export const api = {
   /** Daftar skill pengawasan terdaftar (folder-driven) untuk dropdown. */
   getSkills: () => request<SkillInfo[]>('/skills'),
 
+  // ===== Kelola Skill (Knowledge > Kelola Skill) =====
+
+  /** Detail 1 skill: isi SKILL.md + daftar reference. */
+  getSkillDetail: (slug: string) =>
+    request<{ slug: string; content: string; references: string[] }>(
+      `/skills/${encodeURIComponent(slug)}`
+    ),
+
+  /** Baca isi 1 file reference skill (read-only). */
+  getSkillReference: (slug: string, path: string) =>
+    request<{ slug: string; path: string; binary: boolean; content: string }>(
+      `/skills/${encodeURIComponent(slug)}/reference?path=${encodeURIComponent(path)}`
+    ),
+
+  /** Simpan perubahan SKILL.md — PT only (validasi frontmatter di backend). */
+  updateSkillMd: (slug: string, content: string) =>
+    request<{ ok: boolean; slug: string }>(`/skills/${encodeURIComponent(slug)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+    }),
+
+  /** Buat skill baru dari 0 — PT only. */
+  createSkill: (slug: string, content: string) =>
+    request<{ ok: boolean; slug: string; path: string }>('/skills', {
+      method: 'POST',
+      body: JSON.stringify({ slug, content }),
+    }),
+
   /** Render Laporan Survei Pendahuluan (.docx) — HANYA skill audit (Fase 2 merge v8.8). */
   renderSurveyPendahuluan: (penugasanId: number) =>
     request<{ ok: boolean; path: string; name: string }>(
