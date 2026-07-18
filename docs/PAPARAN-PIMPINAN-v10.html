@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paparan Pimpinan — Ekosistem Pengawasan Berbasis AI (v10)</title>
+<style>
+  :root{
+    --primary:#4f46e5; --primary-dark:#3730a3; --primary-soft:#eef2ff;
+    --ink:#1e293b; --ink-2:#475569; --muted:#94a3b8;
+    --surface:#ffffff; --bg:#f1f5f9; --line:#e2e8f0;
+    --good:#047857; --good-bg:#ecfdf5; --warn:#b45309; --warn-bg:#fffbeb;
+    --plan:#1d4ed8; --plan-bg:#eff6ff; --crit:#b91c1c; --crit-bg:#fef2f2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+  .deck{height:100vh;position:relative}
+  .slide{position:absolute;inset:0;display:none;padding:48px 64px 72px;background:var(--surface);overflow:auto}
+  .slide.active{display:block}
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:8px}
+  h1{font-size:40px;line-height:1.15;color:var(--primary-dark)}
+  h2{font-size:30px;color:var(--primary-dark);margin-bottom:6px}
+  .sub{font-size:16px;color:var(--ink-2);margin-top:10px;max-width:960px}
+  .badge{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;vertical-align:middle}
+  .b-ukur{background:var(--good-bg);color:var(--good)}
+  .b-est{background:var(--warn-bg);color:var(--warn)}
+  .b-ren{background:var(--plan-bg);color:var(--plan)}
+  .b-off{background:#f1f5f9;color:var(--ink-2)}
+  .grid{display:grid;gap:16px;margin-top:22px}
+  .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{font-size:15.5px;color:var(--primary-dark);margin-bottom:6px}
+  .card p, .card li{font-size:13.5px;color:var(--ink-2);line-height:1.55}
+  .card ul{padding-left:18px;margin-top:4px}
+  .stat{background:var(--primary-soft);border:1px solid #e0e7ff;border-radius:12px;padding:18px;text-align:center}
+  .stat .v{font-size:34px;font-weight:800;color:var(--primary-dark);line-height:1.1}
+  .stat .l{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.4}
+  table{width:100%;border-collapse:collapse;margin-top:18px;font-size:13.5px}
+  th{background:var(--primary-soft);color:var(--primary-dark);text-align:left;padding:9px 12px;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+  .flow{display:flex;align-items:stretch;gap:0;margin-top:26px;flex-wrap:wrap}
+  .fbox{flex:1;min-width:150px;background:var(--primary-soft);border:1.5px solid #c7d2fe;border-radius:10px;padding:14px;text-align:center}
+  .fbox b{display:block;font-size:14.5px;color:var(--primary-dark)} .fbox span{font-size:12px;color:var(--ink-2)}
+  .arr{align-self:center;font-size:20px;color:var(--primary);padding:0 10px;font-weight:700}
+  .note{margin-top:20px;background:var(--warn-bg);border:1px solid #fde68a;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--warn)}
+  .note-good{margin-top:20px;background:var(--good-bg);border:1px solid #a7f3d0;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--good)}
+  .foot{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--surface);border-top:1px solid var(--line);z-index:10}
+  .foot .brand{font-size:12px;color:var(--muted)}
+  .nav{display:flex;gap:8px;align-items:center}
+  .nav button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 14px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+  .nav button:hover{border-color:var(--primary);color:var(--primary)}
+  .pg{font-size:12.5px;color:var(--muted);min-width:64px;text-align:center}
+  .title-slide{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;background:linear-gradient(135deg,#eef2ff 0%,#ffffff 55%,#f5f3ff 100%)}
+  .logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .mini{font-size:12px;color:var(--muted);margin-top:14px}
+  .cols{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:20px}
+  .tick{color:var(--good);font-weight:700}
+  @media print{
+    body{overflow:visible;background:#fff}
+    .slide{display:block!important;position:relative;page-break-after:always;height:100vh}
+    .foot{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 · JUDUL -->
+<section class="slide title-slide active">
+  <div class="logo">∫</div>
+  <div class="kicker">Inspektorat II · Inspektorat Jenderal Kementerian Komunikasi dan Digital</div>
+  <h1>Ekosistem Pengawasan Internal<br>Berbasis Kecerdasan Buatan</h1>
+  <p class="sub" style="font-size:18px;margin-top:14px">Sistem Audit AI (engine) × INTEGRAL (workspace) × CACM × Knowledge Wiki<br>
+  <b>Status: pengembangan v10 selesai — memasuki uji coba oleh auditor (UAT)</b></p>
+  <p class="mini">Paparan pimpinan · 18 Juli 2026 · Setiap angka diberi label kejujuran:
+    <span class="badge b-ukur">TERUKUR</span> <span class="badge b-est">ESTIMASI</span> <span class="badge b-ren">RENCANA</span></p>
+</section>
+
+<!-- 2 · MASALAH & TUJUAN -->
+<section class="slide">
+  <div class="kicker">Latar Belakang</div>
+  <h2>Masalah yang Diselesaikan</h2>
+  <div class="grid g3">
+    <div class="card"><h3>⏱ Beban waktu penugasan</h3><p>Satu penugasan reviu — dari membaca dokumen, menyusun kertas kerja, sampai draft laporan — memakan waktu berhari-hari per auditor. Kapasitas tim terbatas, obyek pengawasan terus bertambah.</p></div>
+    <div class="card"><h3>📏 Konsistensi mutu</h3><p>Kualitas temuan (kelengkapan Kondisi–Kriteria–Sebab–Akibat, presisi sitasi pasal) bergantung pada jam terbang individu. Standar SAIPI dicek manual dan tidak selalu seragam.</p></div>
+    <div class="card"><h3>🧠 Pengetahuan tersebar</h3><p>Pola temuan berulang, regulasi kunci, dan riwayat pengawasan tersimpan di kepala auditor dan berkas terpisah — tidak terwariskan secara sistematis.</p></div>
+  </div>
+  <div class="grid g1" style="grid-template-columns:1fr">
+    <div class="card" style="background:var(--primary-soft)"><h3>🎯 Tujuan</h3><p><b>Auditor tetap pengambil keputusan</b> — AI mengerjakan pekerjaan baca-tulis yang berat: mencerna dokumen, menyusun draft temuan ber-K/K/S/A dengan sitasi pasal presisi, menjalankan kontrol mutu SAIPI otomatis, dan merender laporan siap reviu. Setiap temuan <b>wajib disetujui manusia</b> (human-in-the-loop) sebelum masuk laporan.</p></div>
+  </div>
+</section>
+
+<!-- 3 · BLUEPRINT -->
+<section class="slide">
+  <div class="kicker">Grand Design</div>
+  <h2>Blueprint Ekosistem — Satu Kesatuan</h2>
+  <div class="flow">
+    <div class="fbox"><b>Sistem Eksisting</b><span>ev-SAKIP · e-Ziko · SPIP · MR · RB · SIMWAS v2</span></div>
+    <div class="arr">→</div>
+    <div class="fbox" style="background:#ede9fe;border-color:#c4b5fd"><b>INTEGRAL</b><span>Workspace orkestrasi: penugasan, peran (AT/KT/PT/PM), persetujuan, arsip</span></div>
+    <div class="arr">→</div>
+    <div class="fbox" style="background:#e0e7ff;border-color:#a5b4fc"><b>Engine AI</b><span>19 skill pengawasan · 2 agen Claude · digest dokumen · render laporan</span></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3>📚 Knowledge / Wiki</h3><p>Basis pengetahuan yang DIBACA agen setiap penugasan: pattern temuan terkurasi, regulasi &amp; pasal kunci (anti-halusinasi), template KP/PKP, riwayat pengawasan.</p></div>
+    <div class="card"><h3>🎯 CACM</h3><p>Pemantauan berkelanjutan atas data pengadaan, anggaran, dan kinerja terhadap kriteria terkurasi — sinyal merah dapat dipromosikan menjadi usulan penugasan.</p></div>
+    <div class="card"><h3>💬 Kanal Chatbot <span class="badge b-ren">RENCANA</span></h3><p>Chatbot Telegram <b>pernah berjalan</b> (nonaktif karena hosting); rencana reaktivasi &amp; migrasi ke WhatsApp organisasi.</p></div>
+  </div>
+  <p class="sub">Prinsip arsitektur: sistem eksisting <b>diorkestrasi INTEGRAL</b>, lalu engine AI yang menganalisis — engine dibuat portabel (tidak terikat satu UI/database) sehingga siap dipakai lintas sistem.</p>
+</section>
+
+<!-- 4 · ANGKA TERUKUR -->
+<section class="slide">
+  <div class="kicker">Manfaat</div>
+  <h2>Kecepatan — Angka Nyata dari Sistem <span class="badge b-ukur">TERUKUR</span></h2>
+  <p class="sub">Diukur dari log eksekusi penugasan demo reviu PNBP end-to-end (17 Jul 2026), bukan estimasi:</p>
+  <div class="grid g4">
+    <div class="stat"><div class="v">5,8 mnt</div><div class="l">Agen Anggota Tim: baca dokumen → 3 temuan K/K/S/A → KKP → QC SAIPI <span class="badge b-ukur">TERUKUR</span></div></div>
+    <div class="stat"><div class="v">5,1 mnt</div><div class="l">Agen Ketua Tim: rekomendasi → render LHR → QC laporan <span class="badge b-ukur">TERUKUR</span></div></div>
+    <div class="stat"><div class="v">±11 mnt</div><div class="l">Total waktu mesin satu siklus analisis–laporan draft <span class="badge b-ukur">TERUKUR</span></div></div>
+    <div class="stat"><div class="v">± 1 minggu</div><div class="l">Pembanding pengerjaan manual per penugasan <span class="badge b-est">ESTIMASI — perlu konfirmasi baseline</span></div></div>
+  </div>
+  <div class="grid g4">
+    <div class="stat"><div class="v">19</div><div class="l">Skill jenis pengawasan siap pakai (audit, reviu, evaluasi, pemantauan, konsultansi) <span class="badge b-ukur">TERUKUR</span></div></div>
+    <div class="stat"><div class="v">16/16</div><div class="l">Skill inti lolos baseline mutu terukur (LLM-judge + cek deterministik) <span class="badge b-ukur">TERUKUR</span></div></div>
+    <div class="stat"><div class="v">100%</div><div class="l">Temuan melewati persetujuan manusia sebelum masuk laporan (HITL) <span class="badge b-ukur">by design</span></div></div>
+    <div class="stat"><div class="v">21</div><div class="l">Cek kepatuhan SAIPI otomatis per berkas (QC KKP + QC laporan) <span class="badge b-ukur">TERUKUR</span></div></div>
+  </div>
+  <div class="note">Catatan jujur: waktu mesin ≠ waktu penugasan selesai — auditor tetap mereviu &amp; menyetujui. Skor baseline sebagian diukur pada dokumen uji sintetis; validasi akhir dilakukan pada UAT dengan dokumen riil.</div>
+</section>
+
+<!-- 5 · ALUR -->
+<section class="slide">
+  <div class="kicker">Cara Kerja</div>
+  <h2>Alur Penugasan — 8 Tahapan, AI Mendampingi, Manusia Memutuskan</h2>
+  <div class="flow">
+    <div class="fbox"><b>1 · Kartu Penugasan</b><span>PT — dari template wiki</span></div><div class="arr">→</div>
+    <div class="fbox"><b>2 · PKP</b><span>KT — sasaran &amp; langkah kerja</span></div><div class="arr">→</div>
+    <div class="fbox" style="background:#e0e7ff"><b>3 · KKP</b><span>AT + <b>AI</b>: digest dokumen, draft temuan</span></div><div class="arr">→</div>
+    <div class="fbox"><b>4 · Persetujuan</b><span>Setujui / Tolak / Edit tiap temuan (HITL)</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox" style="background:#e0e7ff"><b>5 · Konsep Laporan</b><span>KT + <b>AI</b>: rekomendasi + render LHR</span></div><div class="arr">→</div>
+    <div class="fbox"><b>6 · Reviu Berjenjang</b><span>PT/PM — lembar reviu</span></div><div class="arr">→</div>
+    <div class="fbox"><b>7 · Laporan Hasil</b><span>Inspektur</span></div><div class="arr">→</div>
+    <div class="fbox"><b>8 · Administrasi</b><span>TU — arsip &amp; surat</span></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Dokumen yang dianalisis AI</h3><p>Dokumen objek &amp; kriteria (PDF/Office), TOR/RAB, KAK/HPS/kontrak — plus <b>bukti lapangan</b>: hasil pemeriksaan fisik, observasi, wawancara/diskusi ahli, berita acara. Bukti lapangan bersifat opsional, <b>tetapi bila diunggah wajib dianalisis</b> dan menjadi bukti terkuat unsur Kondisi.</p></div>
+    <div class="card"><h3>Kontrol mutu otomatis di dua gerbang</h3><p>QC SAIPI (PER-01/AAIPI/DPN/2021) berjalan otomatis pada tahap KKP dan tahap laporan: kelengkapan KP/PKP, unsur temuan, supervisi berjenjang, placeholder bocor. Berkas ber-gap kritis <b>diblokir</b> sampai dikoreksi.</p></div>
+  </div>
+</section>
+
+<!-- 6 · FITUR SISTEM AUDIT -->
+<section class="slide">
+  <div class="kicker">Fitur Utama · 1</div>
+  <h2>Sistem Audit AI — Mesin Analisis Pengawasan</h2>
+  <div class="grid g2">
+    <div class="card"><h3>🧾 Temuan berdoktrin K/K/S/A</h3><ul>
+      <li>Kondisi berbukti dokumen (file + halaman + kutipan) — <b>anti-mengarang</b>: bila penyebab tak terbukti, agen menulis jujur "tidak cukup data".</li>
+      <li>Kriteria wajib presisi: regulasi + nomor + tahun + pasal — diverifikasi terhadap basis regulasi terkurasi.</li>
+      <li>Kodefikasi temuan SIM-HP pada KKP.</li></ul></div>
+    <div class="card"><h3>📄 Laporan sesuai jenis pengawasan</h3><ul>
+      <li>Render otomatis LHA / LHR / LHE / LP dengan kop, nota dinas, dasar hukum per jenis, dan lampiran.</li>
+      <li>Bahasa tingkat keyakinan otomatis (memadai vs terbatas).</li>
+      <li>Tanda tangan/NIP tetap diisi manusia (penanda HITL).</li></ul></div>
+    <div class="card"><h3>🔎 Skill spesifik per jenis</h3><p>19 skill: reviu RKA-K/L, reviu &amp; audit pengadaan, audit kinerja/umum, evaluasi SPIP·SAKIP·RB (rezim LKE), manajemen risiko, pemantauan TL, konsultansi, dan 3 skill keuangan baru: <b>reviu LK, PIPK, PNBP</b> — kriteria diikat ke pasal PMK/PP yang riil.</p></div>
+    <div class="card"><h3>🛡 Pengukuran mutu internal</h3><p>Harness evaluasi otomatis menilai setiap skill (grounding bukti, ketepatan kriteria, kelengkapan unsur, recall) memakai LLM-judge dengan referensi regulasi — mutu diukur, bukan diklaim.</p></div>
+  </div>
+</section>
+
+<!-- 7 · FITUR CACM -->
+<section class="slide">
+  <div class="kicker">Fitur Utama · 2</div>
+  <h2>CACM — Pemantauan Berkelanjutan Multi-Dimensi</h2>
+  <div class="grid g3">
+    <div class="card"><h3>🛒 Pengadaan <span class="badge b-ukur">DATA RIIL</span></h3><p>9 kriteria atas data SIRUP (agent EWS): konsentrasi non-kompetitif, ambang pengadaan langsung, indikasi pemecahan paket, rasio PDN &amp; UMK, penumpukan pemilihan Q4.</p></div>
+    <div class="card"><h3>💰 Anggaran <span class="badge b-est">DATA DUMMY</span></h3><p>Serapan rendah, penumpukan belanja Q4. Jalur teknis siap — menunggu koneksi OM SPAN/DIPA dan penetapan ambang oleh auditor.</p></div>
+    <div class="card"><h3>📈 Kinerja <span class="badge b-est">DATA DUMMY</span></h3><p>Capaian RO di bawah target; sinyal klasik "serapan tinggi tapi output rendah". Sumber data (e-Performance/SAKIP) menunggu keputusan.</p></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>⚡ Sinyal → Penugasan</h3><p>Finding MERAH/KUNING dapat <b>dipromosikan satu klik</b> menjadi usulan penugasan — konteksnya (regulasi, ambang, bukti observasi) otomatis terisi untuk agen. Satu satker terlihat utuh: pengadaan + anggaran + kinerja dalam satu kartu.</p></div>
+    <div class="card"><h3>⚖️ Kriteria dikelola auditor</h3><p>Pengendali Teknis mengelola kriteria (tambah/ubah/hapus) langsung dari layar — tervalidasi sebelum tersimpan. Sistem juga <b>mengusulkan kriteria baru dari basis regulasi wiki</b> untuk diterima/ditolak PT.</p></div>
+  </div>
+  <p class="sub"><b>Jalur ingest multi-sumber ini adalah pondasi v11</b>: menyambungkan ev-SAKIP, e-Ziko, dan SPIP tidak memerlukan pembangunan ulang — cukup mendefinisikan sumber data dan kriterianya.</p>
+</section>
+
+<!-- 8 · FITUR KNOWLEDGE -->
+<section class="slide">
+  <div class="kicker">Fitur Utama · 3</div>
+  <h2>Knowledge — Pengetahuan Organisasi yang Dibaca Mesin</h2>
+  <div class="grid g3">
+    <div class="card"><h3>🧩 Pattern Temuan</h3><p>65+ pola temuan terkurasi lintas skill — acuan agen menyusun temuan; auditor dapat mempromosikan pattern baru dari penugasan nyata.</p></div>
+    <div class="card"><h3>⚖️ Kriteria Pengawasan</h3><p>Basis regulasi &amp; pasal yang dipakai kriteria. <b>Upload PDF regulasi → otomatis masuk wiki → langsung dibaca agen</b> di penugasan berikutnya (ekstraksi deterministik, tanpa risiko sitasi karangan).</p></div>
+    <div class="card"><h3>🛠 Kelola Skill</h3><p>Baca, buat dari nol (ber-template doktrin), dan edit skill pengawasan dari layar — tervalidasi; plus graduasi skill baru dari kumpulan penugasan sejenis.</p></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>📇 Template KP/PKP — 20 skill</h3><p>Kartu Penugasan &amp; Program Kerja Pengawasan per skill, sasaran dan langkah kerja baku siap impor pada tahapan 1–2.</p></div>
+    <div class="card"><h3>↩️ Tulis-balik</h3><p>Hasil penugasan selesai ditulis balik ke vault sebagai riwayat — agen memakai riwayat obyek serupa pada penugasan berikutnya. Pengetahuan organisasi <b>terakumulasi</b>, tidak menguap.</p></div>
+  </div>
+</section>
+
+<!-- 9 · INTEGRITAS -->
+<section class="slide">
+  <div class="kicker">Jaminan Mutu</div>
+  <h2>Integritas Sistem — Diaudit &amp; Diverifikasi, Bukan Dipercaya Begitu Saja</h2>
+  <div class="grid g2">
+    <div class="card"><h3>🔍 Audit sistem menyeluruh (18 Jul 2026)</h3><p>Sistem diaudit oleh 4 agen pemeriksa independen: <b>±44 temuan, 36 diperbaiki &amp; diverifikasi</b> — termasuk potensi kehilangan data kertas kerja, QC yang bisa "lulus palsu", celah keamanan upload, dan metrik evaluasi yang bisa menyesatkan. Sisanya terdokumentasi dengan alasan.</p></div>
+    <div class="card"><h3>📜 Regulasi PBJ terverifikasi dari teks asli</h3><p>5 PDF resmi (Perpres 16/2018, 12/2021, 46/2025; Perlem LKPP 12/2021, 4/2024) diekstrak dan <b>setiap klaim pasal dicocokkan ke teks</b>. Salah sitasi lama dikoreksi; ditemukan pula perubahan penting Perpres 46/2025: <b>ambang Pengadaan Langsung konstruksi naik ke Rp400 juta</b> dan kriteria Penunjukan Langsung diperluas.</p></div>
+    <div class="card"><h3>🚦 Tiga label kejujuran data</h3><p>Setiap klaim di sistem dan paparan ini berlabel: <span class="badge b-ukur">TERUKUR</span> (dari log/teks asli), <span class="badge b-est">ESTIMASI/DUMMY</span> (menunggu data riil), <span class="badge b-ren">RENCANA</span>. Ambang yang belum ditetapkan auditor ditandai eksplisit — sistem tidak mengarang angka.</p></div>
+    <div class="card"><h3>🔐 Kontrol akses berlapis</h3><p>Peran AT/KT/PT/PM/TU ditegakkan di antarmuka <b>dan</b> di server; aksi destruktif dan pengelolaan kriteria/skill terbatas pada Pengendali Teknis; jejak audit tersimpan.</p></div>
+  </div>
+</section>
+
+<!-- 10 · OUTPUT -->
+<section class="slide">
+  <div class="kicker">Keluaran</div>
+  <h2>Output yang Dihasilkan Sistem</h2>
+  <table>
+    <tr><th>Output</th><th>Bentuk</th><th>Keterangan</th></tr>
+    <tr><td><b>Kertas Kerja Pengawasan (KKP)</b></td><td>.docx per anggota tim</td><td>Temuan K/K/S/A + kodefikasi SIM-HP + dokumen sumber ber-halaman</td></tr>
+    <tr><td><b>Laporan Hasil (LHA/LHR/LHE/LP)</b></td><td>.docx ber-kop, per jenis</td><td>Nota dinas, dasar hukum per jenis, simpulan ber-bahasa keyakinan, lampiran</td></tr>
+    <tr><td><b>Laporan QC SAIPI</b></td><td>Markdown + checklist JSON</td><td>2 gerbang (KKP &amp; laporan); gap kritis memblokir</td></tr>
+    <tr><td><b>LKE terisi</b> (SPIP/SAKIP/RB)</td><td>.xlsx sesuai instrumen</td><td>Termasuk rezim batch untuk LKE besar multi-satker</td></tr>
+    <tr><td><b>Laporan pemantauan CACM</b></td><td>Dashboard + usulan penugasan</td><td>Finding per satker lintas dimensi, siap dipromosikan</td></tr>
+    <tr><td><b>Catatan wiki riwayat</b></td><td>Markdown ke vault</td><td>Tulis-balik penugasan selesai — memperkaya penugasan berikutnya</td></tr>
+  </table>
+  <div class="note-good">Seluruh output berformat file standar (Word/Excel/Markdown) — kompatibel dengan tata naskah dan arsip yang berlaku; penandatanganan tetap manual/BSrE.</div>
+</section>
+
+<!-- 11 · STATUS & ROADMAP -->
+<section class="slide">
+  <div class="kicker">Status &amp; Rencana</div>
+  <h2>Posisi Hari Ini dan Langkah Berikutnya</h2>
+  <div class="flow">
+    <div class="fbox" style="background:var(--good-bg);border-color:#a7f3d0"><b>v10 — SELESAI ✅</b><span>Engine 19 skill · CACM multi-dimensi · Knowledge terkelola · bukti lapangan · terverifikasi &amp; teraudit</span></div>
+    <div class="arr">→</div>
+    <div class="fbox" style="background:var(--warn-bg);border-color:#fde68a"><b>UAT — BERJALAN 🟡</b><span>Uji coba skill oleh auditor dengan dokumen riil; validasi baseline mutu</span></div>
+    <div class="arr">→</div>
+    <div class="fbox" style="background:var(--plan-bg);border-color:#bfdbfe"><b>v11 — RENCANA 🔵</b><span>Integrasi ev-SAKIP · e-Ziko · SPIP via jalur ingest multi-sumber CACM</span></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3>Sudah di tangan <span class="badge b-ukur">TERUKUR</span></h3><ul><li>Kode final di repositori (PR tinjauan #1)</li><li>Demo end-to-end reviu PNBP: 11 menit mesin</li><li>Basis regulasi PBJ &amp; keuangan terverifikasi</li></ul></div>
+    <div class="card"><h3>Sedang berjalan <span class="badge b-est">UAT</span></h3><ul><li>Uji skill dengan berkas penugasan nyata</li><li>Penetapan ambang kriteria CACM oleh auditor</li><li>Keputusan sumber data kinerja</li></ul></div>
+    <div class="card"><h3>Berikutnya <span class="badge b-ren">RENCANA</span></h3><ul><li>v11: koneksi sistem pengawasan eksisting</li><li>Reaktivasi chatbot → WhatsApp organisasi</li><li>Integrasi INTEGRAL ↔ SIMWAS v2 penuh</li></ul></div>
+  </div>
+</section>
+
+<!-- 12 · DUKUNGAN -->
+<section class="slide">
+  <div class="kicker">Penutup</div>
+  <h2>Dukungan yang Dibutuhkan dari Pimpinan</h2>
+  <div class="grid g2">
+    <div class="card"><h3>1 · Penugasan UAT</h3><p>Penetapan auditor penguji dan berkas penugasan riil untuk validasi akhir — dari "terukur oleh mesin" menjadi "tervalidasi auditor".</p></div>
+    <div class="card"><h3>2 · Keputusan substansi</h3><p>Penetapan ambang kriteria pemantauan (anggaran/kinerja) dan sistem rujukan capaian kinerja — keputusan auditor, bukan mesin.</p></div>
+    <div class="card"><h3>3 · Dukungan infrastruktur</h3><p>Keberlanjutan biaya API AI dan hosting (pembelajaran dari chatbot Telegram yang berhenti karena hosting), serta akses data sistem eksisting untuk v11.</p></div>
+    <div class="card"><h3>4 · Arah kebijakan v11</h3><p>Persetujuan arah integrasi ev-SAKIP, e-Ziko, dan SPIP ke dalam ekosistem — fondasi teknisnya telah disiapkan di v10.</p></div>
+  </div>
+  <p class="sub" style="margin-top:26px"><b>Satu kalimat penutup:</b> sistem ini tidak menggantikan auditor — ia mengembalikan waktu auditor dari pekerjaan baca-tulis ke pekerjaan pertimbangan profesional, dengan mutu yang diukur dan integritas yang diverifikasi.</p>
+  <p class="mini">Terima kasih · Inspektorat II — Kementerian Komunikasi dan Digital RI</p>
+</section>
+
+</div>
+
+<div class="foot">
+  <span class="brand">∫ INTEGRAL · Ekosistem Pengawasan AI — Inspektorat II Komdigi · 18 Jul 2026</span>
+  <div class="nav">
+    <button onclick="go(-1)">‹ Sebelumnya</button>
+    <span class="pg" id="pg"></span>
+    <button onclick="go(1)">Berikutnya ›</button>
+  </div>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];let cur=0;
+  function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===cur));document.getElementById('pg').textContent=(cur+1)+' / '+slides.length;slides[cur].scrollTop=0;}
+  function go(d){show(cur+d)}
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')go(1);if(e.key==='ArrowLeft'||e.key==='PageUp')go(-1);if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1)});
+  show(0);
+</script>
+</body>
+</html>
