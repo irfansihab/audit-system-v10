@@ -220,6 +220,12 @@ def _normalize_temuan_input(raw: dict) -> dict:
     out.setdefault("langkah_kerja_terkait", "")
     out.setdefault("pattern_id", "")
 
+    # Identitas RO (RKA-K/L multi-RO): label STABIL RO tempat temuan ini berasal
+    # (dari `ro_label` di index read_digest — bukan nomor posisional). Kosong untuk
+    # penugasan non-RKA / RO tunggal. Dipakai untuk analisis inkremental: RO yang
+    # sudah punya temuan (n_temuan>0) tidak dianalisis ulang saat RO baru ditambah.
+    out.setdefault("ro", "")
+
     # Metadata
     out.setdefault("tanggal_input", datetime.utcnow().isoformat() + "Z")
     out.setdefault("status", "DRAFT")

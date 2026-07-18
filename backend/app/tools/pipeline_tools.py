@@ -421,20 +421,50 @@ async def read_digest(args: dict) -> dict:
             rab = _strip_big(safe_read_json(kkp / f"rab-{ro_sel}.json") or {})
             payload = {"jenis": "rka-kl", "ro": ro_sel, "tor": tor, "rab": rab}
             return {"content": [{"type": "text", "text": _fit_ro_digest(payload)}]}
+        # Temuan existing → hitung n_temuan per RO (analisis inkremental). Cocokkan
+        # `temuan.ro` (label STABIL) dgn ro_label RO. Label = nama RO → fallback
+        # nama file TOR (bukan nomor posisional yg bisa bergeser saat RO ditambah).
+        tj = safe_read_json(kkp / "temuan.json") or {}
+        temuan_list = (tj.get("temuan") if isinstance(tj, dict) else tj) or []
+
+        def _ro_label(tor: dict, rid: str) -> str:
+            # Prioritas: nama RO/KRO hasil parse (paling bermakna) → nama file objek
+            # ASLI (prefix staging "[N] " dibuang supaya STABIL lintas re-staging;
+            # nomor posisional bisa bergeser saat RO ditambah) → terakhir "RO-<id>".
+            idr = tor.get("identitas_ro") or {}
+            nama = (idr.get("ro") or idr.get("kro")
+                    or tor.get("nama_ro") or tor.get("nama") or tor.get("judul") or "").strip()
+            if nama:
+                return nama
+            src = str((tor.get("metadata") or {}).get("source_file") or "").strip()
+            if src.startswith("[") and "] " in src:
+                src = src.split("] ", 1)[1]  # buang prefix "[N] "
+            return Path(src).stem if src else f"RO-{rid}"
+
         # index semua RO (ringkas)
         idx = []
         for rid in ids:
             tor = safe_read_json(kkp / f"tor-{rid}.json") or {}
             rab = safe_read_json(kkp / f"rab-{rid}.json") or {}
+            label = _ro_label(tor, rid)
+            n_temuan = sum(
+                1 for t in temuan_list
+                if isinstance(t, dict) and str(t.get("ro", "")).strip() == label
+            )
             idx.append({
                 "ro": rid,
+                "ro_label": label,
+                "n_temuan": n_temuan,
                 "tor_nama": (tor.get("nama_ro") or tor.get("nama") or tor.get("judul") or "")[:120],
                 "tor_keys": [k for k in tor.keys() if k not in _DIGEST_BIG_KEYS][:15],
                 "rab_total": rab.get("total_pagu") or rab.get("total") or rab.get("nilai_total"),
                 "rab_komponen": rab.get("komponen_count") or len(rab.get("komponen", []) or []),
             })
         payload = {"jenis": "rka-kl", "total_ro": len(ids), "index": idx,
-                   "catatan": "Panggil read_digest(ro=<id>) untuk digest lengkap satu RO."}
+                   "catatan": ("read_digest(ro=<id>) utk digest lengkap satu RO. "
+                               "Analisis inkremental: garap RO dgn n_temuan=0; saat append_temuan "
+                               "isi field `ro` = ro_label RO tsb. RO dgn n_temuan>0 = sudah selesai, "
+                               "jangan dianalisis ulang.")}
         return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)[:8000]}]}
 
     return {
