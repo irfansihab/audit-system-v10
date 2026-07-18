@@ -27,6 +27,8 @@ export function LembarReviuPanel({
   onReviewed?: (status: 'APPROVED' | 'NEEDS_REVISION' | null) => void;
 }) {
   const [data, setData] = useState<any>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [saving, setSaving] = useState(false);
   // Keputusan reviu konsep LHP (level PT) — menggantikan panel approve lama.
   const [verdict, setVerdict] = useState<'APPROVED' | 'NEEDS_REVISION' | null>(null);
@@ -34,12 +36,24 @@ export function LembarReviuPanel({
   const [verdictBusy, setVerdictBusy] = useState(false);
 
   useEffect(() => {
-    api.getLembarReviu(penugasanId, level).then(setData).catch(() => {});
+    setLoadError(null);
+    // Dulu error di-catch kosong → panel macet di "Memuat…" selamanya dan PT
+    // mengira masih loading — kini error tampil + tombol coba lagi. (#F7)
+    api.getLembarReviu(penugasanId, level).then(setData).catch((e: any) => setLoadError(e.message));
     if (level === 'PT') {
       api.listLhpReview(penugasanId).then((r) => setVerdict(r.latest_status)).catch(() => {});
     }
-  }, [penugasanId, level]);
+  }, [penugasanId, level, reloadKey]);
 
+  if (loadError)
+    return (
+      <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+        Gagal memuat lembar reviu: {loadError}{' '}
+        <button onClick={() => setReloadKey((k) => k + 1)} className="underline font-semibold">
+          ↻ Coba lagi
+        </button>
+      </div>
+    );
   if (!data) return <p className="text-sm text-gray-400">Memuat lembar reviu…</p>;
 
   const setAspek = (kode: string, patch: any) =>

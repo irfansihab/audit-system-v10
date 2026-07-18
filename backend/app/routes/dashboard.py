@@ -110,10 +110,13 @@ async def dashboard_summary(
 ) -> dict:
     """Ringkasan beranda — satu panggilan, di-cache ~30 detik (ringan utk ±80 user)."""
     now = time.monotonic()
-    if _cache["data"] is not None and (now - _cache["ts"]) < _TTL_SECONDS:
-        return _cache["data"]
-
     user, role = current
+    role_str = role.value if hasattr(role, "value") else str(role)
+    if _cache["data"] is not None and (now - _cache["ts"]) < _TTL_SECONDS:
+        # _role selalu milik PEMANGGIL — dulu ikut ter-cache dari user pertama
+        # yang mengisi cache, jadi user lain melihat role orang lain di payload.
+        return {**_cache["data"], "_role": role_str}
+
     data = {
         "penugasan": await _penugasan_summary(db),
         "ews": await _ews_summary(db),
@@ -123,7 +126,7 @@ async def dashboard_summary(
         # Stub — modul belum dibangun (roadmap): F3 permintaan · F5 tren temuan.
         "permintaan_belum_ditindaklanjuti": {"tersedia": False, "catatan": "Belum ada model permintaan (F3)."},
         "tren_temuan_berulang": {"tersedia": False, "catatan": "Belum dirakit (F5)."},
-        "_role": role.value if hasattr(role, "value") else str(role),
+        "_role": role_str,
         "_cache_ttl_detik": int(_TTL_SECONDS),
     }
     _cache["data"] = data

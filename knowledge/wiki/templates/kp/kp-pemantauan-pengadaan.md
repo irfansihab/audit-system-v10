@@ -74,7 +74,7 @@ Sasaran baku untuk skill `pemantauan-pengadaan` (impor → daftar Sasaran KP; ot
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[PMP-53]], [[PMP-54]], [[PMP-55]], [[PMP-56]] (dari temuan-patterns/pemantauan-pengadaan/)
+- Pattern: [[pemantauan-pengadaan/PMP-53-jawaban-rfi-belum-lengkap]], [[pemantauan-pengadaan/PMP-54-selisih-penawaran-tanpa-kompetisi]], [[pemantauan-pengadaan/PMP-55-sirup-draft-tinggi]], [[pemantauan-pengadaan/PMP-56-kajian-tanpa-milestone]] (dari temuan-patterns/pemantauan-pengadaan/)
 - Regulasi: [[regulasi-kunci]] (Perpres 16/2018 jo. Perpres 12/2021, Perpres 46/2025 — Pasal 78 denda keterlambatan, Pasal 18/22 perencanaan & SIRUP)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/pemantauan-pengadaan/SKILL.md`

@@ -74,7 +74,7 @@ Sasaran baku untuk skill `reviu-pengadaan` (impor → daftar Sasaran KP; otomati
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[RP-08]]..[[RP-16]] (HPS multi-source, pekerjaan tanpa kontrak, adendum nomor ganda, SIRUP draft, kajian tanpa rencana aksi, confidentiality audit-trail, perpanjangan lisensi, e-katalog tanpa negosiasi, vendor belum berkontrak)
+- Pattern: [[reviu-pengadaan/RP-08-hps-rfi-minimum]]..[[reviu-pengadaan/RP-16-vendor-pjt-belum-berkontrak]] (HPS multi-source, pekerjaan tanpa kontrak, adendum nomor ganda, SIRUP draft, kajian tanpa rencana aksi, confidentiality audit-trail, perpanjangan lisensi, e-katalog tanpa negosiasi, vendor belum berkontrak)
 - Regulasi: [[regulasi-kunci]] (Perpres 16/2018 jo. Perpres 12/2021; Perlem LKPP 12/2021)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/reviu-pengadaan/SKILL.md`

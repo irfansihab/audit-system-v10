@@ -165,46 +165,8 @@ async def read_survey_pendahuluan(args: dict) -> dict:
     return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)}]}
 
 
-def _detect_skill_from_folder(folder: Path) -> str | None:
-    """Resolve skill penugasan dari folder name (kode penugasan) via DB.
+# (dead-code _detect_skill_from_folder dihapus — tak pernah dipanggil; audit #B12.)
 
-    Format kode: `<yyyy>-<mm>-<skill>-<timestamp>`. Best-effort — kalau gagal
-    return None. Sync-aware: dipakai di tool sync wrapper, jadi pakai sync
-    SQLAlchemy session.
-    """
-    try:
-        # Lookup di DB (lebih akurat dari parse kode)
-        import asyncio
-        from sqlalchemy import select
-        from app.database import SessionLocal
-        from app.models import Penugasan
-
-        async def _q():
-            async with SessionLocal() as db:
-                row = (await db.execute(
-                    select(Penugasan.skill).where(Penugasan.kode == folder.name)
-                )).first()
-                if row:
-                    s = row[0]
-                    return s if isinstance(s, str) else getattr(s, "value", str(s))
-                return None
-
-        # Async tool context — ada event loop aktif
-        loop = asyncio.get_running_loop()
-        if loop.is_running():
-            # Schedule sebagai task + tunggu via run_until_complete tidak mungkin
-            # dalam loop yg sudah jalan. Fallback ke folder-name parse.
-            pass
-    except Exception:  # noqa: BLE001
-        pass
-    # Fallback: parse dari folder name. Format: `2026-06-audit-pengadaan-2026...`
-    name = folder.name.lower()
-    for s in ("audit-pengadaan", "audit-kinerja", "reviu-pengadaan", "reviu-rka-kl",
-              "konsultasi-pengadaan", "konsultansi-umum", "pemantauan-pengadaan"):
-        # Kode normalisasi: dash → kosong, mis. "reviurkakl"
-        if s.replace("-", "") in name:
-            return s
-    return None
 
 
 def _normalize_temuan_input(raw: dict) -> dict:

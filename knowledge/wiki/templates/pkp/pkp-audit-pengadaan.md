@@ -65,7 +65,7 @@ Sasaran baku untuk skill `audit-pengadaan` (impor → baris Sasaran; sub-butir �
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[AP-23]]..[[AP-29]] (pekerjaan tanpa kontrak, SLA tak termonitor, data prestasi tak memadai, pembayaran retroaktif, vendor lock-in, kelebihan bayar, kurs/klasifikasi akun)
+- Pattern: [[audit-pengadaan/AP-23-pekerjaan-tanpa-kontrak]]..[[audit-pengadaan/AP-29-kurs-klasifikasi-akun]] (pekerjaan tanpa kontrak, SLA tak termonitor, data prestasi tak memadai, pembayaran retroaktif, vendor lock-in, kelebihan bayar, kurs/klasifikasi akun)
 - Regulasi: [[regulasi-kunci]] (Perpres 16/2018 jo. 12/2021; Perpres 46/2025 Ps. 9(1)f²)
 - Konteks: [[pola-temuan-berulang]] (Pola 1 kontrak tanpa kontrak, Pola 8 anomali administrasi kontrak)
 - PANDUAN substansi: `knowledge/skills/audit-pengadaan/SKILL.md`

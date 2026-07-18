@@ -74,7 +74,7 @@ Sasaran baku untuk skill `evaluasi-sakip` (impor → daftar Sasaran KP; otomatis
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ESK-30]] (stagnasi predikat AKIP; lihat juga ESK-31 s.d. ESK-34)
+- Pattern: [[evaluasi-sakip/ESK-30-stagnasi-predikat-akip]] (stagnasi predikat AKIP; lihat juga ESK-31 s.d. ESK-34)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PermenPAN-RB 88/2021 tentang Evaluasi AKIP)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-sakip/SKILL.md`

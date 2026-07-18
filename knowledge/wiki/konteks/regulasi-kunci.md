@@ -45,7 +45,7 @@ tags: [regulasi, perpres-16, perpres-46-2025, pmk-107, pnbp, pmk-206-2021, bhp-t
 |---|---|---|
 | **Pasal 9 ayat (1) huruf f angka 2** | Pekerjaan berjalan sebelum anggaran | Membenarkan pekerjaan yang sudah berjalan sebelum anggaran ditetapkan dapat diproses pembayarannya sepanjang justifikasi terpenuhi (kasus DIPA terlambat). |
 
-**Konteks**: Dasar yuridis untuk kontrak yang berjalan tanpa kontrak akibat keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[RP-09]], [[lhr-kontrak-aptika-2025]].
+**Konteks**: Dasar yuridis untuk kontrak yang berjalan tanpa kontrak akibat keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]], [[lhr-kontrak-aptika-2025]].
 
 ---
 
@@ -56,7 +56,7 @@ tags: [regulasi, perpres-16, perpres-46-2025, pmk-107, pnbp, pmk-206-2021, bhp-t
 | **Peraturan LKPP 9/2021** | Toko Daring & Katalog Elektronik | Mekanisme e-katalog + e-purchasing. |
 | **Peraturan LKPP 4/2024** | PBJ melalui Penyedia | 1 penyedia → wajib negosiasi; > 1 penyedia → wajib mini kompetisi. |
 
-Lihat [[RP-15]] untuk pattern temuan.
+Lihat [[reviu-pengadaan/RP-15-e-katalog-tanpa-negosiasi]] untuk pattern temuan.
 
 ---
 
@@ -79,7 +79,7 @@ PMK 107/2024 menggantikan PMK 62/2023.
 6. Anggaran
 7. Jadwal
 
-Pattern terkait: [[RKA-01]], [[RKA-02]], [[RKA-03]], [[RKA-04]], [[RKA-05]], [[RKA-06]], [[RKA-07]].
+Pattern terkait: [[reviu-rka-kl/RKA-01-tor-7-blok]], [[reviu-rka-kl/RKA-02-ro-tanpa-parameter-keberhasilan]], [[reviu-rka-kl/RKA-03-komponen-belum-cukup]], [[reviu-rka-kl/RKA-04-tor-tanpa-metode-pengadaan]], [[reviu-rka-kl/RKA-05-ketidakselarasan-metode-tahapan]], [[reviu-rka-kl/RKA-06-cost-analysis-belum-ada]], [[reviu-rka-kl/RKA-07-indikator-om-tidak-sesuai-prinsip]].
 
 ---
 
@@ -153,7 +153,7 @@ Substansi: kewajiban PSE terkait keamanan anak online.
 |---|---|
 | **Pasal 9** | Kewenangan BPK mengakses semua dokumen/data terkait pengelolaan keuangan negara, termasuk yang dipegang pihak ketiga. |
 
-Dasar yuridis untuk klausul *right to audit* di kontrak dengan vendor. Lihat [[RP-13]].
+Dasar yuridis untuk klausul *right to audit* di kontrak dengan vendor. Lihat [[reviu-pengadaan/RP-13-vendor-confidentiality-audit-trail]].
 
 ---
 
@@ -171,7 +171,7 @@ Substansi: skala 5 level + 3 komponen (Penetapan Tujuan 40% + Struktur Proses 30
 
 ## Penerimaan Negara Bukan Pajak (PNBP) — Komdigi
 
-> Nama K/L di regulasi = **"Komunikasi dan Informatika" (Kominfo)**; kini **Komdigi**. Kutip nama sesuai teks regulasi — jangan ubah. Skill: `reviu-pnbp`. Pola terkait: [[RK-67]], [[RK-68]], [[RK-69]].
+> Nama K/L di regulasi = **"Komunikasi dan Informatika" (Kominfo)**; kini **Komdigi**. Kutip nama sesuai teks regulasi — jangan ubah. Skill: `reviu-pnbp`. Pola terkait: [[reviu-pnbp/RK-67-pnbp-overstating-pencatatan]], [[reviu-pnbp/RK-68-piutang-pnbp-lag-sinkronisasi]], [[reviu-laporan-keuangan/RK-69-tagihan-om-anggaran-realisasi]].
 
 ### PP 43/2023 (Jenis & Tarif PNBP pada Kemenkominfo) — ganti PP 80/2015
 
@@ -304,7 +304,7 @@ Reviu PIPK = keyakinan terbatas; kelemahan material → dapat memicu pendalaman 
 
 Substansi: transformasi Kominfo → Komdigi; likuidasi PPI 31 Juli 2025; pembentukan 3 Ditjen baru (Ekosistem Digital, Wasdig, Infra Digital) + TPD + BPSDM.
 
-**Konteks**: Pemicu pola temuan "kontrak tanpa kontrak akibat SOTK" — DIPA terlambat pada masa transisi. Lihat [[RP-09]].
+**Konteks**: Pemicu pola temuan "kontrak tanpa kontrak akibat SOTK" — DIPA terlambat pada masa transisi. Lihat [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]].
 
 ---
 

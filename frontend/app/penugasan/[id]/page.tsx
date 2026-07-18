@@ -42,6 +42,7 @@ export default function DetailPenugasanPage() {
   const [error, setError] = useState<string | null>(null);
   // Status reviu konsep LHP terbaru (S3.2) — dipakai HeroPenugasan untuk tahapan 6.
   const [lhpStatus, setLhpStatus] = useState<'APPROVED' | 'NEEDS_REVISION' | null>(null);
+  const [lhpStatusError, setLhpStatusError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -70,10 +71,15 @@ export default function DetailPenugasanPage() {
       .catch((e) => {
         if (!stale) setError(e.message);
       });
-    // Status reviu LHP — opsional, abaikan error (fitur tahapan 6).
+    // Status reviu LHP — bila gagal, JANGAN diam: tahapan 7/8 diturunkan dari
+    // status ini, error senyap membuat keduanya tampak terkunci padahal bisa
+    // saja sudah APPROVED. (#F6)
+    setLhpStatusError(false);
     api.listLhpReview(id).then((r) => {
       if (!stale) setLhpStatus(r.latest_status);
-    }).catch(() => {});
+    }).catch(() => {
+      if (!stale) setLhpStatusError(true);
+    });
     return () => {
       stale = true;
     };
@@ -82,19 +88,27 @@ export default function DetailPenugasanPage() {
 
   // Poll status dokumen setiap 3 detik selama ada yang masih INGESTING.
   // Berhenti otomatis saat semua sudah READY/FAILED — tidak ada request sia-sia.
+  // Dependency = boolean hasIngesting (bukan array dokumen) + skip setState bila
+  // status tidak berubah — dulu tiap tick membuat array baru → effect re-run →
+  // interval dibongkar-pasang & SELURUH halaman re-render tiap 3 dtk. (#F11)
+  const hasIngesting = dokumen.some((d) => d.status === 'INGESTING');
   useEffect(() => {
-    const hasIngesting = dokumen.some((d) => d.status === 'INGESTING');
     if (!hasIngesting) return;
     const timer = setInterval(async () => {
       try {
         const updated = await api.listDokumen(id);
-        setDokumen(updated);
+        setDokumen((prev) => {
+          const sama =
+            prev.length === updated.length &&
+            prev.every((p, i) => p.id === updated[i].id && p.status === updated[i].status);
+          return sama ? prev : updated;
+        });
       } catch {
         // abaikan error network sementara — polling akan coba lagi
       }
     }, 3000);
     return () => clearInterval(timer);
-  }, [dokumen, id]);
+  }, [hasIngesting, id]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, jenis?: string) => {
     const files = e.target.files;
@@ -152,6 +166,17 @@ export default function DetailPenugasanPage() {
         {error && (
           <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
             {error}
+          </div>
+        )}
+        {lhpStatusError && (
+          <div className="mb-4 p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+            ⚠ Status reviu LHP gagal dimuat — tahapan 7/8 bisa salah tampak terkunci.{' '}
+            <button
+              onClick={() => window.location.reload()}
+              className="underline font-semibold hover:text-amber-900"
+            >
+              ↻ Muat ulang
+            </button>
           </div>
         )}
 
@@ -1650,6 +1675,15 @@ function SetupPenugasanTab({
   const [savedAt, setSavedAt] = useState<{ sasaran?: string; context?: string }>({});
   const [err, setErr] = useState<string | null>(null);
   const [genCtx, setGenCtx] = useState(false); // generate context (AI) sedang berjalan
+  // ES generate-context di-ref supaya ditutup saat unmount — dulu koneksi tetap
+  // terbuka + setState di komponen unmounted bila user pindah tahapan. (#F5)
+  const genCtxEsRef = useRef<EventSource | null>(null);
+  useEffect(() => {
+    return () => {
+      genCtxEsRef.current?.close();
+      genCtxEsRef.current = null;
+    };
+  }, []);
   const [ctxReady, setCtxReady] = useState<{ ready: boolean; reason: string } | null>(null);
   const [simwasOpen, setSimwasOpen] = useState(false); // W1.1 — modal Impor dari SIMWAS
   const [templatesOpen, setTemplatesOpen] = useState(false); // Mulai dari template (3-sumber)
@@ -1799,6 +1833,7 @@ function SetupPenugasanTab({
       '[MODE:CONTEXT] Susun/perbarui context.md dari hasil digest dokumen + sasaran audit. ' +
       'Jangan jalankan pipeline/analisis atau susun temuan — cukup context.md lalu berhenti.';
     const es = new EventSource(api.agentStreamUrl('anggota_tim', penugasanId, prompt));
+    genCtxEsRef.current = es; // simpan utk cleanup unmount (audit #F5)
     let done = false;
     const finish = async () => {
       if (done) return;
@@ -3132,16 +3167,21 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
   }>>([]);
   const [meta, setMeta] = useState<{ nomor_pkp?: string }>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const data = await api.getSasaranAssignment(penugasanId);
       setSasaran(data.sasaran || []);
       setMeta({ nomor_pkp: data.nomor_pkp });
-    } catch { /* ignore */ }
+    } catch (e: any) {
+      // Dulu ditelan → panel lenyap dan dikira "memang tidak ada sasaran". (#F8)
+      setLoadError(e.message);
+    }
     finally { setLoading(false); }
   };
   useEffect(() => { load(); }, [penugasanId]);
@@ -3151,7 +3191,7 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
   };
 
   const setujuiSemua = async () => {
-    const hasPending = sasaran.some(s => s.status !== 'DISETUJUI_KT' && s.status !== 'DIKEMBALIKAN_AT' && s.status !== 'DIBATALKAN');
+    const sebelum = sasaran; // utk rollback bila save gagal (#F10)
     const updated = sasaran.map(s =>
       s.status === 'DIBATALKAN' || s.status === 'DIKEMBALIKAN_AT' ? s : { ...s, status: 'DISETUJUI_KT' }
     );
@@ -3161,7 +3201,11 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
       await api.saveSasaranAssignment(penugasanId, updated, meta);
       setMsg('Sasaran yang belum dikembalikan telah disetujui semua.');
       onSaved?.();
-    } catch (e: any) { setMsg(`Gagal simpan: ${e.message}`); }
+    } catch (e: any) {
+      // Rollback tampilan — dulu badge tetap "✓ Disetujui" padahal server gagal.
+      setSasaran(sebelum);
+      setMsg(`Gagal simpan — status DIKEMBALIKAN ke sebelumnya: ${e.message}`);
+    }
     finally { setSaving(false); }
   };
 
@@ -3176,6 +3220,13 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
   };
 
   if (loading) return <div className="p-3 text-xs text-gray-400 italic">Memuat sasaran…</div>;
+  if (loadError)
+    return (
+      <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-xs">
+        Gagal memuat sasaran (bukan berarti kosong): {loadError}{' '}
+        <button onClick={load} className="underline font-semibold">↻ Coba lagi</button>
+      </div>
+    );
   if (!sasaran.length) return null;
 
   const disetujuiCount = sasaran.filter(s => s.status === 'DISETUJUI_KT').length;
@@ -3310,13 +3361,18 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
     akibat: string;
   } | undefined>>({});
 
+  const [loadError, setLoadError] = useState<string | null>(null);
   const refresh = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const r = await api.listTemuanReview(penugasanId);
       setItems(r.items);
       setCounts(r.counts);
-    } catch { /* silent */ }
+    } catch (e: any) {
+      // Dulu silent → panel review lenyap & temuan dikira tidak ada. (#F8)
+      setLoadError(e.message);
+    }
     finally { setLoading(false); }
   };
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [penugasanId]);
@@ -3334,6 +3390,35 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
     } catch (e: any) { setMsg(`Gagal submit: ${e.message}`); }
     finally { setBusy(null); }
   };
+  // Setujui/tolak 1 temuan (HITL) — memakai endpoint approve/reject yang sudah
+  // ada di backend; sebelum ini tidak ada jalur UI-nya sama sekali.
+  const doReview = async (t: TemuanReviewItem, aksi: 'approve' | 'reject') => {
+    setBusy(`rev-${t.id_temuan}`);
+    setMsg(null);
+    try {
+      if (aksi === 'approve') await api.approveTemuan(penugasanId, t.id_temuan);
+      else await api.rejectTemuan(penugasanId, t.id_temuan);
+      await refresh();
+    } catch (e: any) {
+      setMsg(`Gagal ${aksi === 'approve' ? 'menyetujui' : 'menolak'} ${t.id_temuan}: ${e.message}`);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doBulkApprove = async () => {
+    setBusy('bulk');
+    setMsg(null);
+    try {
+      await api.bulkApproveTemuan(penugasanId);
+      await refresh();
+    } catch (e: any) {
+      setMsg(`Gagal setujui semua: ${e.message}`);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const startEdit = (t: TemuanReviewItem) => {
     // Pre-fill dengan edit overlay yg sudah ada, atau pakai versi agen.
     const ef = t.edited_fields || {};
@@ -3395,6 +3480,14 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
   if (loading) {
     return <div className="mb-4 p-3 text-xs text-gray-400 italic">Memuat status review temuan…</div>;
   }
+  if (loadError) {
+    return (
+      <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-xs">
+        Gagal memuat status review temuan (bukan berarti kosong): {loadError}{' '}
+        <button onClick={refresh} className="underline font-semibold">↻ Coba lagi</button>
+      </div>
+    );
+  }
   if (items.length === 0) {
     return null; // hide panel jika tidak ada temuan
   }
@@ -3419,6 +3512,16 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
         >
           {loading ? '…' : '↻ Refresh'}
         </button>
+        {canEdit && items.some((t) => t.status !== 'APPROVED' && t.status !== 'REJECTED') && (
+          <button
+            onClick={doBulkApprove}
+            disabled={busy !== null}
+            className="px-2.5 py-1 text-xs rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 whitespace-nowrap"
+            title="Setujui semua temuan yang masih PENDING sekaligus"
+          >
+            {busy === 'bulk' ? '…' : '✓ Setujui semua'}
+          </button>
+        )}
         {canSubmit && (
           <button
             onClick={doSubmit}
@@ -3579,6 +3682,27 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
                     className="text-[11px] px-2 py-0.5 rounded border border-amber-400 text-amber-700 hover:bg-amber-50 disabled:opacity-50"
                   >
                     ✎ Edit
+                  </button>
+                )}
+                {/* HITL per-temuan — endpoint approve/reject sudah lama ada di
+                    backend tapi TIDAK pernah punya tombol UI (audit): auditor
+                    tak bisa menyetujui/menolak temuan dari layar. */}
+                {canEdit && t.status !== 'APPROVED' && (
+                  <button
+                    onClick={() => doReview(t, 'approve')}
+                    disabled={busy !== null}
+                    className="text-[11px] px-2 py-0.5 rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    {busy === `rev-${t.id_temuan}` ? '…' : '✓ Setujui'}
+                  </button>
+                )}
+                {canEdit && t.status !== 'REJECTED' && (
+                  <button
+                    onClick={() => doReview(t, 'reject')}
+                    disabled={busy !== null}
+                    className="text-[11px] px-2 py-0.5 rounded border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                  >
+                    ✗ Tolak
                   </button>
                 )}
               </div>

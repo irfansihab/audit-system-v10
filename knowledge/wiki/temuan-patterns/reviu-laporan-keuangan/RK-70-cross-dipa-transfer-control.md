@@ -165,10 +165,10 @@ Berdasarkan **PP 60/2008 Pasal 8** (Pengendalian Internal Pemerintah):
 - Long-term (Sep 2026 onwards): Monitor compliance & QA checklist
 
 **Related Patterns:**
-- [[RK-67]] — PNBP Overstating (accuracy aspect)
-- [[RK-68]] — Piutang Lag Sinkronisasi (system sync aspect)
-- [[RK-69]] — Payment Delay (timing aspect)
-- [[SAIPI-65]] — KKP Tidak Standar (documentation methodology)
+- [[reviu-pnbp/RK-67-pnbp-overstating-pencatatan]] — PNBP Overstating (accuracy aspect)
+- [[reviu-pnbp/RK-68-piutang-pnbp-lag-sinkronisasi]] — Piutang Lag Sinkronisasi (system sync aspect)
+- [[reviu-laporan-keuangan/RK-69-tagihan-om-anggaran-realisasi]] — Payment Delay (timing aspect)
+- [[kepatuhan-saipi/SAIPI-65-kka-tanpa-root-cause]] — KKP Tidak Standar (documentation methodology)
 
 ---
 

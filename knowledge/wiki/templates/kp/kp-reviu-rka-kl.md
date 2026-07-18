@@ -74,7 +74,7 @@ Sasaran baku untuk skill `reviu-rka-kl` (impor → daftar Sasaran KP; otomatis s
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[RKA-01]]..[[RKA-07]] (TOR 7 blok, RO tanpa parameter keberhasilan, komponen belum cukup, TOR tanpa metode pengadaan, ketidakselarasan metode-tahapan, cost analysis belum ada, indikator OM tidak sesuai prinsip)
+- Pattern: [[reviu-rka-kl/RKA-01-tor-7-blok]]..[[reviu-rka-kl/RKA-07-indikator-om-tidak-sesuai-prinsip]] (TOR 7 blok, RO tanpa parameter keberhasilan, komponen belum cukup, TOR tanpa metode pengadaan, ketidakselarasan metode-tahapan, cost analysis belum ada, indikator OM tidak sesuai prinsip)
 - Regulasi: [[regulasi-kunci]] (PMK 107/2024 Pasal 61; Kriteria IR2; PMK SBM/SBK tahun berjalan)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/reviu-rka-kl/SKILL.md`

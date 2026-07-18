@@ -38,9 +38,8 @@ CATEGORIES = {
     "_SUBMIT": "Submit / INTEGRAL",
 }
 
-# Subfolder yang TIDAK ditampilkan (input docs sudah accessible lewat upload tab)
-HIDDEN_SUBFOLDERS = {"00-input", "01-peraturan-internal", "02-kontrak", "03-perencanaan",
-                     "04-pelaksanaan", "05-keuangan"}
+# (dead-code HIDDEN_SUBFOLDERS dihapus — penyembunyian folder input bekerja
+# lewat iterasi CATEGORIES, konstanta ini tak pernah dipakai. Audit #B12.)
 
 
 # MIME type mapping untuk download

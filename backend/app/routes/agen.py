@@ -194,19 +194,23 @@ async def _run_llm_fallback(jobs: list, results: list) -> None:
 async def _run_ingestion(penugasan_id: int) -> None:
     """Jalankan digest deterministic V6 untuk semua dokumen di penugasan.
 
-    Digest TOR/RAB/PBJ dijalankan PARALEL (asyncio.gather, dibatasi semaphore)
-    karena tiap subprocess independen — mempercepat penugasan multi-dokumen.
-    Mutasi DB + tulis cache dilakukan SEKUENSIAL setelah gather (AsyncSession
-    tidak aman dipakai banyak coroutine bersamaan). Hasil digest per-file
-    (TOR/RAB) di-cache by sha256; PBJ folder-level tidak di-cache.
+    Digest TOR/RAB/PBJ dijalankan PARALEL (asyncio.gather, dibatasi semaphore).
+    STRUKTUR 3 FASE (audit #B4): sesi DB pertama hanya MEMBACA daftar dokumen
+    lalu DILEPAS; subprocess digest (bisa 2-5 menit) berjalan TANPA memegang
+    koneksi; sesi kedua yang singkat menerapkan hasil + cache. Dulu satu sesi
+    dipegang selama seluruh gather → koneksi "idle in transaction" bermenit-menit
+    dan beberapa upload paralel bisa menghabiskan pool asyncpg.
     """
+    from types import SimpleNamespace
+
+    # ---- Fase 1: baca data yang dibutuhkan, lalu LEPAS sesi ----
     async with SessionLocal() as db:
         p = (
             await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))
         ).scalar_one_or_none()
         if not p:
             return
-        docs = (
+        rows = (
             await db.execute(
                 select(Dokumen).where(
                     Dokumen.penugasan_id == penugasan_id,
@@ -214,159 +218,177 @@ async def _run_ingestion(penugasan_id: int) -> None:
                 )
             )
         ).scalars().all()
-
         folder = Path(p.folder_path)
-        ingested_dir = folder / "_INGESTED"
-        ingested_dir.mkdir(parents=True, exist_ok=True)
-
-        tor_docs = [d for d in docs if d.jenis == "TOR"]
-        rab_docs = [d for d in docs if d.jenis == "RAB"]
-        pbj_docs = [d for d in docs if d.jenis in ("KAK", "HPS", "RFI", "KONTRAK")]
-        bukti_docs = [d for d in docs if d.jenis == "BUKTI-LAPANGAN"]
-        other_docs = [d for d in docs if d.jenis in (None, "ST", "KP", "PKP", "OTHER")]
-
-        sem = asyncio.Semaphore(_INGEST_CONCURRENCY)
-        # Daftar job: (kind, payload, out_path, coro). kind="file" → cache-able;
-        # kind="pbj" → folder-level, satu output dipakai banyak dokumen.
-        jobs: list[tuple[str, object, Path, object]] = []
-
-        for i, d in enumerate(tor_docs, start=1):
-            out = ingested_dir / f"tor-{i:02d}.json"
-            jobs.append((
-                "file", d, out,
-                _digest_subprocess(
-                    sem, "scripts/reviu-rka-kl/digest_tor.py",
-                    [d.file_path, "--no-raw", "-o", str(out)], out, 120,
-                ),
-            ))
-        for i, d in enumerate(rab_docs, start=1):
-            out = ingested_dir / f"rab-{i:02d}.json"
-            jobs.append((
-                "file", d, out,
-                _digest_subprocess(
-                    sem, "scripts/reviu-rka-kl/digest_rab.py",
-                    [d.file_path, "-o", str(out)], out, 120,
-                ),
-            ))
-        if pbj_docs:
-            out = ingested_dir / "pengadaan-digest.json"
-            jobs.append((
-                "pbj", pbj_docs, out,
-                _digest_subprocess(
-                    sem, "scripts/audit-pengadaan/digest_pengadaan.py",
-                    [str(folder), "-o", str(out)], out, 180,
-                ),
-            ))
-
-        # Jalankan SEMUA subprocess paralel
-        results = await asyncio.gather(*(coro for _, _, _, coro in jobs))
-
-        # Terapkan hasil + cache (sekuensial — aman untuk satu AsyncSession)
-        for (kind, payload, out, _), (ok, err) in zip(jobs, results):
-            if kind == "file":
-                d = payload  # type: ignore[assignment]
-                if ok:
-                    d.status = DokumenStatus.READY
-                    d.ingested_json_path = str(out)
-                    d.ingested_at = datetime.utcnow()
-                    await _cache_put(db, d.sha256, d.jenis, str(out))
-                else:
-                    d.status = DokumenStatus.FAILED
-                    d.error_message = (err or "digest returned non-zero")[:500]
-            else:  # pbj
-                for d in payload:  # type: ignore[assignment]
-                    if ok:
-                        d.status = DokumenStatus.READY
-                        d.ingested_json_path = str(out)
-                        d.ingested_at = datetime.utcnow()
-                    else:
-                        d.status = DokumenStatus.FAILED
-                        d.error_message = (err or "digest_pengadaan returned non-zero")[:500]
-
-        for d in other_docs:
-            d.status = DokumenStatus.READY
-            d.ingested_at = datetime.utcnow()
-
-        # Bukti lapangan AT (pemeriksaan fisik/observasi/diskusi ahli) — digest
-        # generik atas folder 04-bukti-lapangan utk SEMUA skill, termasuk skill
-        # ber-pipeline khusus (reviu-rka-kl/PBJ) yang tidak menjalankan
-        # digest_generic penuh. Doktrin: dokumen ini opsional, tapi BILA ADA
-        # wajib dianalisis agen — jadi digest-nya tidak boleh bergantung jenis skill.
-        if bukti_docs:
-            try:
-                from app.digest_generic import digest_folder as _digest_bukti
-
-                res = await asyncio.to_thread(
-                    _digest_bukti, folder, subfolder_scan=["04-bukti-lapangan"]
-                )
-                # Petakan file sumber → file digest supaya ingested_json_path terisi.
-                out_map: dict[str, str] = {}
-                for rel in res.get("files", []):
-                    try:
-                        dj = json.loads((folder / rel).read_text(encoding="utf-8"))
-                        src = dj.get("file")
-                        if src:
-                            out_map[str(folder / src)] = str(folder / rel)
-                    except (OSError, json.JSONDecodeError):
-                        continue
-                for d in bukti_docs:
-                    d.status = DokumenStatus.READY
-                    d.ingested_at = datetime.utcnow()
-                    d.ingested_json_path = out_map.get(d.file_path)
-                    if d.ingested_json_path is None:
-                        # File tak terdigest (format tak didukung, mis. foto) —
-                        # tetap READY sebagai lampiran, tapi katakan jujur.
-                        d.error_message = (
-                            "format tidak terdigest — agen tidak bisa membaca isinya; "
-                            "unggah versi teks/PDF bila perlu dianalisis"
-                        )
-            except Exception as exc:  # noqa: BLE001
-                for d in bukti_docs:
-                    d.status = DokumenStatus.FAILED
-                    d.error_message = f"digest bukti lapangan gagal: {exc}"[:500]
-
-        # Digest generik untuk skill criteria-driven (audit-kinerja, evaluasi-*,
-        # kepatuhan-saipi, konsultansi-*, pemantauan-*, audit-umum, reviu-umum)
-        # — semua skill yg TIDAK punya pipeline V6 khusus.
-        # File-only output di _INGESTED/<jenis>-<nn>.json. Best-effort: gagal tidak
-        # menggagalkan ingestion utama. Pakai LiteParse (deterministik, no LLM).
         try:
             skill_value = p.skill if isinstance(p.skill, str) else getattr(p.skill, "value", str(p.skill))
         except Exception:  # noqa: BLE001
             skill_value = None
+        # Snapshot ringan (bukan ORM) — dipakai di luar sesi.
+        docs = [
+            SimpleNamespace(id=d.id, jenis=d.jenis, file_path=d.file_path, sha256=d.sha256)
+            for d in rows
+        ]
+
+    ingested_dir = folder / "_INGESTED"
+    ingested_dir.mkdir(parents=True, exist_ok=True)
+
+    tor_docs = [d for d in docs if d.jenis == "TOR"]
+    rab_docs = [d for d in docs if d.jenis == "RAB"]
+    pbj_docs = [d for d in docs if d.jenis in ("KAK", "HPS", "RFI", "KONTRAK")]
+    bukti_docs = [d for d in docs if d.jenis == "BUKTI-LAPANGAN"]
+    other_docs = [d for d in docs if d.jenis in (None, "ST", "KP", "PKP", "OTHER")]
+
+    sem = asyncio.Semaphore(_INGEST_CONCURRENCY)
+    # Daftar job: (kind, payload, out_path, coro). kind="file" → cache-able;
+    # kind="pbj" → folder-level, satu output dipakai banyak dokumen.
+    jobs: list[tuple[str, object, Path, object]] = []
+
+    for i, d in enumerate(tor_docs, start=1):
+        out = ingested_dir / f"tor-{i:02d}.json"
+        jobs.append((
+            "file", d, out,
+            _digest_subprocess(
+                sem, "scripts/reviu-rka-kl/digest_tor.py",
+                [d.file_path, "--no-raw", "-o", str(out)], out, 120,
+            ),
+        ))
+    for i, d in enumerate(rab_docs, start=1):
+        out = ingested_dir / f"rab-{i:02d}.json"
+        jobs.append((
+            "file", d, out,
+            _digest_subprocess(
+                sem, "scripts/reviu-rka-kl/digest_rab.py",
+                [d.file_path, "-o", str(out)], out, 120,
+            ),
+        ))
+    if pbj_docs:
+        out = ingested_dir / "pengadaan-digest.json"
+        jobs.append((
+            "pbj", pbj_docs, out,
+            _digest_subprocess(
+                sem, "scripts/audit-pengadaan/digest_pengadaan.py",
+                [str(folder), "-o", str(out)], out, 180,
+            ),
+        ))
+
+    # ---- Fase 2: SEMUA subprocess paralel, TANPA sesi DB ----
+    results = await asyncio.gather(*(coro for _, _, _, coro in jobs))
+
+    # Kumpulkan mutasi utk diterapkan di fase 3: doc_id → field update.
+    updates: dict[int, dict] = {}
+    cache_puts: list[tuple[str, str | None, str]] = []
+    for (kind, payload, out, _), (ok, err) in zip(jobs, results):
+        if kind == "file":
+            d = payload  # type: ignore[assignment]
+            if ok:
+                updates[d.id] = {"status": DokumenStatus.READY, "ingested_json_path": str(out)}
+                cache_puts.append((d.sha256, d.jenis, str(out)))
+            else:
+                updates[d.id] = {
+                    "status": DokumenStatus.FAILED,
+                    "error_message": (err or "digest returned non-zero")[:500],
+                }
+        else:  # pbj
+            for d in payload:  # type: ignore[assignment]
+                if ok:
+                    updates[d.id] = {"status": DokumenStatus.READY, "ingested_json_path": str(out)}
+                else:
+                    updates[d.id] = {
+                        "status": DokumenStatus.FAILED,
+                        "error_message": (err or "digest_pengadaan returned non-zero")[:500],
+                    }
+
+    for d in other_docs:
+        updates[d.id] = {"status": DokumenStatus.READY}
+
+    # Bukti lapangan AT (pemeriksaan fisik/observasi/diskusi ahli) — digest
+    # generik atas folder 04-bukti-lapangan utk SEMUA skill, termasuk skill
+    # ber-pipeline khusus (reviu-rka-kl/PBJ) yang tidak menjalankan
+    # digest_generic penuh. Doktrin: dokumen ini opsional, tapi BILA ADA
+    # wajib dianalisis agen — jadi digest-nya tidak boleh bergantung jenis skill.
+    if bukti_docs:
         try:
-            from app.digest_generic import skill_needs_generic_digest, digest_folder
-            if skill_needs_generic_digest(skill_value):
-                # Run di thread (sync I/O, jangan block event loop)
-                generic_result = await asyncio.to_thread(digest_folder, folder)
-                log.info(
-                    "digest_generic untuk penugasan_id=%d skill=%s: %d/%d files digested (%s)",
-                    penugasan_id, skill_value,
-                    generic_result.get("n_digested", 0),
-                    generic_result.get("n_total", 0),
-                    generic_result.get("per_jenis", {}),
-                )
-        except Exception as exc:  # noqa: BLE001 — best-effort, log saja
-            log.warning("digest_generic gagal untuk penugasan_id=%d: %s", penugasan_id, exc)
+            from app.digest_generic import digest_folder as _digest_bukti
 
-        # Tier-2 (opsional, OFF default): untuk digest yang field kuncinya hilang,
-        # pulihkan via LLM murah dari TEKS dokumen. File-only (tidak menyentuh DB).
-        await _run_llm_fallback(jobs, results)
-
-        # Post-process digest pengadaan: rescue file yg masuk `unclassified_files`
-        # karena pattern V6 terlalu ketat (mis. prefix `Signed_` dari Privy/eMaterai
-        # membuat `\bKAK\b` gagal). Robust classifier + re-parse via V6 module.
-        # File-only, V6 read-only. Lihat app.digest_postprocess.
-        for (kind, payload, out, _) in jobs:
-            if kind == "pbj" and out.exists():
+            res = await asyncio.to_thread(
+                _digest_bukti, folder, subfolder_scan=["04-bukti-lapangan"]
+            )
+            # Petakan file sumber → file digest supaya ingested_json_path terisi.
+            out_map: dict[str, str] = {}
+            for rel in res.get("files", []):
                 try:
-                    from app.digest_postprocess import repair_pengadaan_digest
+                    dj = json.loads((folder / rel).read_text(encoding="utf-8"))
+                    src_file = dj.get("file")
+                    if src_file:
+                        out_map[str(folder / src_file)] = str(folder / rel)
+                except (OSError, json.JSONDecodeError):
+                    continue
+            for d in bukti_docs:
+                upd: dict = {"status": DokumenStatus.READY,
+                             "ingested_json_path": out_map.get(d.file_path)}
+                if upd["ingested_json_path"] is None:
+                    # File tak terdigest (format tak didukung, mis. foto) —
+                    # tetap READY sebagai lampiran, tapi katakan jujur.
+                    upd["error_message"] = (
+                        "format tidak terdigest — agen tidak bisa membaca isinya; "
+                        "unggah versi teks/PDF bila perlu dianalisis"
+                    )
+                updates[d.id] = upd
+        except Exception as exc:  # noqa: BLE001
+            for d in bukti_docs:
+                updates[d.id] = {
+                    "status": DokumenStatus.FAILED,
+                    "error_message": f"digest bukti lapangan gagal: {exc}"[:500],
+                }
 
-                    repair_pengadaan_digest(out, folder=folder)
-                except Exception as exc:
-                    # Repair best-effort; jangan gagalkan ingestion bila gagal.
-                    print(f"[digest_postprocess] warning: {exc}")
+    # Digest generik untuk skill criteria-driven — file-only, best-effort.
+    try:
+        from app.digest_generic import skill_needs_generic_digest, digest_folder
+        if skill_needs_generic_digest(skill_value):
+            generic_result = await asyncio.to_thread(digest_folder, folder)
+            log.info(
+                "digest_generic untuk penugasan_id=%d skill=%s: %d/%d files digested (%s)",
+                penugasan_id, skill_value,
+                generic_result.get("n_digested", 0),
+                generic_result.get("n_total", 0),
+                generic_result.get("per_jenis", {}),
+            )
+    except Exception as exc:  # noqa: BLE001 — best-effort, log saja
+        log.warning("digest_generic gagal untuk penugasan_id=%d: %s", penugasan_id, exc)
 
+    # Tier-2 (opsional, OFF default): pulihkan field digest yang hilang via LLM
+    # murah. File-only (tidak menyentuh DB).
+    await _run_llm_fallback(jobs, results)
+
+    # Post-process digest pengadaan (rescue unclassified). File-only.
+    for (kind, payload, out, _) in jobs:
+        if kind == "pbj" and out.exists():
+            try:
+                from app.digest_postprocess import repair_pengadaan_digest
+
+                repair_pengadaan_digest(out, folder=folder)
+            except Exception as exc:
+                print(f"[digest_postprocess] warning: {exc}")
+
+    # ---- Fase 3: terapkan hasil dengan sesi BARU yang singkat ----
+    if not updates:
+        return
+    async with SessionLocal() as db:
+        rows = (
+            await db.execute(select(Dokumen).where(Dokumen.id.in_(list(updates))))
+        ).scalars().all()
+        now = datetime.utcnow()
+        for d in rows:
+            upd = updates.get(d.id) or {}
+            d.status = upd.get("status", d.status)
+            if "ingested_json_path" in upd:
+                d.ingested_json_path = upd["ingested_json_path"]
+            if upd.get("error_message"):
+                d.error_message = upd["error_message"]
+            if upd.get("status") == DokumenStatus.READY:
+                d.ingested_at = now
+        for sha, jenis_c, out_str in cache_puts:
+            await _cache_put(db, sha, jenis_c, out_str)
         await db.commit()
 
 

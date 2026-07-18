@@ -74,7 +74,7 @@ Sasaran baku untuk skill `konsultasi-pengadaan` (impor → daftar Sasaran KP; ot
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[KSP-57]]..[[KSP-59]] (E-Katalog tanpa mini-kompetisi, pemaketan/spesifikasi belum jelas, Itjen advisor pra-pengadaan)
+- Pattern: [[konsultasi-pengadaan/KSP-57-e-katalog-tanpa-mini-kompetisi]]..[[konsultasi-pengadaan/KSP-59-itjen-advisor-pra-pengadaan]] (E-Katalog tanpa mini-kompetisi, pemaketan/spesifikasi belum jelas, Itjen advisor pra-pengadaan)
 - Regulasi: [[regulasi-kunci]] (Perpres 16/2018 jo. Perpres 12/2021; Perlem LKPP 12/2021; Perpres 46/2025)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/konsultasi-pengadaan/SKILL.md`

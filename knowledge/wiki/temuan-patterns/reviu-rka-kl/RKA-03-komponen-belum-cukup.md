@@ -79,6 +79,6 @@ Pengujian kecukupan:
 
 ## Catatan
 
-- Pattern ini sering muncul bersamaan dengan [[RKA-02]] (RO tanpa parameter keberhasilan) — sama-sama mengindikasikan kausalitas anggaran-output belum matang.
-- Lihat juga [[RKA-04]] (TOR belum jelaskan metode pengadaan & spek teknis).
+- Pattern ini sering muncul bersamaan dengan [[reviu-rka-kl/RKA-02-ro-tanpa-parameter-keberhasilan]] (RO tanpa parameter keberhasilan) — sama-sama mengindikasikan kausalitas anggaran-output belum matang.
+- Lihat juga [[reviu-rka-kl/RKA-04-tor-tanpa-metode-pengadaan]] (TOR belum jelaskan metode pengadaan & spek teknis).
 - Untuk RO dengan banyak komponen administratif (rapat, koordinasi), nilai dengan hati-hati — kadang komponen administratif memang substantif (mis. forum lintas K/L untuk regulasi).

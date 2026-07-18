@@ -70,7 +70,7 @@ Kajian teknis yang tidak terhubung ke rencana aksi gagal memenuhi prinsip ini.
 - Susun **matriks rencana aksi** dari kajian: per rekomendasi → kegiatan pengadaan/non-pengadaan → PJP → milestone (mis. per triwulan) → target output.
 - Pasang **gate review** per triwulan untuk monitor progres milestone.
 - Kalau anggaran tidak cukup TA berjalan, susun **multi-year roadmap** sampai akhir Renstra dengan urutan prioritas.
-- Letakkan kajian dalam **lingkup KAK** RKA-K/L TA berikutnya (lihat juga [[RKA-04]] — TOR belum jelaskan metode pengadaan).
+- Letakkan kajian dalam **lingkup KAK** RKA-K/L TA berikutnya (lihat juga [[reviu-rka-kl/RKA-04-tor-tanpa-metode-pengadaan]] — TOR belum jelaskan metode pengadaan).
 
 ## Contoh Kasus Historis
 

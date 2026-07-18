@@ -7,6 +7,7 @@ di SIMWAS. Tindak lanjut dipantau via modul TLHP (sudah ter-ingest saat approval
 """
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
@@ -152,7 +153,10 @@ async def hapus_kelengkapan(
     p = await _penugasan(db, penugasan_id)
     base = Path(p.folder_path).resolve()
     target = (base / path).resolve()
-    if not str(target).startswith(str(base / "_ADMIN")) or not target.is_file():
+    # Boundary dgn separator eksplisit — startswith tanpa os.sep meloloskan
+    # folder sibling berawalan "_ADMIN..." (mis. "_ADMIN-lain/").
+    admin_dir = (base / "_ADMIN").resolve()
+    if not (target == admin_dir or str(target).startswith(str(admin_dir) + os.sep)) or not target.is_file():
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Path tidak valid.")
     target.unlink()
     return {"ok": True}

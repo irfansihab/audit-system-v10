@@ -83,4 +83,4 @@ Pengujian pada TOR:
 
 - Pattern ini sering muncul di RO baru atau RO dengan banyak sub-komponen pengadaan kecil.
 - Severity dapat naik ke HIGH bila ada sub-komponen besar (≥ Rp1 M) yang tidak memiliki metode/spek.
-- Lihat juga [[RP-11]] (Pagu SIRUP draft > 50% setelah TW I) — gejala dari pattern ini.
+- Lihat juga [[reviu-pengadaan/RP-11-pagu-sirup-draft-akhir-tw1]] (Pagu SIRUP draft > 50% setelah TW I) — gejala dari pattern ini.

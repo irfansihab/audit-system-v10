@@ -77,4 +77,4 @@ Prinsip kewajaran harga:
 
 - Pattern ini sering muncul di lisensi *yearly* yang harus diperpanjang tiap TA.
 - Untuk pengadaan dengan banyak item (≥ 10 lisensi), buat **tabel periode efektif per item** sebelum susun HPS.
-- Lihat juga [[RP-08]] untuk pattern HPS yang lebih umum (sumber harga).
+- Lihat juga [[reviu-pengadaan/RP-08-hps-rfi-minimum]] untuk pattern HPS yang lebih umum (sumber harga).

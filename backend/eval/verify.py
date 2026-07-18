@@ -51,7 +51,7 @@ def verify(folder: Path, skill: str) -> dict:
     # RAGU "tidak dapat diverifikasi" dan temuan BENAR disuruh revisi (audit #E9).
     try:
         from eval.run_eval import _load_kriteria_context
-        kriteria_ctx = _load_kriteria_context(skill)
+        kriteria_ctx = _load_kriteria_context(skill, temuan)
     except Exception:  # noqa: BLE001 — best-effort; tanpa konteks = perilaku lama
         kriteria_ctx = ""
     scores = judge.judge_per_temuan(temuan, is_audit=_is_audit(skill), kriteria_context=kriteria_ctx)

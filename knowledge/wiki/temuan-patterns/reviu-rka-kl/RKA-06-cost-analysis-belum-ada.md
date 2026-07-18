@@ -83,4 +83,4 @@ Pengujian:
 - Pattern ini lebih berat di RO yang melibatkan banyak komponen dan target output kuantitatif.
 - Cost analysis tidak perlu rumit — minimal: unit cost output + benchmark + sensitivity.
 - Severity HIGH karena dampak langsung ke akuntabilitas anggaran.
-- Lihat juga [[RKA-02]] (RO tanpa parameter keberhasilan) — dua-duanya hulu dari kausalitas anggaran-output yang lemah.
+- Lihat juga [[reviu-rka-kl/RKA-02-ro-tanpa-parameter-keberhasilan]] (RO tanpa parameter keberhasilan) — dua-duanya hulu dari kausalitas anggaran-output yang lemah.

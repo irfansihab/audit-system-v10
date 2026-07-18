@@ -61,7 +61,7 @@ Sasaran baku untuk skill `evaluasi-manajemen-risiko` (impor → baris Sasaran; s
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[EMR-39]] — Pemantauan Risiko Triwulanan Belum Diinput (+ [[EMR-40]] piagam belum TTD, [[EMR-41]] rencana penanganan belum diisi, [[EMR-42]] pedoman MR usang, [[EMR-43]] gap komitmen top-down)
+- Pattern: [[evaluasi-manajemen-risiko/EMR-39-pemantauan-belum-diinput]] — Pemantauan Risiko Triwulanan Belum Diinput (+ [[evaluasi-manajemen-risiko/EMR-40-piagam-risiko-belum-ttd]] piagam belum TTD, [[evaluasi-manajemen-risiko/EMR-41-rencana-penanganan-belum-diisi]] rencana penanganan belum diisi, [[evaluasi-manajemen-risiko/EMR-42-pedoman-mr-usang]] pedoman MR usang, [[evaluasi-manajemen-risiko/EMR-43-gap-komitmen-top-down]] gap komitmen top-down)
 - Regulasi/Pedoman: [[regulasi-kunci]] (Pedoman Menkomdigi 6/2017 — kriteria utama; ISO 31000:2018 pendukung)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-manajemen-risiko/SKILL.md`

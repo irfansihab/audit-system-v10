@@ -76,4 +76,4 @@ RO Operation & Maintenance (OM) — yang seharusnya berorientasi mempertahankan/
 
 - Pattern ini sering muncul saat ada kebutuhan teknologi baru tapi dikamuflase masuk RO OM untuk kemudahan administratif.
 - Solusi: Direktorat susun **roadmap multi-tahun** yang membedakan pemeliharaan dan pengembangan secara eksplisit.
-- Lihat juga [[RP-12]] (Kajian tanpa rencana aksi) dan [[pola-temuan-berulang]] poin #4 (Pedoman Internal Usang).
+- Lihat juga [[reviu-pengadaan/RP-12-kajian-tanpa-rencana-aksi]] (Kajian tanpa rencana aksi) dan [[pola-temuan-berulang]] poin #4 (Pedoman Internal Usang).

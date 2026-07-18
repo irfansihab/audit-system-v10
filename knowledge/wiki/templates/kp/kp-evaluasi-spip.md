@@ -74,7 +74,7 @@ Sasaran baku untuk skill `evaluasi-spip` (impor → daftar Sasaran KP; otomatis 
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ESP-35]] (skor PM lebih tinggi dari QA; lihat juga ESP-36 s.d. ESP-38)
+- Pattern: [[evaluasi-spip/ESP-35-skor-pm-lebih-tinggi-qa]] (skor PM lebih tinggi dari QA; lihat juga ESP-36 s.d. ESP-38)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PP 60/2008 & Peraturan BPKP 5/2021)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-spip/SKILL.md`

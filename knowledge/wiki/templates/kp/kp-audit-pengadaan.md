@@ -75,7 +75,7 @@ Sasaran baku untuk skill `audit-pengadaan` (impor → daftar Sasaran KP; otomati
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[AP-23]]..[[AP-29]] (temuan-patterns/audit-pengadaan)
+- Pattern: [[audit-pengadaan/AP-23-pekerjaan-tanpa-kontrak]]..[[audit-pengadaan/AP-29-kurs-klasifikasi-akun]] (temuan-patterns/audit-pengadaan)
 - Regulasi: [[regulasi-kunci]] (Perpres 16/2018 jo. 12/2021; Perpres 46/2025 Ps. 9(1)f²)
 - Konteks: [[pola-temuan-berulang]] (Pola 1, 8)
 - PANDUAN substansi: `knowledge/skills/audit-pengadaan/SKILL.md`

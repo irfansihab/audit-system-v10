@@ -81,6 +81,6 @@ Framework APIP yang terdiri dari **5 elemen inti** (Piagam Audit, KKSAR, Pedoman
 
 ## Catatan
 
-- Lintas-relation dengan [[SAIPI-60]] (Piagam Audit) — tapi SAIPI-60 fokus 1 elemen, SAIPI-66 fokus INTEGRASI 5 elemen.
+- Lintas-relation dengan [[kepatuhan-saipi/SAIPI-60-piagam-audit-belum-diperbarui]] (Piagam Audit) — tapi SAIPI-60 fokus 1 elemen, SAIPI-66 fokus INTEGRASI 5 elemen.
 - Lintas-skill P-23 (Pedoman/SOP Usang) — sama jenis governance readiness.
 - Foundation untuk [[pattern-temuan]] P-33 (Sistem Maturitas), karena framework APIP adalah prerequisite.

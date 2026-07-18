@@ -61,7 +61,7 @@ Sasaran baku untuk skill `pemantauan-tindak-lanjut` (impor → baris Sasaran; su
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[PTL-48]], [[PTL-49]], [[PTL-50]], [[PTL-51]], [[PTL-52]] (dari temuan-patterns/pemantauan-tindak-lanjut/)
+- Pattern: [[pemantauan-tindak-lanjut/PTL-48-rekomendasi-struktural-outstanding]], [[pemantauan-tindak-lanjut/PTL-49-asimetri-tl-antar-ditjen]], [[pemantauan-tindak-lanjut/PTL-50-verifikasi-outstanding-belum-tuntas]], [[pemantauan-tindak-lanjut/PTL-51-ownership-fragmen-pasca-sotk]], [[pemantauan-tindak-lanjut/PTL-52-outstanding-belum-disetor]] (dari temuan-patterns/pemantauan-tindak-lanjut/)
 - Regulasi: [[regulasi-kunci]] (PP 60/2008 Pasal 50, SAIPI (AAIPI 2021), UU 15/2004 Pasal 20)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/pemantauan-tindak-lanjut/SKILL.md`

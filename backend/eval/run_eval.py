@@ -27,26 +27,55 @@ KNOWLEDGE_DIR = EVAL_DIR.parent.parent / "knowledge"
 _KRITERIA_CTX_CAP = 30000  # char, agar prompt judge tak membengkak
 
 
-def _load_kriteria_context(skill: str | None) -> str:
+def _reg_tokens_eval(text: str) -> set[str]:
+    """Token nomor-tahun regulasi ('155/PMK.02/2021' → '155-2021') utk seleksi
+    referensi relevan — sama semangatnya dgn _reg_tokens di routes/cacm.py."""
+    import re as _re
+
+    out: set[str] = set()
+    for m in _re.finditer(r"\b(\d{1,4})\s*(?:/[\w.\-]*?)*/\s*(\d{4})\b", text):
+        out.add(f"{m.group(1)}-{m.group(2)}")
+    for m in _re.finditer(r"\b(\d{1,4})\s+tahun\s+(\d{4})\b", text, _re.IGNORECASE):
+        out.add(f"{m.group(1)}-{m.group(2)}")
+    return out
+
+
+def _load_kriteria_context(skill: str | None, temuan: list[dict] | None = None) -> str:
     """Ringkasan kriteria yang BERLAKU untuk skill (references/*.md digest +
     wiki regulasi-kunci) agar judge dapat memverifikasi sitasi pasal.
-    Sama dengan yang diakses agen (read_skill_reference + read_preload_context)."""
+
+    Efisiensi (audit #E12b): bila `temuan` diberikan, hanya reference yang
+    regulasinya benar-benar DISITIR temuan yang disertakan (regulasi-kunci
+    selalu ikut sebagai cheat-sheet dasar) — memangkas ~ribuan token per
+    panggilan judge tanpa mengurangi kemampuan verifikasi. `temuan=None` =
+    perilaku lama (semua reference)."""
     if not skill:
         return ""
+    cited: set[str] = set()
+    if temuan:
+        for t in temuan:
+            cited |= _reg_tokens_eval(str(t.get("kriteria") or ""))
     parts: list[str] = []
+    n_skip = 0
     ref_dir = KNOWLEDGE_DIR / "skills" / skill / "references"
     if ref_dir.is_dir():
         for md in sorted(ref_dir.glob("*.md")):
             try:
-                parts.append(f"# [{skill}/references/{md.name}]\n{md.read_text()}")
+                text = md.read_text()
             except OSError:
                 continue
+            if cited and not (_reg_tokens_eval(md.name) & cited or _reg_tokens_eval(text[:3000]) & cited):
+                n_skip += 1
+                continue
+            parts.append(f"# [{skill}/references/{md.name}]\n{text}")
     wiki = KNOWLEDGE_DIR / "wiki" / "konteks" / "regulasi-kunci.md"
     if wiki.is_file():
         try:
             parts.append(f"# [wiki/konteks/regulasi-kunci.md]\n{wiki.read_text()}")
         except OSError:
             pass
+    if n_skip:
+        parts.append(f"_({n_skip} reference lain tidak disertakan — regulasinya tidak disitir temuan mana pun.)_")
     ctx = "\n\n".join(parts).strip()
     return ctx[:_KRITERIA_CTX_CAP]
 
@@ -110,7 +139,7 @@ def score_case(case: dict, use_judge: bool) -> dict:
 
     try:
         is_audit = deterministic.is_audit_skill(case.get("skill"))
-        kriteria_ctx = _load_kriteria_context(case.get("skill"))
+        kriteria_ctx = _load_kriteria_context(case.get("skill"), temuan)
         per_temuan = judge.judge_per_temuan(temuan, is_audit=is_audit, kriteria_context=kriteria_ctx)
         # Guard: judge kadang balikkan skor LEBIH SEDIKIT dari jumlah temuan
         # (truncation/flaky). Dulu zip() diam-diam membuang sisanya DAN pembagi

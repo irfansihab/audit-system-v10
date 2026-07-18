@@ -76,5 +76,5 @@ Pengujian:
 
 ## Catatan
 
-- Pola ini sering merupakan akar penyebab dari [[RP-11]] (Pagu SIRUP draft tinggi di akhir TW I).
+- Pola ini sering merupakan akar penyebab dari [[reviu-pengadaan/RP-11-pagu-sirup-draft-akhir-tw1]] (Pagu SIRUP draft tinggi di akhir TW I).
 - Severity dapat naik ke HIGH bila Quattro paket besar (≥ Rp1 M) terjadwal di TW IV.

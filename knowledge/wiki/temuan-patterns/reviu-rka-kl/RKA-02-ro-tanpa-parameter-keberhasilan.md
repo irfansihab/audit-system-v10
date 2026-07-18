@@ -77,5 +77,5 @@ Rincian Output (RO) di RKA-K/L dinyatakan dengan jumlah (mis. "150 Startup", "1 
 
 - Pattern ini sering muncul di Direktorat dengan output berbasis layanan atau program akselerasi.
 - Pertanyaan kunci agen: "Bagaimana cara mengetahui bahwa RO ini SUDAH tercapai? Apa indikatornya?"
-- Lihat juga [[RKA-03]] (Komponen belum cukup) dan [[RKA-04]] (TOR belum jelaskan metode).
+- Lihat juga [[reviu-rka-kl/RKA-03-komponen-belum-cukup]] (Komponen belum cukup) dan [[reviu-rka-kl/RKA-04-tor-tanpa-metode-pengadaan]] (TOR belum jelaskan metode).
 - Lihat juga [[pola-temuan-berulang]] poin #6 (Data Kinerja Tidak Dapat Diverifikasi Sumbernya).

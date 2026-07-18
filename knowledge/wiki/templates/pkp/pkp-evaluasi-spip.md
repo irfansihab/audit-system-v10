@@ -61,7 +61,7 @@ Sasaran baku untuk skill `evaluasi-spip` (impor → baris Sasaran; sub-butir →
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ESP-35]] — Skor PM > QA / Optimism Bias (+ [[ESP-36]] register risiko strategis belum ada, [[ESP-37]] aplikasi SPIP bermasalah, [[ESP-38]] kompetensi SDM belum merata)
+- Pattern: [[evaluasi-spip/ESP-35-skor-pm-lebih-tinggi-qa]] — Skor PM > QA / Optimism Bias (+ [[evaluasi-spip/ESP-36-register-risiko-strategis-belum-ada]] register risiko strategis belum ada, [[evaluasi-spip/ESP-37-aplikasi-spip-bermasalah]] aplikasi SPIP bermasalah, [[evaluasi-spip/ESP-38-kompetensi-sdm-belum-merata]] kompetensi SDM belum merata)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PP 60/2008 + Peraturan BPKP 5/2021 — Maturitas SPIP Terintegrasi)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-spip/SKILL.md`

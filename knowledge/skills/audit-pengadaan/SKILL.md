@@ -5,7 +5,7 @@ format_laporan: kksa
 dasar-hukum: Perpres 16/2018 jo. Perpres 12/2021, Perlem LKPP 12/2021, Perlem LKPP 4/2024, Perpres 46/2025
 kode-surat: PW.04.04
 tingkat-keyakinan: memadai
-version: "3.1"
+version: "3.2"
 changelog:
   - v3.2 (2026-07-01): Hardening v10 — terminologi baku **CCSAA→KKSAR** di body (Sebab WAJIB & hitung kerugian negara tetap).
   - v3.1 (2026-06-29): **Engine-ready** — orkestrasi (urutan tool, peran AT/KT/PM, titik HITL, auto-eksekusi, pilihan model) DIPINDAH ke orkestrator (harness uji `backend/app/prompts/anggota_tim.md`; produksi INTEGRAL). Skill = substansi murni & portabel. Frontmatter `model`/`auto_execute`/`auto_execute_command` dihapus; seksi "Eksekusi di v7" + tabel "Tahap A0–A4" (kolom Pelaku) dibuang; nama tool v9 di-bahasakan tool-agnostik; seksi Identitas duplikat dihapus; versi disatukan. Doktrin DIPERTAHANKAN utuh — audit = Sebab WAJIB (gali akar masalah/RCA), hitung kerugian negara bila ada, terminologi CCSAA tidak diubah.

@@ -61,7 +61,7 @@ Sasaran baku untuk skill `kepatuhan-saipi` (impor → baris Sasaran; sub-butir �
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[SAIPI-60]]..[[SAIPI-66]] (Piagam belum diperbarui, terminologi non-baku, PIA belum memadai, telaah sejawat kedaluwarsa, register risiko fraud, KKA tanpa root cause, framework APIP multi-elemen)
+- Pattern: [[kepatuhan-saipi/SAIPI-60-piagam-audit-belum-diperbarui]]..[[kepatuhan-saipi/SAIPI-66-framework-apip-multi-elemen]] (Piagam belum diperbarui, terminologi non-baku, PIA belum memadai, telaah sejawat kedaluwarsa, register risiko fraud, KKA tanpa root cause, framework APIP multi-elemen)
 - Regulasi: [[regulasi-kunci]] (PER-01/AAIPI/DPN/2021 — SAIPI; IPPF 2017; PP 60/2008; IACM)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/meta/kepatuhan-saipi/SKILL.md`

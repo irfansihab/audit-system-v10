@@ -74,7 +74,7 @@ Sasaran baku untuk skill `evaluasi-manajemen-risiko` (impor → daftar Sasaran K
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[EMR-39]] (pemantauan belum diinput; lihat juga EMR-40 s.d. EMR-43)
+- Pattern: [[evaluasi-manajemen-risiko/EMR-39-pemantauan-belum-diinput]] (pemantauan belum diinput; lihat juga EMR-40 s.d. EMR-43)
 - Regulasi/Pedoman: [[regulasi-kunci]] (Pedoman Menkomdigi 6/2017 & ISO 31000:2018)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-manajemen-risiko/SKILL.md`

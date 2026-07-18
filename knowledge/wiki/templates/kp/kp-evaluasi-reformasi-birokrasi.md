@@ -74,7 +74,7 @@ Sasaran baku untuk skill `evaluasi-reformasi-birokrasi` (impor → daftar Sasara
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ERB-44]] (outcome/dampak tidak diukur; lihat juga ERB-45 s.d. ERB-47)
+- Pattern: [[evaluasi-reformasi-birokrasi/ERB-44-outcome-tidak-diukur]] (outcome/dampak tidak diukur; lihat juga ERB-45 s.d. ERB-47)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PermenPAN-RB 9/2023, KepmenPAN-RB 182/2024, SE MenPAN-RB 6/2025)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-reformasi-birokrasi/SKILL.md`

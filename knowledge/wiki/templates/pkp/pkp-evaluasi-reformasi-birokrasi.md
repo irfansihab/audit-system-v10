@@ -61,7 +61,7 @@ Sasaran baku untuk skill `evaluasi-reformasi-birokrasi` (impor → baris Sasaran
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ERB-44]] — Outcome/Dampak Tidak Diukur (+ [[ERB-45]] pelaporan format/timeline, [[ERB-46]] data dukung berupa matriks, [[ERB-47]] Zona Integritas stagnan)
+- Pattern: [[evaluasi-reformasi-birokrasi/ERB-44-outcome-tidak-diukur]] — Outcome/Dampak Tidak Diukur (+ [[evaluasi-reformasi-birokrasi/ERB-45-pelaporan-format-timeline]] pelaporan format/timeline, [[evaluasi-reformasi-birokrasi/ERB-46-data-dukung-matriks]] data dukung berupa matriks, [[evaluasi-reformasi-birokrasi/ERB-47-zona-integritas-stagnan]] Zona Integritas stagnan)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PermenPAN-RB 3/2023 Road Map RB; PermenPAN-RB 90/2021 ZI WBK/WBBM)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-reformasi-birokrasi/SKILL.md`

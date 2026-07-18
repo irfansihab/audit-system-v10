@@ -35,7 +35,7 @@ Impor hanya mengisi I/III bila masih kosong (tak menimpa isian KT); sasaran di-d
 Implementasi parser: `frontend/app/penugasan/[id]/page.tsx`
 (`extractSasaranBakuFromTemplate`, `extractLangkahSection`).
 
-## Skill yang ter-cover (17 skill + 1 default)
+## Skill yang ter-cover (20 skill + 1 default)
 
 Satu template PKP & KP per skill di `knowledge/skills/` (kecuali `*-shared`/`graduasi`/`panduan`):
 
@@ -48,7 +48,7 @@ Satu template PKP & KP per skill di `knowledge/skills/` (kecuali `*-shared`/`gra
 > Backend `/knowledge/templates/{kind}?skill=` mem-filter by skill dan selalu menyertakan
 > `default` sebagai fallback. Menambah skill baru = tambah file `pkp-<skill>.md` + `kp-<skill>.md`.
 >
-> **Status:** template **PKP** dan **KP** sudah lengkap 17 skill + default (format v2.0).
+> **Status:** template **PKP** dan **KP** lengkap 20 skill + default — termasuk 3 skill reviu keuangan (laporan-keuangan/pipk/pnbp, ditambah 18 Jul 2026, format v1.0 diselaraskan aspek SKILL.md).
 
 ### Impor KP (Kartu Penugasan)
 

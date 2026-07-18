@@ -87,5 +87,5 @@ Pengujian dasar:
 
 - Pattern ini lazim di pengadaan layanan infrastruktur terdistribusi (TKPPSE multi-PJT, ISP, kolokasi multi-DC).
 - Severity dapat dipertahankan HIGH bila vendor terkait paket Prioritas Nasional atau layanan kritikal.
-- Lihat juga [[RP-09]] (kontrak tanpa kontrak akibat SOTK) dan [[RP-13]] (klausul confidentiality vendor).
+- Lihat juga [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]] (kontrak tanpa kontrak akibat SOTK) dan [[reviu-pengadaan/RP-13-vendor-confidentiality-audit-trail]] (klausul confidentiality vendor).
 - Untuk Itjen: pertimbangkan masukan ke peta risiko Ditjen ([[peta-risiko-wasdig-2026]]) bila pola berulang antar TA.

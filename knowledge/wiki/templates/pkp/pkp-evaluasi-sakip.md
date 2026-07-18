@@ -61,7 +61,7 @@ Sasaran baku untuk skill `evaluasi-sakip` (impor → baris Sasaran; sub-butir �
 
 ## Sumber Wiki Terkait
 
-- Pattern: [[ESK-30]] — Stagnasi Predikat AKIP (+ [[ESK-31]] pengukuran terendah, [[ESK-32]] indikator belum SMART, [[ESK-33]] cascading belum lengkap, [[ESK-34]] hasil belum jadi decision tool)
+- Pattern: [[evaluasi-sakip/ESK-30-stagnasi-predikat-akip]] — Stagnasi Predikat AKIP (+ [[evaluasi-sakip/ESK-31-pengukuran-kinerja-terendah]] pengukuran terendah, [[evaluasi-sakip/ESK-32-indikator-belum-smart]] indikator belum SMART, [[evaluasi-sakip/ESK-33-cascading-belum-lengkap]] cascading belum lengkap, [[evaluasi-sakip/ESK-34-hasil-pengukuran-belum-decision-tool]] hasil belum jadi decision tool)
 - Regulasi/Pedoman: [[regulasi-kunci]] (PermenPAN-RB 88/2021 — LKE AKIP)
 - Konteks: [[pola-temuan-berulang]]
 - PANDUAN substansi: `knowledge/skills/evaluasi-sakip/SKILL.md`

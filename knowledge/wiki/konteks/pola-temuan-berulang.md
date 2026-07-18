@@ -22,7 +22,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: DIPA terbit terlambat pasca perubahan SOTK; belum ada playbook transisi kontrak; vendor tetap bekerja karena layanan continuous.
 
-**Pattern terkait**: [[RP-09]]
+**Pattern terkait**: [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]]
 
 **Contoh kasus**:
 - LHA TKPPSE 2025: tagihan Desember 2025 tanpa kontrak Rp2,69 M
@@ -37,7 +37,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: perencanaan pengadaan belum matang menjelang akhir TW I.
 
-**Pattern terkait**: [[RP-11]]
+**Pattern terkait**: [[reviu-pengadaan/RP-11-pagu-sirup-draft-akhir-tw1]]
 
 **Contoh kasus**:
 - LHP Program Prioritas Wasdig: 68,36% pagu (Rp236,7M) masih draft per 27 Januari 2026; 3 paket risiko tinggi Rp95M.
@@ -50,7 +50,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: kajian tertulis tapi tidak diterjemahkan ke rencana aksi konkret dengan milestone.
 
-**Pattern terkait**: [[RP-12]]
+**Pattern terkait**: [[reviu-pengadaan/RP-12-kajian-tanpa-rencana-aksi]]
 
 **Contoh kasus**:
 - Redesain TKPPSE: kajian teknis baru akan dikaji TW II 2026, eksekusi TA 2027.
@@ -63,7 +63,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: pedoman/SOP masih merujuk regulasi lama, tidak disesuaikan dengan SOTK atau regulasi pengganti.
 
-**Pattern terkait**: [[RKA-07]] (berdekatan), [[RP-15]] (e-katalog tanpa negosiasi)
+**Pattern terkait**: [[reviu-rka-kl/RKA-07-indikator-om-tidak-sesuai-prinsip]] (berdekatan), [[reviu-pengadaan/RP-15-e-katalog-tanpa-negosiasi]] (e-katalog tanpa negosiasi)
 
 **Contoh kasus**:
 - Pedoman MR masih memakai Permenkominfo 6/2017 (sumber: LHE MR 2026).
@@ -90,7 +90,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: capaian dilaporkan tinggi tapi sumber data tidak traceable.
 
-**Pattern terkait**: [[RKA-02]] (RO tanpa parameter keberhasilan)
+**Pattern terkait**: [[reviu-rka-kl/RKA-02-ro-tanpa-parameter-keberhasilan]] (RO tanpa parameter keberhasilan)
 
 **Contoh kasus**:
 - LKj Kemkomdigi 2025: data tidak dapat diverifikasi sumbernya, belum ada analisis efisiensi SDM.
@@ -116,7 +116,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: inkonsistensi nomor adendum, tanggal, atau versi dokumen kontrak.
 
-**Pattern terkait**: [[RP-10]]
+**Pattern terkait**: [[reviu-pengadaan/RP-10-adendum-nomor-ganda]]
 
 **Contoh kasus**:
 - Server crawling CSE: adendum ganda bernomor sama (AD01) dengan isi berbeda.
@@ -129,7 +129,7 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 **Akar masalah**: vendor besar punya klausul atau arsitektur yang menghalangi pengawasan teknis rutin.
 
-**Pattern terkait**: [[RP-13]], [[RP-16]]
+**Pattern terkait**: [[reviu-pengadaan/RP-13-vendor-confidentiality-audit-trail]], [[reviu-pengadaan/RP-16-vendor-pjt-belum-berkontrak]]
 
 **Contoh kasus**:
 - Moratel: topologi terenkripsi — TCP Reset tidak dapat baca trafik.
@@ -143,15 +143,15 @@ tags: [pola-berulang, akar-masalah, audit-preventif, cheat-sheet]
 
 | Pola | Pattern | Area Audit Preventif |
 |------|---------|----------------------|
-| 1 — Kontrak tanpa kontrak (SOTK) | [[RP-09]] | SOP transisi kontrak; monitoring DIPA awal TA |
-| 2 — Pagu draft SIRUP tinggi | [[RP-11]] | Sinkronisasi RKA-K/L → SIRUP; early flag TW I |
-| 3 — Kajian tanpa implementasi | [[RP-12]] | Milestone tracking; roadmap multi-tahun |
-| 4 — Pedoman usang | [[RKA-07]] | Reguler policy refresh per 3 tahun |
+| 1 — Kontrak tanpa kontrak (SOTK) | [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]] | SOP transisi kontrak; monitoring DIPA awal TA |
+| 2 — Pagu draft SIRUP tinggi | [[reviu-pengadaan/RP-11-pagu-sirup-draft-akhir-tw1]] | Sinkronisasi RKA-K/L → SIRUP; early flag TW I |
+| 3 — Kajian tanpa implementasi | [[reviu-pengadaan/RP-12-kajian-tanpa-rencana-aksi]] | Milestone tracking; roadmap multi-tahun |
+| 4 — Pedoman usang | [[reviu-rka-kl/RKA-07-indikator-om-tidak-sesuai-prinsip]] | Reguler policy refresh per 3 tahun |
 | 5 — Sistem belum early warning | (umum) | Audit IT fokus fungsionalitas |
-| 6 — Data kinerja tidak traceable | [[RKA-02]] | Reviu LKj dengan uji traceability |
+| 6 — Data kinerja tidak traceable | [[reviu-rka-kl/RKA-02-ro-tanpa-parameter-keberhasilan]] | Reviu LKj dengan uji traceability |
 | 7 — Layanan baru: tata kelola | (umum) | Framework 5-area IGRS |
-| 8 — Administrasi kontrak inkonsisten | [[RP-10]] | Sistem nomenklatur adendum terpusat |
-| 9 — Vendor besar klausul tertutup | [[RP-13]], [[RP-16]] | Klausul right to audit; CBA vendor |
+| 8 — Administrasi kontrak inkonsisten | [[reviu-pengadaan/RP-10-adendum-nomor-ganda]] | Sistem nomenklatur adendum terpusat |
+| 9 — Vendor besar klausul tertutup | [[reviu-pengadaan/RP-13-vendor-confidentiality-audit-trail]], [[reviu-pengadaan/RP-16-vendor-pjt-belum-berkontrak]] | Klausul right to audit; CBA vendor |
 
 ---
 
