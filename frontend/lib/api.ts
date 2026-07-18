@@ -486,6 +486,7 @@ export const api = {
         id_temuan: string;
         judul: string;
         sasaran_id: string;
+        ro: string;
         kondisi: string;
         kriteria: string;
         akibat: string;

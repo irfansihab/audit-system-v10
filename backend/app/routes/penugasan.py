@@ -1103,6 +1103,7 @@ async def list_temuan_review(
             "id_temuan": tid,
             "judul": judul,
             "sasaran_id": t.get("sasaran_id") or "",
+            "ro": str(t.get("ro") or "").strip(),  # label RO (RKA-K/L multi-RO); kosong = non-RKA/RO tunggal
             "kondisi": kondisi[:400],
             "kriteria": kriteria[:400],
             "akibat": akibat[:400],

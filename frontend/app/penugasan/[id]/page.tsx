@@ -3548,6 +3548,14 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
                     {t.status}
                   </span>
                   {t.sasaran_id && <span className="text-[10px] text-gray-400">{t.sasaran_id}</span>}
+                  {t.ro && (
+                    <span
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 max-w-[220px] truncate inline-block align-bottom"
+                      title={t.ro}
+                    >
+                      RO: {t.ro}
+                    </span>
+                  )}
                   {t.anggota && <span className="text-[10px] text-gray-400">· {t.anggota}</span>}
                   <span className="text-[10px] text-gray-400">· {t.dokumen_sumber_count} sumber</span>
                 </div>

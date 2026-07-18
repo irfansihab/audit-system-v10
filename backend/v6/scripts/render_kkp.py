@@ -203,10 +203,9 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     render_lke_recap(doc, penugasan_dir, jenis)
     add_p(doc, "DAFTAR CATATAN / TEMUAN", bold=True, size=12)
 
-    if not my_temuan:
-        add_p(doc, "(Tidak ada temuan untuk anggota ini.)", italic=True, size=10)
-    else:
-        t = doc.add_table(rows=len(my_temuan) + 1, cols=len(kolom))
+    def _render_tabel(temuan_list: list) -> None:
+        """Render satu tabel Grid untuk subset temuan (No direset per tabel)."""
+        t = doc.add_table(rows=len(temuan_list) + 1, cols=len(kolom))
         t.style = "Table Grid"
 
         # Header row
@@ -222,7 +221,7 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
             for row in t.rows:
                 row.cells[j].width = Cm(w)
 
-        for i, temuan in enumerate(my_temuan, start=1):
+        for i, temuan in enumerate(temuan_list, start=1):
             sumber_text = "\n\n".join(
                 f"• {ds['file']} (hal. {ds['halaman']}):\n  \"{ds['kutipan']}\""
                 for ds in temuan.get("dokumen_sumber", [])
@@ -266,6 +265,27 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
                 p0 = c.paragraphs[0]
                 if p0.text == "":
                     p0._element.getparent().remove(p0._element)
+
+    if not my_temuan:
+        add_p(doc, "(Tidak ada temuan untuk anggota ini.)", italic=True, size=10)
+    else:
+        # Grup per RO (RKA-K/L multi-RO): bila temuan berasal dari >1 RO berbeda,
+        # render sub-bagian ber-heading per RO supaya jelas mana temuan RO mana.
+        # Non-RKA / RO tunggal → satu tabel datar seperti biasa.
+        distinct_ro = [r for r in dict.fromkeys(
+            str(t.get("ro", "")).strip() for t in my_temuan) if r]
+        if len(distinct_ro) > 1:
+            for ro in distinct_ro:
+                grp = [t for t in my_temuan if str(t.get("ro", "")).strip() == ro]
+                add_p(doc, f"Rincian Output (RO): {ro}", bold=True, size=11)
+                _render_tabel(grp)
+                doc.add_paragraph()
+            sisa = [t for t in my_temuan if not str(t.get("ro", "")).strip()]
+            if sisa:
+                add_p(doc, "Rincian Output (RO): (tidak ditandai)", bold=True, size=11)
+                _render_tabel(sisa)
+        else:
+            _render_tabel(my_temuan)
 
     doc.add_paragraph()
     if "Sebab" in kolom:
