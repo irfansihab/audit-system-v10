@@ -36,8 +36,16 @@ from audit_trail import log_event  # noqa: E402
 
 WIB = timezone(timedelta(hours=7))
 
-PLACEHOLDER_BAD = re.compile(r"(\{\{[^}]+\}\}|\[XXXX+\]|\[TBD\]|\[CONTOH\])", re.IGNORECASE)
-PLACEHOLDER_OK = "[DIISI AUDITOR]"  # whitelist
+# \[DIISI[^\]]*\] ditambahkan: renderer memancarkan default bab "[DIISI — ...]"
+# yang dulu TIDAK terdeteksi (regex lama hanya {{...}}/[XXXX]/[TBD]/[CONTOH])
+# → laporan berisi teks instruksi bisa lolos QC "tidak ada placeholder".
+PLACEHOLDER_BAD = re.compile(
+    r"(\{\{[^}]+\}\}|\[XXXX+\]|\[TBD\]|\[CONTOH\]|\[DIISI[^\]]*\])", re.IGNORECASE
+)
+# Whitelist = placeholder HITL yang memang menunggu MANUSIA (tanda tangan, NIP,
+# tanggapan auditi) — bukan kegagalan render substansi.
+PLACEHOLDER_OK_PREFIXES = ("[DIISI AUDITOR", "[DIISI AUDITI", "[DIISI]")
+PLACEHOLDER_OK = "[DIISI AUDITOR]"  # kompat lama
 
 
 def _now_iso() -> str:
@@ -406,14 +414,15 @@ def check_KOM_005(rule, ctx) -> dict:
     bad = []
     for m in PLACEHOLDER_BAD.finditer(t):
         token = m.group(1)
-        if PLACEHOLDER_OK.upper() in token.upper():
-            continue
+        if any(token.upper().startswith(p.upper()) for p in PLACEHOLDER_OK_PREFIXES):
+            continue  # placeholder HITL sah (TTD/NIP/tanggapan auditi)
         bad.append(token)
     if bad:
         sample = list(set(bad))[:5]
         return _result(rule, "GAP", rule["default_severity"],
                        f"{len(bad)} placeholder bocor terdeteksi (sample: {sample})",
-                       "Ganti semua placeholder kecuali [DIISI AUDITOR]")
+                       "Ganti semua placeholder substansi; yang boleh tersisa hanya "
+                       "penanda HITL [DIISI AUDITOR]/[DIISI AUDITI]")
     return _result(rule, "OK", "OK", "Tidak ada placeholder bocor")
 
 

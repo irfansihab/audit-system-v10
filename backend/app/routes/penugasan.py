@@ -1693,18 +1693,3 @@ async def render_survey_pendahuluan_route(
         "path": str(out_path.relative_to(folder)),
         "name": out_path.name,
     }
-
-
-# ============================================================
-# Kartu Penugasan (KP) — diisi PT (tahapan 1), dokumen administratif.
-# Beda dgn context.md (konteks kerja AI yang di-generate AT). Disimpan sbg
-# _KP/kartu-penugasan.md. Diisi dari template wiki (kind=kp) lalu di-edit.
-# ============================================================
-
-_KP_REL = "_KP/kartu-penugasan.md"
-_KP_FIELDS_REL = "_KP/kp-fields.json"
-
-
-class KpPayload(BaseModel):
-    content: str = Field(..., description="Isi Kartu Penugasan (markdown ter-render)")
-    # Nilai field form terstruktur — format INTEGRAL (hasil bedah form live

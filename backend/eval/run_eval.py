@@ -112,8 +112,26 @@ def score_case(case: dict, use_judge: bool) -> dict:
         is_audit = deterministic.is_audit_skill(case.get("skill"))
         kriteria_ctx = _load_kriteria_context(case.get("skill"))
         per_temuan = judge.judge_per_temuan(temuan, is_audit=is_audit, kriteria_context=kriteria_ctx)
+        # Guard: judge kadang balikkan skor LEBIH SEDIKIT dari jumlah temuan
+        # (truncation/flaky). Dulu zip() diam-diam membuang sisanya DAN pembagi
+        # mengecil → metrik membaik palsu (audit #E7). Retry sekali; masih
+        # kurang → pad dgn skor-0 eksplisit supaya terlihat, bukan tersembunyi.
+        if len(per_temuan) < len(temuan):
+            per_temuan = judge.judge_per_temuan(temuan, is_audit=is_audit, kriteria_context=kriteria_ctx)
+        while len(per_temuan) < len(temuan):
+            per_temuan.append({
+                "grounded": 0, "kriteria_tepat": 0, "unsur_lengkap": 0, "narasi": 0,
+                "alasan": "TIDAK DINILAI judge (respons terpotong dua kali) — dihitung 0, periksa manual",
+            })
         expected = case.get("expected_key_issues", [])
         recall = judge.judge_recall(expected, temuan) if expected else []
+        # Guard: index temuan yang diklaim judge harus valid — klaim "tertangani"
+        # dengan index di luar daftar temuan tidak boleh menaikkan recall (audit #E8).
+        for m in recall:
+            idx = m.get("matched_temuan_index", -1)
+            if m.get("tertangani") and not (isinstance(idx, int) and 0 <= idx < len(temuan)):
+                m["tertangani"] = False
+                m["alasan"] = f"[GUARD] index temuan tidak valid ({idx}) — {m.get('alasan', '')}"[:300]
     except anthropic.APIStatusError as e:
         msg = getattr(e, "message", str(e))
         hint = ""

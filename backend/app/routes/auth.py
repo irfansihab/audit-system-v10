@@ -6,12 +6,18 @@ yang punya `role_default == role` tersebut.
 
 Produksi nanti diganti SSO Komdigi (OIDC).
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import login_guard
-from app.auth import create_session_token, get_current_user, hash_password, verify_password
+from app.auth import (
+    create_session_token,
+    decode_session_token,
+    get_current_user,
+    hash_password,
+    verify_password,
+)
 from app.config import get_settings
 from app.database import get_db
 from app.models import Role, User
@@ -99,19 +105,42 @@ async def change_password(
     await db.commit()
 
 
-@router.get("/users", response_model=list[UserOut])
+@router.get("/users")
 async def list_users(
+    request: Request,
     role: Role | None = None,
     db: AsyncSession = Depends(get_db),
-) -> list[UserOut]:
+) -> list[dict]:
     """Daftar user seed (opsional filter by role_default).
 
-    Publik (prototype) — dipakai layar login untuk menampilkan pilihan orang
-    saat satu role punya >1 user (mis. beberapa Anggota Tim), dan dipakai KT
-    untuk dropdown assignment sasaran ke nama AT yang sebenarnya.
+    Dipakai layar login (PRA-auth) untuk pilihan akun, dan oleh KT (PASCA-auth)
+    untuk dropdown assignment sasaran. Dulu selalu mengembalikan email+NIP
+    tanpa autentikasi → enumerasi identitas pegawai oleh siapa pun yang bisa
+    menjangkau backend (audit #B9). Kini: TANPA token yang valid → hanya field
+    minimum yang memang dibutuhkan layar login (username, nama, role); dengan
+    token → lengkap.
     """
+    authed = False
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        try:
+            decode_session_token(auth_header[7:])
+            authed = True
+        except HTTPException:
+            authed = False
+
     stmt = select(User).order_by(User.id)
     if role is not None:
         stmt = stmt.where(User.role_default == role)
     rows = (await db.execute(stmt)).scalars().all()
-    return [UserOut.model_validate(u) for u in rows]
+    if authed:
+        return [UserOut.model_validate(u).model_dump() for u in rows]
+    return [
+        {
+            "id": u.id,
+            "username": u.username,
+            "nama_lengkap": u.nama_lengkap,
+            "role_default": u.role_default.value if hasattr(u.role_default, "value") else u.role_default,
+        }
+        for u in rows
+    ]

@@ -376,7 +376,18 @@ async def trigger_ingestion(
     current: tuple[User, Role] = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Trigger ingestion (synchronous inline, response 30-60 detik)."""
+    """Trigger ingestion (synchronous inline, response 30-60 detik).
+
+    DESTRUKTIF: reset_downstream menghapus KKP/LHP hasil analisis. Karena itu
+    di-gate AT (konsisten dgn upload/hapus dokumen) — dulu role apa pun bisa
+    memanggil dan menghapus hasil analisis penugasan selesai. (Audit #B3.)
+    """
+    user, role = current
+    if role != Role.AT:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Hanya Anggota Tim (AT) yang boleh re-ingest (menghapus hasil analisis). Role Anda: {role.value}.",
+        )
     p = (
         await db.execute(select(Penugasan).where(Penugasan.id == penugasan_id))
     ).scalar_one_or_none()
@@ -572,6 +583,16 @@ async def _execute_run(handle: RunHandle, user_prompt: str, user_id: int) -> Non
     # Lepas dari index "active" supaya /attach berikutnya tahu run sudah kelar.
     _ACTIVE_BY_KEY.pop((handle.penugasan_id, handle.agent_name, handle.user_id), None)
 
+    # Buffer event run selesai TIDAK boleh hidup selamanya — dulu _RUNS tak
+    # pernah di-pop → RAM naik terus (audit #B6). Tahan 10 menit dulu supaya
+    # klien yang barusan detach masih bisa attach & melihat hasil akhirnya
+    # (hasil permanen tetap ada di DB AgentRun/history).
+    async def _evict_later(rid: int) -> None:
+        await asyncio.sleep(600)
+        _RUNS.pop(rid, None)
+
+    asyncio.create_task(_evict_later(run_id))
+
 
 async def _start_run(agent_name: str, full_prompt: str, penugasan_id: int, user_id: int) -> RunHandle:
     """Buat AgentRun di DB + RunHandle + jadwalkan task agen di background."""
@@ -668,7 +689,24 @@ async def stream_agent(
         f"Pengguna: {user.nama_lengkap} ({role.value})\n\n"
         f"Permintaan: {prompt}"
     )
-    handle = await _start_run(agent_name, full_prompt, p.id, user.id)
+    # Anti-TOCTOU (audit #B5): cek 409 di atas dan pengisian _ACTIVE_BY_KEY di
+    # _start_run dipisahkan oleh await (insert DB) — dua request bersamaan
+    # (double-click / dua tab) bisa sama-sama lolos lalu DUA run paralel menulis
+    # temuan.json bergantian. Reservasi key SINKRON di sini (tanpa await di
+    # antara cek dan set), lepas bila _start_run gagal.
+    key = (p.id, agent_name, user.id)
+    if key in _ACTIVE_BY_KEY:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "Masih ada analisis berjalan untuk Anda. Tunggu selesai atau buka tab Chat untuk melihat progres.",
+        )
+    _ACTIVE_BY_KEY[key] = -1  # reservasi; diganti run_id asli oleh _start_run
+    try:
+        handle = await _start_run(agent_name, full_prompt, p.id, user.id)
+    except Exception:
+        if _ACTIVE_BY_KEY.get(key) == -1:
+            _ACTIVE_BY_KEY.pop(key, None)
+        raise
     return EventSourceResponse(handle.subscribe())
 
 

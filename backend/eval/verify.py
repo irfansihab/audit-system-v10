@@ -46,7 +46,15 @@ def verify(folder: Path, skill: str) -> dict:
     temuan = _load_temuan(folder)
     if not temuan:
         return {"n": 0, "items": [], "flagged": 0, "lolos": True}
-    scores = judge.judge_per_temuan(temuan, is_audit=_is_audit(skill))
+    # Suplai referensi kriteria (references skill + regulasi-kunci wiki) — sama
+    # seperti run_eval. Tanpa ini judge meng-cap sitasi sub-pasal granular ke
+    # RAGU "tidak dapat diverifikasi" dan temuan BENAR disuruh revisi (audit #E9).
+    try:
+        from eval.run_eval import _load_kriteria_context
+        kriteria_ctx = _load_kriteria_context(skill)
+    except Exception:  # noqa: BLE001 — best-effort; tanpa konteks = perilaku lama
+        kriteria_ctx = ""
+    scores = judge.judge_per_temuan(temuan, is_audit=_is_audit(skill), kriteria_context=kriteria_ctx)
     items = []
     for t, s in zip(temuan, scores):
         items.append({

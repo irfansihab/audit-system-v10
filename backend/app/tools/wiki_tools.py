@@ -444,6 +444,30 @@ def _parse_vault_index(notes_dir: Path) -> dict[str, dict]:
     return out
 
 
+# Cache isi vault per-file, di-refresh by mtime — vault_search dipanggil
+# berkali-kali per run agen + tiap ketikan user di UI Cari Wiki; tanpa cache,
+# SETIAP panggilan membaca ulang ±300 file dari disk (audit #B10).
+_VAULT_CONTENT_CACHE: dict[str, tuple[float, str]] = {}
+
+
+def _vault_read_cached(f) -> str | None:
+    key = str(f)
+    try:
+        mtime = f.stat().st_mtime
+    except OSError:
+        _VAULT_CONTENT_CACHE.pop(key, None)
+        return None
+    hit = _VAULT_CONTENT_CACHE.get(key)
+    if hit and hit[0] == mtime:
+        return hit[1]
+    try:
+        content = f.read_text(encoding="utf-8")[:30000]
+    except OSError:
+        return None
+    _VAULT_CONTENT_CACHE[key] = (mtime, content)
+    return content
+
+
 def vault_search(query: str, limit: int = 12) -> dict:
     """Cari catatan vault relevan. Index-driven + full-text scoring sederhana.
 
@@ -466,9 +490,8 @@ def vault_search(query: str, limit: int = 12) -> dict:
         if f.name.lower() in _VAULT_SKIP:
             continue
         name = f.stem
-        try:
-            content = f.read_text(encoding="utf-8")[:30000]
-        except OSError:
+        content = _vault_read_cached(f)
+        if content is None:
             continue
         name_lc = name.lower()
         meta = index.get(name, {})

@@ -6,6 +6,7 @@ cache (sha256 match), status langsung READY tanpa re-process.
 """
 import asyncio
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -83,7 +84,13 @@ async def upload_dokumen(
     sha = sha256_bytes(content)
     jenis_final = jenis or classify_doc_by_filename(file.filename or "")
     sub = target_subfolder_for(jenis_final)
-    target = Path(p.folder_path) / sub / (file.filename or "dokumen.bin")
+    # Sanitasi nama file — filename multipart dikontrol klien; tanpa ini
+    # "..\/..\/" bisa menulis file di LUAR folder penugasan (path traversal).
+    # Pola sama dengan administrasi.py. (Temuan audit #B2.)
+    safe_name = re.sub(
+        r"[^A-Za-z0-9._() -]", "_", Path(file.filename or "dokumen.bin").name
+    ).strip() or "dokumen.bin"
+    target = Path(p.folder_path) / sub / safe_name
     await save_upload(content, target)
 
     # Cek cache (hanya TOR/RAB) → kalau ada, salin digest ke _INGESTED lokal
@@ -116,7 +123,7 @@ async def upload_dokumen(
 
     d = Dokumen(
         penugasan_id=p.id,
-        nama_file=file.filename or "dokumen.bin",
+        nama_file=safe_name,
         file_path=str(target),
         jenis=jenis_final,
         sha256=sha,

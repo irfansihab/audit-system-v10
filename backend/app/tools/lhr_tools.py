@@ -441,6 +441,20 @@ async def run_qc_lhp(args: dict) -> dict:
         timeout=120,
     )
 
+    # qc_saipi.py exit code: 0=PASS, 2=ada KRITIS (checklist valid), selain itu
+    # = ERROR EKSEKUSI → jangan baca checklist basi (bisa "PASS" palsu).
+    if code not in (0, 2):
+        return {
+            "content": [{
+                "type": "text",
+                "text": (
+                    f"FAILED|stage=lhp|qc_saipi gagal dieksekusi (exit={code}) — "
+                    f"status QC TIDAK diketahui, JANGAN anggap PASS. err={err[:300]}"
+                ),
+            }],
+            "is_error": True,
+        }
+
     checklist = safe_read_json(folder / "_QA-SAIPI" / "checklist-lhp.json")
     total_kritis, total_peringatan, total_needs_review, total_ok = qc_summary_counts(checklist)
 

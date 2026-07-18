@@ -32,16 +32,28 @@ def grounding_presence(temuan_list: list[dict]) -> dict:
 
 
 def is_audit_skill(skill: str | None) -> bool:
-    """`sebab` (penyebab) hanya digali pada penugasan jenis AUDIT.
-    Reviu/evaluasi/pemantauan TIDAK sampai menggali akar penyebab — `sebab` kosong itu benar."""
+    """AUDIT = Sebab wajib hasil penggalian akar penyebab (RCA)."""
     return bool(skill) and skill.lower().startswith("audit")
 
 
+# Skill yang DIKECUALIKAN dari kewajiban mengisi Sebab — selaras QC produksi
+# qc_saipi.py LAK-005: LKE (AoI, tanpa K/K/S/A) + konsultansi (pendapat).
+_SKILL_TANPA_SEBAB_PREFIX = ("evaluasi-spip", "evaluasi-sakip", "evaluasi-reformasi-birokrasi",
+                             "konsultansi", "konsultasi")
+
+
 def unsur_lengkap(temuan_list: list[dict], skill: str | None = None) -> dict:
-    """Kelengkapan unsur temuan, sadar-jenis. Audit → 4 unsur (incl. sebab);
-    reviu/evaluasi/pemantauan → 3 unsur (kondisi/kriteria/akibat)."""
+    """Kelengkapan unsur temuan, sadar-jenis — SELARAS doktrin 17 Jun 2026
+    (Sebab diisi SEMUA jenis ber-KKSA, anti-mengarang: teks jujur
+    "Tidak ditemukan penyebab"/"Tidak cukup data" juga sah — yang salah adalah
+    KOSONG). Dulu harness masih pakai doktrin lama (non-audit tanpa sebab) →
+    agen yang mengosongkan Sebab dapat 1.0 di eval tapi PERINGATAN di QC
+    produksi. Pengecualian: LKE + konsultansi (tanpa rezim K/K/S/A).
+    """
     audit = is_audit_skill(skill)
-    keys = ("kondisi", "kriteria", "sebab", "akibat") if audit else ("kondisi", "kriteria", "akibat")
+    s = (skill or "").lower()
+    tanpa_sebab = any(s.startswith(p) for p in _SKILL_TANPA_SEBAB_PREFIX)
+    keys = ("kondisi", "kriteria", "akibat") if tanpa_sebab else ("kondisi", "kriteria", "sebab", "akibat")
     total = len(temuan_list)
     lengkap = sum(1 for t in temuan_list if all((t.get(k) or "").strip() for k in keys))
     return {
@@ -49,7 +61,7 @@ def unsur_lengkap(temuan_list: list[dict], skill: str | None = None) -> dict:
         "lengkap": lengkap,
         "rasio": round(lengkap / total, 3) if total else 0.0,
         "unsur_diwajibkan": list(keys),
-        "jenis": "audit" if audit else "non-audit (reviu/evaluasi/pemantauan)",
+        "jenis": ("audit" if audit else ("tanpa-sebab (LKE/konsultansi)" if tanpa_sebab else "non-audit KKSA (sebab anti-mengarang)")),
     }
 
 

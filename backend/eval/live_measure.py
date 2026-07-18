@@ -190,6 +190,16 @@ def main() -> int:
     if not fixture.is_dir():
         print(f"Fixture tidak ada: {fixture}", file=sys.stderr)
         return 1
+    # Guard: --fixture varian (mis. reviu-pengadaan-p2) TANPA --case akan diskor
+    # terhadap golden pertama skill tsb (bisa case p1 — dokumen beda!) → recall
+    # anjlok bukan karena agen buruk (audit #E10). Wajibkan --case eksplisit.
+    if args.fixture and args.fixture != args.skill and not args.case:
+        print(
+            f"--fixture '{args.fixture}' ≠ skill '{args.skill}' — wajib sebutkan --case "
+            f"agar tidak diskor terhadap golden yang salah.",
+            file=sys.stderr,
+        )
+        return 1
     golden = _golden_by_id(args.case) if args.case else _golden_for_skill(args.skill)
     if not golden:
         print(f"Golden case ('{args.case or args.skill}') tak ditemukan.", file=sys.stderr)

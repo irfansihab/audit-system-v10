@@ -71,9 +71,11 @@ def _per_temuan_system(is_audit: bool, kriteria_context: str = "") -> str:
         unsur_rule = ("- unsur_lengkap: kondisi/kriteria/SEBAB/akibat semua terisi substantif "
                       "(penugasan AUDIT wajib menggali sebab/akar penyebab).")
     else:
-        unsur_rule = ("- unsur_lengkap: kondisi/kriteria/akibat terisi substantif. "
-                      "PENTING: ini penugasan REVIU/EVALUASI/PEMANTAUAN — TIDAK menggali penyebab; "
-                      "'sebab' yang kosong itu BENAR dan TIDAK boleh menurunkan skor.")
+        unsur_rule = ("- unsur_lengkap: kondisi/kriteria/sebab/akibat terisi. "
+                      "PENTING: ini penugasan REVIU/EVALUASI/PEMANTAUAN — Sebab diisi dgn doktrin "
+                      "ANTI-MENGARANG: sebab yang terbukti dari dokumen = bagus; teks jujur "
+                      "'Tidak ditemukan penyebab'/'Tidak cukup data' juga SAH (jangan turunkan skor); "
+                      "yang salah: sebab KOSONG, atau sebab SPEKULATIF tanpa dukungan dokumen (turunkan).")
     if kriteria_context:
         # Judge tanpa akses teks regulasi cenderung meng-cap sitasi sub-pasal
         # granular ke 1 ("tidak dapat diverifikasi"). Suplai ringkasan kriteria

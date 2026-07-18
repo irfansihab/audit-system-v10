@@ -37,6 +37,7 @@ Bridge `append_temuan` menerima input yang lebih sederhana dari agen dan
 me-transform ke schema di atas — supaya agen tidak perlu tahu skema render_kkp.
 """
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -295,6 +296,22 @@ async def append_temuan(args: dict) -> dict:
     # tapi defensive).
     if path.exists():
         data = safe_read_json(path) or {}
+        if not data:
+            # File ADA tapi gagal parse (korup) — JANGAN re-init envelope kosong:
+            # itu menimpa file dan menghapus seluruh temuan tim secara diam-diam.
+            # Gagalkan eksplisit; auditor pulihkan dari temuan-full-backup.json /
+            # git, atau perbaiki file-nya. (Temuan audit #E1.)
+            return {
+                "content": [{
+                    "type": "text",
+                    "text": (
+                        "FAILED|_KKP/temuan.json ADA tapi tidak bisa di-parse (korup?) — "
+                        "append dibatalkan agar temuan lama tidak tertimpa. "
+                        "Minta auditor memeriksa/memulihkan file tersebut dulu."
+                    ),
+                }],
+                "is_error": True,
+            }
     else:
         data = {}
     if not data or "penugasan" not in data:
@@ -331,7 +348,11 @@ async def append_temuan(args: dict) -> dict:
         new_temuan["id_temuan"] = f"T-{seq:03d}"
         data["temuan"].append(new_temuan)
 
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Tulis ATOMIK (temp + os.replace) — crash di tengah write tidak boleh
+    # meninggalkan temuan.json terpotong (yang lalu memicu jalur "korup" di atas).
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
     return {
         "content": [
             {
@@ -462,6 +483,16 @@ async def _filter_temuan_by_review(folder: Path) -> tuple[Path | None, dict | No
     # Tak ada overlay sama sekali → bypass (render semua apa adanya).
     if not rejected and not edits_by_id:
         return None, None
+
+    # Sisa backup dari run yang crash (restore tak sempat jalan) → pulihkan
+    # DULU. Tanpa ini, filter bekerja atas temuan.json yang SUDAH ter-filter
+    # lalu menimpa backup dengan versi ter-filter → temuan asli hilang permanen.
+    leftover = folder / "_KKP" / "temuan-full-backup.json"
+    if leftover.exists():
+        try:
+            temuan_path.write_bytes(leftover.read_bytes())
+        except OSError:
+            pass
 
     # Load + terapkan overlay (exclude REJECTED + edited_fields).
     try:
@@ -608,11 +639,16 @@ async def render_kkp_docx(args: dict) -> dict:
     backup, stats = await _filter_temuan_by_review(folder)
     filter_note = ""
     if stats is not None:
+        # PENTING: pakai kunci yang benar-benar ada di stats (n_included/n_total/
+        # n_rejected). Dulu merujuk n_approved/n_pending yang TIDAK ada → KeyError
+        # dilempar SEBELUM try/finally di bawah → temuan.json tertinggal dalam
+        # kondisi ter-filter dan run berikutnya menimpa backup → temuan asli
+        # hilang permanen. (Temuan audit #B1.)
         edit_str = f", edits_applied={stats.get('n_edits_applied', 0)}" if stats.get('n_edits_applied') else ""
         filter_note = (
-            f" | FILTER:APPROVED-only "
-            f"({stats['n_approved']}/{stats['n_total']} masuk, "
-            f"pending={stats['n_pending']}, rejected={stats['n_rejected']}{edit_str})"
+            f" | FILTER:review-applied "
+            f"({stats.get('n_included', '?')}/{stats.get('n_total', '?')} masuk, "
+            f"rejected={stats.get('n_rejected', 0)}{edit_str})"
         )
     try:
         code, out, err = await run_v6_script(
@@ -663,6 +699,21 @@ async def run_qc_kkp(args: dict) -> dict:
         ["--penugasan", str(folder), "--stage", "kkp"],
         timeout=120,
     )
+
+    # qc_saipi.py exit code: 0=PASS, 2=ada KRITIS (checklist tetap valid),
+    # selain itu = ERROR EKSEKUSI → jangan baca checklist (bisa file basi run
+    # sebelumnya → status "PASS" palsu). (Temuan audit #E2.)
+    if code not in (0, 2):
+        return {
+            "content": [{
+                "type": "text",
+                "text": (
+                    f"FAILED|stage=kkp|qc_saipi gagal dieksekusi (exit={code}) — "
+                    f"status QC TIDAK diketahui, JANGAN anggap PASS. err={err[:300]}"
+                ),
+            }],
+            "is_error": True,
+        }
 
     checklist = safe_read_json(folder / "_QA-SAIPI" / "checklist-kkp.json")
     total_kritis, total_peringatan, total_needs_review, total_ok = qc_summary_counts(checklist)
@@ -874,8 +925,33 @@ async def read_ingested_digest(args: dict) -> dict:
         for p in sorted(folder.glob("*.json")):
             data = safe_read_json(p)
             items.append(_summarize_digest(p.name, data))
-    text = json.dumps({"total": len(items), "digest": items}, ensure_ascii=False)
-    return {"content": [{"type": "text", "text": text[:8000]}]}
+    # Cap TANPA memotong di tengah string JSON — slicing dumps() menghasilkan
+    # JSON invalid yang membingungkan agen saat digest banyak (audit #B7).
+    # Strategi: perpendek ringkasan_teks bertahap, lalu (bila masih besar)
+    # buang item ekor dengan penanda eksplisit — tetap JSON valid.
+    def _dump(payload: dict) -> str:
+        return json.dumps(payload, ensure_ascii=False)
+
+    payload = {"total": len(items), "digest": items}
+    text = _dump(payload)
+    if len(text) > 8000:
+        for cap in (900, 400, 150):
+            for it in items:
+                if isinstance(it.get("ringkasan_teks"), str) and len(it["ringkasan_teks"]) > cap:
+                    it["ringkasan_teks"] = it["ringkasan_teks"][:cap] + "…"
+            text = _dump(payload)
+            if len(text) <= 8000:
+                break
+    total_asli = len(items)
+    while len(text) > 8000 and len(items) > 1:
+        items.pop()
+        payload = {
+            "total": total_asli,
+            "digest": items,
+            "terpotong": f"{total_asli - len(items)} digest tidak ditampilkan — panggil read_digest per-file bila perlu",
+        }
+        text = _dump(payload)
+    return {"content": [{"type": "text", "text": text}]}
 
 
 @tool(
