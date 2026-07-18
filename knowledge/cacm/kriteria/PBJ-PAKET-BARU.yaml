@@ -10,7 +10,8 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 — perencanaan pengadaan harus dipublikasikan tepat waktu"
+  - "Perlem LKPP 11/2021 Pasal 8 ayat (2) — RUP diumumkan paling lambat 31 Maret TA berjalan (konfirmasi auditor 18 Jul 2026)"
+  - "Perpres 16/2018 Pasal 22 — pengumuman RUP setelah penetapan alokasi anggaran, via SIRUP"
 
 metric:
   # Jumlah paket baru dgn pagu signifikan (>200jt) yg di-flag agent
