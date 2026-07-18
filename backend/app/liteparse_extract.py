@@ -18,6 +18,13 @@ from __future__ import annotations
 
 import os
 import re
+import threading
+
+# LiteParse (parser PDF native) TIDAK thread-safe: memanggil `parse()` dari >1
+# thread bersamaan → SEGFAULT yang MEMBUNUH seluruh proses (bukan exception).
+# Terjadi saat _run_ingestion men-digest banyak PDF paralel (asyncio.to_thread).
+# Serialisasi semua panggilan parse dengan satu lock global — aman & tak mahal.
+_PARSE_LOCK = threading.Lock()
 from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
@@ -93,7 +100,8 @@ def extract_pages(
     if parser is None:
         return []
     try:
-        result = parser.parse(str(p))
+        with _PARSE_LOCK:  # serialisasi — liteparse tidak thread-safe (anti-segfault)
+            result = parser.parse(str(p))
     except Exception:  # noqa: BLE001 — rusak/encrypted → diam
         return []
     pages: list[str] = []
