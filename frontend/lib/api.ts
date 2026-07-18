@@ -1365,4 +1365,11 @@ export const api = {
       `/knowledge/templates/${kind}/generate`,
       { method: 'POST', body: JSON.stringify({ skill, instruksi: instruksi || '' }) }
     ),
+
+  /** Chat bebas berbasis pengetahuan wiki (RAG). Semua role. */
+  chatAsk: (question: string, history: { role: string; content: string }[]) =>
+    request<{ answer: string; sources: { jenis: string; nama: string; summary: string }[]; n_sumber: number }>(
+      `/chat/ask`,
+      { method: 'POST', body: JSON.stringify({ question, history }) }
+    ),
 };

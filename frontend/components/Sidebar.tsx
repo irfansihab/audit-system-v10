@@ -52,6 +52,7 @@ const MENU_ITEMS: MenuItem[] = [
       { href: '/knowledge/writeback', label: 'Tulis-balik Wiki' },
     ],
   },
+  { href: '/chat', label: 'Chat AI (Wiki)', icon: '🤖' },
   { href: '/feedback', label: 'Feedback Agen', icon: '💬' },
 ];
 
