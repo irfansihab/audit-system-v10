@@ -91,23 +91,122 @@
   </div>
 </section>
 
-<!-- 3 · BLUEPRINT -->
+<!-- 3 · BLUEPRINT / ARSITEKTUR (DIAGRAM) -->
 <section class="slide">
   <div class="kicker">Grand Design</div>
-  <h2>Blueprint Ekosistem — Satu Kesatuan</h2>
-  <div class="flow">
-    <div class="fbox"><b>Sistem Eksisting</b><span>ev-SAKIP · e-Ziko · SPIP · MR · RB · SIMWAS v2</span></div>
-    <div class="arr">→</div>
-    <div class="fbox" style="background:#ede9fe;border-color:#c4b5fd"><b>INTEGRAL</b><span>Workspace orkestrasi: penugasan, peran (AT/KT/PT/PM), persetujuan, arsip</span></div>
-    <div class="arr">→</div>
-    <div class="fbox" style="background:#e0e7ff;border-color:#a5b4fc"><b>Engine AI</b><span>19 skill pengawasan · 2 agen Claude · digest dokumen · render laporan</span></div>
-  </div>
-  <div class="grid g3">
-    <div class="card"><h3>📚 Knowledge / Wiki</h3><p>Basis pengetahuan yang DIBACA agen setiap penugasan: pattern temuan terkurasi, regulasi &amp; pasal kunci (anti-halusinasi), template KP/PKP, riwayat pengawasan.</p></div>
-    <div class="card"><h3>🎯 CACM</h3><p>Pemantauan berkelanjutan atas data pengadaan, anggaran, dan kinerja terhadap kriteria terkurasi — sinyal merah dapat dipromosikan menjadi usulan penugasan.</p></div>
-    <div class="card"><h3>💬 Kanal Chatbot <span class="badge b-ren">RENCANA</span></h3><p>Chatbot Telegram <b>pernah berjalan</b> (nonaktif karena hosting); rencana reaktivasi &amp; migrasi ke WhatsApp organisasi.</p></div>
-  </div>
-  <p class="sub">Prinsip arsitektur: sistem eksisting <b>diorkestrasi INTEGRAL</b>, lalu engine AI yang menganalisis — engine dibuat portabel (tidak terikat satu UI/database) sehingga siap dipakai lintas sistem.</p>
+  <h2>Arsitektur Ekosistem — Satu Kesatuan</h2>
+  <svg viewBox="0 0 1240 590" style="width:100%;max-height:70vh;margin-top:10px" font-family="-apple-system,'Segoe UI',Roboto,sans-serif">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+      </marker>
+      <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+      </marker>
+    </defs>
+
+    <!-- ===== LAPIS 1: SISTEM EKSISTING ===== -->
+    <text x="620" y="24" text-anchor="middle" font-size="13" font-weight="700" fill="#64748b" letter-spacing="2">SISTEM PENGAWASAN EKSISTING — SUMBER DATA &amp; OBJEK</text>
+    <g font-size="13.5" font-weight="600" fill="#334155" text-anchor="middle">
+      <rect x="240" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="295" y="61">ev-SAKIP</text>
+      <rect x="362" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="417" y="61">e-Ziko</text>
+      <rect x="484" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="539" y="61">SPIP</text>
+      <rect x="606" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="661" y="61">MR</text>
+      <rect x="728" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="783" y="61">RB</text>
+      <rect x="850" y="38" width="110" height="36" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/><text x="905" y="61">SIMWAS v2</text>
+    </g>
+
+    <!-- panah eksisting -> INTEGRAL -->
+    <line x1="600" y1="80" x2="600" y2="112" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="612" y="102" font-size="11.5" fill="#64748b">diorkestrasi</text>
+    <!-- panah data eksisting -> CACM (kanan) -->
+    <path d="M 965 56 H 1060 V 150" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arg)"/>
+    <text x="1013" y="48" font-size="11" fill="#94a3b8">data pengadaan · anggaran · kinerja</text>
+
+    <!-- ===== PILAR KIRI: KNOWLEDGE ===== -->
+    <rect x="22" y="150" width="210" height="240" rx="14" fill="#fefce8" stroke="#facc15" stroke-width="1.5"/>
+    <text x="127" y="180" text-anchor="middle" font-size="16" font-weight="800" fill="#854d0e">📚 KNOWLEDGE / WIKI</text>
+    <g font-size="12" fill="#713f12">
+      <text x="40" y="206">• 65+ pattern temuan terkurasi</text>
+      <text x="40" y="228">• Regulasi &amp; pasal kunci</text>
+      <text x="52" y="244" font-size="11" fill="#a16207">(terverifikasi — anti-halusinasi)</text>
+      <text x="40" y="266">• Template KP/PKP (20 skill)</text>
+      <text x="40" y="288">• Kelola skill &amp; kriteria</text>
+      <text x="40" y="310">• Upload regulasi → dibaca agen</text>
+      <text x="40" y="332">• Riwayat pengawasan</text>
+    </g>
+
+    <!-- ===== PILAR KANAN: CACM ===== -->
+    <rect x="1008" y="150" width="210" height="240" rx="14" fill="#fdf2f8" stroke="#f472b6" stroke-width="1.5"/>
+    <text x="1113" y="180" text-anchor="middle" font-size="16" font-weight="800" fill="#9d174d">🎯 CACM</text>
+    <text x="1113" y="198" text-anchor="middle" font-size="11.5" fill="#9d174d">Pemantauan Berkelanjutan</text>
+    <g font-size="12" fill="#831843">
+      <text x="1026" y="224">• 13+ kriteria terkurasi</text>
+      <text x="1026" y="246">• Dimensi: Pengadaan ·</text>
+      <text x="1038" y="262">Anggaran · Kinerja</text>
+      <text x="1026" y="284">• Vonis MERAH/KUNING/HIJAU</text>
+      <text x="1026" y="306">• Usulan kriteria dari wiki</text>
+      <text x="1026" y="328">• Kelola kriteria oleh PT</text>
+    </g>
+
+    <!-- ===== LAPIS 2: INTEGRAL ===== -->
+    <rect x="288" y="112" width="624" height="116" rx="16" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="600" y="142" text-anchor="middle" font-size="20" font-weight="800" fill="#4c1d95">∫ INTEGRAL — Workspace Orkestrasi</text>
+    <g font-size="12.5" fill="#5b21b6" text-anchor="middle">
+      <text x="600" y="166">Penugasan 8 tahapan · Peran AT / KT / PT / PM · Upload dokumen &amp; bukti lapangan</text>
+      <text x="600" y="188">Persetujuan manusia per temuan (Setujui / Tolak / Edit) · Reviu berjenjang · Arsip</text>
+      <text x="600" y="212" font-weight="700">⚖ HUMAN-IN-THE-LOOP: manusia memutuskan, AI mengerjakan draft</text>
+    </g>
+
+    <!-- integral <-> engine -->
+    <line x1="560" y1="228" x2="560" y2="268" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+    <line x1="640" y1="268" x2="640" y2="228" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="548" y="252" text-anchor="end" font-size="11" fill="#64748b">dokumen + sasaran</text>
+    <text x="652" y="252" font-size="11" fill="#64748b">draft temuan + laporan</text>
+
+    <!-- ===== LAPIS 3: ENGINE AI ===== -->
+    <rect x="288" y="268" width="624" height="122" rx="16" fill="#e0e7ff" stroke="#6366f1" stroke-width="2"/>
+    <text x="600" y="298" text-anchor="middle" font-size="20" font-weight="800" fill="#312e81">🤖 ENGINE AI — Sistem Audit</text>
+    <g font-size="12.5" fill="#3730a3" text-anchor="middle">
+      <text x="600" y="322">19 skill jenis pengawasan · 2 agen (Anggota Tim &amp; Ketua Tim)</text>
+      <text x="600" y="344">Digest dokumen (PDF/Office) · Temuan K/K/S/A ber-sitasi pasal presisi</text>
+      <text x="600" y="366">Render laporan per jenis · QC SAIPI otomatis 2 gerbang · portabel (buta-UI/DB)</text>
+    </g>
+
+    <!-- konektor lapisan atas (tidak tertutup kotak) -->
+    <line x1="232" y1="300" x2="286" y2="300" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="259" y="290" text-anchor="middle" font-size="10.5" fill="#64748b">preload</text>
+    <line x1="286" y1="352" x2="234" y2="352" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arg)"/>
+    <text x="259" y="370" text-anchor="middle" font-size="10.5" fill="#94a3b8">tulis-balik</text>
+    <line x1="1008" y1="230" x2="914" y2="230" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="960" y="220" text-anchor="middle" font-size="11" fill="#64748b">sinyal merah →</text>
+    <text x="960" y="248" text-anchor="middle" font-size="11" fill="#64748b">usulan penugasan</text>
+
+    <!-- engine -> output -->
+    <line x1="600" y1="390" x2="600" y2="428" stroke="#6366f1" stroke-width="2.5" marker-end="url(#ar)"/>
+
+    <!-- ===== LAPIS 4: OUTPUT ===== -->
+    <text x="620" y="446" text-anchor="middle" font-size="13" font-weight="700" fill="#64748b" letter-spacing="2">OUTPUT — DRAF SIAP REVIU AUDITOR</text>
+    <g font-size="13" font-weight="600" fill="#065f46" text-anchor="middle">
+      <rect x="248" y="458" width="140" height="40" rx="9" fill="#ecfdf5" stroke="#6ee7b7"/><text x="318" y="483">KKP (.docx)</text>
+      <rect x="400" y="458" width="180" height="40" rx="9" fill="#ecfdf5" stroke="#6ee7b7"/><text x="490" y="483">LHA · LHR · LHE · LP</text>
+      <rect x="592" y="458" width="140" height="40" rx="9" fill="#ecfdf5" stroke="#6ee7b7"/><text x="662" y="483">LKE (.xlsx)</text>
+      <rect x="744" y="458" width="170" height="40" rx="9" fill="#ecfdf5" stroke="#6ee7b7"/><text x="829" y="483">Laporan QC SAIPI</text>
+    </g>
+
+    <!-- ===== KANAL CHATBOT (RENCANA) ===== -->
+    <rect x="22" y="440" width="200" height="72" rx="12" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="122" y="464" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1d4ed8">💬 Kanal Chatbot</text>
+    <text x="122" y="482" text-anchor="middle" font-size="11" fill="#3b82f6">Telegram (pernah berjalan)</text>
+    <text x="122" y="498" text-anchor="middle" font-size="11" fill="#3b82f6">→ WhatsApp · RENCANA</text>
+
+    <!-- ===== v11 (RENCANA) ===== -->
+    <rect x="1008" y="440" width="210" height="72" rx="12" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="1113" y="464" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1d4ed8">🔜 v11 — RENCANA</text>
+    <text x="1113" y="482" text-anchor="middle" font-size="11" fill="#3b82f6">ev-SAKIP · e-Ziko · SPIP masuk</text>
+    <text x="1113" y="498" text-anchor="middle" font-size="11" fill="#3b82f6">via jalur ingest CACM (sudah siap)</text>
+  </svg>
+  <p class="sub" style="margin-top:8px;font-size:13.5px">Prinsip: sistem eksisting <b>diorkestrasi INTEGRAL</b>, engine AI menganalisis; engine portabel (tidak terikat satu UI/database). Garis putus-putus = jalur <span class="badge b-ren">RENCANA</span>.</p>
 </section>
 
 <!-- 4 · ANGKA TERUKUR -->
