@@ -29,10 +29,14 @@ from typing import Any
 
 
 # Skill yang SUDAH punya pipeline V6 khusus — digest generik di-skip untuk ini.
+# reviu-pengadaan & audit-pengadaan DIPINDAH ke digest generik (18 Jul 2026):
+# parser terstruktur `digest_pengadaan.py` rapuh pada dokumen riil (nama_pekerjaan
+# ter-parse jadi teks pasal, RAB/HPS unclassified) → salah-menyesatkan + agen
+# fallback baca PDF. Sejak full-AI (tanpa rule), digest TEKS generik yang andal
+# (per-dokumen, sudah PDF/Word/Excel) lebih baik. Hanya RKA-K/L yang tetap pakai
+# pipeline TOR/RAB khusus (parser SAKTI-nya bernilai).
 _SKILL_WITH_NATIVE_DIGEST = {
     "reviu-rka-kl",
-    "reviu-pengadaan",
-    "audit-pengadaan",
 }
 
 

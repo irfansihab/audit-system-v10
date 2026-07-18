@@ -234,9 +234,12 @@ async def _run_ingestion(penugasan_id: int) -> None:
 
     tor_docs = [d for d in docs if d.jenis == "TOR"]
     rab_docs = [d for d in docs if d.jenis == "RAB"]
-    pbj_docs = [d for d in docs if d.jenis in ("KAK", "HPS", "RFI", "KONTRAK")]
     bukti_docs = [d for d in docs if d.jenis == "BUKTI-LAPANGAN"]
-    other_docs = [d for d in docs if d.jenis in (None, "ST", "KP", "PKP", "OTHER")]
+    # Dokumen pengadaan (KAK/HPS/RFI/KONTRAK) DIALIHKAN ke digest generik
+    # (digest_folder) — parser terstruktur digest_pengadaan.py DIPENSIUNKAN
+    # (rapuh pada dokumen riil). Digest generik andal + sudah PDF/Word/Excel.
+    other_docs = [d for d in docs if d.jenis in (
+        None, "ST", "KP", "PKP", "OTHER", "KAK", "HPS", "RFI", "KONTRAK")]
 
     sem = asyncio.Semaphore(_INGEST_CONCURRENCY)
     # Daftar job: (kind, payload, out_path, coro). kind="file" → cache-able;
@@ -261,16 +264,6 @@ async def _run_ingestion(penugasan_id: int) -> None:
                 [d.file_path, "-o", str(out)], out, 120,
             ),
         ))
-    if pbj_docs:
-        out = ingested_dir / "pengadaan-digest.json"
-        jobs.append((
-            "pbj", pbj_docs, out,
-            _digest_subprocess(
-                sem, "scripts/audit-pengadaan/digest_pengadaan.py",
-                [str(folder), "-o", str(out)], out, 180,
-            ),
-        ))
-
     # ---- Fase 2: SEMUA subprocess paralel, TANPA sesi DB ----
     results = await asyncio.gather(*(coro for _, _, _, coro in jobs))
 
@@ -288,15 +281,6 @@ async def _run_ingestion(penugasan_id: int) -> None:
                     "status": DokumenStatus.FAILED,
                     "error_message": (err or "digest returned non-zero")[:500],
                 }
-        else:  # pbj
-            for d in payload:  # type: ignore[assignment]
-                if ok:
-                    updates[d.id] = {"status": DokumenStatus.READY, "ingested_json_path": str(out)}
-                else:
-                    updates[d.id] = {
-                        "status": DokumenStatus.FAILED,
-                        "error_message": (err or "digest_pengadaan returned non-zero")[:500],
-                    }
 
     for d in other_docs:
         updates[d.id] = {"status": DokumenStatus.READY}

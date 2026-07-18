@@ -216,26 +216,47 @@ async def run_batch_pbj(args: dict) -> dict:
 
 @tool(
     "read_pdf_page",
-    "Baca teks satu halaman PDF — untuk verifikasi kutipan/fakta janggal (≤1–2 halaman per temuan, anti sapu-baca).",
+    "Baca teks satu halaman dokumen objek — PDF, **Word (.docx)**, atau **Excel (.xlsx)**. "
+    "Untuk PDF/Word: `halaman` = nomor halaman/bagian; untuk Excel: `halaman` = nomor SHEET "
+    "(1=sheet pertama; hasil memuat sel non-kosong per baris). Untuk verifikasi kutipan/fakta "
+    "atau menelaah rincian (mis. rincian HPS di lembar kerja Excel). Anti sapu-baca (≤1–2 per temuan).",
     {"pdf_path": str, "halaman": int},
 )
 async def read_pdf_page(args: dict) -> dict:
-    from pdfplumber import open as open_pdf
-
     p = Path(args["pdf_path"])
     if not p.exists():
         return {
             "content": [{"type": "text", "text": f"FAILED|file tidak ada: {p}"}],
             "is_error": True,
         }
+    halaman = int(args.get("halaman") or 1)
+    suf = p.suffix.lower()
+
+    # --- Word / Excel: pakai ekstraktor Office ---
+    if suf in (".docx", ".xlsx", ".xlsm"):
+        try:
+            from app.office_extract import extract_docx_pages, extract_xlsx_pages
+            pages = extract_docx_pages(p) if suf == ".docx" else extract_xlsx_pages(p)
+        except Exception as e:  # noqa: BLE001
+            return {"content": [{"type": "text", "text": f"FAILED|{str(e)[:200]}"}], "is_error": True}
+        if not pages:
+            return {"content": [{"type": "text", "text": f"FAILED|tak ada teks terbaca dari {p.name}"}], "is_error": True}
+        idx = max(0, halaman - 1)
+        if idx >= len(pages):
+            unit = "sheet" if suf != ".docx" else "bagian"
+            return {"content": [{"type": "text", "text":
+                    f"INFO|{p.name} punya {len(pages)} {unit}. Minta {unit} 1..{len(pages)}."}]}
+        header = f"[{p.name} · {'sheet' if suf!='.docx' else 'bagian'} {idx+1}/{len(pages)}]\n"
+        return {"content": [{"type": "text", "text": (header + pages[idx])[:4000]}]}
+
+    # --- PDF (default) ---
+    from pdfplumber import open as open_pdf
     try:
         with open_pdf(str(p)) as pdf:
-            idx = max(0, args["halaman"] - 1)
+            idx = max(0, halaman - 1)
             if idx >= len(pdf.pages):
                 return {
-                    "content": [
-                        {"type": "text", "text": f"FAILED|halaman {args['halaman']} di luar rentang"}
-                    ],
+                    "content": [{"type": "text", "text": f"FAILED|halaman {halaman} di luar rentang ({len(pdf.pages)} hal)"}],
                     "is_error": True,
                 }
             text = pdf.pages[idx].extract_text() or ""
