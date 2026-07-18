@@ -3438,6 +3438,8 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
     try { setLke(await api.getPenilaianLke(penugasanId)); } catch { setLke(null); }
   };
   const isLke = !!lke?.is_lke;
+  const unitLabel = ((lke?.skill || '') as string).includes('pengadaan') ? 'Paket'
+    : lke?.skill === 'reviu-rka-kl' ? 'RO' : 'Unit';
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [penugasanId]);
 
   const doSubmit = async () => {
@@ -3623,7 +3625,7 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
                       className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 max-w-[220px] truncate inline-block align-bottom"
                       title={t.ro}
                     >
-                      RO: {t.ro}
+                      {unitLabel}: {t.ro}
                     </span>
                   )}
                   {t.anggota && <span className="text-[10px] text-gray-400">· {t.anggota}</span>}

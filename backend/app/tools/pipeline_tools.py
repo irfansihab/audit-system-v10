@@ -396,6 +396,9 @@ async def read_digest(args: dict) -> dict:
     digest = safe_read_json(kkp / "pengadaan-digest.json")
     if isinstance(digest, dict) and digest.get("dokumen"):
         ringkas: dict = {}
+        # Kumpulan label paket dari nama_pekerjaan (identitas STABIL antar dokumen
+        # satu paket) — untuk analisis multi-paket inkremental (analog RKA per-RO).
+        paket_labels: list[str] = []
         for jenis, entries in (digest.get("dokumen") or {}).items():
             ringkas[jenis] = [{
                 "filename": e.get("filename"),
@@ -403,11 +406,27 @@ async def read_digest(args: dict) -> dict:
                 "parsed": {k: v for k, v in (e.get("parsed") or {}).items()
                            if k not in _DIGEST_BIG_KEYS},
             } for e in (entries or [])]
+            for e in (entries or []):
+                nm = str((e.get("parsed") or {}).get("nama_pekerjaan") or "").strip()
+                if nm and nm not in paket_labels:
+                    paket_labels.append(nm)
+        # Hitung n_temuan per paket (cocokkan temuan.ro dgn label paket).
+        tj = safe_read_json(kkp / "temuan.json") or {}
+        temuan_list = (tj.get("temuan") if isinstance(tj, dict) else tj) or []
+        paket_index = [{
+            "paket": lbl,
+            "n_temuan": sum(1 for t in temuan_list
+                            if isinstance(t, dict) and str(t.get("ro", "")).strip() == lbl),
+        } for lbl in paket_labels]
         payload = {
             "jenis": "pengadaan",
+            "paket_index": paket_index,
+            "total_paket": len(paket_labels),
             "dokumen": ringkas,
             "missing_types": digest.get("missing_types", []),
             "unclassified_files": digest.get("unclassified_files", [])[:10],
+            "catatan_paket": ("Multi-paket: tag `ro`=label paket (nama_pekerjaan) tiap temuan. "
+                              "Analisis paket dgn n_temuan=0; paket n_temuan>0 sudah selesai."),
         }
         return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)[:8000]}]}
 

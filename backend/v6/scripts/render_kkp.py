@@ -274,15 +274,19 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
         # Non-RKA / RO tunggal → satu tabel datar seperti biasa.
         distinct_ro = [r for r in dict.fromkeys(
             str(t.get("ro", "")).strip() for t in my_temuan) if r]
+        # Label unit sesuai jenis: RKA=RO, pengadaan=Paket, lainnya=Unit.
+        _unit = ("Rincian Output (RO)" if jenis == "reviu-rka-kl"
+                 else "Paket Pengadaan" if "pengadaan" in (jenis or "")
+                 else "Unit Objek")
         if len(distinct_ro) > 1:
             for ro in distinct_ro:
                 grp = [t for t in my_temuan if str(t.get("ro", "")).strip() == ro]
-                add_p(doc, f"Rincian Output (RO): {ro}", bold=True, size=11)
+                add_p(doc, f"{_unit}: {ro}", bold=True, size=11)
                 _render_tabel(grp)
                 doc.add_paragraph()
             sisa = [t for t in my_temuan if not str(t.get("ro", "")).strip()]
             if sisa:
-                add_p(doc, "Rincian Output (RO): (tidak ditandai)", bold=True, size=11)
+                add_p(doc, f"{_unit}: (tidak ditandai)", bold=True, size=11)
                 _render_tabel(sisa)
         else:
             _render_tabel(my_temuan)
