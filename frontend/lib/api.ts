@@ -1344,4 +1344,25 @@ export const api = {
       body: string;
       raw: string;
     }>(`/knowledge/templates/${kind}/${encodeURIComponent(slug)}`),
+
+  /** Buat/timpa template KP/PKP (PT only). */
+  upsertTemplate: (kind: 'kp' | 'pkp', slug: string, raw: string) =>
+    request<{ ok: boolean; slug: string; kind: string; action: string; skill: string }>(
+      `/knowledge/templates/${kind}/${encodeURIComponent(slug)}`,
+      { method: 'PUT', body: JSON.stringify({ raw }) }
+    ),
+
+  /** Hapus template KP/PKP (PT only; default dilindungi). */
+  deleteTemplate: (kind: 'kp' | 'pkp', slug: string) =>
+    request<{ ok: boolean; deleted: string; kind: string }>(
+      `/knowledge/templates/${kind}/${encodeURIComponent(slug)}`,
+      { method: 'DELETE' }
+    ),
+
+  /** Generate DRAFT template dari wiki oleh AI (PT only; tidak disimpan). */
+  generateTemplate: (kind: 'kp' | 'pkp', skill: string, instruksi?: string) =>
+    request<{ ok: boolean; kind: string; skill: string; draft: string; meta_terdeteksi: Record<string, any>; catatan: string }>(
+      `/knowledge/templates/${kind}/generate`,
+      { method: 'POST', body: JSON.stringify({ skill, instruksi: instruksi || '' }) }
+    ),
 };

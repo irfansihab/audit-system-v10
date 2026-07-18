@@ -18,10 +18,14 @@ export function TemplatePickerKpPkp({
   kind,
   skill,
   onUse,
+  onEdit,
+  onDelete,
 }: {
   kind: 'kp' | 'pkp';
   skill: string;
   onUse?: (template: { slug: string; body: string; meta: Record<string, any> }) => void;
+  onEdit?: (slug: string, raw: string) => void;
+  onDelete?: (slug: string) => void;
 }) {
   const [items, setItems] = useState<TemplateItem[]>([]);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
@@ -94,16 +98,37 @@ export function TemplatePickerKpPkp({
 
       {preview && (
         <div className="integral-card p-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 gap-2">
             <h4 className="font-semibold text-sm text-primary-dark">Preview · {preview.slug}</h4>
-            {onUse && (
-              <button
-                onClick={() => onUse(preview)}
-                className="px-3 py-1.5 rounded bg-primary text-white text-xs font-semibold hover:bg-primary-dark"
-              >
-                ✓ Pakai Template Ini
-              </button>
-            )}
+            <div className="flex gap-2">
+              {onEdit && (
+                <button
+                  onClick={async () => {
+                    const r = await api.getTemplate(kind, preview.slug);
+                    onEdit(preview.slug, r.raw);
+                  }}
+                  className="px-2.5 py-1 rounded border border-gray-300 text-gray-700 text-xs hover:bg-gray-50"
+                >
+                  ✎ Edit
+                </button>
+              )}
+              {onDelete && preview.slug !== 'kp-default' && preview.slug !== 'pkp-default' && (
+                <button
+                  onClick={() => onDelete(preview.slug)}
+                  className="px-2.5 py-1 rounded border border-red-300 text-red-600 text-xs hover:bg-red-50"
+                >
+                  🗑 Hapus
+                </button>
+              )}
+              {onUse && (
+                <button
+                  onClick={() => onUse(preview)}
+                  className="px-3 py-1.5 rounded bg-primary text-white text-xs font-semibold hover:bg-primary-dark"
+                >
+                  ✓ Pakai Template Ini
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Field required */}

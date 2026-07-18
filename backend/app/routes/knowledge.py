@@ -13,11 +13,13 @@
 
 V6 read-only — promosi menulis ke folder wiki proyek, bukan ke V6.
 """
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.responses import PlainTextResponse
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -544,6 +546,163 @@ async def get_template(
         "body": body,
         "raw": txt,
     }
+
+
+# ---------------------------------------------------------------------------
+# Pengelolaan Template KP/PKP (menu Knowledge > Template) — Pengendali Teknis
+# bisa buat/edit/hapus + generate draft dari wiki oleh AI. Baca: semua role.
+# Template dipakai form KP/PKP INTEGRAL (routes/penugasan kp-md/sasaran).
+# ---------------------------------------------------------------------------
+_TEMPLATE_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,80}$")
+_PROTECTED_TEMPLATES = {"kp-default", "pkp-default"}
+
+
+def _require_pt_template(role: Role) -> None:
+    if role != Role.PT:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Hanya Pengendali Teknis (PT) yang boleh mengelola template. Role Anda: {role.value}.",
+        )
+
+
+def _validate_template_text(kind: str, text: str) -> tuple[dict, str]:
+    """Validasi template: wajib frontmatter YAML + field `skill`, dan ada judul H1.
+    Return (meta, body) bila valid; raise 422 bila tidak."""
+    meta, body = _parse_template_frontmatter(text)
+    if not isinstance(meta, dict) or not meta:
+        raise HTTPException(422, "Template wajib diawali frontmatter YAML (--- ... ---) berisi minimal `skill`.")
+    if not str(meta.get("skill", "")).strip():
+        raise HTTPException(422, "Frontmatter wajib memuat `skill` (mis. audit-pengadaan / default).")
+    if not any(l.startswith("# ") for l in body.split("\n")):
+        raise HTTPException(422, "Body template wajib memuat satu judul H1 (baris diawali '# ').")
+    return meta, body
+
+
+class TemplatePayload(BaseModel):
+    raw: str = Field(..., min_length=20, description="Isi lengkap template (frontmatter + body markdown)")
+
+
+@router.put("/templates/{kind}/{slug}")
+async def upsert_template(
+    kind: str,
+    slug: str,
+    payload: TemplatePayload,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Buat/timpa 1 template KP/PKP. Hanya Pengendali Teknis."""
+    _user, role = current
+    _require_pt_template(role)
+    if kind not in ("kp", "pkp"):
+        raise HTTPException(400, "kind harus 'kp' atau 'pkp'")
+    slug = slug.strip().lower()
+    if not _TEMPLATE_SLUG_RE.match(slug):
+        raise HTTPException(422, "slug hanya huruf kecil/angka/strip, 2-81 karakter.")
+    meta, _body = _validate_template_text(kind, payload.raw)
+    s = get_settings()
+    root = s.wiki_path / "templates" / kind
+    root.mkdir(parents=True, exist_ok=True)
+    f = root / f"{slug}.md"
+    existed = f.is_file()
+    tmp = f.with_suffix(".md.tmp")
+    tmp.write_text(payload.raw, encoding="utf-8")
+    import os as _os
+    _os.replace(tmp, f)
+    return {"ok": True, "slug": slug, "kind": kind, "action": "replaced" if existed else "created",
+            "skill": str(meta.get("skill", ""))}
+
+
+@router.delete("/templates/{kind}/{slug}")
+async def delete_template(
+    kind: str,
+    slug: str,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Hapus 1 template KP/PKP. Hanya PT. Template default dilindungi."""
+    _user, role = current
+    _require_pt_template(role)
+    if kind not in ("kp", "pkp"):
+        raise HTTPException(400, "kind harus 'kp' atau 'pkp'")
+    slug = slug.strip().lower()
+    if slug in _PROTECTED_TEMPLATES:
+        raise HTTPException(400, f"Template '{slug}' adalah fallback default — tidak boleh dihapus.")
+    s = get_settings()
+    f = s.wiki_path / "templates" / kind / f"{slug}.md"
+    if not f.is_file():
+        raise HTTPException(404, f"Template {kind}/{slug} tidak ditemukan")
+    f.unlink()
+    return {"ok": True, "deleted": slug, "kind": kind}
+
+
+class TemplateGeneratePayload(BaseModel):
+    skill: str = Field(..., description="Slug skill target, mis. audit-pengadaan")
+    instruksi: str = Field(default="", description="Arahan tambahan opsional dari PT")
+
+
+@router.post("/templates/{kind}/generate")
+async def generate_template(
+    kind: str,
+    payload: TemplateGeneratePayload,
+    current: tuple[User, Role] = Depends(get_current_user),
+) -> dict:
+    """Generate DRAFT template KP/PKP dari pengetahuan wiki oleh AI (tidak disimpan;
+    PT meninjau lalu simpan lewat PUT). Hanya PT."""
+    _user, role = current
+    _require_pt_template(role)
+    if kind not in ("kp", "pkp"):
+        raise HTTPException(400, "kind harus 'kp' atau 'pkp'")
+    skill = payload.skill.strip().lower()
+    if not skill:
+        raise HTTPException(422, "skill wajib diisi.")
+    s = get_settings()
+
+    # Kumpulkan konteks wiki: template default/base + panduan format skill (bila ada).
+    ctx_parts: list[str] = []
+    base_f = s.wiki_path / "templates" / kind / f"{kind}-{skill}.md"
+    default_f = s.wiki_path / "templates" / kind / f"{kind}-default.md"
+    for f in (base_f, default_f):
+        if f.is_file():
+            ctx_parts.append(f"### Contoh template {kind} ({f.stem}):\n{f.read_text(encoding='utf-8')[:4000]}")
+            break
+    # Panduan format skill dari knowledge/skills/<skill>/ (SKILL.md ringkas).
+    # wiki_path = .../knowledge/wiki → skills = wiki_path.parent/skills.
+    skill_md = s.wiki_path.parent / "skills" / skill / "SKILL.md"
+    if skill_md.is_file():
+        ctx_parts.append(f"### Ringkas SKILL {skill}:\n{skill_md.read_text(encoding='utf-8')[:3000]}")
+    konteks = "\n\n".join(ctx_parts) or "(tidak ada contoh template/skill di wiki — susun dari struktur umum)"
+
+    from app.llm_extract import resolve_anthropic_key
+    key = resolve_anthropic_key()
+    if not key:
+        raise HTTPException(503, "API key AI belum dikonfigurasi — generate tidak tersedia. Isi manual via editor.")
+
+    kind_label = "Kartu Penugasan (KP)" if kind == "kp" else "Program Kerja Pengawasan (PKP)"
+    prompt = (
+        f"Anda membantu Inspektorat menyusun DRAFT template {kind_label} untuk jenis pengawasan '{skill}'.\n"
+        f"Gunakan gaya & struktur template contoh dan substansi skill di bawah. Output HARUS berupa markdown "
+        f"template lengkap: diawali frontmatter YAML (--- ... ---) dengan field minimal `skill: {skill}`, `kind: {kind}`, "
+        f"`jenis`, `field_required` (list), `field_optional` (list); lalu body dengan satu judul H1 dan "
+        f"placeholder `{{{{nama_field}}}}` untuk bagian yang diisi via form INTEGRAL. Jangan menambah penjelasan di luar template.\n"
+        + (f"\nArahan tambahan PT: {payload.instruksi}\n" if payload.instruksi.strip() else "")
+        + f"\n=== KONTEKS WIKI ===\n{konteks}\n=== AKHIR KONTEKS ==="
+    )
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=key)
+        resp = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        draft = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text").strip()
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(502, f"Gagal generate via AI: {e}")
+    # Bersihkan bila model membungkus dengan ```
+    if draft.startswith("```"):
+        draft = re.sub(r"^```[a-z]*\n?", "", draft)
+        draft = re.sub(r"\n?```$", "", draft).strip()
+    meta, _b = _parse_template_frontmatter(draft)
+    return {"ok": True, "kind": kind, "skill": skill, "draft": draft,
+            "meta_terdeteksi": meta, "catatan": "DRAFT — tinjau & simpan lewat tombol Simpan (PUT)."}
 
 
 # ===========================================================================

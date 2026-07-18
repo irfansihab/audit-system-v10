@@ -28,56 +28,126 @@ export function TemplateKpPkpPanel() {
   const [skills, setSkills] = useState<SkillInfo[]>([]);
   const [skill, setSkill] = useState('');
   const [kind, setKind] = useState<'kp' | 'pkp'>('kp');
+  const isPT = (getSession()?.role_aktif || '') === 'PT';
+
+  // Editor state (PT): slug '' = buat baru; raw = isi markdown.
+  const [editSlug, setEditSlug] = useState<string | null>(null); // null = editor tertutup
+  const [editRaw, setEditRaw] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    api
-      .getSkills()
-      .then((rows) => {
-        setSkills(rows);
-        if (rows.length) setSkill(rows[0].slug);
-      })
-      .catch(() => {});
+    api.getSkills().then((rows) => {
+      setSkills(rows);
+      if (rows.length) setSkill(rows[0].slug);
+    }).catch(() => {});
   }, []);
+
+  const openNew = () => {
+    setEditSlug('');
+    setEditRaw(`---\nskill: ${skill}\nkind: ${kind}\njenis: \nfield_required: []\nfield_optional: []\nversi: '1.0'\n---\n\n# Judul Template ${kind.toUpperCase()}\n\n(isi struktur di sini; pakai {{nama_field}} untuk bagian yang diisi via form)\n`);
+    setMsg(null);
+  };
+  const openEdit = (slug: string, raw: string) => { setEditSlug(slug); setEditRaw(raw); setMsg(null); };
+  const closeEditor = () => { setEditSlug(null); setEditRaw(''); };
+
+  const doGenerate = async () => {
+    setBusy('gen'); setMsg('AI sedang menyusun draft dari wiki…');
+    try {
+      const r = await api.generateTemplate(kind, skill);
+      setEditSlug(''); setEditRaw(r.draft);
+      setMsg('Draft AI siap — tinjau, sesuaikan slug/isi, lalu Simpan.');
+    } catch (e: any) { setMsg(`Gagal generate: ${e.message}`); }
+    finally { setBusy(null); }
+  };
+
+  const [saveSlug, setSaveSlug] = useState('');
+  const doSave = async () => {
+    const slug = (editSlug || saveSlug).trim().toLowerCase();
+    if (!slug) { setMsg('Isi slug dulu (mis. kp-audit-pengadaan-khusus).'); return; }
+    setBusy('save'); setMsg(null);
+    try {
+      const r = await api.upsertTemplate(kind, slug, editRaw);
+      setMsg(`Template ${r.slug} ${r.action === 'created' ? 'dibuat' : 'disimpan'}.`);
+      closeEditor(); setSaveSlug(''); setRefreshKey((k) => k + 1);
+    } catch (e: any) { setMsg(`Gagal simpan: ${e.message}`); }
+    finally { setBusy(null); }
+  };
+  const doDelete = async (slug: string) => {
+    if (!(await confirmDialog({ message: `Hapus template ${slug}?`, danger: true, confirmText: 'Hapus' }))) return;
+    setBusy('del'); setMsg(null);
+    try {
+      await api.deleteTemplate(kind, slug);
+      setMsg(`Template ${slug} dihapus.`); setRefreshKey((k) => k + 1);
+    } catch (e: any) { setMsg(`Gagal hapus: ${e.message}`); }
+    finally { setBusy(null); }
+  };
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
-      <h2 className="font-semibold text-primary-dark mb-1">Template KP / PKP</h2>
+      <h2 className="font-semibold text-primary-dark mb-1">Pengelolaan Template KP / PKP</h2>
       <p className="text-xs text-gray-500 mb-3">
-        Template <b>Kartu Penugasan</b> dan <b>Program Kerja Pengawasan</b> terkurasi per skill
-        (sumber: wiki tim). Dipakai di tab <b>Setup</b> penugasan untuk memulai tanpa dari nol.
+        Template <b>Kartu Penugasan</b> &amp; <b>Program Kerja Pengawasan</b> per skill.
+        {isPT ? ' Sebagai Pengendali Teknis, Anda bisa buat, edit, hapus, dan generate draft dari wiki (AI).'
+              : ' Hanya Pengendali Teknis yang dapat mengubah template.'}
       </p>
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <select
-          value={skill}
-          onChange={(e) => setSkill(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
-        >
-          {skills.length === 0 ? (
-            <option value="">(memuat skill…)</option>
-          ) : (
-            skills.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.jenis || s.name}
-              </option>
-            ))
-          )}
+        <select value={skill} onChange={(e) => setSkill(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white">
+          {skills.length === 0 ? <option value="">(memuat skill…)</option>
+            : skills.map((s) => <option key={s.slug} value={s.slug}>{s.jenis || s.name}</option>)}
         </select>
         <div className="inline-flex rounded-md border border-gray-300 overflow-hidden">
           {(['kp', 'pkp'] as const).map((k) => (
-            <button
-              key={k}
-              onClick={() => setKind(k)}
-              className={`px-3 py-1.5 text-sm transition ${
-                kind === k ? 'bg-primary text-white font-semibold' : 'bg-white text-gray-600 hover:bg-gray-50'
-              }`}
-            >
+            <button key={k} onClick={() => setKind(k)}
+              className={`px-3 py-1.5 text-sm transition ${kind === k ? 'bg-primary text-white font-semibold' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
               {k.toUpperCase()}
             </button>
           ))}
         </div>
+        {isPT && (
+          <div className="flex gap-2 ml-auto">
+            <button onClick={openNew} disabled={!!busy}
+              className="px-3 py-1.5 rounded bg-primary text-white text-xs font-semibold hover:bg-primary-dark disabled:opacity-50">
+              + Buat Baru
+            </button>
+            <button onClick={doGenerate} disabled={!!busy || !skill}
+              className="px-3 py-1.5 rounded border border-primary text-primary text-xs font-semibold hover:bg-primary-50 disabled:opacity-50">
+              ✨ Generate dari Wiki (AI)
+            </button>
+          </div>
+        )}
       </div>
+
+      {msg && <div className="mb-3 text-xs px-3 py-2 rounded bg-indigo-50 text-indigo-800 border border-indigo-200">{msg}</div>}
+
+      {isPT && editSlug !== null && (
+        <div className="mb-4 border border-primary-200 rounded-lg p-3 bg-primary-50/40">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-primary-dark">{editSlug ? `Edit: ${editSlug}` : 'Template baru'}</span>
+            {!editSlug && (
+              <input value={saveSlug} onChange={(e) => setSaveSlug(e.target.value)}
+                placeholder="slug, mis. kp-audit-pengadaan-khusus"
+                className="border border-gray-300 rounded px-2 py-1 text-xs font-mono flex-1" />
+            )}
+          </div>
+          <textarea value={editRaw} onChange={(e) => setEditRaw(e.target.value)} rows={16}
+            className="w-full border border-gray-300 rounded p-2 text-[11px] font-mono" spellCheck={false} />
+          <div className="flex gap-2 mt-2">
+            <button onClick={doSave} disabled={!!busy}
+              className="px-3 py-1.5 rounded bg-green-600 text-white text-xs font-semibold hover:bg-green-700 disabled:opacity-50">
+              {busy === 'save' ? 'Menyimpan…' : '✓ Simpan'}
+            </button>
+            <button onClick={closeEditor} disabled={!!busy}
+              className="px-3 py-1.5 rounded border border-gray-300 text-gray-600 text-xs hover:bg-gray-50">Batal</button>
+          </div>
+        </div>
+      )}
+
       {skill ? (
-        <TemplatePickerKpPkp key={`${kind}-${skill}`} kind={kind} skill={skill} />
+        <TemplatePickerKpPkp key={`${kind}-${skill}-${refreshKey}`} kind={kind} skill={skill}
+          onEdit={isPT ? openEdit : undefined} onDelete={isPT ? doDelete : undefined} />
       ) : (
         <div className="text-sm text-gray-400 italic">Memuat daftar skill…</div>
       )}
