@@ -14,7 +14,7 @@ Keempat jenis pengawasan pengadaan menggunakan dasar hukum yang sama. Yang membe
 |----|----------|-------------|
 | 1 | **Perpres 16/2018** jo. **Perpres 12/2021** | Prinsip, pelaku, metode, prosedur pengadaan |
 | 2 | **Perlem LKPP 12/2021** | Prosedur teknis pemilihan penyedia secara rinci |
-| 3 | **Perlem LKPP 4/2024** | Pengadaan konstruksi metode Design & Build |
+| 3 | **Perlem LKPP 4/2024** | Perubahan Perlem 12/2021 — mengganti Lampiran III (pedoman) & VI (model dokumen) **Pekerjaan Konstruksi Terintegrasi Rancang & Bangun/Design & Build** melalui Penyedia ✅ terverifikasi |
 | 4 | **Perpres 46/2025** | Ketentuan kontrak dan pembayaran terbaru |
 
 ### File Referensi (lokasi):

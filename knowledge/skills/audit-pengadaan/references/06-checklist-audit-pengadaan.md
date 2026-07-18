@@ -309,12 +309,12 @@
 ### B4. Pengadaan Langsung (Nilai ≤ Rp. 200 Juta)
 
 #### B4a. Verifikasi Nilai
-- [ ] **Nilai pengadaan benar-benar ≤ Rp. 200 juta**
+- [ ] **Nilai pengadaan benar-benar ≤ ambang PL** — B/Jasa Lainnya ≤Rp200 jt; **Pekerjaan Konstruksi ≤Rp400 jt (Perpres 46/2025 Ps 38(3)b)**; Konsultansi ≤Rp100 jt (Ps 41(3))
 - [ ] **Tidak ada pemecahan pengadaan** untuk mengecilkan nilai (sub-splitting)
 - [ ] **Pengadaan sejenis untuk tahun yang sama di-aggregate**: Hitung total, jangan split
 
 **Red Flag Pengadaan Langsung**:
-- Nilai > Rp. 200 juta tapi diperlakukan sebagai pengadaan langsung
+- Nilai melebihi ambang PL per jenis (200jt B/JL · 400jt konstruksi · 100jt konsultansi) tapi diperlakukan sebagai pengadaan langsung
 - Ada banyak pengadaan langsung dari vendor yang sama untuk item sejenis (indication: splitting)
 
 #### B4b. Proses Pengadaan Langsung

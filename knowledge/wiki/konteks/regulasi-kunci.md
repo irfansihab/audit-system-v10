@@ -21,40 +21,48 @@ tags: [regulasi, perpres-16, perpres-46-2025, pmk-107, pnbp, pmk-206-2021, bhp-t
 
 ## Pengadaan Barang/Jasa
 
-### Perpres 16/2018 jo. Perpres 12/2021 (PBJ Pemerintah)
+### Perpres 16/2018 jo. 12/2021 jo. 46/2025 (PBJ Pemerintah) — ✅ pasal TERVERIFIKASI dari teks asli (18 Jul 2026)
 
 | Pasal | Topik | Kutipan inti |
 |---|---|---|
-| **Pasal 6 huruf g** | Prinsip akuntabel | "Pengadaan Barang/Jasa menerapkan prinsip akuntabel — dapat dipertanggungjawabkan." |
-| **Pasal 18** | Perencanaan Pengadaan | Identifikasi kebutuhan + spesifikasi + metode + jadwal. |
-| **Pasal 22** | Pengumuman RUP | "RUP wajib diumumkan paling lambat 31 Maret TA berjalan untuk paket APBN." |
-| **Pasal 26 ayat (5)** | HPS — sumber harga | "Penyusunan HPS didasarkan pada hasil survei pasar... mengumpulkan informasi harga dari sekurang-kurangnya 2 (dua) penyedia atau sumber informasi harga lainnya." |
+| **Pasal 6** | PRINSIP PBJ | "…prinsip: a. efisien; b. efektif; c. transparan; d. terbuka; **e. bersaing; f. adil**; g. akuntabel." (Pasal 7 = ETIKA — jangan tertukar.) |
+| **Pasal 18 ayat (1)** | Perencanaan Pengadaan | "Perencanaan pengadaan meliputi identifikasi kebutuhan, penetapan barang/jasa, cara, jadwal, dan anggaran." |
+| **Pasal 20 ayat (2) huruf d** | LARANGAN pemecahan paket | "dilarang … memecah Pengadaan Barang/Jasa menjadi beberapa paket dengan maksud menghindari Tender/Seleksi." |
+| **Pasal 22** | Pengumuman RUP | K/L: "setelah penetapan alokasi anggaran belanja"; via aplikasi **SIRUP** (ayat 3). ⚠ Klaim "paling lambat 31 Maret" TIDAK ada di Perpres — [VERIFIKASI AUDITOR: kemungkinan aturan turunan]. |
+| **Pasal 26 (versi 46/2025)** | HPS | "(2) Nilai HPS bersifat tidak rahasia. (3) **Rincian HPS bersifat rahasia.** (5) HPS digunakan sebagai alat menilai kewajaran harga… dasar batas tertinggi penawaran yang sah…" ⚠ "survei ≥2 penyedia" bukan bunyi Perpres — [VERIFIKASI: pedoman turunan]. |
+| **Pasal 38 ayat (3) (versi 46/2025)** | Ambang Pengadaan Langsung B/PK/JL | "a. Barang/Jasa Lainnya paling banyak **Rp200.000.000**; b. **Pekerjaan Konstruksi paling banyak Rp400.000.000**" (400 jt = BARU per 46/2025; era 12/2021 semuanya ≤200 jt). |
+| **Pasal 38 ayat (4)–(5)** | Penunjukan Langsung B/PK/JL | PjL utk "keadaan tertentu"; kriteria (46/2025) DIPERLUAS a.l. "**program prioritas pemerintah… berdasarkan arahan Presiden**", kegiatan mendadak dihadiri Presiden/Wapres, barang/jasa rahasia. |
+| **Pasal 41 ayat (3)** | Ambang PL Jasa Konsultansi | "…bernilai sampai dengan paling banyak **Rp100.000.000**" (TIDAK berubah di 46/2025). Metode konsultansi (46/2025) kini + **E-purchasing**; Seleksi utk >Rp100 jt (rumusan 12/2021 Ps 41(2)). |
+| **Pasal 41 ayat (4)–(5)** | Penunjukan Langsung Konsultansi | Keadaan tertentu; kriteria (46/2025) a.l. arahan Presiden, 1 pelaku usaha mampu, hak cipta, konsultan hukum/arbiter mendesak, repeat order, Seleksi ulang gagal. |
+| **Pasal 42** | Metode EVALUASI penawaran konsultansi | "a. Kualitas dan Biaya; b. Kualitas; c. Pagu Anggaran; d. Biaya Terendah." (BUKAN kriteria PjL!) |
+| **Pasal 65 (versi 46/2025)** | UMK & koperasi | Alokasi **≥40%** nilai belanja barang/jasa; paket B/PK/JL pagu **≤Rp15 miliar diperuntukkan Usaha Mikro & Kecil serta koperasi** (kecuali menuntut kemampuan teknis yang tak terpenuhi). |
+| **Pasal 66** | Wajib PDN | "wajib menggunakan produk dalam negeri, termasuk rancang bangun dan perekayasaan nasional" (+ Inpres 2/2022). |
 
-**Catatan**: Perpres 16/2018 telah diubah dengan Perpres 12/2021 — rujuk gabungan "Perpres 16/2018 jo. Perpres 12/2021 Pasal XX". **Perpres 16/2018 jo. 12/2021 TETAP dasar utama PBJ**; **Perpres 46/2025 hanya mengubah SEBAGIAN pasal** (bukan seluruhnya) — lihat catatan reconcile di bawah.
+**Cara sitasi**: pasal TIDAK diubah 46/2025 → "Perpres 16/2018 jo. 12/2021 Pasal XX"; pasal diubah → "Perpres 16/2018 jo. 12/2021 jo. 46/2025 Pasal XX". Daftar pasal yang disentuh 46/2025 (±60 butir): lihat `skills/audit-pengadaan/references/05-perpres-46-2025.md`.
 
 ---
 
-### Perpres 46/2025 (perubahan SEBAGIAN Perpres 16/2018)
+### Perpres 46/2025 (perubahan KEDUA, SEBAGIAN pasal) — ✅ terverifikasi
 
-> **Reconcile (penting, anti-halusinasi):** Perpres 46/2025 **hanya menggantikan/mengubah SEBAGIAN pasal** Perpres 16/2018 jo. 12/2021 — **bukan** menggantikan seluruhnya. Maka:
-> - Untuk pasal umum yang **belum** diubah (mis. prinsip Ps 6, perencanaan Ps 18, RUP Ps 22, HPS Ps 26(5)) → tetap rujuk **Perpres 16/2018 jo. 12/2021**.
-> - Untuk pasal yang **telah diubah** Perpres 46/2025 (mis. Pasal 9(1)f² kondisi khusus/kontrak transisi) → rujuk **Perpres 46/2025**.
-> - **Bila ragu** apakah suatu pasal sudah diubah Perpres 46/2025 → **verifikasi ke auditor**; jangan asumsikan "seluruhnya diganti".
+> **Reconcile (anti-halusinasi):** 46/2025 mengubah **SEBAGIAN** pasal (±60 butir; a.l. Ps 2, 7, 9, 11, 19–21, +20A/20B, 26, 29–30, 33, **38**, 39, **41**, +41A, 44, 47, 50–52, 54, 59, 64, +64A–64C, **65–67**, 70–72, 74A, 80–81, 86 dihapus, 91). Pasal di luar daftar → tetap 16/2018 jo. 12/2021. Bila ragu → verifikasi ke referensi 05 / auditor.
 
 | Pasal | Topik | Kutipan inti |
 |---|---|---|
-| **Pasal 9 ayat (1) huruf f angka 2** | Pekerjaan berjalan sebelum anggaran | Membenarkan pekerjaan yang sudah berjalan sebelum anggaran ditetapkan dapat diproses pembayarannya sepanjang justifikasi terpenuhi (kasus DIPA terlambat). |
+| **Pasal 9 ayat (1) huruf f2** | Kewenangan PA kondisi khusus | PA berwenang "menyesuaikan prosedur/tata cara/tahapan, metode, jenis Kontrak, dan/atau bentuk Kontrak … untuk **mengisi kekosongan hukum dan/atau mengatasi stagnasi pemerintahan** guna kemanfaatan dan kepentingan umum". |
+| **Pasal 38 ayat (3) huruf b** | PL Pekerjaan Konstruksi | "…paling banyak **Rp400.000.000**" — ambang baru, naik dari 200 jt. |
 
-**Konteks**: Dasar yuridis untuk kontrak yang berjalan tanpa kontrak akibat keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]], [[lhr-kontrak-aptika-2025]].
+**Konteks**: Ps 9(1)f2 = dasar yuridis kontrak transisi keterlambatan DIPA pasca SOTK Kominfo→Komdigi. Lihat [[reviu-pengadaan/RP-09-kontrak-tanpa-kontrak-sotk]], [[lhr-kontrak-aptika-2025]].
 
 ---
 
-### Peraturan LKPP (E-Katalog & E-Purchasing)
+### Peraturan LKPP — ✅ identitas terverifikasi dari teks asli
 
 | Peraturan | Topik | Substansi |
 |---|---|---|
-| **Peraturan LKPP 9/2021** | Toko Daring & Katalog Elektronik | Mekanisme e-katalog + e-purchasing. |
-| **Peraturan LKPP 4/2024** | PBJ melalui Penyedia | 1 penyedia → wajib negosiasi; > 1 penyedia → wajib mini kompetisi. |
+| **Perlem LKPP 12/2021** | **Pedoman Pelaksanaan PBJ melalui Penyedia** (induk) | Pedoman teknis pelaksanaan + lampiran per jenis (persiapan, pemilihan, kontrak, model dokumen). |
+| **Perlem LKPP 4/2024** | **Perubahan Perlem 12/2021 — KHUSUS Lampiran III & VI (Design & Build)** | Mengganti pedoman & model dokumen pemilihan Pekerjaan Konstruksi Terintegrasi **Rancang dan Bangun** melalui Penyedia. **BUKAN aturan e-katalog** (koreksi 18 Jul 2026 — atribusi lama salah). |
+| **Perlem LKPP 9/2021** | Toko Daring & Katalog Elektronik | Mekanisme e-katalog + e-purchasing. |
+| *(e-purchasing katalog)* | Negosiasi / mini-kompetisi | Substansi "1 penyedia → wajib negosiasi harga; >1 → mini-kompetisi" tetap dipakai pattern RP-15, tetapi **sumber pasalnya [VERIFIKASI AUDITOR]** — kandidat: Perlem 9/2021 / Kepka LKPP katalog; JANGAN sitir Perlem 4/2024. |
 
 Lihat [[reviu-pengadaan/RP-15-e-katalog-tanpa-negosiasi]] untuk pattern temuan.
 

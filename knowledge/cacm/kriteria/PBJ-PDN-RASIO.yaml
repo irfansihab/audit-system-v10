@@ -11,7 +11,7 @@ satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
   - "Inpres 2/2022 (Percepatan Penggunaan PDN)"
-  - "Perpres 12/2021 Pasal 66"
+  - "Perpres 16/2018 jo. 12/2021 jo. 46/2025 Pasal 66 — wajib PDN termasuk rancang bangun & perekayasaan nasional ✅ terverifikasi"
 
 metric:
   expression: 'sum(data.pagu WHERE data.pdn == "Produk Dalam Negeri") / sum(data.pagu) * 100'

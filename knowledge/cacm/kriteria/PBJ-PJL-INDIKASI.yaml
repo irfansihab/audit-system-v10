@@ -10,8 +10,8 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 Pasal 38 ayat (4) — kondisi Penunjukan Langsung [VERIFIKASI AUDITOR: pasal belum terdaftar di regulasi-kunci.md]"
-  - "Perpres 16/2018 Pasal 42 — kriteria PjL [VERIFIKASI AUDITOR: pasal belum terdaftar di regulasi-kunci.md]"
+  - "Perpres 16/2018 jo. 12/2021 jo. 46/2025 Pasal 38 ayat (4)-(5) — PjL B/PK/JL keadaan tertentu (46/2025 memperluas kriteria, a.l. program prioritas/arahan Presiden) ✅ terverifikasi"
+  - "Perpres 16/2018 jo. 46/2025 Pasal 41 ayat (4)-(5) — PjL Jasa Konsultansi keadaan tertentu ✅ terverifikasi (Pasal 42 = metode EVALUASI penawaran, sitasi lama keliru)"
   - "Perpres 16/2018 Pasal 6 — prinsip bersaing (Pasal 7 = etika; selaras regulasi-kunci.md)"
 
 metric:

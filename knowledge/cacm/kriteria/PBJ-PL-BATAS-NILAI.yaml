@@ -10,8 +10,8 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 Pasal 38 ayat (2) — PL Barang/Konstruksi/Jasa Lainnya ≤ Rp200jt [VERIFIKASI AUDITOR: nomor pasal belum terdaftar di regulasi-kunci.md; ambang ≤200jt sesuai checklist]"
-  - "Perpres 16/2018 Pasal 38 ayat (3) — PL Konsultansi ≤ Rp100jt [VERIFIKASI AUDITOR: nomor pasal belum terdaftar di regulasi-kunci.md; ambang ≤100jt sesuai checklist]"
+  - "Perpres 16/2018 jo. 12/2021 jo. 46/2025 Pasal 38 ayat (3) — PL Barang/Jasa Lainnya ≤ Rp200jt; Pekerjaan Konstruksi ≤ Rp400jt (46/2025) ✅ terverifikasi teks asli"
+  - "Perpres 16/2018 jo. 12/2021 Pasal 41 ayat (3) — PL Jasa Konsultansi ≤ Rp100jt ✅ terverifikasi teks asli (BUKAN Pasal 38)"
 
 metric:
   # Hitung jumlah paket PL Barang/Konstruksi/JasaLainnya dgn pagu > 200jt
@@ -43,3 +43,11 @@ promote:
   skill: reviu-pengadaan
   prefilled_obyek_tpl: "Reviu Kepatuhan Metode PL — {satker} TA {tahun}"
   prefilled_dasar_permintaan: "Perpres 16/2018 Pasal 38 ayat (2)"
+
+catatan_implementasi: |
+  ⚠️ Perpres 46/2025 membedakan ambang PL per jenis: Barang/Jasa Lainnya ≤Rp200jt,
+  Pekerjaan Konstruksi ≤Rp400jt, Jasa Konsultansi ≤Rp100jt (Ps 41(3)). Metric saat
+  ini memakai ambang tunggal >200jt (field `jenis` per paket belum tersedia di data
+  EWS) → paket KONSTRUKSI 200-400jt akan ter-flag padahal SAH. Perlakukan flag pada
+  paket konstruksi sebagai kandidat-periksa, bukan pelanggaran otomatis; refine
+  metric per-jenis saat data SIRUP membawa kolom jenis pengadaan.

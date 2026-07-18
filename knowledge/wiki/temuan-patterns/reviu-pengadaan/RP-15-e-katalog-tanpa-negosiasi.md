@@ -4,7 +4,7 @@ skill: reviu-pengadaan
 kategori: PBJ-PEMILIHAN
 severity: MEDIUM
 judul: "Pemilihan via E-Katalog/E-Purchasing Tanpa Negosiasi atau Mini Kompetisi"
-kriteria_baku: "Peraturan LKPP 9/2021 + Peraturan LKPP 4/2024 tentang Pengadaan Barang/Jasa Melalui Penyedia"
+kriteria_baku: "Peraturan LKPP 9/2021 (Toko Daring & Katalog Elektronik) [sumber pasal negosiasi/mini-kompetisi: VERIFIKASI AUDITOR — BUKAN Perlem 4/2024, terverifikasi 18 Jul 2026 Perlem 4/2024 = lampiran Design&Build]"
 tags: [e-katalog, e-purchasing, negosiasi, mini-kompetisi, lkpp]
 ---
 
@@ -22,7 +22,7 @@ Pengadaan dilakukan melalui E-Katalog atau E-Purchasing dengan satu atau lebih p
 
 ## Kriteria
 
-**Peraturan LKPP 9/2021** tentang Toko Daring dan Katalog Elektronik, **Peraturan LKPP 4/2024** tentang Pengadaan Barang/Jasa Melalui Penyedia:
+**Peraturan LKPP 9/2021** tentang Toko Daring dan Katalog Elektronik (⚠ atribusi lama ke Perlem 4/2024 KELIRU — Perlem 4/2024 terverifikasi hanya mengubah Lampiran III & VI Perlem 12/2021 ttg Design & Build; nomor pasal negosiasi/mini-kompetisi katalog: [VERIFIKASI AUDITOR]):
 - Bila tersedia **1 penyedia** di e-katalog → wajib dilakukan **negosiasi harga**.
 - Bila tersedia **> 1 penyedia** di e-katalog → wajib dilakukan **mini kompetisi** atau prosedur kompetitif setara.
 
