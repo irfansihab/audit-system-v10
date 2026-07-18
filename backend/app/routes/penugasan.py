@@ -1124,6 +1124,59 @@ async def list_temuan_review(
     return {"total": len(items), "counts": counts, "items": items}
 
 
+_LKE_SKILLS = {"evaluasi-sakip", "evaluasi-spip", "evaluasi-reformasi-birokrasi"}
+
+
+@router.get("/{penugasan_id}/penilaian-lke")
+async def get_penilaian_lke(
+    penugasan_id: int,
+    _current: tuple[User, Role] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Rekap penilaian LKE (skor/predikat per unsur) untuk penugasan evaluasi
+    ber-LKE. `is_lke=False` bila skill bukan rezim LKE atau rekap belum ada —
+    UI pakai flag ini untuk memilih tampilan (rekap+AoI vs KKSA biasa)."""
+    p = await _get_penugasan_or_404(db, penugasan_id)
+    skill = p.skill if isinstance(p.skill, str) else getattr(p.skill, "value", str(p.skill))
+    is_lke_skill = skill in _LKE_SKILLS
+    folder = Path(p.folder_path)
+    src = folder / "_KKP" / f"penilaian-lke-{skill}.json"
+    if not src.is_file():
+        # fallback: glob apa pun penilaian-lke-*.json (skill mungkin tak persis)
+        src = next(iter(sorted((folder / "_KKP").glob("penilaian-lke-*.json"))), None)
+    if not is_lke_skill or not src or not src.is_file():
+        return {"is_lke": is_lke_skill, "skill": skill, "tersedia": False,
+                "komponen": [], "total_pm": None, "total_apip": None, "predikat_akhir": None}
+    try:
+        pen = json.loads(src.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {"is_lke": True, "skill": skill, "tersedia": False, "komponen": [],
+                "total_pm": None, "total_apip": None, "predikat_akhir": None}
+    komp = pen.get("komponen") or []
+    # Normalisasi ringan + hitung selisih PM-APIP per unsur.
+    out_komp = []
+    for k in komp if isinstance(komp, list) else []:
+        if not isinstance(k, dict):
+            continue
+        pm, apip = k.get("nilai_pm"), k.get("nilai_apip")
+        try:
+            delta = round(float(pm) - float(apip), 2) if pm not in (None, "") and apip not in (None, "") else None
+        except (TypeError, ValueError):
+            delta = None
+        out_komp.append({
+            "nama": k.get("nama", ""), "bobot": k.get("bobot"),
+            "nilai_pm": pm, "nilai_apip": apip, "delta": delta,
+            "predikat": k.get("predikat", ""), "catatan": k.get("catatan"),
+        })
+    return {
+        "is_lke": True, "skill": skill, "tersedia": True,
+        "komponen": out_komp,
+        "total_pm": pen.get("total_pm"),
+        "total_apip": pen.get("total_apip") or pen.get("nilai_akhir"),
+        "predikat_akhir": pen.get("predikat_akhir") or pen.get("predikat"),
+    }
+
+
 class TemuanReviewAction(BaseModel):
     note: str | None = None
 

@@ -3339,6 +3339,65 @@ function SasaranApprovalPanel({ penugasanId, onSaved }: { penugasanId: number; o
   );
 }
 
+// Rekap Penilaian LKE (skill evaluasi ber-LKE): skor/predikat per unsur,
+// PM (auditee) vs APIP. Dipisah jadi komponen agar JSX panel tetap ringkas.
+function LkeRekapTable({ lke }: { lke: any }) {
+  const komponen: any[] = Array.isArray(lke?.komponen) ? lke.komponen : [];
+  return (
+    <div className="mb-4">
+      <h3 className="font-semibold text-primary-dark mb-1">
+        Rekap Penilaian LKE{' '}
+        <span className="text-xs font-normal text-gray-500">penjaminan APIP vs penilaian mandiri auditee</span>
+      </h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs border-collapse">
+          <thead>
+            <tr className="bg-gray-50 text-gray-600">
+              <th className="text-left px-2 py-1.5 border border-gray-200">Unsur / Komponen</th>
+              <th className="px-2 py-1.5 border border-gray-200">Bobot</th>
+              <th className="px-2 py-1.5 border border-gray-200">Nilai PM</th>
+              <th className="px-2 py-1.5 border border-gray-200">Nilai APIP</th>
+              <th className="px-2 py-1.5 border border-gray-200">Selisih</th>
+              <th className="px-2 py-1.5 border border-gray-200">Predikat</th>
+            </tr>
+          </thead>
+          <tbody>
+            {komponen.map((k: any, i: number) => {
+              const dNum = typeof k.delta === 'number';
+              const dPos = dNum && Number(k.delta) > 0;
+              const dText = dNum ? (dPos ? '+' + k.delta : String(k.delta)) : '—';
+              const dCls = 'px-2 py-1.5 border border-gray-200 text-center ' + (dPos ? 'text-red-600 font-semibold' : 'text-gray-500');
+              return (
+                <tr key={i} className="hover:bg-gray-50">
+                  <td className="px-2 py-1.5 border border-gray-200">{k.nama}</td>
+                  <td className="px-2 py-1.5 border border-gray-200 text-center">{k.bobot ?? '—'}</td>
+                  <td className="px-2 py-1.5 border border-gray-200 text-center">{k.nilai_pm ?? '—'}</td>
+                  <td className="px-2 py-1.5 border border-gray-200 text-center font-semibold">{k.nilai_apip ?? '—'}</td>
+                  <td className={dCls}>{dText}</td>
+                  <td className="px-2 py-1.5 border border-gray-200 text-center">{k.predikat || '—'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr className="bg-gray-100 font-semibold">
+              <td className="px-2 py-1.5 border border-gray-200">Total / Predikat Akhir</td>
+              <td className="px-2 py-1.5 border border-gray-200"></td>
+              <td className="px-2 py-1.5 border border-gray-200 text-center">{lke?.total_pm ?? '—'}</td>
+              <td className="px-2 py-1.5 border border-gray-200 text-center">{lke?.total_apip ?? '—'}</td>
+              <td className="px-2 py-1.5 border border-gray-200"></td>
+              <td className="px-2 py-1.5 border border-gray-200 text-center">
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300">{lke?.predikat_akhir ?? '—'}</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p className="text-[11px] text-amber-700 mt-1">Selisih positif = auditee menilai lebih tinggi dari APIP (perlu perhatian).</p>
+    </div>
+  );
+}
+
 function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
   const session = getSession();
   const role = session?.role_aktif || '';
@@ -3362,6 +3421,7 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
   } | undefined>>({});
 
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [lke, setLke] = useState<any>(null);
   const refresh = async () => {
     setLoading(true);
     setLoadError(null);
@@ -3374,7 +3434,10 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
       setLoadError(e.message);
     }
     finally { setLoading(false); }
+    // Rekap LKE (skill evaluasi ber-LKE) — best-effort, non-blocking.
+    try { setLke(await api.getPenilaianLke(penugasanId)); } catch { setLke(null); }
   };
+  const isLke = !!lke?.is_lke;
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [penugasanId]);
 
   const doSubmit = async () => {
@@ -3488,20 +3551,27 @@ function TemuanReviewPanel({ penugasanId }: { penugasanId: number }) {
       </div>
     );
   }
-  if (items.length === 0) {
-    return null; // hide panel jika tidak ada temuan
+  if (items.length === 0 && !(isLke && lke?.tersedia)) {
+    return null; // hide panel jika tidak ada temuan (dan bukan LKE ber-rekap)
   }
 
   return (
     <div className="mb-4 bg-white border border-emerald-200 rounded-lg p-4">
+      {isLke && lke?.tersedia ? <LkeRekapTable lke={lke} /> : null}
       <div className="flex justify-between items-start mb-2 gap-2 flex-wrap">
         <div>
           <h3 className="font-semibold text-primary-dark">
-            Temuan KKP <span className="text-xs font-normal text-emerald-700">· {items.length} temuan</span>
+            {isLke ? 'Area of Improvement (AoI)' : 'Temuan KKP'} <span className="text-xs font-normal text-emerald-700">· {items.length} {isLke ? 'catatan' : 'temuan'}</span>
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Periksa hasil AI. Perlu perbaikan? <b>Edit</b> langsung (terekam log) atau iterasi lewat <b>Chat AT</b>. Sudah benar semua? <b>Submit ke Ketua Tim</b>.
-          </p>
+          {isLke ? (
+            <p className="text-xs text-gray-500 mt-0.5">
+              Catatan perbaikan per unsur (bukan temuan audit K/K/S/A). Periksa hasil AI, <b>Edit</b> bila perlu, lalu <b>Submit ke Ketua Tim</b>.
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-0.5">
+              Periksa hasil AI. Perlu perbaikan? <b>Edit</b> langsung (terekam log) atau iterasi lewat <b>Chat AT</b>. Sudah benar semua? <b>Submit ke Ketua Tim</b>.
+            </p>
+          )}
         </div>
         <div className="flex gap-2 items-center flex-wrap">
         <button

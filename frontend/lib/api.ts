@@ -1366,6 +1366,18 @@ export const api = {
       { method: 'POST', body: JSON.stringify({ skill, instruksi: instruksi || '' }) }
     ),
 
+  /** Rekap penilaian LKE (skor/predikat per unsur) untuk penugasan evaluasi ber-LKE. */
+  getPenilaianLke: (penugasanId: number) =>
+    request<{
+      is_lke: boolean;
+      skill: string;
+      tersedia: boolean;
+      komponen: { nama: string; bobot: any; nilai_pm: any; nilai_apip: any; delta: number | null; predikat: string; catatan?: string }[];
+      total_pm: any;
+      total_apip: any;
+      predikat_akhir: any;
+    }>(`/penugasan/${penugasanId}/penilaian-lke`),
+
   /** Chat bebas berbasis pengetahuan wiki (RAG). Semua role. */
   chatAsk: (question: string, history: { role: string; content: string }[]) =>
     request<{ answer: string; sources: { jenis: string; nama: string; summary: string }[]; n_sumber: number }>(
