@@ -33,7 +33,7 @@ Prinsip kunci:
 
 ## Kapan Skill Ini Digunakan
 
-Untuk reviu dokumen/proses **administratif/prosedural** yang belum punya skill spesifik. Bila ada skill khusus (`reviu-rka-kl`, `reviu-pengadaan`, `reviu-spip`, `reviu-kinerja`), gunakan yang spesifik.
+Untuk reviu dokumen/proses **administratif/prosedural** yang belum punya skill spesifik. Bila ada skill khusus (`reviu-rka-kl`, `reviu-pengadaan`, `reviu-laporan-keuangan`, `reviu-pipk`, `reviu-pnbp`), gunakan yang spesifik. (Catatan: `reviu-spip`/`reviu-kinerja` BELUM tersedia — pakai skill ini dengan kriteria terkait.)
 
 Cocok untuk:
 - Reviu kepatuhan dokumen terhadap juklak/juknis tertentu
@@ -155,4 +155,4 @@ Ikuti `panduan-format-umum/PANDUAN.md`. Struktur isi:
 - Perlu analisis akar masalah / penyimpangan → gunakan **audit-umum**
 - Perlu menilai efektivitas/sistem secara substantif → gunakan **evaluasi-umum**
 - Unit kerja hanya butuh panduan/pendapat → gunakan **konsultansi-umum**
-- Tersedia skill reviu spesifik (`reviu-rka-kl`, `reviu-pengadaan`, `reviu-spip`, `reviu-kinerja`) → pakai yang spesifik
+- Tersedia skill reviu spesifik (`reviu-rka-kl`, `reviu-pengadaan`, `reviu-laporan-keuangan`, `reviu-pipk`, `reviu-pnbp`) → pakai yang spesifik

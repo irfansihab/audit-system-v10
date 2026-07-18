@@ -267,7 +267,7 @@ F. APRESIASI
 
 **Jangan gunakan skill ini ketika:**
 - Program sudah berjalan → gunakan **audit-kinerja**
-- LKj sudah disusun dan perlu direviu → gunakan **reviu-kinerja**
+- LKj sudah disusun dan perlu direviu → gunakan **reviu-umum** dengan kriteria LKj (skill khusus reviu-kinerja belum tersedia)
 - Sistem AKIP secara keseluruhan perlu dievaluasi → gunakan **evaluasi-sakip**
 
 ## Referensi yang Digunakan

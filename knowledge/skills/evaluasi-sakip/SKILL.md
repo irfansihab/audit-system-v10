@@ -187,18 +187,18 @@ KKP memuat: rekapitulasi nilai (PM vs APIP per komponen + predikat akhir), catat
 - **Tingkat keyakinan terbatas (evaluatif)** — bukan keyakinan memadai seperti audit.
 - **Penjaminan kualitas atas self-assessment**, bukan menilai dari nol; jangan menimpa kolom penilaian mandiri (PM) auditee maupun cell berformula/sheet agregator pada LKE.
 - Setiap predikat APIP wajib didukung kutipan/observasi spesifik dari bukti dukung — bukan menyalin nilai pihak lain.
-- Lingkup = sistem SAKIP (5 komponen). Bila penugasan menyasar kualitas dokumen LKj saja → gunakan **reviu-kinerja (LKj)**; bila menguji efektivitas program → **audit-kinerja**.
+- Lingkup = sistem SAKIP (5 komponen). Bila penugasan menyasar kualitas dokumen LKj saja → gunakan **reviu-umum** dengan kriteria LKj (skill khusus reviu-kinerja BELUM tersedia); bila menguji efektivitas program → **audit-kinerja**.
 
 ## Referensi
 
 - `references/01-kriteria-lke-permen88-2021.md` — kriteria lengkap (79) per sub-komponen.
 - `references/02-template-lhe.md` — template LHE AKIP.
-- `shared-kinerja-references/PANDUAN.md` — perbandingan dasar hukum, terminologi, dan format antar skill kinerja (audit-kinerja, evaluasi-sakip, reviu-kinerja, reviu-rka-kl).
+- `shared-kinerja-references/PANDUAN.md` — perbandingan dasar hukum, terminologi, dan format antar skill kinerja (audit-kinerja, evaluasi-sakip, reviu-rka-kl; reviu LKj via reviu-umum).
 - `panduan-format-umum/PANDUAN.md` — format Nota Dinas + LHE; sumber kebenaran doktrin unsur.
 
 ## Posisi dalam Keluarga Skill Kinerja
 
-> Termasuk keluarga skill kinerja (audit-kinerja, evaluasi-sakip, reviu-kinerja/LKj, reviu-rka-kl) — berpijak pada regulasi yang sama (Perpres 29/2014, PermenPAN-RB 53/2014 & 88/2021, PP 8/2006). Yang membedakan: tujuan, waktu, dan kedalaman.
+> Termasuk keluarga skill kinerja (audit-kinerja, evaluasi-sakip, reviu-rka-kl; reviu LKj via reviu-umum) — berpijak pada regulasi yang sama (Perpres 29/2014, PermenPAN-RB 53/2014 & 88/2021, PP 8/2006). Yang membedakan: tujuan, waktu, dan kedalaman.
 
 | Dimensi | Evaluasi SAKIP (skill ini) | Reviu LKj | Audit Kinerja | Reviu RKA/KL |
 |---|---|---|---|---|

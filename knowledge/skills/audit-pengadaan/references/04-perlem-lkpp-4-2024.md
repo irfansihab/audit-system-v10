@@ -1,5 +1,12 @@
 # Peraturan Lembaga LKPP No. 4 Tahun 2024: Design and Build Procurement
 
+> ## ⚠️ PERINGATAN — SUBSTANSI PERLEM BERTENTANGAN — [VERIFIKASI AUDITOR]
+> `wiki/konteks/regulasi-kunci.md` + pattern RP-15 menyebut **Perlem LKPP 4/2024 =
+> aturan e-purchasing/katalog (1 penyedia → wajib negosiasi; >1 → mini-kompetisi)**,
+> sedangkan file ini menyebutnya aturan **Design & Build**. Salah satu keliru nomor.
+> Sampai auditor memverifikasi nomor perlem yang benar: untuk sitasi temuan
+> e-katalog **pakai regulasi-kunci.md**; jangan kutip file ini sebagai dasar hukum.
+
 ## 1. Pendahuluan dan Latar Belakang
 
 ### Tujuan Regulasi

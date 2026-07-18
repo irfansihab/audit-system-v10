@@ -252,6 +252,7 @@ terima kasih."
 - [ ] Seksi Apresiasi di akhir
 - [ ] TTD + nama Inspektur
 - [ ] Catatan BSrE di setiap halaman (di-generate oleh sistem digital signing, cantumkan placeholder)
+- [ ] **Kodefikasi temuan SIM-HP di KKP** — `kode_kondisi` + `kode_rekomendasi` WAJIB, `kode_penyebab` semua jenis (sejak 17 Jun 2026): daftar kode & cara pakai di **`panduan-format-umum/kodefikasi-temuan.md`** (baca file itu saat menyusun temuan; berlaku SEMUA skill, bukan hanya audit)
 
 ---
 

@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -398,8 +399,15 @@ def build_hasil_reviu_blocks(kkp: dict, sa: dict, rekomendasi: dict, jenis: str,
     aspek_letter_seq = ["F.1", "F.2", "F.3", "F.4", "F.5", "F.6", "F.7", "F.8"]
 
     for idx, sid in enumerate(sorted(per_sasaran.keys())):
-        sasaran_obj = next(x for x in sa["sasaran"] if x["sasaran_id"] == sid)
-        section_title = f"{aspek_letter_seq[idx]}. {sasaran_obj['deskripsi']}"
+        # Guard (audit #E5): sasaran_id di temuan bisa tak ada di
+        # sasaran-assignment (agen mengetik "S-PBJ-01" vs "S-01") → dulu
+        # StopIteration crash; >8 kelompok → IndexError. Fallback jujur.
+        sasaran_obj = next((x for x in sa["sasaran"] if x.get("sasaran_id") == sid), None)
+        deskripsi = (sasaran_obj or {}).get(
+            "deskripsi", f"[Sasaran {sid} tidak terdaftar di sasaran-assignment — verifikasi]"
+        )
+        huruf = aspek_letter_seq[idx] if idx < len(aspek_letter_seq) else f"F.{idx + 1}"
+        section_title = f"{huruf}. {deskripsi}"
         blocks.append((section_title, {"bold": True, "size": 12}))
 
         for ti, t in enumerate(per_sasaran[sid], start=1):
@@ -424,7 +432,9 @@ def build_hasil_reviu_blocks(kkp: dict, sa: dict, rekomendasi: dict, jenis: str,
                 rek = rekomendasi.get(t["id_temuan"], "[Rekomendasi disusun bersama Pengendali Teknis berdasarkan exit meeting]")
                 blocks.append((rek, {"align": "justify", "indent": 0.3}))
 
-            sumber = "; ".join(f"{ds['file']} hal. {ds['halaman']}" for ds in t.get("dokumen_sumber", []))
+            sumber = "; ".join(
+                f"{ds.get('file', '?')} hal. {ds.get('halaman', '?')}" for ds in t.get("dokumen_sumber", [])
+            )
             blocks.append((f"Sumber dokumen: {sumber}", {"italic": True, "size": 9, "indent": 0.3, "align": "justify"}))
             blocks.append(("", {}))
     return blocks
@@ -3176,7 +3186,12 @@ def main() -> int:
     for _leftover in ("RINGKASAN_EKSEKUTIF", "H_APRESIASI", "E_GAMBARAN_UMUM"):
         replace_in_doc(doc, {_leftover: ""})
 
-    doc.save(out_path)
+    # Save ATOMIK (tmp + os.replace) — crash saat save jangan meninggalkan docx
+    # terpotong di path final: file korup itu tetap ter-pilih _finalize_jenis
+    # (newest-by-mtime) dan membuat QC membaca "" (audit #E11).
+    tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
+    doc.save(tmp_path)
+    os.replace(tmp_path, out_path)
     print(f"OK: {out_path}")
     print(f"  paragraphs={len(doc.paragraphs)} tables={len(doc.tables)}")
     return 0

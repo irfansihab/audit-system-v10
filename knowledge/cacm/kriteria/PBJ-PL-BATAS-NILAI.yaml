@@ -10,8 +10,8 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 Pasal 38 ayat (2) — PL Barang/Konstruksi/Jasa Lainnya ≤ Rp200jt"
-  - "Perpres 16/2018 Pasal 38 ayat (3) — PL Konsultansi ≤ Rp100jt"
+  - "Perpres 16/2018 Pasal 38 ayat (2) — PL Barang/Konstruksi/Jasa Lainnya ≤ Rp200jt [VERIFIKASI AUDITOR: nomor pasal belum terdaftar di regulasi-kunci.md; ambang ≤200jt sesuai checklist]"
+  - "Perpres 16/2018 Pasal 38 ayat (3) — PL Konsultansi ≤ Rp100jt [VERIFIKASI AUDITOR: nomor pasal belum terdaftar di regulasi-kunci.md; ambang ≤100jt sesuai checklist]"
 
 metric:
   # Hitung jumlah paket PL Barang/Konstruksi/JasaLainnya dgn pagu > 200jt

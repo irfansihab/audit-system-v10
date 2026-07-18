@@ -14,7 +14,7 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 Pasal 23 ayat (4) — DILARANG memecah pengadaan utk menghindari Tender"
+  - "Perpres 16/2018 Pasal 23 ayat (4) — DILARANG memecah pengadaan utk menghindari Tender [VERIFIKASI AUDITOR: nomor pasal belum terdaftar di regulasi-kunci.md]"
 
 metric:
   # Jumlah pasangan paket dgn similarity ≥0.7 dan kombinasi pagu > batas PL

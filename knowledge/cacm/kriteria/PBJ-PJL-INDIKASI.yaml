@@ -10,9 +10,9 @@ sumber_data: sirup
 satker_terapkan: [itjen, ekosdig, wasdig]
 
 regulasi:
-  - "Perpres 16/2018 Pasal 38 ayat (4) — kondisi Penunjukan Langsung"
-  - "Perpres 16/2018 Pasal 42 — kriteria PjL"
-  - "Perpres 16/2018 Pasal 7 huruf e/f — prinsip bersaing"
+  - "Perpres 16/2018 Pasal 38 ayat (4) — kondisi Penunjukan Langsung [VERIFIKASI AUDITOR: pasal belum terdaftar di regulasi-kunci.md]"
+  - "Perpres 16/2018 Pasal 42 — kriteria PjL [VERIFIKASI AUDITOR: pasal belum terdaftar di regulasi-kunci.md]"
+  - "Perpres 16/2018 Pasal 6 — prinsip bersaing (Pasal 7 = etika; selaras regulasi-kunci.md)"
 
 metric:
   # % total pagu PjL terhadap total pagu satker.

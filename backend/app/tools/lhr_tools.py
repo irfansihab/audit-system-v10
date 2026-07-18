@@ -328,15 +328,20 @@ def _finalize_jenis(folder: Path, skill: str) -> str | None:
     if not outs:
         return None
     produced = outs[-1]
+    adaptasi_warn: str | None = None
     if family != "reviu":
         try:
             n, m = _counts(folder)
             _apply_jenis(produced, family, up, title, n, m)
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001
+            # JANGAN telan senyap: tanpa adaptasi, LHA/LHE bisa terbit masih
+            # berbunyi "REVIU"/keyakinan terbatas utk penugasan audit (audit #E6).
+            adaptasi_warn = f"adaptasi jenis GAGAL ({type(exc).__name__}: {exc}) — periksa paradigma/metodologi di dokumen"
     final = produced.with_name(produced.name.replace("LHP-SUBSTANSI", prefix, 1))
     if final != produced:
         produced.replace(final)
+    if adaptasi_warn:
+        return f"{final.name}|WARNING:{adaptasi_warn}"
     return final.name
 
 

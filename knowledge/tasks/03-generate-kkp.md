@@ -230,7 +230,7 @@ Lihat `references/01-aspek-perencanaan.md` bagian "Pemeriksaan Konsistensi Inter
 **Prinsip analisis:**
 - Catat kondisi berdasarkan fakta dokumen — sertakan nama file + halaman/pasal sumber
 - Kriteria dari `references/` — gunakan teks normatif yang tepat (nomor pasal)
-- Sebab (hanya untuk audit penuh): analisis akar masalah administratif/prosedural
+- Sebab (SEMUA jenis pengawasan, doktrin 17 Jun 2026 — lihat `panduan-format-umum/PANDUAN.md`): audit = WAJIB gali akar penyebab; reviu/evaluasi/pemantauan = isi bila terbukti dari dokumen, bila tidak tulis jujur "Tidak ditemukan penyebab"/"Tidak cukup data" — JANGAN mengarang
 - Akibat: konsekuensi/risiko dari kondisi yang ditemukan; jika sesuai ketentuan nyatakan "tidak ada dampak negatif"
 - Setiap catatan memiliki **Judul Temuan** — kalimat deskriptif (lihat panduan judul di bawah)
 
