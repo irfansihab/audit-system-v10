@@ -142,12 +142,40 @@ def _extract_docx_text(path: Path) -> list[str]:
         return [f"[ERROR: {e}]"]
 
 
+def _extract_xlsx_text(path: Path) -> list[str]:
+    """Ekstrak teks dari .xlsx: satu 'halaman' per sheet, sel non-kosong ' | '."""
+    try:
+        import openpyxl
+    except ImportError:
+        return ["[xlsx not supported — install openpyxl]"]
+    try:
+        wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
+    except Exception as e:  # noqa: BLE001
+        return [f"[ERROR: {e}]"]
+    pages: list[str] = []
+    for ws in wb.worksheets:
+        rows = []
+        for row in ws.iter_rows(values_only=True):
+            cells = [str(c) for c in row if c is not None and str(c).strip() != ""]
+            if cells:
+                rows.append(" | ".join(cells))
+        if rows:
+            pages.append(f"[Sheet: {ws.title}]\n" + "\n".join(rows))
+    try:
+        wb.close()
+    except Exception:  # noqa: BLE001
+        pass
+    return pages
+
+
 def _extract_text(path: Path) -> list[str]:
     suffix = path.suffix.lower()
     if suffix == ".pdf":
         return _extract_pdf_text(path)
     elif suffix in (".docx", ".doc"):
         return _extract_docx_text(path)
+    elif suffix in (".xlsx", ".xlsm"):
+        return _extract_xlsx_text(path)
     return []
 
 

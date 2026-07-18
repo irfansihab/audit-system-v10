@@ -85,8 +85,52 @@ def _pdftotext_pages(path: str | Path) -> list[str]:
     return pages
 
 
+def _office_docx_pages(path) -> list[str]:
+    try:
+        import docx
+        d = docx.Document(str(path))
+    except Exception:  # noqa: BLE001
+        return []
+    parts = [p.text for p in d.paragraphs if p.text and p.text.strip()]
+    for t in getattr(d, "tables", []):
+        for row in t.rows:
+            cells = [c.text.strip() for c in row.cells if c.text and c.text.strip()]
+            if cells:
+                parts.append(" | ".join(cells))
+    txt = "\n".join(parts).strip()
+    return [txt] if txt else []
+
+
+def _office_xlsx_pages(path) -> list[str]:
+    try:
+        import openpyxl
+        wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
+    except Exception:  # noqa: BLE001
+        return []
+    pages = []
+    for ws in wb.worksheets:
+        rows = []
+        for row in ws.iter_rows(values_only=True):
+            cells = [str(c) for c in row if c is not None and str(c).strip() != ""]
+            if cells:
+                rows.append(" | ".join(cells))
+        if rows:
+            pages.append(f"[Sheet: {ws.title}]\n" + "\n".join(rows))
+    try:
+        wb.close()
+    except Exception:  # noqa: BLE001
+        pass
+    return pages
+
+
 def _extract_pages(pdf_path: Path) -> list[str]:
-    """Return list of page texts (delegate ke pdftotext)."""
+    """Return list of page texts. PDF → pdftotext; Word/.docx & Excel/.xlsx →
+    ekstraktor Office (agar TOR dalam Word/Excel juga diterima)."""
+    suf = Path(pdf_path).suffix.lower()
+    if suf == ".docx":
+        return _office_docx_pages(pdf_path)
+    if suf in (".xlsx", ".xlsm"):
+        return _office_xlsx_pages(pdf_path)
     return _pdftotext_pages(pdf_path)
 
 

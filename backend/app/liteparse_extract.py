@@ -93,6 +93,12 @@ def extract_pages(
             return [p.read_text(encoding="utf-8", errors="replace")]
         except OSError:
             return []
+    # Office (Word .docx / Excel .xlsx): ekstrak deterministik (bukan lewat
+    # LiteParse yang PDF-centric) supaya upload Word/Excel diterima.
+    from app.office_extract import extract_office_pages
+    office = extract_office_pages(p)
+    if office is not None:
+        return office
     parser = _get_parser(
         _OCR_DEFAULT if ocr is None else ocr,
         _QUIET_DEFAULT if quiet is None else quiet,
