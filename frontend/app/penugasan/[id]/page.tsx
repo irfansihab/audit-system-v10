@@ -58,14 +58,25 @@ export default function DetailPenugasanPage() {
     setError(null);
     setLhpStatus(null);
     setStage(defaultStageForRole(s.role_aktif));
+    // Stale-guard (audit #F4): pindah cepat A→B tanpa pembatalan bisa membuat
+    // respons A (lambat) tiba TERAKHIR → halaman B menampilkan data penugasan A.
+    let stale = false;
     Promise.all([api.getPenugasan(id), api.listDokumen(id)])
       .then(([p, d]) => {
+        if (stale) return;
         setPenugasan(p);
         setDokumen(d);
       })
-      .catch((e) => setError(e.message));
+      .catch((e) => {
+        if (!stale) setError(e.message);
+      });
     // Status reviu LHP — opsional, abaikan error (fitur tahapan 6).
-    api.listLhpReview(id).then((r) => setLhpStatus(r.latest_status)).catch(() => {});
+    api.listLhpReview(id).then((r) => {
+      if (!stale) setLhpStatus(r.latest_status);
+    }).catch(() => {});
+    return () => {
+      stale = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -318,7 +329,7 @@ function SurveiPendahuluanButton({ penugasanId, skill }: { penugasanId: number; 
     try {
       const r = await api.renderSurveyPendahuluan(penugasanId);
       setDone(r.name);
-      toast.success(`Laporan Survei Pendahuluan dibuat: ${r.name} (lihat tab Berkas)`);
+      toast.success(`Laporan Survei Pendahuluan dibuat: ${r.name} (lihat kartu Berkas/File)`);
     } catch (e) {
       toast.error(`Survei pendahuluan gagal: ${(e as Error).message}`);
     } finally {
@@ -330,7 +341,7 @@ function SurveiPendahuluanButton({ penugasanId, skill }: { penugasanId: number; 
       <div className="font-semibold text-sm text-primary-dark mb-1">Laporan Survei Pendahuluan</div>
       <p className="text-xs text-gray-600 mb-3">
         Rangkum orientasi objek + profil risiko + hipotesis area pengujian jadi .docx (dari context.md yang
-        sudah digenerate). Hasil bisa diunduh di tab Berkas (<code className="bg-violet-100 px-1 rounded">_SURVEY</code>).
+        sudah digenerate). Hasil bisa diunduh di daftar berkas (<code className="bg-violet-100 px-1 rounded">_SURVEY</code>).
       </p>
       <button onClick={onClick} disabled={busy}
         className="px-3 py-1.5 rounded-lg text-sm font-medium bg-primary text-white disabled:opacity-60">
@@ -900,7 +911,7 @@ function DokumenTab({
 
       {allReady && (
         <div className="mt-4 p-3 rounded bg-green-50 border border-green-200 text-green-700 text-sm">
-          ✓ Semua dokumen siap dianalisis. Buka tab <strong>Chat AT</strong> untuk memulai analisis.
+          ✓ Semua dokumen siap dianalisis. Buka <strong>Tahapan 3 — KKP</strong> untuk memulai analisis.
         </div>
       )}
     </div>
@@ -1005,10 +1016,22 @@ function ChatTab({
   // Live streaming state — text & tool_use chip yang sedang ter-stream.
   const [streamText, setStreamText] = useState('');
   const [streamTools, setStreamTools] = useState<Array<{ tool: string; input: any }>>([]);
+  // Error run terakhir — dulu di-set tapi TIDAK PERNAH ditampilkan (run gagal
+  // start = spinner hilang tanpa pesan apa pun). (Audit #F2)
+  const [streamError, setStreamError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const esRef = useRef<EventSource | null>(null);
+  // Timer elapsed di-ref supaya bisa di-clear dari detach/unmount/stream baru —
+  // dulu hanya di-clear di jalur happy-path → interval bocor & elapsed flicker. (#F1)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const agent = role === 'AT' ? 'anggota_tim' : 'ketua_tim';
+
+  // Role-gate UI (audit #F3): kartu tahapan bisa diklik semua role, tapi backend
+  // menolak stream 403 (anggota_tim=AT; ketua_tim=KT/PT) — dulu tombol tetap
+  // aktif dan gagalnya senyap. Cocokkan gate UI dengan _check_agent_role backend.
+  const myRole = getSession()?.role_aktif ?? '?';
+  const roleBolehJalan = role === 'AT' ? myRole === 'AT' : myRole === 'KT' || myRole === 'PT';
 
   // Load history saat mount (atau saat penugasan/role change)
   const loadHistory = async () => {
@@ -1029,13 +1052,17 @@ function ChatTab({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [penugasanId, agent]);
 
-  // Cleanup: tutup EventSource saat unmount / penugasan ganti supaya tidak ada
-  // koneksi nyangkut di latar setelah pindah halaman.
+  // Cleanup: tutup EventSource + timer saat unmount / penugasan ganti supaya
+  // tidak ada koneksi/interval nyangkut setelah pindah halaman.
   useEffect(() => {
     return () => {
       if (esRef.current) {
         esRef.current.close();
         esRef.current = null;
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, [penugasanId, agent]);
@@ -1056,10 +1083,15 @@ function ChatTab({
       esRef.current.close();
       esRef.current = null;
     }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     // Untuk start (klik user) → langsung running. Untuk attach (probe) → tunggu
     // event `start` dari backend supaya tidak flicker "running" saat sebenarnya idle.
     setRunning(!opts.isAttach);
     setReconnected(opts.isAttach);
+    setStreamError(null);
     // Pada attach, backend me-replay buffer dari awal → mulai dari teks kosong
     // supaya tidak dobel dengan sisa stream sebelumnya.
     setStreamText('');
@@ -1067,6 +1099,7 @@ function ChatTab({
     setElapsed(0);
     const startTime = Date.now();
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startTime) / 1000)), 1000);
+    timerRef.current = timer;
 
     let gotError: string | null = null;
     let finished = false;
@@ -1075,6 +1108,7 @@ function ChatTab({
 
     const teardown = () => {
       clearInterval(timer);
+      if (timerRef.current === timer) timerRef.current = null;
       if (esRef.current === es) esRef.current = null;
       es.close();
     };
@@ -1085,6 +1119,9 @@ function ChatTab({
       teardown();
       setRunning(false);
       setReconnected(false);
+      // Tampilkan error run (dulu gotError di-set tapi tak pernah dibaca —
+      // run gagal start berakhir tanpa pesan apa pun).
+      setStreamError(gotError);
       try {
         const res = await api.getAgentHistory(agent as any, penugasanId);
         setHistory(res.runs);
@@ -1158,11 +1195,15 @@ function ChatTab({
   };
 
   // "Stop" sekarang = LEPAS jendela (run tetap jalan di backend). Untuk lihat
-  // lagi, buka tab Chat → otomatis reconnect.
+  // lagi, buka Tahapan 3 (Chat) → otomatis reconnect.
   const detach = () => {
     if (esRef.current) {
       esRef.current.close();
       esRef.current = null;
+    }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
     setRunning(false);
     setReconnected(false);
@@ -1311,18 +1352,30 @@ function ChatTab({
         )}
       </div>
 
+      {streamError && (
+        <div className="mb-2 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+          ⚠ Run gagal: {streamError}
+        </div>
+      )}
+      {!roleBolehJalan && (
+        <div className="mb-2 p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+          Chat ini milik agen <b>{role === 'AT' ? 'Anggota Tim' : 'Ketua Tim'}</b> — role Anda
+          ({myRole}) hanya bisa <b>melihat</b> history, tidak bisa menjalankan.
+        </div>
+      )}
       <textarea
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         className="w-full border border-gray-300 rounded-lg p-3 text-sm h-24"
         placeholder="Tulis perintah ke agen…"
-        disabled={running}
+        disabled={running || !roleBolehJalan}
       />
       <div className="mt-2 flex gap-2">
         <button
           onClick={start}
-          disabled={running}
+          disabled={running || !roleBolehJalan}
           className="px-4 py-2 rounded bg-primary text-white text-sm font-semibold hover:bg-primary-dark disabled:opacity-40"
+          title={roleBolehJalan ? undefined : 'Role Anda tidak berwenang menjalankan agen ini'}
         >
           {running ? `⟳ Streaming (${elapsed}s)…` : '▶ Jalankan (streaming)'}
         </button>
@@ -1798,7 +1851,7 @@ function SetupPenugasanTab({
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-sm text-blue-900">
           <strong>Konteks (peran AT).</strong> Klik <strong>Generate Context (AI)</strong> di bawah —
           AI menyusun context.md dari hasil digest dokumen + sasaran. Setelah jadi, <strong>review &amp; edit</strong>{' '}
-          bila perlu tambah informasi, lalu <strong>Simpan</strong>. Baru jalankan <strong>Analisis AI</strong> di tab Chat AT.
+          bila perlu tambah informasi, lalu <strong>Simpan</strong>. Baru jalankan <strong>Analisis AI</strong> di Tahapan 3 — KKP.
           Bagian sasaran hanya menampilkan <strong>sasaran yang ditugaskan kepada Anda</strong> ({currentUserName}) — read-only.
         </div>
       ) : (

@@ -20,7 +20,15 @@ export function clearToken(): void {
 export function getSession(): Session | null {
   if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem('audit_v7_session');
-  return raw ? (JSON.parse(raw) as Session) : null;
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as Session;
+  } catch {
+    // Session korup/format lama — dulu throw di sini men-crash SELURUH halaman
+    // (dipanggil saat render) sampai user membersihkan localStorage manual. (#F9)
+    clearToken();
+    return null;
+  }
 }
 
 export function setSession(session: Session): void {
