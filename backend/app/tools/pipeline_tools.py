@@ -334,6 +334,39 @@ def _strip_big(d, _depth=0):
     return d
 
 
+# Budget char untuk digest LENGKAP satu RO (RKA-K/L). Lebih besar dari cap
+# ringkas 8000 karena ini memang view detail (komponen+akun+rincian) — cukup
+# untuk 1 RO tipikal tanpa memaksa agen baca ulang PDF (read_pdf_page).
+_RO_DIGEST_BUDGET = 30000
+
+
+def _fit_ro_digest(payload: dict) -> str:
+    """Serialisasi digest 1 RO sebagai JSON yang SELALU valid dan muat budget.
+
+    Bila kelewat besar, pangkas `rincian` per akun lebih dulu (paling voluminous,
+    paling tidak kritis utk pass pertama) — bukan memotong string mentah yang
+    bikin JSON rusak. Komponen+akun+total (backbone analisis) selalu dipertahankan.
+    """
+    s = json.dumps(payload, ensure_ascii=False)
+    if len(s) <= _RO_DIGEST_BUDGET:
+        return s
+    rab = payload.get("rab") if isinstance(payload.get("rab"), dict) else {}
+    trimmed = 0
+    for k in (rab.get("komponen") or []):
+        for a in (k.get("akun") or []):
+            if a.get("rincian"):
+                a["_rincian_dipangkas"] = len(a["rincian"])
+                a["rincian"] = []
+                trimmed += 1
+    if trimmed:
+        rab["_catatan"] = (
+            f"rincian {trimmed} akun dipangkas agar muat; panggil read_pdf_page "
+            "untuk detail item bila perlu verifikasi harga satuan."
+        )
+    s = json.dumps(payload, ensure_ascii=False)
+    return s if len(s) <= _RO_DIGEST_BUDGET else s[:_RO_DIGEST_BUDGET]
+
+
 @tool(
     "read_digest",
     "Baca DIGEST terstruktur hasil run_batch_* mode digest-only (full-AI). "
@@ -387,7 +420,7 @@ async def read_digest(args: dict) -> dict:
             tor = _strip_big(safe_read_json(kkp / f"tor-{ro_sel}.json") or {})
             rab = _strip_big(safe_read_json(kkp / f"rab-{ro_sel}.json") or {})
             payload = {"jenis": "rka-kl", "ro": ro_sel, "tor": tor, "rab": rab}
-            return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)[:8000]}]}
+            return {"content": [{"type": "text", "text": _fit_ro_digest(payload)}]}
         # index semua RO (ringkas)
         idx = []
         for rid in ids:
@@ -397,7 +430,7 @@ async def read_digest(args: dict) -> dict:
                 "ro": rid,
                 "tor_nama": (tor.get("nama_ro") or tor.get("nama") or tor.get("judul") or "")[:120],
                 "tor_keys": [k for k in tor.keys() if k not in _DIGEST_BIG_KEYS][:15],
-                "rab_total": rab.get("total") or rab.get("nilai_total"),
+                "rab_total": rab.get("total_pagu") or rab.get("total") or rab.get("nilai_total"),
                 "rab_komponen": rab.get("komponen_count") or len(rab.get("komponen", []) or []),
             })
         payload = {"jenis": "rka-kl", "total_ro": len(ids), "index": idx,

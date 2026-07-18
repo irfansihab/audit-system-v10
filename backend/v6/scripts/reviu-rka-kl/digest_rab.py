@@ -123,8 +123,87 @@ def parse_identitas(pages: list[str]) -> dict:
     return out
 
 
+# --- Format SAKTI riil (RKA-K/L cetak DJA/SAKTI) ---
+# Output header 6-segmen: "059.GK.7443.01.QDJ.001 STARTUP DIGITAL ... 54,450,000,000"
+_OUTPUT_HEADER_RE = re.compile(
+    r"^(\d{3}\.[A-Z]{2}\.\d{4}\.\d{2}\.[A-Z]{3}\.\d{3})\s+(.+?)\s+(\d{1,3}(?:,\d{3})+)\s*$",
+    re.M,
+)
+# Komponen 3-digit telanjang: "051 Inkubasi Startup Digital 25,496,236,000"
+_SAKTI_KOMP_RE = re.compile(r"^(\d{3})\s+([A-Za-z][^\n]*?)\s+(\d{1,3}(?:,\d{3})+)\s*$", re.M)
+# Akun 6-digit: "521211 Belanja Bahan 351,122,000" (opsional prefix PNBP)
+_SAKTI_AKUN_RE = re.compile(
+    r"^(?:PNBP\s+)?(\d{6})\s+([Bb]elanja\s+[A-Za-z ]+?)\s+(\d{1,3}(?:,\d{3})+)\s*(?:-)?\s*$",
+    re.M,
+)
+# Rincian: deskripsi diakhiri "<volume> <harga_satuan> <total> [referensi]"
+_SAKTI_RINCIAN_RE = re.compile(
+    r"^(.+?)\s+(\d+)\s+(\d{1,3}(?:,\d{3})+)\s+(\d{1,3}(?:,\d{3})+)(?:\s+referensi)?\s*$",
+    re.M,
+)
+
+
+def _output_total(full_text: str) -> int | None:
+    """Total pagu dari baris output header SAKTI (6-segmen dotted)."""
+    m = _OUTPUT_HEADER_RE.search(full_text)
+    return _parse_number(m.group(3)) if m else None
+
+
+def _parse_komponen_sakti(full_text: str) -> list[dict]:
+    """Fallback parser untuk format RAB SAKTI riil (komponen 3-digit telanjang).
+
+    Dipakai bila komp_pattern format demo (kode dotted 4-segmen) tidak match.
+    Menghasilkan skema yang sama: komponen → akun → rincian.
+    """
+    heads = list(_SAKTI_KOMP_RE.finditer(full_text))
+    components: list[dict] = []
+    for i, m in enumerate(heads):
+        start = m.end()
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(full_text)
+        seg = full_text[start:end]
+        akun_matches = list(_SAKTI_AKUN_RE.finditer(seg))
+        akun_list = []
+        for j, am in enumerate(akun_matches):
+            ak_start = am.end()
+            ak_end = akun_matches[j + 1].start() if j + 1 < len(akun_matches) else len(seg)
+            ak_seg = seg[ak_start:ak_end]
+            rincian_lines = []
+            for rm in _SAKTI_RINCIAN_RE.finditer(ak_seg):
+                harga = _parse_number(rm.group(3))
+                tot = _parse_number(rm.group(4))
+                if harga is None or tot is None:
+                    continue
+                rincian_lines.append({
+                    "deskripsi": rm.group(1).strip().rstrip("-").strip(),
+                    "volume": int(rm.group(2)),
+                    "satuan": None,  # satuan majemuk SAKTI tetap di deskripsi
+                    "harga_satuan": harga,
+                    "total": tot,
+                })
+            akun_list.append({
+                "kode_akun": am.group(1),
+                "nama_akun": am.group(2).strip(),
+                "total": _parse_number(am.group(3)),
+                "rincian": rincian_lines,
+                "jumlah_rincian": len(rincian_lines),
+            })
+        components.append({
+            "kode": m.group(1),
+            "nama": m.group(2).strip(),
+            "total": _parse_number(m.group(3)),
+            "akun": akun_list,
+            "jumlah_akun": len(akun_list),
+        })
+    return components
+
+
 def parse_komponen(pages: list[str]) -> list[dict]:
-    """Parse struktur komponen → akun → rincian dari teks RAB."""
+    """Parse struktur komponen → akun → rincian dari teks RAB.
+
+    Dua format didukung: (1) demo/lama kode dotted 4-segmen `7444.QDC.001.051`;
+    (2) SAKTI riil komponen 3-digit telanjang `051 Nama ...` — dipakai sebagai
+    fallback bila format (1) tidak menghasilkan komponen.
+    """
     full_text = "\n".join(pages)
 
     # Komponen header pattern: "7444.QDC.001.051 Nama Komponen  2,000,000,000"
@@ -204,6 +283,10 @@ def parse_komponen(pages: list[str]) -> list[dict]:
             "jumlah_akun": len(akun_list),
         })
 
+    # Fallback: format SAKTI riil (komponen 3-digit telanjang) bila format demo nihil.
+    if not components:
+        components = _parse_komponen_sakti(full_text)
+
     return components
 
 
@@ -235,7 +318,14 @@ def digest_rab(pdf_path: str | Path) -> dict:
     identitas = parse_identitas(pages)
     komponen = parse_komponen(pages)
 
-    total_pagu = identitas.get("alokasi_dana") or sum((k.get("total") or 0) for k in komponen)
+    # total_pagu: prioritas alokasi_dana identitas → total baris output header SAKTI
+    # → jumlah total komponen. Header SAKTI dipakai agar RAB riil (yang tak punya
+    # baris "Alokasi Dana") tetap punya total_pagu benar, bukan 0.
+    total_pagu = (
+        identitas.get("alokasi_dana")
+        or _output_total("\n".join(pages))
+        or sum((k.get("total") or 0) for k in komponen)
+    )
 
     # Pre-computed indices untuk cross-check
     indices = {

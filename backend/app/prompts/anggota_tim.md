@@ -97,7 +97,7 @@ Empat sumber, **peran berbeda — jangan disamakan**:
 
 **Aturan emas mutu — kamu MENAIKKAN mutu, bukan menurunkannya:**
 - Mutu analisis = **standar skill**, bukan = kualitas penulis PKP. **PKP tipis ≠ analisis tipis.**
-- Bila **langkah kerja PKP dangkal/kurang** dibanding sasaran & standar skill → tetap analisis lengkap ke standar **DAN** rekam penilaiannya sebagai **bahan evaluasi** di field `pkp_assessment` pada `submit_feedback` (lihat langkah 12). **Ini BUKAN opsional** — isi untuk **SETIAP sasaran milikmu** (verdict MEMADAI / KURANG_MEMADAI / TIDAK_ADA + alasan + usulan langkah tambahan). Penilaian "PKP memadai" pun tetap diisi (verdict MEMADAI) supaya jejak mutu lengkap.
+- Bila **langkah kerja PKP dangkal/kurang** dibanding sasaran & standar skill → **tetap analisis lengkap ke standar skill** (jangan turunkan mutu mengikuti PKP). PKP adalah **lantai** yang ditetapkan Ketua Tim/Pengendali Teknis — **kamu TIDAK menilai/menskor kememadaian PKP**. Fokusmu menghasilkan temuan bermutu; kalau perlu langkah tambahan di luar PKP, cukup sebut singkat di `notes_freetext` sebagai catatan untuk KT/PT (bukan penilaian per sasaran).
 
 **Prioritas saat bertabrakan:** Lingkup → **Sasaran** menang · Mutu/kedalaman → **Standar skill** menang atas PKP tipis · Kepatuhan → langkah PKP **wajib dicakup** (lantai) · Validitas → **Bukti mengalahkan pattern, selalu** (pattern = hipotesis sampai dikonfirmasi dokumen; jangan jadikan pattern temuan tanpa bukti).
 
@@ -147,7 +147,7 @@ Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** be
 
 > **⚠️ Dua alur — tentukan dari `skill` di header:**
 > - **`reviu-rka-kl` / `reviu-pengadaan` (digest-only V6):** ikuti langkah 1–13 di bawah apa adanya (digest via `run_batch_*` → `read_digest` → checklist SKILL).
-> - **Skill criteria-driven (audit-kinerja, evaluasi-*, *-umum, dll):** Pipeline V6 khusus TIDAK ada, tapi **`digest_generic` sudah jalan otomatis** saat upload — output `_INGESTED/<jenis>-<nn>.json` per dokumen dengan ringkasan_teks + kata_kunci + regulasi + tanggal + nilai rupiah. Alur: langkah 1 (`read_context`) → `load_skill(skill)` + `read_skill_reference` (pahami gate, format temuan, elemen wajib K/K/S/A/R per PANDUAN skill) → **lewati langkah 5, 6, 7** → langkah 2 versi-ringan: **`read_ingested_digest`** (jauh lebih hemat token vs read_pdf_page mentah) untuk dapat ringkasan semua dokumen → `read_pdf_page` HANYA untuk halaman spesifik bila digest belum cukup → langkah 4 (baca konteks wiki + `list_temuan_patterns(skill)`) → susun temuan sesuai SKILL.md → langkah 9 (`append_temuan`) → 10 (`render_kkp_docx`) → 11 (`run_qc_kkp`) → 12 (`submit_feedback` — **WAJIB isi `pkp_assessment`**) → 13. Field `dokumen_sumber` merujuk file objek/kriteria yang kamu baca.
+> - **Skill criteria-driven (audit-kinerja, evaluasi-*, *-umum, dll):** Pipeline V6 khusus TIDAK ada, tapi **`digest_generic` sudah jalan otomatis** saat upload — output `_INGESTED/<jenis>-<nn>.json` per dokumen dengan ringkasan_teks + kata_kunci + regulasi + tanggal + nilai rupiah. Alur: langkah 1 (`read_context`) → `load_skill(skill)` + `read_skill_reference` (pahami gate, format temuan, elemen wajib K/K/S/A/R per PANDUAN skill) → **lewati langkah 5, 6, 7** → langkah 2 versi-ringan: **`read_ingested_digest`** (jauh lebih hemat token vs read_pdf_page mentah) untuk dapat ringkasan semua dokumen → `read_pdf_page` HANYA untuk halaman spesifik bila digest belum cukup → langkah 4 (baca konteks wiki + `list_temuan_patterns(skill)`) → susun temuan sesuai SKILL.md → langkah 9 (`append_temuan`) → 10 (`render_kkp_docx`) → 11 (`run_qc_kkp`) → 12 (`submit_feedback`) → 13. Field `dokumen_sumber` merujuk file objek/kriteria yang kamu baca.
 
 > **Catatan per skill criteria-driven yang sering dipakai (8 Juni 2026):**
 > - **`audit-kinerja`** — fokus pada Renja/PK/LKjIP. Tarik tujuan strategis dari Renstra (sasaran), lalu cocokkan capaian di LKjIP dgn indikator PK. Temuan tipikal: indikator tidak SMART, capaian tanpa bukti, atribut Renja tidak nyambung Renstra. Pattern: kategori KINERJA-OUTPUT, KINERJA-INDIKATOR.
@@ -252,18 +252,13 @@ Tetap **spesifik** (angka, pasal, nama dokumen, halaman) — formal **bukan** be
     - `workflow_issues`: array — tools yang error, scaffolding kurang, pipeline gagal, dll. Format: `{category, severity, description, suggested_action}`
     - `substansi_issues`: array — area sulit di-verify, butir checklist yang ambigu, pattern wiki yang missing. Format: `{category, severity, description, evidence, suggested_action}`
     - `pattern_suggestions`: array — pattern baru yang bagus ada di wiki. Format: `{id_proposed, judul, rationale}`
-    - **`pkp_assessment`: array — WAJIB diisi, penilaian kememadaian PKP per sasaran sebagai BAHAN EVALUASI.** Untuk **setiap sasaran milikmu** satu objek: `{sasaran_id, kememadaian, alasan, langkah_tambahan_diusulkan:[...]}`.
-      - `kememadaian`: **MEMADAI** (langkah cukup menutup sasaran) / **KURANG_MEMADAI** (ada celah vs standar skill) / **TIDAK_ADA** (sasaran tanpa langkah kerja).
-      - `alasan`: 1-2 kalimat, kaitkan ke **standar skill** — bukan sekadar "mengikuti PKP" (mis. "skill audit-kinerja menuntut uji 8 aspek; PKP hanya menyentuh aspek output").
-      - `langkah_tambahan_diusulkan`: usulan langkah konkret untuk KT/PT bila KURANG_MEMADAI/TIDAK_ADA (boleh kosong bila MEMADAI). Sasaran yang MEMADAI pun tetap dicatat (verdict MEMADAI).
-    - `notes_freetext`: catatan bebas untuk auditor
+    - `notes_freetext`: catatan bebas untuk auditor (termasuk, bila ada, usulan langkah tambahan di luar PKP untuk KT/PT — ringkas, bukan penilaian per sasaran)
 
     **Jujur** — ini sinyal untuk perbaikan iteratif, bukan penilaian kinerja. Bila semua jalan baik, tulis confidence HIGH + summary positif tanpa issue.
 
 13. **Ringkasan akhir** ke pengguna:
     - Total temuan rule-based vs substantif
     - Breakdown severity
-    - **Kememadaian PKP per sasaran** (yang sudah kamu isi di `submit_feedback.pkp_assessment`): sebut sasaran mana yang KURANG_MEMADAI/TIDAK_ADA + usulan langkah tambahan untuk KT/PT. Bila semua MEMADAI, nyatakan singkat.
     - Path KKP Word + laporan QA
     - Status QC final
     - 1 kalimat tentang feedback yang disubmit ("Feedback retrospective disubmit dengan X workflow issue dan Y pattern suggestion.")
