@@ -61,6 +61,18 @@ Objek reviu: **data & dokumen PNBP** — target & realisasi PNBP, SK/penetapan t
 
 > Tiap elemen **tidak sesuai** → catatan **K/K/S/A** (Kondisi = fakta PNBP: nilai/wajib bayar/tanggal + dokumen; Kriteria kutip **presisi** UU 9/2018 / PP 43/2023 / PMK 155/2021 jo. 58/2023 / Permen Kominfo 1/2024 + pasal; Sebab anti-mengarang; Akibat = risiko kurang pungut/terlambat setor/salah guna — **tanpa** menghitung kerugian negara; **indikasi kurang bayar material → eskalasi audit**). Elemen sesuai → "telah memenuhi". Bila versi berlaku suatu PP/PMK tak dapat dipastikan untuk periode objek → catatan/"tidak cukup data", bukan deviasi terkonfirmasi.
 
+## Penutupan Penilaian per Aspek (WAJIB — bukan exception-only)
+
+Setelah menelusuri seluruh checklist/aspek di atas, **tutup TIAP butir** dengan kesimpulan eksplisit — jangan hanya melaporkan yang bermasalah. Untuk **setiap** butir/aspek yang relevan dengan sasaran, beri kesimpulan:
+
+- **SESUAI** — butir memenuhi kriteria (direkam sebagai kesimpulan penilaian; tak perlu jadi temuan).
+- **TIDAK SESUAI** — ada deviasi → rinci jadi **temuan** (K/K/S/A) sesuai Format Unsur Temuan.
+- **TIDAK CUKUP DATA** — dokumen/data tak memadai untuk menyimpulkan → catat + (bila material) rekomendasikan langkah lanjut. **Jangan mengarang** kesimpulan.
+
+Setiap butir sertakan **dasar** singkat (bukti dari dokumen — nama file + halaman/angka). Tujuannya agar **cakupan penilaian terdokumentasi** untuk Ketua Tim/Pengendali Teknis — terlihat apa yang sudah dinilai memadai, bukan sekadar daftar masalah. Terapkan **JUDGMENT substansi** (mutu, kelengkapan, konsistensi, kecukupan informasi), jangan berhenti di diskrepansi termudah (nomor/label/terbilang).
+
+> Perekaman kesimpulan tiap aspek & render tabelnya diorkestrasikan oleh harness/INTEGRAL (di v7: tool `write_penilaian_aspek`, dipanggil sebelum render KKP). Skill ini menetapkan **substansinya**: butir apa yang dinilai & bagaimana menyimpulkannya.
+
 ## Format Unsur Temuan (KKSAR)
 
 Catatan reviu **K/K/S/A** — **Kondisi** (fakta PNBP: nilai/wajib bayar/tanggal + dokumen), **Kriteria** (UU 9/2018/PP tarif/PMK + pasal, kutip **presisi**), **Sebab** (anti-mengarang), **Akibat** (risiko PNBP kurang pungut/terlambat setor/salah guna — **tanpa perhitungan kerugian negara**; indikasi kurang bayar signifikan → eskalasi audit). **Rekomendasi di LHR.** Doktrin: `panduan-format-umum/PANDUAN.md`.

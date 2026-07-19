@@ -36,11 +36,11 @@ Paradigma audit adalah **pengujian bukti yang sangat mendalam** dengan verifikas
 
 **Eskalasi:** indikasi kerugian negara material (>Rp 1 M) atau indikasi pidana → flag MERAH + eskalasi ke pimpinan penugasan.
 
-## Sumber Fakta: Digest Pengadaan
+## Sumber Fakta: Digest Dokumen Pengadaan
 
-Fakta penilaian tersedia dalam **digest pengadaan** (`_KKP/pengadaan-digest.json`) — hasil scan folder + klasifikasi jenis dokumen (KAK/HPS/Kontrak/BAST/**dokumen pemeriksaan**/Pembayaran/dll.) **by nama file + fallback by ISI** (nama dokumen beda tiap direktorat — dikenali dari fungsi dalam teksnya), lalu di-parse menjadi fakta terstruktur: nomor, tanggal, nilai (Rp), periode, SLA, jaminan, `elemen_justifikasi`, `lingkup_komponen`, `identifikasi_kebutuhan`, rincian pemeriksaan. **Tidak ada rule deterministik** — kamu **menilai sendiri** fakta digest terhadap Checklist & Analisis Substantif di bawah (judgment), dengan keyakinan **memadai**, lingkup **seluruh siklus**.
+Fakta penilaian tersedia dalam **digest generik per dokumen** (`_INGESTED/<jenis>-NN.json`, dibaca via **`read_ingested_digest`**) — setiap dokumen (KAK/HPS/Kontrak/BAST/**dokumen pemeriksaan**/Pembayaran/dll., **PDF, Word `.docx`, maupun Excel `.xlsx`**) diklasifikasi jenisnya lalu diekstraksi jadi ringkasan_teks + kata_kunci + regulasi + tanggal + nilai (Rp). **Tidak ada rule deterministik** — kamu **menilai sendiri** fakta digest terhadap Checklist & Analisis Substantif di bawah (judgment), dengan keyakinan **memadai**, lingkup **seluruh siklus**. *(Digester khusus `digest_pengadaan` sudah dipensiunkan — sumber fakta kini digest generik yang andal untuk PDF/Word/Excel.)*
 
-**Hemat token:** baca fakta dari digest, jangan re-read seluruh PDF "untuk konteks". Buka halaman dokumen sumber **hanya** untuk: verifikasi halaman yang akan dikutip ke `dokumen_sumber`, mengonfirmasi fakta digest yang janggal (parser bisa salah, mis. periode/angka/klasifikasi keliru), atau mengambil kalimat pasal/butir yang menjadi sumber temuan.
+**Hemat token:** baca fakta dari `read_ingested_digest`, jangan re-read seluruh dokumen "untuk konteks". Buka halaman dokumen sumber via **`read_pdf_page`** (mendukung PDF/Word/Excel) **hanya** untuk: verifikasi halaman yang akan dikutip ke `dokumen_sumber`, mengonfirmasi fakta digest yang janggal (mis. periode/angka/klasifikasi keliru), atau mengambil kalimat pasal/butir yang menjadi sumber temuan.
 
 ## Survey Pendahuluan (WAJIB membuka audit)
 
@@ -148,6 +148,18 @@ Tugas substantif di bawah adalah **inti penilaian audit (judgment)** dan **WAJIB
 - Temuan > Rp 500 juta: wajib konfirmasi sebelum masuk KKP
 - Temuan > Rp 1 miliar: flag sebagai "MATERIAL - PRIORITAS TINGGI"
 - Temuan < Rp 10 juta: catat sebagai catatan administratif
+
+## Penutupan Penilaian per Aspek (WAJIB — bukan exception-only)
+
+Setelah menelusuri seluruh checklist/aspek di atas, **tutup TIAP butir** dengan kesimpulan eksplisit — jangan hanya melaporkan yang bermasalah. Untuk **setiap** butir/aspek yang relevan dengan sasaran, beri kesimpulan:
+
+- **SESUAI** — butir memenuhi kriteria (direkam sebagai kesimpulan penilaian; tak perlu jadi temuan).
+- **TIDAK SESUAI** — ada deviasi → rinci jadi **temuan** (K/K/S/A) sesuai Format Unsur Temuan.
+- **TIDAK CUKUP DATA** — dokumen/data tak memadai untuk menyimpulkan → catat + (bila material) rekomendasikan langkah lanjut. **Jangan mengarang** kesimpulan.
+
+Setiap butir sertakan **dasar** singkat (bukti dari dokumen — nama file + halaman/angka). Tujuannya agar **cakupan penilaian terdokumentasi** untuk Ketua Tim/Pengendali Teknis — terlihat apa yang sudah dinilai memadai, bukan sekadar daftar masalah. Terapkan **JUDGMENT substansi** (mutu, kelengkapan, konsistensi, kecukupan informasi), jangan berhenti di diskrepansi termudah (nomor/label/terbilang).
+
+> Perekaman kesimpulan tiap aspek & render tabelnya diorkestrasikan oleh harness/INTEGRAL (di v7: tool `write_penilaian_aspek`, dipanggil sebelum render KKP). Skill ini menetapkan **substansinya**: butir apa yang dinilai & bagaimana menyimpulkannya.
 
 ## Format Unsur Temuan (KKSAR)
 

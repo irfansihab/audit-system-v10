@@ -68,6 +68,18 @@ Fakta penilaian tersedia dari **digest dokumen** (ringkasan terstruktur hasil pa
 
 **Eskalasi:** jika ditemukan indikasi penyimpangan substantif / kerugian → hentikan, eskalasi untuk pertimbangan konversi ke audit-umum (bukan dipaksakan jadi catatan reviu).
 
+## Penutupan Penilaian per Aspek (WAJIB — bukan exception-only)
+
+Setelah menelusuri seluruh checklist/aspek di atas, **tutup TIAP butir** dengan kesimpulan eksplisit — jangan hanya melaporkan yang bermasalah. Untuk **setiap** butir/aspek yang relevan dengan sasaran, beri kesimpulan:
+
+- **SESUAI** — butir memenuhi kriteria (direkam sebagai kesimpulan penilaian; tak perlu jadi temuan).
+- **TIDAK SESUAI** — ada deviasi → rinci jadi **temuan** (K/K/S/A) sesuai Format Unsur Temuan.
+- **TIDAK CUKUP DATA** — dokumen/data tak memadai untuk menyimpulkan → catat + (bila material) rekomendasikan langkah lanjut. **Jangan mengarang** kesimpulan.
+
+Setiap butir sertakan **dasar** singkat (bukti dari dokumen — nama file + halaman/angka). Tujuannya agar **cakupan penilaian terdokumentasi** untuk Ketua Tim/Pengendali Teknis — terlihat apa yang sudah dinilai memadai, bukan sekadar daftar masalah. Terapkan **JUDGMENT substansi** (mutu, kelengkapan, konsistensi, kecukupan informasi), jangan berhenti di diskrepansi termudah (nomor/label/terbilang).
+
+> Perekaman kesimpulan tiap aspek & render tabelnya diorkestrasikan oleh harness/INTEGRAL (di v7: tool `write_penilaian_aspek`, dipanggil sebelum render KKP). Skill ini menetapkan **substansinya**: butir apa yang dinilai & bagaimana menyimpulkannya.
+
 ## Format KKR (Kertas Kerja Reviu)
 
 Sheet **"Cover"**, **"Matriks Kriteria"**, lalu sheet **"Catatan Reviu"** dengan kolom:

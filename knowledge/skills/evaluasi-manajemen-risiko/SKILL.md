@@ -73,6 +73,18 @@ Evaluasi mengacu pada aspek wajib dan red flag dalam `references/01-pedoman-menk
 
 > **TKPMR (Tingkat Kematangan Penerapan Manajemen Risiko)** dinilai pada 5 level (Risk Naive → Risk Aware → Risk Defined → Risk Managed → Risk Enable) atas 4 parameter di atas. Tetapkan posisi kematangan secara naratif berbasis bukti (uji petik); **tidak memberi skor maturity formal** kecuali memakai instrumen resmi (mis. MRI BPKP) — lihat Batasan.
 
+## Penutupan Penilaian per Aspek (WAJIB — bukan exception-only)
+
+Setelah menelusuri seluruh checklist/aspek di atas, **tutup TIAP butir** dengan kesimpulan eksplisit — jangan hanya melaporkan yang bermasalah. Untuk **setiap** butir/aspek yang relevan dengan sasaran, beri kesimpulan:
+
+- **SESUAI** — butir memenuhi kriteria (direkam sebagai kesimpulan penilaian; tak perlu jadi temuan).
+- **TIDAK SESUAI** — ada deviasi → rinci jadi **temuan** (K/K/S/A) sesuai Format Unsur Temuan.
+- **TIDAK CUKUP DATA** — dokumen/data tak memadai untuk menyimpulkan → catat + (bila material) rekomendasikan langkah lanjut. **Jangan mengarang** kesimpulan.
+
+Setiap butir sertakan **dasar** singkat (bukti dari dokumen — nama file + halaman/angka). Tujuannya agar **cakupan penilaian terdokumentasi** untuk Ketua Tim/Pengendali Teknis — terlihat apa yang sudah dinilai memadai, bukan sekadar daftar masalah. Terapkan **JUDGMENT substansi** (mutu, kelengkapan, konsistensi, kecukupan informasi), jangan berhenti di diskrepansi termudah (nomor/label/terbilang).
+
+> Perekaman kesimpulan tiap aspek & render tabelnya diorkestrasikan oleh harness/INTEGRAL (di v7: tool `write_penilaian_aspek`, dipanggil sebelum render KKP). Skill ini menetapkan **substansinya**: butir apa yang dinilai & bagaimana menyimpulkannya.
+
 ## ⚠️ Struktur Laporan Khusus
 
 Laporan evaluasi manajemen risiko memiliki struktur yang **berbeda** dari audit atau reviu:

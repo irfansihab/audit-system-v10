@@ -62,6 +62,18 @@ Objek reviu: **komponen LK** (LRA, Neraca, LO, LPE, CaLK; LAK/LPSAL untuk BUN) b
 
 > Tiap elemen **tidak sesuai** → catatan **K/K/S/A** (Kriteria kutip **presisi**: PSAP/PMK + pasal/nomor; Sebab anti-mengarang; Akibat pada keandalan/penyajian LK, **tanpa** kerugian negara). Elemen sesuai → nyatakan eksplisit "telah memenuhi". Bila kriteria acuan (versi PMK/Bultek) tak dapat dipastikan → catatan/"tidak cukup data", **bukan** deviasi terkonfirmasi.
 
+## Penutupan Penilaian per Aspek (WAJIB — bukan exception-only)
+
+Setelah menelusuri seluruh checklist/aspek di atas, **tutup TIAP butir** dengan kesimpulan eksplisit — jangan hanya melaporkan yang bermasalah. Untuk **setiap** butir/aspek yang relevan dengan sasaran, beri kesimpulan:
+
+- **SESUAI** — butir memenuhi kriteria (direkam sebagai kesimpulan penilaian; tak perlu jadi temuan).
+- **TIDAK SESUAI** — ada deviasi → rinci jadi **temuan** (K/K/S/A) sesuai Format Unsur Temuan.
+- **TIDAK CUKUP DATA** — dokumen/data tak memadai untuk menyimpulkan → catat + (bila material) rekomendasikan langkah lanjut. **Jangan mengarang** kesimpulan.
+
+Setiap butir sertakan **dasar** singkat (bukti dari dokumen — nama file + halaman/angka). Tujuannya agar **cakupan penilaian terdokumentasi** untuk Ketua Tim/Pengendali Teknis — terlihat apa yang sudah dinilai memadai, bukan sekadar daftar masalah. Terapkan **JUDGMENT substansi** (mutu, kelengkapan, konsistensi, kecukupan informasi), jangan berhenti di diskrepansi termudah (nomor/label/terbilang).
+
+> Perekaman kesimpulan tiap aspek & render tabelnya diorkestrasikan oleh harness/INTEGRAL (di v7: tool `write_penilaian_aspek`, dipanggil sebelum render KKP). Skill ini menetapkan **substansinya**: butir apa yang dinilai & bagaimana menyimpulkannya.
+
 ## Format Unsur Temuan (KKSAR)
 
 Catatan reviu direkam **K/K/S/A** — **Kondisi** (fakta: pos/angka/dokumen + rujukan), **Kriteria** (SAP/PMK + pasal, kutip **presisi** — lihat `panduan-format-umum`), **Sebab** (anti-mengarang: diisi bila terbukti; bila tidak → "Tidak ditemukan penyebab"/"Tidak cukup data"), **Akibat** (dampak pada keandalan/penyajian LK; **tanpa perhitungan kerugian negara**). **Rekomendasi disusun di LHR, bukan di KKP.** Doktrin unsur & Sebab: `panduan-format-umum/PANDUAN.md`.
