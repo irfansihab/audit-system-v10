@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from openpyxl import load_workbook
+from openpyxl.cell.cell import MergedCell
 
 
 class LKEWriter:
@@ -56,10 +57,23 @@ class LKEWriter:
         except (ValueError, KeyError):
             self.refused.append({"sheet": sheet, "coord": coord, "alasan": "koordinat invalid"})
             return False
+        # Sel gabung (merge): hanya cell anchor (kiri-atas) yang writable; sel lain
+        # dalam range = MergedCell read-only → menulis ke situ meng-crash openpyxl.
+        # Tolak dengan pesan yang mengarahkan agen ke cell anchor (bukan crash).
+        if isinstance(cell, MergedCell):
+            self.refused.append({"sheet": sheet, "coord": coord,
+                                 "alasan": "cell bagian sel gabung/merge — tulis ke cell anchor (kiri-atas range)"})
+            return False
         if cell.data_type == "f":
             self.refused.append({"sheet": sheet, "coord": coord, "alasan": "cell formula (runtime)"})
             return False
-        cell.value = value
+        try:
+            cell.value = value
+        except AttributeError:
+            # Jaring pengaman: kondisi read-only lain (mis. merge tak terdeteksi) →
+            # tolak, jangan biarkan exception menggagalkan seluruh fill_lke.
+            self.refused.append({"sheet": sheet, "coord": coord, "alasan": "cell tidak dapat ditulis (read-only)"})
+            return False
         self.written.append({"sheet": sheet, "coord": coord, "value": value, "note": note or ""})
         return True
 
