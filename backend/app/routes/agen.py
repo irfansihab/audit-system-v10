@@ -232,14 +232,19 @@ async def _run_ingestion(penugasan_id: int) -> None:
     ingested_dir = folder / "_INGESTED"
     ingested_dir.mkdir(parents=True, exist_ok=True)
 
-    tor_docs = [d for d in docs if d.jenis == "TOR"]
-    rab_docs = [d for d in docs if d.jenis == "RAB"]
+    # Pipeline TOR/RAB SAKTI hanya untuk reviu-rka-kl. Untuk skill lain (mis.
+    # pengadaan yang objek-nya RAB/HPS bukan format SAKTI), TOR/RAB dialihkan ke
+    # digest generik supaya dapat ringkasan_teks (bukan komponen SAKTI kosong).
+    _is_rka = skill_value == "reviu-rka-kl"
+    tor_docs = [d for d in docs if d.jenis == "TOR" and _is_rka]
+    rab_docs = [d for d in docs if d.jenis == "RAB" and _is_rka]
     bukti_docs = [d for d in docs if d.jenis == "BUKTI-LAPANGAN"]
-    # Dokumen pengadaan (KAK/HPS/RFI/KONTRAK) DIALIHKAN ke digest generik
-    # (digest_folder) — parser terstruktur digest_pengadaan.py DIPENSIUNKAN
+    # Dokumen pengadaan (KAK/HPS/RFI/KONTRAK) + TOR/RAB non-RKA → digest generik
+    # (digest_folder). Parser terstruktur digest_pengadaan.py DIPENSIUNKAN
     # (rapuh pada dokumen riil). Digest generik andal + sudah PDF/Word/Excel.
-    other_docs = [d for d in docs if d.jenis in (
-        None, "ST", "KP", "PKP", "OTHER", "KAK", "HPS", "RFI", "KONTRAK")]
+    _generic_jenis = (None, "ST", "KP", "PKP", "OTHER", "KAK", "HPS", "RFI", "KONTRAK")
+    other_docs = [d for d in docs if d.jenis in _generic_jenis
+                  or (d.jenis in ("TOR", "RAB") and not _is_rka)]
 
     sem = asyncio.Semaphore(_INGEST_CONCURRENCY)
     # Daftar job: (kind, payload, out_path, coro). kind="file" → cache-able;

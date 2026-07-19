@@ -900,23 +900,28 @@ async def read_ingested_digest(args: dict) -> dict:
     def _dump(payload: dict) -> str:
         return json.dumps(payload, ensure_ascii=False)
 
+    # Budget diperbesar 8000→20000 (18 Jul): saat pengadaan pindah ke digest
+    # generik, ringkasan yang terlalu pendek memaksa agen membaca ulang PDF
+    # (20x read_pdf_page). Dgn budget lebih besar, isi per-dokumen (≤1800 char)
+    # utuh sampai ±10 dokumen → agen mulai dgn fakta lebih lengkap, hemat baca PDF.
+    _BUDGET = 20000
     payload = {"total": len(items), "digest": items}
     text = _dump(payload)
-    if len(text) > 8000:
-        for cap in (900, 400, 150):
+    if len(text) > _BUDGET:
+        for cap in (1800, 1100, 600):
             for it in items:
                 if isinstance(it.get("ringkasan_teks"), str) and len(it["ringkasan_teks"]) > cap:
                     it["ringkasan_teks"] = it["ringkasan_teks"][:cap] + "…"
             text = _dump(payload)
-            if len(text) <= 8000:
+            if len(text) <= _BUDGET:
                 break
     total_asli = len(items)
-    while len(text) > 8000 and len(items) > 1:
+    while len(text) > _BUDGET and len(items) > 1:
         items.pop()
         payload = {
             "total": total_asli,
             "digest": items,
-            "terpotong": f"{total_asli - len(items)} digest tidak ditampilkan — panggil read_digest per-file bila perlu",
+            "terpotong": f"{total_asli - len(items)} digest tidak ditampilkan — panggil read_pdf_page per-file bila perlu",
         }
         text = _dump(payload)
     return {"content": [{"type": "text", "text": text}]}

@@ -171,7 +171,7 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
         raise FileNotFoundError(f"temuan.json tidak ditemukan: {kkp_path}")
 
     data = json.loads(kkp_path.read_text(encoding="utf-8"))
-    jenis = data["penugasan"]["jenis_pengawasan"]
+    jenis = (data.get("penugasan") or {}).get("jenis_pengawasan") or "reviu-umum"
     kolom = JENIS_KOLOM.get(jenis, JENIS_KOLOM["reviu-pengadaan"])
 
     my_temuan = [t for t in data["temuan"] if t["anggota_tim"]["nama_lengkap"] == anggota_nama]
@@ -187,9 +187,10 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     # Header
     add_p(doc, "KERTAS KERJA PENGAWASAN — DRAFT",
           bold=True, size=14, align=WD_ALIGN_PARAGRAPH.CENTER)
-    add_p(doc, f"{jenis.replace('-', ' ').title()} | {data['penugasan']['obyek']}",
+    _png = data.get("penugasan") or {}
+    add_p(doc, f"{jenis.replace('-', ' ').title()} | {_png.get('obyek', '')}",
           size=11, align=WD_ALIGN_PARAGRAPH.CENTER)
-    info_line = f"ST: {data['penugasan']['nomor_st']}"
+    info_line = f"ST: {_png.get('nomor_st') or '[belum diisi]'}"
     if ctx.get("periode"):
         info_line += f" | Periode: {ctx['periode']}"
     if ctx.get("ketua_tim"):
