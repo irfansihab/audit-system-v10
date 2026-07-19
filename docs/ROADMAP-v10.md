@@ -97,6 +97,18 @@ UAT langsung auditor (tema pengadaan · RKA-K/L · SPIP) menemukan celah mutu/ef
 - **7.12 Mode limit langganan** — agen dijalankan dengan `CLAUDE_CODE_OAUTH_TOKEN` (plan Claude), **bukan kredit API pay-per-token**; proses backend tetap pegang API key untuk fitur non-agen (chat/generate/LLM-fallback yang wajib Messages API). Tervalidasi (run #11 tuntas tanpa error kredit). *(commit `75b8e09`)*
 - *Sisa opsional:* tampilkan rekap aspek di panel temuan UI (seperti LKE) · uji live skenario (f) dokumen-pendukung di skill criteria-driven baru · upload PDF sumber 4 skill (SPIP/PIPK/RB/MR) untuk parity verifikasi regulasi.
 
+### 🔜 Pasca-Demo — Backlog (dikerjakan SETELAH demo)
+
+- **7.13 Hard-gate urutan tahapan (dari pengecekan 19 Jul).** Saat ini urutan ditegakkan **lunak**: status **diturunkan dari artefak** (`compute_penugasan_status` — tak bisa palsu), **kunci UI** Tahapan 5–8, + 2 gate keras (Generate-Context wajib PKP+dokumen via `context_readiness`; Administrasi wajib LHP disetujui, 409). **Tiga transisi belum di-hard-gate di backend** (hanya konvensi/kunci-UI) → perlu gate di endpoint supaya konsisten walau diakses via API:
+  - **(a) Analisis utama tidak butuh PKP.** Tombol *Jalankan (streaming)* hanya di-disable oleh peran & sedang-berjalan (`page.tsx:1396`); run natural (tanpa tag `[MODE:CONTEXT]`) melewati gate `context_readiness` (`agen.py:641/661`). → tambah gate 400/409 "PKP belum dibuat / dokumen belum ada" pada run analisis AT.
+  - **(b) PKP bisa diisi tanpa KP.** Simpan sasaran (`sasaran-assignment.json`) tak mengecek KP ada (`penugasan.py:902` sync sasaran KP→PKP tapi tanpa prasyarat). → tambah cek KP (`00-input/KP-*.md`) sebelum PKP tersimpan/valid.
+  - **(c) Generate LHP tidak butuh KKP_DONE di backend.** `ketua_tim` (`agen.py`) tak mengecek `_all_sasaran_disetujui` — hanya terkunci di UI (stage 5). → tambah gate `all_sasaran_disetujui` sebelum run LHP.
+  - Prinsip: **gate di BACKEND (bukan hanya UI)**; pertahankan derivasi status + kunci UI yang sudah ada. Uji: coba lompati tiap tahap via API → harus tertolak.
+- **7.14 Sisa teknis sesi 19 Jul.**
+  - **Restart backend** agar fix `fill_lke` sel-gabung/merge (commit `df41bb3`) aktif; lalu **uji live SPIP/SAKIP** dengan LKE contoh (baca LKE + bukti dukung → isi kolom PK/APIP tanpa rusak rumus → nilai + catatan + AoI). *(mekanisme sudah terbukti unit-test: 240.762 rumus utuh)*
+  - **Top-up kredit API** bila ingin **Chat Wiki + Generate-Template-AI + LLM-fallback digest** aktif (mode-limit langganan hanya untuk AGEN, bukan Messages API).
+  - *(kosmetik)* tambah `favicon.ico` frontend agar console `/dashboard` bersih (404 favicon).
+
 ---
 
 ## Kontrak dokumen per skill — reminder unggah (WAJIB vs OPSIONAL)
