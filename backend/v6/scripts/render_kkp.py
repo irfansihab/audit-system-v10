@@ -165,6 +165,50 @@ def render_lke_recap(doc, penugasan_dir: Path, jenis: str) -> bool:
     return True
 
 
+def render_aspek_recap(doc, penugasan_dir: Path, jenis: str) -> bool:
+    """Tabel 'Kesimpulan Penilaian per Aspek' dari _KKP/penilaian-aspek.json —
+    menunjukkan CAKUPAN penilaian (tiap butir checklist: Sesuai/Tidak Sesuai/
+    Tidak Cukup Data + dasar), bukan hanya daftar temuan. Untuk skill KKSA
+    (non-LKE; LKE punya rekap skor sendiri). Return True bila ter-render."""
+    if jenis in _LKE_SKILLS:
+        return False
+    src = penugasan_dir / "_KKP" / "penilaian-aspek.json"
+    if not src.exists():
+        return False
+    try:
+        pen = json.loads(src.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    aspek = pen.get("aspek") or []
+    if not aspek:
+        return False
+    add_p(doc, "KESIMPULAN PENILAIAN PER ASPEK", bold=True, size=12)
+    cols = ["No", "Aspek / Butir Checklist", "Kesimpulan", "Dasar"]
+    t = doc.add_table(rows=len(aspek) + 1, cols=len(cols))
+    t.style = "Table Grid"
+    for j, h in enumerate(cols):
+        c = t.rows[0].cells[j]; c.text = ""
+        r = c.paragraphs[0].add_run(h)
+        r.bold = True; r.font.size = Pt(10); r.font.name = "Arial"
+        c.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        shade(c, "D9D9D9")
+    _label = {"SESUAI": "Sesuai", "TIDAK_SESUAI": "Tidak Sesuai", "TIDAK_CUKUP_DATA": "Tidak Cukup Data"}
+    for i, a in enumerate(aspek, start=1):
+        vals = [str(i), str(a.get("aspek", "")),
+                _label.get(a.get("kesimpulan", ""), str(a.get("kesimpulan", ""))),
+                str(a.get("dasar", ""))]
+        for j, v in enumerate(vals):
+            cell = t.rows[i].cells[j]; cell.text = ""
+            for line in v.split("\n"):
+                cell.add_paragraph().add_run(line).font.size = Pt(9)
+            p0 = cell.paragraphs[0]
+            if p0.text == "":
+                p0._element.getparent().remove(p0._element)
+    add_p(doc, "Catatan: butir bertanda \"Tidak Sesuai\" dirinci sebagai temuan di bawah.", italic=True, size=9)
+    doc.add_paragraph()
+    return True
+
+
 def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     kkp_path = penugasan_dir / "_KKP" / "temuan.json"
     if not kkp_path.exists():
@@ -202,6 +246,7 @@ def render_kkp_for_anggota(penugasan_dir: Path, anggota_nama: str) -> Path:
     doc.add_paragraph()
     # Skill ber-LKE: rekap skor/predikat dulu (kertas kerja mencerminkan instrumen), baru AoI
     render_lke_recap(doc, penugasan_dir, jenis)
+    render_aspek_recap(doc, penugasan_dir, jenis)
     add_p(doc, "DAFTAR CATATAN / TEMUAN", bold=True, size=12)
 
     def _render_tabel(temuan_list: list) -> None:

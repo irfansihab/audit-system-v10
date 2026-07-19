@@ -1048,10 +1048,49 @@ async def build_context_md_template(args: dict) -> dict:
     }
 
 
+@tool(
+    "write_penilaian_aspek",
+    "Rekam KESIMPULAN penilaian per aspek/butir checklist SKILL (bukan hanya temuan) ke "
+    "_KKP/penilaian-aspek.json. WAJIB untuk reviu/audit ber-KKSA: tutup TIAP butir checklist "
+    "yang dinilai — TERMASUK yang SESUAI/memadai — supaya cakupan penilaian TERDOKUMENTASI, "
+    "bukan hanya daftar temuan (exception-only). Contoh butir reviu-pengadaan: identifikasi "
+    "kebutuhan, spesifikasi teknis (jelas/terukur/tidak over-under-spec), 5 elemen justifikasi "
+    "KAK, metodologi HPS, dll. Struktur: aspek=[{aspek, kesimpulan: SESUAI|TIDAK_SESUAI|"
+    "TIDAK_CUKUP_DATA, dasar}]. dasar = 1 kalimat pembenaran (bukti dari dokumen). Ditampilkan "
+    "render_kkp sebagai tabel 'Kesimpulan Penilaian per Aspek'. Panggil SEBELUM render_kkp_docx.",
+    {"penugasan_folder": str, "aspek": list},
+)
+async def write_penilaian_aspek(args: dict) -> dict:
+    folder = Path(args["penugasan_folder"])
+    out_dir = folder / "_KKP"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    _VALID = {"SESUAI", "TIDAK_SESUAI", "TIDAK_CUKUP_DATA"}
+    rows: list[dict] = []
+    for a in (args.get("aspek") or []):
+        if not isinstance(a, dict):
+            continue
+        k = str(a.get("kesimpulan", "")).strip().upper().replace(" ", "_").replace("-", "_")
+        if k not in _VALID:
+            k = "TIDAK_CUKUP_DATA"
+        rows.append({
+            "aspek": str(a.get("aspek", "")).strip(),
+            "kesimpulan": k,
+            "dasar": str(a.get("dasar", "")).strip(),
+        })
+    out = out_dir / "penilaian-aspek.json"
+    tmp = out.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps({"aspek": rows}, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, out)
+    n_ts = sum(1 for r in rows if r["kesimpulan"] == "TIDAK_SESUAI")
+    n_tcd = sum(1 for r in rows if r["kesimpulan"] == "TIDAK_CUKUP_DATA")
+    return {"content": [{"type": "text", "text":
+            f"OK|penilaian-aspek ditulis|n_aspek={len(rows)}|tidak_sesuai={n_ts}|tidak_cukup_data={n_tcd}"}]}
+
+
 KKP_TOOLS = [
     read_context, list_ingested, read_ingested_digest, get_team_members,
     write_context_md, build_context_md_template,
-    append_temuan, reset_temuan, get_kodefikasi_temuan,
+    append_temuan, reset_temuan, get_kodefikasi_temuan, write_penilaian_aspek,
     render_kkp_docx, run_qc_kkp,
     read_temuan_json,
 ]
