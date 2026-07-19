@@ -86,6 +86,23 @@ def build_agent_options(
         raise FileNotFoundError(f"Prompt tidak ditemukan: {prompt_path}")
     system_prompt: str | dict = {"type": "file", "path": str(prompt_path)}
 
+    # MODE LIMIT (langganan Claude): bila CLAUDE_CODE_OAUTH_TOKEN tersedia, jalankan
+    # AGEN dengan token langganan itu dan HAPUS ANTHROPIC_API_KEY dari env subprocess
+    # → runtime pakai plan limit, BUKAN kredit API pay-per-token. Proses backend utama
+    # tetap memegang ANTHROPIC_API_KEY untuk fitur non-agen (chat, generate template,
+    # LLM fallback digest) yang wajib pakai Messages API. Bila tak ada OAuth token,
+    # env=None → warisi apa adanya (pakai API key seperti biasa).
+    _oauth = (os.environ.get("CLAUDE_CODE_OAUTH_TOKEN") or "").strip()
+    agent_env: dict[str, str] | None = None
+    if _oauth:
+        # SDK me-MERGE env ini ke os.environ subprocess → sekadar menghapus key
+        # dari dict tak cukup (nilai induk masih bocor). KOSONGKAN eksplisit
+        # ANTHROPIC_API_KEY (+ alias) agar runtime memilih OAuth langganan.
+        agent_env = dict(os.environ)
+        agent_env["ANTHROPIC_API_KEY"] = ""
+        agent_env["ANTHROPIC_AUTH_TOKEN"] = ""
+        agent_env["CLAUDE_CODE_OAUTH_TOKEN"] = _oauth  # tanpa spasi bocor
+
     return ClaudeAgentOptions(
         system_prompt=system_prompt,
         # tools=[] mematikan SEMUA built-in (Bash, Edit, Write, Read, Glob,
@@ -104,6 +121,8 @@ def build_agent_options(
         # Tanpa ini SDK memakai default rendah (~10) → tugas audit kompleks
         # terpotong di tengah sebelum KKP/temuan selesai.
         max_turns=200,
+        # Mode limit langganan (bila OAuth token ada) — lihat komentar di atas.
+        env=agent_env,
         # Pakai claude.exe dari instalasi resmi (bukan bundled SDK yang gagal di Windows).
         cli_path=_find_claude_cli(),
     )
