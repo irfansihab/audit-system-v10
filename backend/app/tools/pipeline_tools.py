@@ -10,6 +10,10 @@ from app.tools.v6_bridge import run_v6_script, safe_read_json
 
 # Subfolder tempat app menyimpan TOR/RAB (lihat storage.target_subfolder_for).
 _RKA_SRC_SUBFOLDER = "03-perencanaan"
+# Format TOR/RAB yang bisa di-digest V6 RKA. digest_tor.py & digest_rab.py
+# me-route by suffix (`_extract_pages`): PDF → pdftotext, .docx → python-docx,
+# .xlsx/.xlsm → openpyxl. Harus SINKRON dgn filter di v6 run_batch.py `_scan_dir`.
+_RKA_SUPPORTED_SUFFIXES = {".pdf", ".docx", ".xlsx", ".xlsm"}
 
 
 def _stage_rka_inputs(folder: Path) -> tuple[Path, Path, list[str]]:
@@ -21,8 +25,9 @@ def _stage_rka_inputs(folder: Path) -> tuple[Path, Path, list[str]]:
 
     - scan `03-perencanaan/` (fallback ke root penugasan) untuk file TOR/RAB,
     - pasangkan TOR↔RAB berdasarkan urutan nama (TOR ke-i ↔ RAB ke-i = RO i),
-    - copy ke `input/objek/TOR/[i] nama.pdf` dan `input/objek/RAB/[i] nama.pdf`,
-    - lewati file non-PDF (mis. RAB .xlsx) karena digest V6 hanya menerima PDF.
+    - copy ke `input/objek/TOR/[i] nama.<ext>` dan `input/objek/RAB/[i] nama.<ext>`,
+    - terima PDF **dan** Word (.docx) / Excel (.xlsx/.xlsm) — digest_tor.py &
+      digest_rab.py sudah bisa mem-parse ketiganya (`_extract_pages` by suffix).
 
     Return (tor_dir, rab_dir, warnings).
     """
@@ -41,10 +46,10 @@ def _stage_rka_inputs(folder: Path) -> tuple[Path, Path, list[str]]:
             if jenis not in ("TOR", "RAB"):
                 continue
             seen.add(p.name)
-            if p.suffix.lower() != ".pdf":
+            if p.suffix.lower() not in _RKA_SUPPORTED_SUFFIXES:
                 warnings.append(
-                    f"{jenis} '{p.name}' bukan PDF — digest V6 RKA hanya menerima PDF "
-                    f"format cetak RKA-K/L, file dilewati."
+                    f"{jenis} '{p.name}' format tidak didukung — digest V6 RKA menerima "
+                    f"PDF / Word (.docx) / Excel (.xlsx), file dilewati."
                 )
                 continue
             (tor_files if jenis == "TOR" else rab_files).append(p)
@@ -99,11 +104,19 @@ async def run_batch_rka(args: dict) -> dict:
     tor_dir, rab_dir, warns = _stage_rka_inputs(folder)
     warn_txt = ("|warnings=" + "; ".join(warns)) if warns else ""
 
-    if not any(tor_dir.glob("*.pdf")) or not any(rab_dir.glob("*.pdf")):
+    def _has_input(d: Path) -> bool:
+        return any(
+            p.is_file() and p.suffix.lower() in _RKA_SUPPORTED_SUFFIXES for p in d.iterdir()
+        )
+
+    if not _has_input(tor_dir) or not _has_input(rab_dir):
         return {
             "content": [{
                 "type": "text",
-                "text": f"FAILED|tidak ada pasangan TOR↔RAB PDF untuk diproses{warn_txt}",
+                "text": (
+                    "FAILED|tidak ada pasangan TOR↔RAB (PDF/Word/Excel) untuk diproses"
+                    f"{warn_txt}"
+                ),
             }],
             "is_error": True,
         }

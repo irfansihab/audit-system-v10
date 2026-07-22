@@ -49,10 +49,15 @@ DIGEST_RAB = SCRIPT_DIR / "digest_rab.py"
 CROSS_CHECK = SCRIPT_DIR / "cross_check.py"
 RENDER_LHR = SCRIPT_DIR / "render_lhr.py"
 
-# Regex match nama file: ^[<RO>]<spasi><YYYYMMDD?><...>.pdf
+# Regex match nama file: ^[<RO>]<spasi><YYYYMMDD?><...>.<ext>
 # Group: 1=RO, 2=YYYY, 3=MM, 4=DD (opsional → None bila tak ada)
-RE_DATED = re.compile(r"^\[(\d+)\].*?(\d{4})(\d{2})(\d{2}).*\.pdf$", re.IGNORECASE)
-RE_NODATE = re.compile(r"^\[(\d+)\].*\.pdf$", re.IGNORECASE)
+# Ekstensi: PDF + Word/Excel — digest_tor.py & digest_rab.py sudah mem-parse
+# ketiganya via `_extract_pages` (route by suffix). Harus SINKRON dengan
+# `_RKA_SUPPORTED_SUFFIXES` di app/tools/pipeline_tools.py.
+SUPPORTED_EXTS = (".pdf", ".docx", ".xlsx", ".xlsm")
+_EXT_RE = r"(?:pdf|docx|xlsx|xlsm)"
+RE_DATED = re.compile(rf"^\[(\d+)\].*?(\d{{4}})(\d{{2}})(\d{{2}}).*\.{_EXT_RE}$", re.IGNORECASE)
+RE_NODATE = re.compile(rf"^\[(\d+)\].*\.{_EXT_RE}$", re.IGNORECASE)
 
 
 # --------- AST self-check --------- #
@@ -132,7 +137,7 @@ def _scan_dir(d: Path) -> dict[int, Path]:
         if not p.is_file():
             continue
         name = p.name
-        if not name.lower().endswith(".pdf"):
+        if not name.lower().endswith(SUPPORTED_EXTS):
             continue
         if name.lower().startswith("lampiran"):
             continue

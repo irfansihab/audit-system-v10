@@ -110,7 +110,9 @@ def _office_xlsx_pages(path) -> list[str]:
         for row in ws.iter_rows(values_only=True):
             cells = [str(c) for c in row if c is not None and str(c).strip() != ""]
             if cells:
-                rows.append(" | ".join(cells))
+                # TAB (bukan " | ") supaya baris komponen SAKTI tetap cocok dengan
+                # regex parser yang berbasis whitespace (mis. `051  Nama  1,500,000`).
+                rows.append("\t".join(cells))
         if rows:
             pages.append(f"[Sheet: {ws.title}]\n" + "\n".join(rows))
     try:
