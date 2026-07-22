@@ -112,6 +112,104 @@ async def fill_lke(args: dict) -> dict:
     return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)}]}
 
 
+_EVAL_LABELS_HDR = ("EVALUASI", "EVALUASI APIP")
+
+
+def _baca_fokus(ws, mulai: int = 1, cap_baris: int = 120) -> dict:
+    """Baca HANYA baris data hidup × kolom relevan (uraian + blok PM + blok PK).
+
+    Sheet LKE besar (mis. KK 5.2) memuat puluhan ribu sel formula/format —
+    membaca SEMUA sel tak praktis pada cap berapa pun. Untuk menilai, agen
+    sebenarnya hanya perlu: uraian kriteria (kolom B), nilai PM auditee, dan
+    kolom PK yang harus diisi. Satu kali lintas, ramah mode read-only.
+    """
+    maks = ws.max_row or 0
+    # Sheet LKE bisa SANGAT lebar — blok PK KK3.x ada di kolom 103-110, jadi
+    # batas kolom harus longgar (80 kolom membuat blok PK tak terdeteksi).
+    lebar = min(ws.max_column or 120, 220)
+    pm_col = pk_col = ev_col = None
+    header_row = 0
+    counter_row = 0
+    started = False
+    baris: list[dict] = []
+    lanjut: int | None = None
+
+    for idx, row in enumerate(
+        ws.iter_rows(min_row=1, max_row=maks, min_col=1, max_col=lebar), start=1
+    ):
+        if pk_col is None and idx <= 8:
+            for c in row:
+                v = str(c.value or "").strip().upper()
+                if v == "PM" and pm_col is None:
+                    pm_col, header_row = c.column, idx
+                elif v == "PK" and pk_col is None:
+                    pk_col, header_row = c.column, (header_row or idx)
+                elif v in _EVAL_LABELS_HDR and ev_col is None and pk_col and c.column > pk_col:
+                    ev_col = c.column
+            continue
+        if pk_col is None:
+            continue
+
+        vals = [c.value for c in row]
+        # Baris "counter" auto-nomor (=X{n}+1) memisahkan header dari data.
+        if not started and any(
+            isinstance(v, str) and v.startswith("=") and "+1" in v for v in vals[:3]
+        ):
+            counter_row = idx
+            continue
+        if idx <= counter_row:
+            continue
+
+        b = vals[1] if len(vals) > 1 else None
+        if b in (None, "") or (isinstance(b, str) and b.startswith("=")):
+            if started:
+                break          # blok data kontigu selesai
+            continue
+        bs = str(b).strip().lower()
+        if bs.startswith("petunjuk") or re.match(r"kolom\s+\d+\s*:", bs):
+            break              # masuk area legenda/petunjuk
+        started = True
+        if idx < mulai:
+            continue
+        if len(baris) >= cap_baris:
+            lanjut = idx
+            break
+
+        pm_end = (pk_col - 1) if (pm_col and pk_col > pm_col) else None
+        pk_end = (ev_col - 1) if ev_col else min(pk_col + 4, lebar)
+
+        def _blok(s, e):
+            out = {}
+            if not s:
+                return out
+            for cc in row[s - 1:e]:
+                if cc.value not in (None, ""):
+                    out[cc.coordinate] = str(cc.value)[:60]
+            return out
+
+        pk_cells = _blok(pk_col, pk_end)
+        baris.append({
+            "row": idx,
+            "uraian": str(b)[:200],
+            "pm": _blok(pm_col, pm_end),
+            "pk": pk_cells,
+            "pk_terisi": bool(pk_cells),
+        })
+
+    return {
+        "mode": "fokus",
+        "header_row": header_row,
+        "kolom_pm": pm_col,
+        "kolom_pk": [pk_col, (ev_col - 1) if ev_col else None] if pk_col else None,
+        "n_baris": len(baris),
+        "baris": baris,
+        "ada_lanjutan": lanjut is not None,
+        "lanjut_dari_baris": lanjut,
+        "catatan": ("Hanya baris data hidup × kolom relevan (uraian + PM + PK). "
+                    "Isi kolom PK via fill_lke pada koordinat di blok 'pk'."),
+    }
+
+
 def _lke_to_read(folder: Path, skill: str) -> tuple[Path | None, str]:
     """LKE yang dibaca: salinan kerja _KKP/LKE-terisi (bila ada, paling mutakhir),
     else sumber (upload auditee / template)."""
@@ -129,12 +227,17 @@ def _lke_to_read(folder: Path, skill: str) -> tuple[Path | None, str]:
     "jumlah cell terisi. Dengan `sheet`: nilai cell non-kosong (coord→{v,f}; f=true bila "
     "FORMULA, jangan ditulis). Pakai untuk MENILAI self-assessment auditee sebelum "
     "mengisi kolom APIP via fill_lke. "
-    "**Sheet besar dibaca per JENDELA BARIS** (≤600 sel/panggilan): `mulai_baris` "
-    "(default 1) + `jumlah_baris` (default 80, maks 300). Bila `ada_lanjutan=true`, "
-    "panggil LAGI dengan `mulai_baris=lanjut_dari_baris` sampai `ada_lanjutan=false` — "
-    "JANGAN menyimpulkan penilaian sebelum seluruh baris sheet terbaca.",
+    "**`fokus=1` (DISARANKAN untuk menilai)** — kembalikan hanya BARIS DATA HIDUP × "
+    "kolom relevan: `uraian` (kriteria), blok `pm` (nilai auditee), blok `pk` (kolom "
+    "APIP yang harus diisi) + `pk_terisi`. Ini satu-satunya cara praktis pada sheet "
+    "raksasa (mis. KK 5.2: puluhan ribu sel formula — mode biasa tak akan tuntas). "
+    "Koordinat di blok `pk` langsung dipakai untuk `fill_lke`. "
+    "**Mode biasa** (tanpa fokus) membaca semua sel per JENDELA BARIS (≤600 sel/"
+    "panggilan): `mulai_baris` + `jumlah_baris`. Bila `ada_lanjutan=true`, panggil LAGI "
+    "dengan `mulai_baris=lanjut_dari_baris` sampai `ada_lanjutan=false` — JANGAN "
+    "menyimpulkan penilaian sebelum seluruh baris terbaca.",
     {"penugasan_folder": str, "skill": str, "sheet": str,
-     "mulai_baris": int, "jumlah_baris": int},
+     "mulai_baris": int, "jumlah_baris": int, "fokus": int},
 )
 async def read_lke(args: dict) -> dict:
     folder = Path(args["penugasan_folder"])
@@ -163,6 +266,15 @@ async def read_lke(args: dict) -> dict:
     if sheet not in wb.sheetnames:
         return {"content": [{"type": "text", "text": f"NOT_FOUND|sheet '{sheet}'. Ada: {wb.sheetnames}"}], "is_error": True}
     ws = wb[sheet]
+
+    # MODE FOKUS — untuk sheet raksasa (puluhan ribu sel formula/format), membaca
+    # semua sel tak praktis. Kembalikan hanya baris data hidup × kolom relevan.
+    if str(args.get("fokus") or "").strip() not in ("", "0", "false", "False"):
+        hasil = _baca_fokus(ws, mulai=max(1, int(args.get("mulai_baris") or 1)))
+        hasil["sumber"] = note
+        hasil["sheet"] = sheet
+        return {"content": [{"type": "text", "text": json.dumps(hasil, ensure_ascii=False)}]}
+
     # Dibaca per JENDELA BARIS supaya sheet raksasa (LKE SPIP rev4: ribuan sel)
     # bisa ditelusuri TUNTAS lewat beberapa panggilan. Dulu mentok 150 sel PERTAMA
     # lalu berhenti — sisa sheet tak pernah terlihat agen (baris PM tak ternilai).
