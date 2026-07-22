@@ -128,8 +128,13 @@ def _lke_to_read(folder: Path, skill: str) -> tuple[Path | None, str]:
     "self-assessment yang sudah diisi auditee. Tanpa `sheet`: daftar nama sheet + "
     "jumlah cell terisi. Dengan `sheet`: nilai cell non-kosong (coord→{v,f}; f=true bila "
     "FORMULA, jangan ditulis). Pakai untuk MENILAI self-assessment auditee sebelum "
-    "mengisi kolom APIP via fill_lke.",
-    {"penugasan_folder": str, "skill": str, "sheet": str},
+    "mengisi kolom APIP via fill_lke. "
+    "**Sheet besar dibaca per JENDELA BARIS** (≤600 sel/panggilan): `mulai_baris` "
+    "(default 1) + `jumlah_baris` (default 80, maks 300). Bila `ada_lanjutan=true`, "
+    "panggil LAGI dengan `mulai_baris=lanjut_dari_baris` sampai `ada_lanjutan=false` — "
+    "JANGAN menyimpulkan penilaian sebelum seluruh baris sheet terbaca.",
+    {"penugasan_folder": str, "skill": str, "sheet": str,
+     "mulai_baris": int, "jumlah_baris": int},
 )
 async def read_lke(args: dict) -> dict:
     folder = Path(args["penugasan_folder"])
@@ -139,7 +144,10 @@ async def read_lke(args: dict) -> dict:
     if src is None or not Path(src).is_file():
         return {"content": [{"type": "text", "text": f"FAILED|{note}"}], "is_error": True}
     try:
-        wb = load_workbook(src, data_only=False, read_only=False)
+        # read_only=True: LKE SPIP rev4 (7 MB, 28 sheet) butuh ~11 detik dgn mode
+        # normal vs ~0,1 detik read-only. Tool ini hanya MEMBACA, dan penelusuran
+        # per-jendela berarti beberapa panggilan → mode normal bikin run melar.
+        wb = load_workbook(src, data_only=False, read_only=True)
     except Exception as e:  # noqa: BLE001
         return {"content": [{"type": "text", "text": f"FAILED|gagal buka LKE: {e}"}], "is_error": True}
 
@@ -155,21 +163,67 @@ async def read_lke(args: dict) -> dict:
     if sheet not in wb.sheetnames:
         return {"content": [{"type": "text", "text": f"NOT_FOUND|sheet '{sheet}'. Ada: {wb.sheetnames}"}], "is_error": True}
     ws = wb[sheet]
-    # Bound DATA (bukan slice string JSON): max 150 cell, nilai dipotong 60 char.
-    _CAP = 150
+    # Dibaca per JENDELA BARIS supaya sheet raksasa (LKE SPIP rev4: ribuan sel)
+    # bisa ditelusuri TUNTAS lewat beberapa panggilan. Dulu mentok 150 sel PERTAMA
+    # lalu berhenti — sisa sheet tak pernah terlihat agen (baris PM tak ternilai).
+    _CAP = 600  # batas sel per panggilan (menjaga ukuran payload tetap wajar)
+    mulai = max(1, int(args.get("mulai_baris") or 1))
+    maks_baris = ws.max_row or 0
+    # Jendela dibatasi JUMLAH SEL, bukan jumlah baris: sheet LKE sering melaporkan
+    # max_row raksasa (mis. 15.008) padahal baris berisi jauh lebih sedikit —
+    # membatasi per-baris akan memboroskan panggilan pada area kosong.
+    jb = int(args.get("jumlah_baris") or 0)
+    akhir = (mulai + max(1, min(jb, 5000)) - 1) if jb > 0 else maks_baris
+
     cells: dict[str, dict] = {}
     capped = False
-    for row in ws.iter_rows():
-        for c in row:
-            if c.value in (None, ""):
-                continue
-            if len(cells) >= _CAP:
-                capped = True
+    baris_terakhir = 0
+    if mulai <= maks_baris:
+        for row in ws.iter_rows(min_row=mulai, max_row=min(akhir, maks_baris)):
+            for c in row:
+                if c.value in (None, ""):
+                    continue
+                if len(cells) >= _CAP:
+                    capped = True
+                    break
+                cells[c.coordinate] = {"v": str(c.value)[:60], "f": c.data_type == "f"}
+                baris_terakhir = max(baris_terakhir, c.row)
+            if capped:
                 break
-            cells[c.coordinate] = {"v": str(c.value)[:60], "f": c.data_type == "f"}
-        if capped:
-            break
-    payload = {"sumber": note, "sheet": sheet, "n_cell": len(cells), "capped": capped, "cells": cells}
+
+    # Bila terpotong cap → sambung dari baris terakhir yang terbaca (bukan lompat).
+    lanjut = (baris_terakhir + 1) if capped else (akhir + 1)
+    # `max_row` sering meleset JAUH (mis. KK 5.2 melaporkan 15.008 baris padahal
+    # data nyata berhenti di baris awal — sisanya artefak format/validasi). Kalau
+    # `ada_lanjutan` dipatok ke max_row, agen akan menyusuri belasan ribu baris
+    # kosong. Jadi: cek apakah MASIH ADA DATA di depan, bukan sekadar sisa baris.
+    # Look-ahead DIBATASI (_LOOKAHEAD baris) supaya murah: cukup untuk memastikan
+    # tidak berhenti di tengah data, tanpa memindai belasan ribu baris kosong.
+    _LOOKAHEAD = 500
+    ada_lanjutan = False
+    if lanjut <= maks_baris:
+        batas = min(maks_baris, lanjut + _LOOKAHEAD - 1)
+        for row in ws.iter_rows(min_row=lanjut, max_row=batas):
+            if any(c.value not in (None, "") for c in row):
+                ada_lanjutan = True
+                break
+    payload = {
+        "sumber": note,
+        "sheet": sheet,
+        "baris_mulai": mulai,
+        "baris_akhir_dibaca": baris_terakhir or min(akhir, maks_baris),
+        "baris_maks_sheet": maks_baris,
+        "n_cell": len(cells),
+        "capped": capped,
+        "ada_lanjutan": ada_lanjutan,
+        "lanjut_dari_baris": lanjut if ada_lanjutan else None,
+        "cells": cells,
+    }
+    if ada_lanjutan:
+        payload["petunjuk"] = (
+            f"Sheet belum habis — panggil read_lke lagi dengan mulai_baris={lanjut} "
+            f"(sampai ada_lanjutan=false) sebelum menyimpulkan penilaian."
+        )
     return {"content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)}]}
 
 
