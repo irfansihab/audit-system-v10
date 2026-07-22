@@ -38,6 +38,7 @@ me-transform ke schema di atas — supaya agen tidak perlu tahu skema render_kkp
 """
 import json
 import os
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -859,9 +860,20 @@ def _summarize_digest_raw(name: str, data: dict) -> dict:
         out["jenis"] = data.get("jenis") or "GENERIK"
         rk = str(data.get("ringkasan_teks") or "")
         if rk:
-            out["ringkasan_teks"] = rk[:1800]
+            # Cap awal longgar; pemangkasan sebenarnya adaptif di read_ingested_digest.
+            # WAJIB page-aware — `rk[:6000]` akan memotong halaman belakang (mis. 25
+            # halaman → tinggal 13) sebelum trim adaptif sempat menjaga sebarannya.
+            out["ringkasan_teks"] = _trim_ringkasan_per_halaman(rk, 6000)
         if data.get("halaman_total"):
             out["halaman_total"] = data["halaman_total"]
+        # Ukuran asli WAJIB ikut: tanpa ini agen tak tahu ringkasan yang dibacanya
+        # hanya sebagian kecil dokumen (mis. 1.800 dari 58.272 char).
+        if data.get("halaman_total_chars"):
+            out["halaman_total_chars"] = data["halaman_total_chars"]
+        # Peta halaman → agen bisa menargetkan read_pdf_page(halaman=N).
+        peta = data.get("peta_halaman")
+        if isinstance(peta, list) and peta:
+            out["peta_halaman"] = peta[:60]
         for k in ("kata_kunci", "regulasi_terdeteksi", "tanggal_terdeteksi",
                   "nilai_rupiah_terdeteksi"):
             v = data.get(k)
@@ -877,6 +889,34 @@ def _summarize_digest_raw(name: str, data: dict) -> dict:
         if data.get(k):
             out[k] = data[k]
     return out
+
+
+def _trim_ringkasan_per_halaman(rk: str, cap: int) -> str:
+    """Pangkas `ringkasan_teks` TANPA membuang bagian belakang dokumen.
+
+    Ringkasan digest generik tersusun dari blok `[hal N] …` yang mewakili SELURUH
+    halaman. Memotong dengan `rk[:cap]` hanya menyisakan halaman awal (head-bias)
+    — justru masalah yang ingin dihindari. Di sini jatah dibagi rata ke tiap blok
+    halaman, sehingga sebaran halaman tetap utuh meski teks per halaman memendek.
+    """
+    if len(rk) <= cap:
+        return rk
+    blocks = [b.strip() for b in re.split(r"(?=\[hal \d+\])", rk) if b.strip()]
+    catatan = ""
+    if blocks and not blocks[-1].startswith("[hal "):
+        catatan = blocks.pop()
+    if not blocks:
+        return rk[:cap] + "…"
+    # Kecilkan jatah per-halaman secara bertahap sampai muat — JANGAN memotong
+    # hasil akhir dari depan (itu akan membuang halaman belakang lagi).
+    hasil = ""
+    for shrink in range(8):
+        per = max(40, (cap - len(catatan) - 40) // len(blocks) - shrink * 12)
+        out = [(b if len(b) <= per else b[:per] + "…") for b in blocks]
+        hasil = "\n".join(out) + (("\n" + catatan) if catatan else "")
+        if len(hasil) <= cap:
+            return hasil
+    return hasil[:cap] + "…"
 
 
 @tool(
@@ -908,13 +948,24 @@ async def read_ingested_digest(args: dict) -> dict:
     payload = {"total": len(items), "digest": items}
     text = _dump(payload)
     if len(text) > _BUDGET:
-        for cap in (1800, 1100, 600):
+        # Cap ADAPTIF: bagi rata budget ke jumlah dokumen dulu (dokumen sedikit →
+        # tiap dokumen dapat jatah besar), baru turun bertahap bila masih lewat.
+        # Sebelumnya dipatok 1800 → dokumen besar (58k char) hanya terbaca ±3%.
+        n_docs = max(1, len(items))
+        adil = max(600, int(_BUDGET * 0.75) // n_docs)
+        for cap in (adil, 2500, 1800, 1100, 600):
             for it in items:
                 if isinstance(it.get("ringkasan_teks"), str) and len(it["ringkasan_teks"]) > cap:
-                    it["ringkasan_teks"] = it["ringkasan_teks"][:cap] + "…"
+                    it["ringkasan_teks"] = _trim_ringkasan_per_halaman(it["ringkasan_teks"], cap)
             text = _dump(payload)
             if len(text) <= _BUDGET:
                 break
+        # Peta halaman ikut dipangkas hanya bila masih kelebihan (prioritas: teks).
+        if len(text) > _BUDGET:
+            for it in items:
+                if isinstance(it.get("peta_halaman"), list) and len(it["peta_halaman"]) > 15:
+                    it["peta_halaman"] = it["peta_halaman"][:15]
+            text = _dump(payload)
     total_asli = len(items)
     while len(text) > _BUDGET and len(items) > 1:
         items.pop()

@@ -239,10 +239,73 @@ def extract_nilai_rupiah(text: str, max_items: int = 10) -> list[str]:
 # Public API
 # ---------------------------------------------------------------------------
 
+def _peta_halaman(pages: list[str], max_pages: int = 400) -> list[dict]:
+    """Indeks per halaman: nomor, jumlah char, dan cuplikan awal (judul/baris pertama).
+
+    Tujuannya supaya agen TAHU apa yang ada di halaman berapa → bisa menargetkan
+    `read_pdf_page(halaman=N)` tepat sasaran, tanpa harus menyimpan teks penuh.
+    """
+    peta: list[dict] = []
+    for i, p in enumerate(pages[:max_pages], start=1):
+        t = " ".join((p or "").split())
+        if not t:
+            continue
+        peta.append({"hal": i, "chars": len(p or ""), "awal": t[:90]})
+    return peta
+
+
+def _ringkasan_representatif(pages: list[str], max_chars: int) -> str:
+    """Potongan REPRESENTATIF seluruh dokumen — bukan `full_text[:N]` (head-only).
+
+    Head-only membuat dokumen besar tak terlihat (mis. KAK 25 hal: hanya ±2,6 hal
+    pertama yang tersimpan, hal 3-25 hilang). Di sini jatah karakter dibagi ke
+    SEMUA halaman; tiap potongan diberi penanda `[hal N]` supaya agen tahu asalnya
+    dan bisa mendalami via `read_pdf_page`. Bila halaman terlalu banyak untuk jatah
+    minimum, halaman disampel MERATA (bukan hanya bagian depan) + diberi catatan.
+    """
+    live = [(i + 1, (p or "").strip()) for i, p in enumerate(pages) if p and p.strip()]
+    if not live:
+        return ""
+    # Selalu beri penanda [hal N] — termasuk saat teks utuh muat. Dengan begitu
+    # pemangkasan di hilir (read_ingested_digest) selalu bisa menjaga sebaran
+    # halaman, bukan memotong bagian depan saja.
+    full = "\n\n".join(f"[hal {h}] {t}" for h, t in live)
+    if len(full) <= max_chars:
+        return full
+
+    _MIN_PER = 150          # jatah minimum agar tiap potongan tetap bermakna
+    _TAG = 12               # perkiraan overhead penanda "[hal N] "
+    n = len(live)
+    muat = max(1, max_chars // (_MIN_PER + _TAG))
+    if n <= muat:
+        sel = live
+        per = max(_MIN_PER, (max_chars - n * _TAG) // n)
+    else:
+        step = n / muat
+        idx = sorted({int(i * step) for i in range(muat)})
+        sel = [live[i] for i in idx if i < n]
+        per = _MIN_PER
+
+    parts = []
+    for hal, teks in sel:
+        cut = teks[:per]
+        if len(teks) > per:
+            cut += "…"
+        parts.append(f"[hal {hal}] {cut}")
+    out = "\n\n".join(parts)
+    if len(sel) < n:
+        out += (f"\n\n[CATATAN: ringkasan menyampel {len(sel)} dari {n} halaman secara merata — "
+                f"pakai `peta_halaman` + `read_pdf_page` untuk halaman lain]")
+    else:
+        out += (f"\n\n[CATATAN: tiap halaman dipotong ±{per} char — "
+                f"pakai `peta_halaman` + `read_pdf_page` untuk isi lengkap]")
+    return out
+
+
 def digest_one_file(
     file_path: Path,
     *,
-    max_text_chars: int = 6000,
+    max_text_chars: int = 12000,
 ) -> dict[str, Any]:
     """Digest satu dokumen → dict ringkas. Pakai LiteParse untuk ekstraksi teks.
 
@@ -295,9 +358,7 @@ def digest_one_file(
         }
 
     full_text = "\n\n".join(p for p in pages if p)
-    ringkasan = full_text[:max_text_chars]
-    if len(full_text) > max_text_chars:
-        ringkasan += "\n\n[...TRUNCATED — gunakan read_pdf_page untuk halaman spesifik]"
+    ringkasan = _ringkasan_representatif(pages, max_text_chars)
 
     return {
         "file": str(file_path),
@@ -306,6 +367,7 @@ def digest_one_file(
         "halaman_total_chars": len(full_text),
         "size_bytes": file_path.stat().st_size,
         "ringkasan_teks": ringkasan,
+        "peta_halaman": _peta_halaman(pages),
         "kata_kunci": extract_keywords(full_text),
         "regulasi_terdeteksi": extract_regulasi(full_text),
         "tanggal_terdeteksi": extract_tanggal_iso(full_text),
